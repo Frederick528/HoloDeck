@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,7 @@ public class Card : Draggable
     [SerializeField] TMP_Text costText;
     [SerializeField] TMP_Text desText;
 
+    public PRS originPRS;
     //private Animator _anim;
 
     public CardData Data { get; private set; }
@@ -45,6 +47,22 @@ public class Card : Draggable
         nameText.text = data.KR;
         costText.text = data.Date.ToString();
         desText.text = data.Descript;
+    }
+
+    public void MoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)
+    {
+        if (useDotween)
+        {
+            transform.DOMove(prs.pos, dotweenTime);
+            transform.DORotateQuaternion(prs.rot, dotweenTime);
+            transform.DOScale(prs.scale, dotweenTime);
+        }
+        else
+        {
+            transform.position = prs.pos;
+            transform.rotation = prs.rot;
+            transform.localScale = prs.scale;
+        }
     }
 
     public void Init(int level)
@@ -174,42 +192,16 @@ public class Card : Draggable
 
     public override void OnMouseUp()
     {
+        this.MoveTransform(originPRS, true, 1f);
         //_rigid.isKinematic = false;
 
 
         //CollisionChecker(RayCastToken);
-        if (this.transform.parent.TryGetComponent(out CardGroup hg))
-        {
-            if (hg.IndexOf(this).Equals(hg.Count - 1))
-            {
-                hg.RemoveCard(this);
-                return;
-            }
-        }
+
         //SoundManager.instance.Play("Sounds/Effect/CardHoldSound");
-        var results = Physics.OverlapSphere(transform.position, 7f);
         //CardManager.Instance.sortBtn.interactable = false;
 
-        for (int i = 1; i < results.Length; i++)
-        {
-            var target = results[i].gameObject;
-            if (target.transform.parent == null) continue;
-            if (target.Equals(this.gameObject)) continue;
-            if (!target.transform.TryGetComponent(out Card c)) continue;
 
-            //foreach (var rule in CardDataDeserializer.CraftRules)
-            //{
-            //    if (rule.Contains(this.ID) && rule.Contains(c.ID))
-            //    {
-            //        Debug.Log(true);
-            //        OnMerge(this.gameObject, c.gameObject, true);
-            //        return;
-            //    }
-            //}
-
-            //var emptyParent = CreateParent(target.transform);
-            //emptyParent.AddCardRange(new[] { c, this });
-        }
         //CardManager.Instance.sortBtn.interactable = true;
     }
     protected override void OnMouseDrag()
@@ -219,83 +211,11 @@ public class Card : Draggable
         Vector2 _temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         transform.position = _temp;
 
-        //if (this.transform.parent.TryGetComponent(out CardGroup cardGroup))
-        //{
-        //    if (cardGroup.IndexOf(this) == 0)
-        //    {
-        //        cardGroup.transform.position = crntPos;
-        //    }
-
-        //    else if (cardGroup.IndexOf(this) == cardGroup.Count - 1)
-        //        this.transform.position = crntPos;
-
-        //    //     else
-        //    //     {
-        //    //         if (_tempGroup == null)
-        //    //         {
-        //    //             var temp = new GameObject("CardGroup");
-        //    //             temp.transform.SetParent(CardManager.Instance.transform, true);
-        //    //             _tempGroup = temp.AddComponent<CardGroup>();
-        //    //             for (int i = cardGroup.IndexOf(this); i < cardGroup.Count;)
-        //    //             {
-        //    //                 var c = cardGroup.RemoveCard(i);
-        //    //                 _tempGroup.AddCard(c);
-        //    //             }
-        //    //             cardGroup.Sort();
-        //    //         }
-        //    //     }
-        //    // }
-        //}
-        //else
-        //{
-        //    this.transform.position = crntPos;
-        //}
     }
     protected override void OnMouseDown()
     {
         //SoundManager.instance.Play("Sounds/Effect/CardDropSound");
-        if (transform.parent.TryGetComponent(out CardGroup g))
-        {
-            var idx = g.IndexOf(this);
-            if (idx != 0)
-            {
-                if (idx != g.Count - 1)
-                {
-                    List<Card> targets = new();
-                    for (int i = g.IndexOf(this); i < g.Count;)
-                    {
-                        var v = g.RemoveCard(i);
-                        //temp.AddCard(v);
-                    }
 
-                    //temp.Sort();
-                }
-                else
-                {
-                    g.RemoveCard(this);
-                }
-            }
-        }
-
-        // if (transform.parent.TryGetComponent(out CardGroup cardGroup))
-        // {
-        //     cardGroup.transform.position = new Vector3()
-        //     {
-        //         x = cardGroup.transform.position.x,
-        //         y = 5,
-        //         z = cardGroup.transform.position.z,
-        //     };
-        // }
-        // else
-        // {
-        //     this.transform.position = new Vector3()
-        //     {
-        //         x = transform.position.x,
-        //         y = 5,
-        //         z = transform.position.z,
-        //
-        //     };
-        // }
         base.OnMouseDown();
     }
 

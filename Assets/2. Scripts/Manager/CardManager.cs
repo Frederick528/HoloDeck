@@ -1,72 +1,140 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CardManager : MonoBehaviour
 {
-    //private static GameObject _ogCard;
-
     public static CardManager Instance { get; private set; }
     //public List<Card> Deck { get; private set; }
-    public List<Card> Deck;
+    public List<Card> MainDeck;
+    public List<Card> DrawDeck;  // 현재 내가 뽑을 수 있는 카드
+    public List<Card> CardDummy;  // 카드 더미(사용 또는 버림)
+    public List<Card> HandCard; // 내 손에 있는 카드
 
-    //public GameObject newerCardEffect;
+    [SerializeField] Transform cardSpawnPoint;
 
-    // Start is called before the first frame update
+    [SerializeField] Transform myCardLeft;
+    [SerializeField] Transform myCardRight;
+
     private void Awake() => Instance = this;
 
     public GameObject cardPrefab;
 
+    public void StartBattle()
+    {
+        SetupCardDeck(true);
+    }
+    void SetupCardDeck(bool start = false)
+    {
+        if (!start)
+        {
+            for (int i = 0; i < CardDummy.Count; i++)
+            {
+                DrawDeck.Add(CardDummy[i]);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < MainDeck.Count; i++)
+            {
+                DrawDeck.Add(MainDeck[i]);
+            }
+        }
+        for (int i = 0; i < DrawDeck.Count; i++)
+        {
+            int rand = Random.Range(0, DrawDeck.Count);
+            Card temp = DrawDeck[i];
+            DrawDeck[i] = DrawDeck[rand];
+            DrawDeck[rand] = temp;
+        }
+    }
+    public Card DrawCard()
+    {
+        if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기
+            SetupCardDeck();
 
-    //public static bool TryGetCardsByID(int id, out Card[] cards)
-    //{
-    //    var result = true;
+        if (DrawDeck.Count == 0)    // 덱을 섞은 후에도 뽑을 카드가 없으면 리턴
+            return null;
 
-    //    var arr = Cards.Where(x => x.ID == id).Select(x => x);
+        Card card = DrawDeck[0];
+        DrawDeck.RemoveAt(0);
+        return card;
 
-    //    cards = arr.ToArray();
+    }
 
-    //    return result;
-    //}
+    public void AddCard()
+    {
+        var drawCard = DrawCard();
+        if (drawCard == null)
+            return;
+        var cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity);
+        var card = cardObject.GetComponent<Card>();
+        card.Setup(drawCard.Data);
+        HandCard.Add(card);
 
-    //public static bool TryGetCardsByLevel(int level, out Card[] cards)
-    //{
-    //    var result = true;
+        SetOriginOrder();
+        CardAlignment();
+    }
 
-    //    var arr = Cards.Where(x => x.level == level).Select(x => x);
+    void SetOriginOrder()
+    {
+        for (int i = 0; i < HandCard.Count; i++)
+        {
+            var targetCard = HandCard[i];
+            targetCard?.GetComponent<Order>().SetOriginOrder(i);
+        }
+    }
 
-    //    cards = arr.ToArray();
+    void CardAlignment()
+    {
+        List<PRS> originCardPRSs = new List<PRS>();
+        originCardPRSs = RoundAlignment(myCardLeft, myCardRight, HandCard.Count, 0.5f, new Vector3(2f, 2.8f, 1f));
+        for (int i = 0; i < HandCard.Count; i++)
+        {
+            var targetCard = HandCard[i];
 
-    //    return result;
-    //}
+            targetCard.originPRS = originCardPRSs[i];
+            targetCard.MoveTransform(targetCard.originPRS, true, 0.7f);
+        }
+    }
 
-    //public static bool TryGetCardsByType(Card.CardType cardType, out Card[] cards)
-    //{
-    //    var result = true;
+    List<PRS> RoundAlignment(Transform leftTr, Transform rightTr, int cardCount, float height, Vector3 scale)
+    {
+        float[] cardLerps = new float[cardCount];
+        List<PRS> results = new List<PRS>(cardCount);
 
-    //    var arr = Cards.Where(x => x.cardType == cardType).Select(x => x);
+        if (cardCount == 1)
+        {
+            cardLerps = new float[] { 0.5f };
+        }
+        else
+        {
+            float interval = cardCount < 7f ? 1f / 6 : 1f / cardCount;
+            float cardPos = 0f;
+            for (int i = 0; i < cardCount; i++)
+            {
+                if (i == 0)
+                    cardPos += cardCount < 7f ? (interval * (3.5f - cardCount * 0.5f)) : interval * 0.5f;
+                else
+                    cardPos += interval;
+                cardLerps[i] = cardPos;
+            }
+        }
 
-    //    cards = arr.ToArray();
+        for (int i = 0; i < cardCount; i++)
+        {
+            var targetPos = Vector3.Lerp(leftTr.position, rightTr.position, cardLerps[i]);
 
-    //    return result;
-    //}
+            float curve = Mathf.Sqrt(Mathf.Pow(height, 2) - Mathf.Pow(cardLerps[i] - 0.5f, 2));   // 원의 방정식
+            //float curve = Mathf.Sqrt(Mathf.Pow(height, 2) * (1 - (Mathf.Pow(cardLerps[i] - 0.5f, 2) / Mathf.Pow(leftTr.position.x, 2))));   // 타원의 방정식
 
-    //public static bool TryGetCards(out Card[] cards)
-    //{
-    //    var result = true;
+            targetPos.y += 2 * curve;
+            Quaternion targetRot = Quaternion.Slerp(leftTr.rotation, rightTr.rotation, cardLerps[i]);
 
-    //    var arr = Cards.Where(x => x.ID < 5000).Select(x => x);
-
-    //    cards = arr.ToArray();
-
-    //    return result;
-    //}
-
-    //private void OnDestroy()
-    //{
-    //    Instance = null;
-    //}
+            results.Add(new PRS(targetPos, targetRot, scale));
+        }
+        return results;
+    }
 }
