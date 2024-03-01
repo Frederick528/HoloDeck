@@ -1,17 +1,13 @@
-using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
-    public CancellationTokenSource Cts;
+    public static GameManager Instance { get; private set; }
+    [SerializeField] bool fastMode;
 
-    //public List<Card> Deck;
-
-    async void Awake()
+    void Awake()
     {
         if (Instance == null)
         {
@@ -31,32 +27,34 @@ public class GameManager : MonoBehaviour
         //{
         //    Debug.Log("데이터 테이블을 불러오는 과정에서 문제가 발생했습니다.");
         //}
-
-        Cts = new CancellationTokenSource();
-        await TokenRebuilder();
     }
 
     private void Start()
     {
+        if (fastMode)
+        {
+            Time.timeScale = 2;
+        }
+        else { Time.timeScale = 1; }
+        _ = TurnManager.Instance.StartTurnTask();
         //SoundManager.instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     }
 
-    private async UniTask TokenRebuilder()
+    void Update()
     {
-        while (true)
+#if UNITY_EDITOR
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    TurnManager.OnAddCard?.Invoke();
+        //}
+        if (Input.GetKeyDown(KeyCode.Q))
         {
-            if (Cts.Token.IsCancellationRequested)
-            {
-                Cts.Cancel();
-                Cts.Dispose();
-                Thread.MemoryBarrier();
-
-                Cts = new CancellationTokenSource();
-            }
-
-            if (this.gameObject == null) break;
-
-            await UniTask.Delay(100);
+            _ = TurnManager.Instance.DrawTask();
         }
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            TurnManager.Instance.EndTurn();
+        }
+#endif
     }
 }

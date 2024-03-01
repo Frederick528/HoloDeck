@@ -1,9 +1,6 @@
-using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using TMPro;
 using UnityEngine;
 
@@ -31,7 +28,6 @@ public class Card : Draggable
     public CardType cardType;
     public int ID;
 
-    public static CancellationTokenSource RayCastToken = new();
     // Start is called before the first frame update
 
     //private void OnEnable()
@@ -192,7 +188,7 @@ public class Card : Draggable
 
     public override void OnMouseUp()
     {
-        this.MoveTransform(originPRS, true, 1f);
+        this.MoveTransform(originPRS, true, 0.5f);
         //_rigid.isKinematic = false;
 
 
@@ -219,94 +215,4 @@ public class Card : Draggable
         base.OnMouseDown();
     }
 
-
-    //public bool Lapse()
-    //{
-    //    var result = true;
-
-    //    _data.Date -= 1;
-    //    if (_data.Date <= 0)
-    //        result = false;
-
-    //    return result;
-    //}
-
-    //public void AnimEvt()
-    //{
-    //    var a = this.GetComponent<Animator>();
-    //    CardManager.CreateQueue.Dequeue();
-    //    CardManager.Instance.sortBtn.interactable =
-    //        CardManager.CreateQueue.Count == 0;
-    //    Destroy(a);
-    //}
-
-    ////카드 분해 기능
-    //public void OnDecomposition(out Card[] createdCards)
-    //{
-    //    if (this.level == 0)
-    //    {
-    //        createdCards = null;
-    //        return;
-    //    }
-
-    //    CardManager.DestroyCard(this);
-
-    //    var v = new Card[2];
-    //    v[0] = CardManager.CreateCard(this.level - 1, Random.Range(0, 4));
-    //    v[1] = CardManager.CreateCard(this.level - 1, Random.Range(0, 4));
-
-    //    createdCards = v;
-    //}
-
-    //public static void MoveToLerp(GameObject targetObj, Vector3 targetPos)
-    //{
-    //    GameManager.Instance.StartCoroutine(Move(targetObj, targetPos));
-    //}
-    //static IEnumerator Move(GameObject targetObj, Vector3 targetPos)
-    //{
-    //    while (true)
-    //    {
-    //        try
-    //        {
-    //            targetObj.transform.position =
-    //                Vector3.Lerp(targetObj.transform.position, targetPos, 0.4f);
-
-    //            if (Vector3.Distance(targetObj.transform.position, targetPos) <= 1f)
-    //            {
-    //                targetObj.transform.position = targetPos;
-    //                break;
-    //            }
-    //        }
-    //        catch
-    //        {
-    //            break;
-    //        }
-    //        yield return new WaitForSeconds(0.02f);
-    //    }
-    //    yield return null;
-    //}
-
-    //private async UniTaskVoid CollisionChecker(CancellationTokenSource tokenSource)
-    //{
-    //    while (true)
-    //    {
-    //        if (tokenSource.Token.IsCancellationRequested)
-    //            break;
-    //        if (this.gameObject == null)
-    //            break;
-    //        if (Physics.Raycast(this.transform.position, Vector3.down, 1f, LayerMask.NameToLayer("Floor")))
-    //        {
-    //            //카드를 내려놓았을 때 바닥으로 레이를 쏴서 닿으면 hit
-    //            Camera.main.transform.position += Vector3.down;
-    //            await UniTask.Delay(100, cancellationToken: tokenSource.Token);
-    //            Camera.main.transform.position += Vector3.up;
-    //            break;
-    //        }
-    //        await UniTask.Delay(100, cancellationToken: tokenSource.Token);
-    //    }
-    //    RayCastToken.Cancel();
-    //    RayCastToken.Dispose();
-
-    //    RayCastToken = new CancellationTokenSource();
-    //}
 }

@@ -1,7 +1,10 @@
 
+using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 using UnityEngine.UI;
 
 public class CardManager : MonoBehaviour
@@ -14,6 +17,7 @@ public class CardManager : MonoBehaviour
     public List<Card> HandCard; // 내 손에 있는 카드
 
     [SerializeField] Transform cardSpawnPoint;
+    [SerializeField] Transform cardDummyTr;
 
     [SerializeField] Transform myCardLeft;
     [SerializeField] Transform myCardRight;
@@ -25,6 +29,7 @@ public class CardManager : MonoBehaviour
     public void StartBattle()
     {
         SetupCardDeck(true);
+        TurnManager.OnAddCard += AddCard;
     }
     void SetupCardDeck(bool start = false)
     {
@@ -34,6 +39,7 @@ public class CardManager : MonoBehaviour
             {
                 DrawDeck.Add(CardDummy[i]);
             }
+            CardDummy.Clear();
         }
         else
         {
@@ -66,11 +72,11 @@ public class CardManager : MonoBehaviour
 
     public void AddCard()
     {
-        var drawCard = DrawCard();
+        Card drawCard = DrawCard();
         if (drawCard == null)
             return;
-        var cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity);
-        var card = cardObject.GetComponent<Card>();
+        GameObject cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity);
+        Card card = cardObject.GetComponent<Card>();
         card.Setup(drawCard.Data);
         HandCard.Add(card);
 
@@ -78,11 +84,24 @@ public class CardManager : MonoBehaviour
         CardAlignment();
     }
 
+    public void ThrowAwayCard()
+    {
+        for (int i = 0; i < HandCard.Count; i++)
+        {
+            Card targetCard = HandCard[i];
+
+            targetCard.MoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, Vector3.one), true, 0.7f);
+
+            CardDummy.Add(targetCard);
+        }
+        HandCard.Clear();
+    }
+
     void SetOriginOrder()
     {
         for (int i = 0; i < HandCard.Count; i++)
         {
-            var targetCard = HandCard[i];
+            Card targetCard = HandCard[i];
             targetCard?.GetComponent<Order>().SetOriginOrder(i);
         }
     }
@@ -125,7 +144,7 @@ public class CardManager : MonoBehaviour
 
         for (int i = 0; i < cardCount; i++)
         {
-            var targetPos = Vector3.Lerp(leftTr.position, rightTr.position, cardLerps[i]);
+            Vector3 targetPos = Vector3.Lerp(leftTr.position, rightTr.position, cardLerps[i]);
 
             float curve = Mathf.Sqrt(Mathf.Pow(height, 2) - Mathf.Pow(cardLerps[i] - 0.5f, 2));   // 원의 방정식
             //float curve = Mathf.Sqrt(Mathf.Pow(height, 2) * (1 - (Mathf.Pow(cardLerps[i] - 0.5f, 2) / Mathf.Pow(leftTr.position.x, 2))));   // 타원의 방정식
