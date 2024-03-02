@@ -16,3 +16,8 @@ public class PRS
         this.scale = scale;
     }
 }
+
+public class CardScale
+{
+    public static Vector3 cardScale = new Vector3(2f, 2.8f, 1f);
+}

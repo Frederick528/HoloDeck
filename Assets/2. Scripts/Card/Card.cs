@@ -1,7 +1,9 @@
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum CardType
@@ -13,7 +15,7 @@ public enum CardType
     Combination,
     Merchant
 }
-public class Card : Draggable
+public class Card : MonoBehaviour
 {
     [SerializeField] SpriteRenderer card;
     [SerializeField] SpriteRenderer character;
@@ -28,6 +30,8 @@ public class Card : Draggable
     public CardType cardType;
     public int ID;
 
+    public bool block;
+
     // Start is called before the first frame update
 
     //private void OnEnable()
@@ -41,17 +45,21 @@ public class Card : Draggable
     public void Setup(CardData data)
     {
         nameText.text = data.KR;
-        costText.text = data.Date.ToString();
+        //costText.text = data.Date.ToString();
+        costText.text = GameManager.Instance.num.ToString();
+        GameManager.Instance.num++;
         desText.text = data.Descript;
     }
 
-    public void MoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)
+    public async UniTask MoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)
     {
         if (useDotween)
         {
-            transform.DOMove(prs.pos, dotweenTime);
-            transform.DORotateQuaternion(prs.rot, dotweenTime);
-            transform.DOScale(prs.scale, dotweenTime);
+            await UniTask.WhenAll(
+            transform.DOMove(prs.pos, dotweenTime).WithCancellation(this.GetCancellationTokenOnDestroy()),
+            transform.DORotateQuaternion(prs.rot, dotweenTime).WithCancellation(this.GetCancellationTokenOnDestroy()),
+            transform.DOScale(prs.scale, dotweenTime).WithCancellation(this.GetCancellationTokenOnDestroy())
+                );
         }
         else
         {
@@ -112,59 +120,59 @@ public class Card : Draggable
         this.GetComponentInChildren<TMP_Text>().text = Data.KR;
 
     }
-    public void Init(int ID, out bool temp)
-    {
-        temp = true;
-        this.ID = ID;
-        level = ID % 10;
+    //public void Init(int ID, out bool temp)
+    //{
+    //    temp = true;
+    //    this.ID = ID;
+    //    level = ID % 10;
 
-        switch (ID / 10)
-        {
-            case 101:
-                GetComponent<MeshRenderer>().material =
-                    Resources.Load<Material>($"Prefabs/Materials/Food/{ID}");
-                cardType = CardType.Food;
-                break;
-            case 102:
-                GetComponent<MeshRenderer>().material =
-                    Resources.Load<Material>($"Prefabs/Materials/Water/{ID}");
-                cardType = CardType.Water;
-                break;
-            case 201:
-                GetComponent<MeshRenderer>().material =
-                    Resources.Load<Material>($"Prefabs/Materials/Wood/{ID}");
-                cardType = CardType.Wood;
-                break;
-            case 202:
-                GetComponent<MeshRenderer>().material =
-                    Resources.Load<Material>($"Prefabs/Materials/Stone/{ID}");
-                cardType = CardType.Stone;
-                break;
-            case 300:
-                GetComponent<MeshRenderer>().material =
-                    Resources.Load<Material>($"Prefabs/Materials/Combination/{ID}");
-                cardType = CardType.Combination;
-                level = 5;
-                break;
-            case 500:
-                GetComponent<MeshRenderer>().material =
-                    Resources.Load<Material>($"Prefabs/Materials/Merchant/{ID}");
-                cardType = CardType.Merchant;
-                level = 5;
-                break;
-            default:
-                GetComponent<MeshRenderer>().material =
-                    Resources.Load<Material>("Prefabs/Materials/Black");
-                break;
-        }
+    //    switch (ID / 10)
+    //    {
+    //        case 101:
+    //            GetComponent<MeshRenderer>().material =
+    //                Resources.Load<Material>($"Prefabs/Materials/Food/{ID}");
+    //            cardType = CardType.Food;
+    //            break;
+    //        case 102:
+    //            GetComponent<MeshRenderer>().material =
+    //                Resources.Load<Material>($"Prefabs/Materials/Water/{ID}");
+    //            cardType = CardType.Water;
+    //            break;
+    //        case 201:
+    //            GetComponent<MeshRenderer>().material =
+    //                Resources.Load<Material>($"Prefabs/Materials/Wood/{ID}");
+    //            cardType = CardType.Wood;
+    //            break;
+    //        case 202:
+    //            GetComponent<MeshRenderer>().material =
+    //                Resources.Load<Material>($"Prefabs/Materials/Stone/{ID}");
+    //            cardType = CardType.Stone;
+    //            break;
+    //        case 300:
+    //            GetComponent<MeshRenderer>().material =
+    //                Resources.Load<Material>($"Prefabs/Materials/Combination/{ID}");
+    //            cardType = CardType.Combination;
+    //            level = 5;
+    //            break;
+    //        case 500:
+    //            GetComponent<MeshRenderer>().material =
+    //                Resources.Load<Material>($"Prefabs/Materials/Merchant/{ID}");
+    //            cardType = CardType.Merchant;
+    //            level = 5;
+    //            break;
+    //        default:
+    //            GetComponent<MeshRenderer>().material =
+    //                Resources.Load<Material>("Prefabs/Materials/Black");
+    //            break;
+    //    }
 
-        //if (!CardDataDeserializer.TryGetData(ID, out _data))
-        //    Debug.Log("데이터를 불러오는 도중에 문제가 발생했습니다." +
-        //              $"\n카드 ID : {ID}");
+    //    //if (!CardDataDeserializer.TryGetData(ID, out _data))
+    //    //    Debug.Log("데이터를 불러오는 도중에 문제가 발생했습니다." +
+    //    //              $"\n카드 ID : {ID}");
 
-        this.GetComponentInChildren<TMP_Text>().text = Data.KR;
+    //    this.GetComponentInChildren<TMP_Text>().text = Data.KR;
 
-    }
+    //}
 
     //private void InitCheck()
     //{
@@ -186,9 +194,39 @@ public class Card : Draggable
     //    return temp;
     //}
 
-    public override void OnMouseUp()
+
+    void OnMouseOver()
     {
-        this.MoveTransform(originPRS, true, 0.5f);
+        if (block)
+            return;
+        CardManager.Instance.CardMouseOver(this);
+    }
+
+    void OnMouseExit()
+    {
+        if (block)
+            return;
+        CardManager.Instance.CardMouseExit(this);
+    }
+
+    void OnMouseDown()
+    {
+        CardManager.Instance.CardMouseDown(this);
+        //if (GameManager.Instance.blockClick || TurnManager.Instance.isLoading)
+        //    return;
+        //comeBackCard = false;
+        //draggable = true;
+        //GameManager.Instance.blockClick = true;
+    }
+
+    void OnMouseUp()
+    {
+        CardManager.Instance.CardMouseUp(this).Forget();
+
+
+        //if (comeBackCard || TurnManager.Instance.isLoading)
+        //    return;
+        
         //_rigid.isKinematic = false;
 
 
@@ -200,19 +238,15 @@ public class Card : Draggable
 
         //CardManager.Instance.sortBtn.interactable = true;
     }
-    protected override void OnMouseDrag()
+    void OnMouseDrag()
     {
+        //if (!draggable)
+        //    return;
         //float distance = Camera.main.WorldToScreenPoint(transform.position).z;
         //print(distance);
         Vector2 _temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        transform.position = _temp;
+        transform.position = _temp/*new Vector3(_temp.x, _temp.y, -5f)*/;
 
-    }
-    protected override void OnMouseDown()
-    {
-        //SoundManager.instance.Play("Sounds/Effect/CardDropSound");
-
-        base.OnMouseDown();
     }
 
 }

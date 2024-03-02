@@ -31,7 +31,7 @@ public class TurnManager : MonoBehaviour
         for (int i = 0; i < startCardCount; i++)
         {
             OnAddCard?.Invoke();
-            await UniTask.Delay(TimeSpan.FromSeconds(0.5f));
+            await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
         }
         isLoading = false;
     }
@@ -40,15 +40,15 @@ public class TurnManager : MonoBehaviour
         isLoading = true;
 
         OnAddCard?.Invoke();
-        await UniTask.Delay(TimeSpan.FromSeconds(0.7f));
+        await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
 
         isLoading = false;
     }
 
     public void EndTurn()
     {
-        myTurn = false;
+        //myTurn = false;
         isLoading = true;
-        CardManager.Instance.ThrowAwayCard();
+        CardManager.Instance.ThrowAwayCard().Forget();
     }
 }

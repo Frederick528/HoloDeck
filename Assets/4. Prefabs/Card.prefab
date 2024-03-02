@@ -447,7 +447,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6059ff0cda36fe46a0635197a2b6138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 0
   card: {fileID: 6399435079816834893}
   character: {fileID: 6399435079843741220}
   nameText: {fileID: 6399435079829069630}

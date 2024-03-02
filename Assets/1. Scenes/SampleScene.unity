@@ -771,7 +771,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6059ff0cda36fe46a0635197a2b6138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 0
   card: {fileID: 0}
   character: {fileID: 0}
   nameText: {fileID: 0}
@@ -783,6 +782,7 @@ MonoBehaviour:
     scale: {x: 0, y: 0, z: 0}
   cardType: 0
   ID: 0
+  block: 0
 --- !u!1 &299998527
 GameObject:
   m_ObjectHideFlags: 0
@@ -1029,7 +1029,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6059ff0cda36fe46a0635197a2b6138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 0
   card: {fileID: 422274900}
   character: {fileID: 1800938680}
   nameText: {fileID: 697026355}
@@ -1041,6 +1040,7 @@ MonoBehaviour:
     scale: {x: 0, y: 0, z: 0}
   cardType: 0
   ID: 0
+  block: 0
 --- !u!212 &422274900
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1564,7 +1564,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -200}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1697,7 +1697,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6059ff0cda36fe46a0635197a2b6138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 0
   card: {fileID: 530939300}
   character: {fileID: 758507076}
   nameText: {fileID: 424267961}
@@ -1709,6 +1708,7 @@ MonoBehaviour:
     scale: {x: 0, y: 0, z: 0}
   cardType: 0
   ID: 0
+  block: 0
 --- !u!212 &530939300
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2182,6 +2182,7 @@ MonoBehaviour:
   cardDummyTr: {fileID: 612295331}
   myCardLeft: {fileID: 1666849163}
   myCardRight: {fileID: 1780255930}
+  cardState: 0
   cardPrefab: {fileID: 6399435079816834892, guid: 3d900da5eb4eb634094479cea5b69518, type: 3}
 --- !u!1 &741150504
 GameObject:
@@ -2731,7 +2732,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6059ff0cda36fe46a0635197a2b6138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 0
   card: {fileID: 0}
   character: {fileID: 0}
   nameText: {fileID: 0}
@@ -2743,6 +2743,7 @@ MonoBehaviour:
     scale: {x: 0, y: 0, z: 0}
   cardType: 0
   ID: 0
+  block: 0
 --- !u!1 &955770028
 GameObject:
   m_ObjectHideFlags: 0
@@ -3854,7 +3855,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6059ff0cda36fe46a0635197a2b6138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 0
   card: {fileID: 0}
   character: {fileID: 0}
   nameText: {fileID: 0}
@@ -3866,6 +3866,7 @@ MonoBehaviour:
     scale: {x: 0, y: 0, z: 0}
   cardType: 0
   ID: 0
+  block: 0
 --- !u!114 &1393313960
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3998,7 +3999,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6059ff0cda36fe46a0635197a2b6138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 0
   card: {fileID: 0}
   character: {fileID: 0}
   nameText: {fileID: 0}
@@ -4010,6 +4010,7 @@ MonoBehaviour:
     scale: {x: 0, y: 0, z: 0}
   cardType: 0
   ID: 0
+  block: 0
 --- !u!114 &1435908857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4141,7 +4142,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6059ff0cda36fe46a0635197a2b6138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 0
   card: {fileID: 1441041445}
   character: {fileID: 319844587}
   nameText: {fileID: 1650748677}
@@ -4153,6 +4153,7 @@ MonoBehaviour:
     scale: {x: 0, y: 0, z: 0}
   cardType: 0
   ID: 0
+  block: 0
 --- !u!212 &1441041445
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4440,7 +4441,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6059ff0cda36fe46a0635197a2b6138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 0
   card: {fileID: 0}
   character: {fileID: 0}
   nameText: {fileID: 0}
@@ -4452,6 +4452,7 @@ MonoBehaviour:
     scale: {x: 0, y: 0, z: 0}
   cardType: 0
   ID: 0
+  block: 0
 --- !u!1 &1619656073
 GameObject:
   m_ObjectHideFlags: 0
@@ -4530,7 +4531,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6059ff0cda36fe46a0635197a2b6138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 0
   card: {fileID: 1619656077}
   character: {fileID: 1487087339}
   nameText: {fileID: 2011822125}
@@ -4542,6 +4542,7 @@ MonoBehaviour:
     scale: {x: 0, y: 0, z: 0}
   cardType: 0
   ID: 0
+  block: 0
 --- !u!212 &1619656077
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5289,6 +5290,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fastMode: 0
+  throwAwayCard: 0
+  blockClick: 0
+  num: 0
 --- !u!1 &1780255929
 GameObject:
   m_ObjectHideFlags: 0
@@ -5353,7 +5357,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6059ff0cda36fe46a0635197a2b6138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 0
   card: {fileID: 0}
   character: {fileID: 0}
   nameText: {fileID: 0}
@@ -5365,6 +5368,7 @@ MonoBehaviour:
     scale: {x: 0, y: 0, z: 0}
   cardType: 0
   ID: 0
+  block: 0
 --- !u!114 &1788162650
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5970,7 +5974,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6059ff0cda36fe46a0635197a2b6138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 0
   card: {fileID: 2035248773}
   character: {fileID: 1742518107}
   nameText: {fileID: 1701176851}
@@ -5982,6 +5985,7 @@ MonoBehaviour:
     scale: {x: 0, y: 0, z: 0}
   cardType: 0
   ID: 0
+  block: 0
 --- !u!212 &2035248773
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -6131,7 +6135,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6059ff0cda36fe46a0635197a2b6138, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 0
   card: {fileID: 2111293253}
   character: {fileID: 299998528}
   nameText: {fileID: 1389344234}
@@ -6143,6 +6146,7 @@ MonoBehaviour:
     scale: {x: 0, y: 0, z: 0}
   cardType: 0
   ID: 0
+  block: 0
 --- !u!212 &2111293253
 SpriteRenderer:
   m_ObjectHideFlags: 0

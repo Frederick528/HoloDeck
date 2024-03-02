@@ -21,10 +21,20 @@ public class CardManager : MonoBehaviour
 
     [SerializeField] Transform myCardLeft;
     [SerializeField] Transform myCardRight;
+    [SerializeField] CardState cardState;
+
+    Card selectCard;
+    bool draggable;
+    enum CardState { Nothing, CanMouseOver, CanMouseDrag }
 
     private void Awake() => Instance = this;
 
     public GameObject cardPrefab;
+
+    private void Update()
+    {
+        SetCardState();
+    }
 
     public void StartBattle()
     {
@@ -84,17 +94,37 @@ public class CardManager : MonoBehaviour
         CardAlignment();
     }
 
-    public void ThrowAwayCard()
+    public async UniTaskVoid ThrowAwayCard()
     {
-        for (int i = 0; i < HandCard.Count; i++)
+        for (int i = 0; i < HandCard.Count; i++) 
         {
             Card targetCard = HandCard[i];
 
-            targetCard.MoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, Vector3.one), true, 0.7f);
+            targetCard.MoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, Vector3.one), true, 0.3f).Forget();
 
             CardDummy.Add(targetCard);
         }
         HandCard.Clear();
+
+        await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
+        foreach (Card dummyCard in CardDummy)
+        {
+            dummyCard.gameObject.SetActive(false);
+        }
+    }
+
+    public async UniTask ThrowAwayCard(Card throwCard)
+    {
+
+
+        CardDummy.Add(throwCard);
+
+        HandCard.Remove(throwCard);
+
+        SetOriginOrder();
+        CardAlignment();
+
+        await throwCard.MoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, Vector3.one), true, 0.3f);
     }
 
     void SetOriginOrder()
@@ -109,13 +139,13 @@ public class CardManager : MonoBehaviour
     void CardAlignment()
     {
         List<PRS> originCardPRSs = new List<PRS>();
-        originCardPRSs = RoundAlignment(myCardLeft, myCardRight, HandCard.Count, 0.5f, new Vector3(2f, 2.8f, 1f));
+        originCardPRSs = RoundAlignment(myCardLeft, myCardRight, HandCard.Count, 0.5f, CardScale.cardScale);
         for (int i = 0; i < HandCard.Count; i++)
         {
             var targetCard = HandCard[i];
 
             targetCard.originPRS = originCardPRSs[i];
-            targetCard.MoveTransform(targetCard.originPRS, true, 0.7f);
+            targetCard.MoveTransform(targetCard.originPRS, true, 0.3f).Forget();
         }
     }
 
@@ -145,15 +175,92 @@ public class CardManager : MonoBehaviour
         for (int i = 0; i < cardCount; i++)
         {
             Vector3 targetPos = Vector3.Lerp(leftTr.position, rightTr.position, cardLerps[i]);
+            targetPos.z = -i * 5;
 
             float curve = Mathf.Sqrt(Mathf.Pow(height, 2) - Mathf.Pow(cardLerps[i] - 0.5f, 2));   // 원의 방정식
             //float curve = Mathf.Sqrt(Mathf.Pow(height, 2) * (1 - (Mathf.Pow(cardLerps[i] - 0.5f, 2) / Mathf.Pow(leftTr.position.x, 2))));   // 타원의 방정식
 
-            targetPos.y += 2 * curve;
+            targetPos.y += 2 * curve - 0.5f;
             Quaternion targetRot = Quaternion.Slerp(leftTr.rotation, rightTr.rotation, cardLerps[i]);
 
             results.Add(new PRS(targetPos, targetRot, scale));
         }
         return results;
     }
+
+    #region MyCard
+
+    public void CardMouseOver(Card card)
+    {
+        if (cardState == CardState.Nothing || draggable)
+            return;
+        selectCard = card;
+        LargeCard(true, card);
+    }
+    public void CardMouseExit(Card card)
+    {
+        if (cardState == CardState.Nothing || draggable)
+            return;
+        selectCard = null;
+        LargeCard(false, card);
+    }
+
+
+    void LargeCard(bool isLarge, Card card)
+    {
+        if (isLarge)
+        {
+            Vector3 largePos = new Vector3(card.originPRS.pos.x, -3.2f, -100f);
+            card.MoveTransform(new PRS(largePos, Quaternion.identity, CardScale.cardScale * 1.2f), false).Forget();
+        }
+        else
+            card.MoveTransform(card.originPRS, true, 0.3f).Forget();
+
+        card.GetComponent<Order>().SetMostFrontOrder(isLarge);
+    }
+
+    public void CardMouseDown(Card card)
+    {
+        if (cardState != CardState.CanMouseDrag)
+            return;
+        draggable = true;
+        card.block = true;
+    }
+
+    public async UniTask CardMouseUp(Card card)
+    {
+        draggable = false;
+        if (cardState != CardState.CanMouseDrag)
+            return;
+        if (GameManager.Instance.throwAwayCard)
+        {
+            await ThrowAwayCard(card);
+            card.block = false;
+            card.gameObject.SetActive(false);
+            //GameManager.Instance.blockClick = false;
+        }
+        else
+        {
+            //comeBackCard = true;
+            card.GetComponent<Order>().SetMostFrontOrder(false);
+            await card.MoveTransform(card.originPRS, true, 0.3f);
+            card.block = false;
+            //draggable = false;
+            //GameManager.Instance.blockClick = false;
+        }
+    }
+
+    void SetCardState()
+    {
+        if (TurnManager.Instance.isLoading)
+            cardState = CardState.Nothing;
+
+        else if (!TurnManager.Instance.myTurn)
+            cardState = CardState.CanMouseOver;
+
+        else if (TurnManager.Instance.myTurn)
+            cardState = CardState.CanMouseDrag;
+    }
+
+    #endregion
 }

@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,10 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     [SerializeField] bool fastMode;
+    public bool throwAwayCard;
+    public bool blockClick;
+
+    public int num;
 
     void Awake()
     {
@@ -33,10 +38,10 @@ public class GameManager : MonoBehaviour
     {
         if (fastMode)
         {
-            Time.timeScale = 2;
+            Time.timeScale = 10;
         }
         else { Time.timeScale = 1; }
-        _ = TurnManager.Instance.StartTurnTask();
+        TurnManager.Instance.StartTurnTask().Forget();
         //SoundManager.instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     }
 
@@ -49,7 +54,7 @@ public class GameManager : MonoBehaviour
         //}
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            _ = TurnManager.Instance.DrawTask();
+            TurnManager.Instance.DrawTask().Forget();
         }
         if (Input.GetKeyDown(KeyCode.W))
         {
