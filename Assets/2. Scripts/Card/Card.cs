@@ -5,7 +5,16 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Pool;
 
+[System.Serializable]
+public struct CardData
+{
+    public string Name; // = "이름";
+    public int Cost; // = 0;
+    public string Descript; // = "카드 종류에 대한 설명";
+    public Sprite Sprite; // = "카드 이미지";
+}
 public enum CardType
 {
     Food,
@@ -17,6 +26,8 @@ public enum CardType
 }
 public class Card : MonoBehaviour
 {
+    public IObjectPool<GameObject> Pool { get; set; }
+
     [SerializeField] SpriteRenderer card;
     [SerializeField] SpriteRenderer character;
     [SerializeField] TMP_Text nameText;
@@ -26,7 +37,7 @@ public class Card : MonoBehaviour
     public PRS originPRS;
     //private Animator _anim;
 
-    public CardData Data { get; private set; }
+    public CardData Data; /*{ get; private set; }*/
     public CardType cardType;
     public int ID;
 
@@ -44,14 +55,15 @@ public class Card : MonoBehaviour
 
     public void Setup(CardData data)
     {
-        nameText.text = data.KR;
-        //costText.text = data.Date.ToString();
+        nameText.text = data.Name;
+        //costText.text = data.Cost.ToString();
         costText.text = GameManager.Instance.num.ToString();
         GameManager.Instance.num++;
         desText.text = data.Descript;
+        character.sprite = data.Sprite;
     }
 
-    public async UniTask MoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)
+    public async UniTask TaskMoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)
     {
         if (useDotween)
         {
@@ -60,6 +72,22 @@ public class Card : MonoBehaviour
             transform.DORotateQuaternion(prs.rot, dotweenTime).WithCancellation(this.GetCancellationTokenOnDestroy()),
             transform.DOScale(prs.scale, dotweenTime).WithCancellation(this.GetCancellationTokenOnDestroy())
                 );
+        }
+        else
+        {
+            transform.position = prs.pos;
+            transform.rotation = prs.rot;
+            transform.localScale = prs.scale;
+        }
+    }
+
+    public void MoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)
+    {
+        if (useDotween)
+        {
+            transform.DOMove(prs.pos, dotweenTime);
+            transform.DORotateQuaternion(prs.rot, dotweenTime);
+            transform.DOScale(prs.scale, dotweenTime);
         }
         else
         {
@@ -117,7 +145,7 @@ public class Card : MonoBehaviour
         //    Debug.Log("데이터를 불러오는 도중에 문제가 발생했습니다." +
         //              $"\n카드 ID : {ID}");
 
-        this.GetComponentInChildren<TMP_Text>().text = Data.KR;
+        this.GetComponentInChildren<TMP_Text>().text = Data.Name;
 
     }
     //public void Init(int ID, out bool temp)
@@ -240,13 +268,20 @@ public class Card : MonoBehaviour
     }
     void OnMouseDrag()
     {
-        //if (!draggable)
-        //    return;
-        //float distance = Camera.main.WorldToScreenPoint(transform.position).z;
-        //print(distance);
-        Vector2 _temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        transform.position = _temp/*new Vector3(_temp.x, _temp.y, -5f)*/;
+        CardManager.Instance.CardDrag(this);
 
+        ////if (!draggable)
+        ////    return;
+        ////float distance = Camera.main.WorldToScreenPoint(transform.position).z;
+        ////print(distance);
+        //Vector2 _temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //transform.position = _temp/*new Vector3(_temp.x, _temp.y, -5f)*/;
+
+    }
+
+    void CardRelease()
+    {
+        Pool.Release(this.gameObject);
     }
 
 }

@@ -31,12 +31,16 @@ public class TurnManager : MonoBehaviour
         for (int i = 0; i < startCardCount; i++)
         {
             OnAddCard?.Invoke();
+            if (CardManager.Instance.HandCard.Count >= 10)
+                break;
             await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
         }
         isLoading = false;
     }
     public async UniTask DrawTask()
     {
+        if (CardManager.Instance.HandCard.Count >= 10)
+            return;
         isLoading = true;
 
         OnAddCard?.Invoke();

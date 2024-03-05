@@ -12,4 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b620d7a90ab39544c93be59b611da5e7, type: 3}
   m_Name: CardSO
   m_EditorClassIdentifier: 
-  cards: []
+  cards:
+  - name: Amelia
+    cost: 1
+    description: Waston
+    sprite: {fileID: 21300000, guid: a36507a88e8baf94cb7bc81524278354, type: 3}
+  - name: Calliope
+    cost: 2
+    description: Mori
+    sprite: {fileID: 21300000, guid: 45f608585a0131145be8357f19a324bc, type: 3}
+  - name: Gura
+    cost: 3
+    description: Gawr
+    sprite: {fileID: 21300000, guid: 1749defbb8d59764e86d80ba6df959b8, type: 3}
+  - name: Ina'nis
+    cost: 2
+    description: Ninomae
+    sprite: {fileID: 21300000, guid: 910ba3ea31cf8dd42865664190476d5b, type: 3}
+  - name: Kiara
+    cost: 1
+    description: Takanashi
+    sprite: {fileID: 21300000, guid: ed69be0c0c59de34e84a6662f8398a9a, type: 3}

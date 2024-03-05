@@ -8,7 +8,6 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     [SerializeField] bool fastMode;
     public bool throwAwayCard;
-    public bool blockClick;
 
     public int num;
 

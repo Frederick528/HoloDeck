@@ -11,10 +11,14 @@ public class CardManager : MonoBehaviour
 {
     public static CardManager Instance { get; private set; }
     //public List<Card> Deck { get; private set; }
+
+    public List<CardData> cardDatas;
     public List<Card> MainDeck;
     public List<Card> DrawDeck;  // 현재 내가 뽑을 수 있는 카드
     public List<Card> CardDummy;  // 카드 더미(사용 또는 버림)
     public List<Card> HandCard; // 내 손에 있는 카드
+
+    [SerializeField] CardSO cardSO;
 
     [SerializeField] Transform cardSpawnPoint;
     [SerializeField] Transform cardDummyTr;
@@ -31,15 +35,49 @@ public class CardManager : MonoBehaviour
 
     public GameObject cardPrefab;
 
+    private void Start()
+    {
+        SetupStartCardDeck();
+    }
     private void Update()
     {
         SetCardState();
+    }
+
+    void SetupStartCardDeck()   // 나중에 무조건 고쳐야 함.
+    {
+        //MainDeck = new List<Card>();
+        CardData cardData;
+        for (int i = 0; i < cardSO.cards.Length; i++)
+        {
+            //Card setCard = cardPrefab.GetComponent<Card>();
+            CardInfo cardInfo = cardSO.cards[i];
+            cardData.Name = cardInfo.name;
+            cardData.Cost = cardInfo.cost;
+            cardData.Descript = cardInfo.description;
+            cardData.Sprite = cardInfo.sprite;
+            //setCard.Data.Name = cardInfo.name;
+            //setCard.Data.Cost = cardInfo.cost;
+            //setCard.Data.Descript = cardInfo.description;
+            //setCard.Data.Sprite = cardInfo.sprite;
+            //print(setCard.Data.Name);
+            cardDatas.Add(cardData);
+            MainDeck[i].Data = cardData;
+            //print(MainDeck[i].Data.Name);
+        }
     }
 
     public void StartBattle()
     {
         SetupCardDeck(true);
         TurnManager.OnAddCard += AddCard;
+    }
+    public void EndBattle()
+    {
+        TurnManager.OnAddCard -= AddCard;
+        DrawDeck.Clear();
+        CardDummy.Clear();
+        HandCard.Clear();
     }
     void SetupCardDeck(bool start = false)
     {
@@ -85,7 +123,8 @@ public class CardManager : MonoBehaviour
         Card drawCard = DrawCard();
         if (drawCard == null)
             return;
-        GameObject cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity);
+        GameObject cardObject = PoolManager.instance.Pool.Get();
+        //GameObject cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity);
         Card card = cardObject.GetComponent<Card>();
         card.Setup(drawCard.Data);
         HandCard.Add(card);
@@ -96,21 +135,29 @@ public class CardManager : MonoBehaviour
 
     public async UniTaskVoid ThrowAwayCard()
     {
-        for (int i = 0; i < HandCard.Count; i++) 
+        foreach (Card targetCard in HandCard)
         {
-            Card targetCard = HandCard[i];
-
-            targetCard.MoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, Vector3.one), true, 0.3f).Forget();
+            targetCard.MoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardScale.cardScale * 0.5f), true, 0.3f);
 
             CardDummy.Add(targetCard);
         }
+        
+        await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
+
+        foreach (Card targetCard in HandCard)
+        {
+            targetCard.block = false;
+            targetCard.Pool.Release(targetCard.gameObject);
+            targetCard.transform.position = cardSpawnPoint.position;
+        }
+
         HandCard.Clear();
 
-        await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
-        foreach (Card dummyCard in CardDummy)
-        {
-            dummyCard.gameObject.SetActive(false);
-        }
+        //foreach (Card dummyCard in CardDummy)
+        //{
+        //    dummyCard.block = false;
+        //    dummyCard.Pool.Release(dummyCard.gameObject);
+        //}
     }
 
     public async UniTask ThrowAwayCard(Card throwCard)
@@ -124,7 +171,11 @@ public class CardManager : MonoBehaviour
         SetOriginOrder();
         CardAlignment();
 
-        await throwCard.MoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, Vector3.one), true, 0.3f);
+        await throwCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardScale.cardScale * 0.5f), true, 0.3f);
+
+        throwCard.block = false;
+        throwCard.Pool.Release(throwCard.gameObject);
+        throwCard.transform.position = cardSpawnPoint.position;
     }
 
     void SetOriginOrder()
@@ -145,7 +196,7 @@ public class CardManager : MonoBehaviour
             var targetCard = HandCard[i];
 
             targetCard.originPRS = originCardPRSs[i];
-            targetCard.MoveTransform(targetCard.originPRS, true, 0.3f).Forget();
+            targetCard.MoveTransform(targetCard.originPRS, true, 0.3f);
         }
     }
 
@@ -211,10 +262,10 @@ public class CardManager : MonoBehaviour
         if (isLarge)
         {
             Vector3 largePos = new Vector3(card.originPRS.pos.x, -3.2f, -100f);
-            card.MoveTransform(new PRS(largePos, Quaternion.identity, CardScale.cardScale * 1.2f), false).Forget();
+            card.MoveTransform(new PRS(largePos, Quaternion.identity, CardScale.cardScale * 1.2f), false);
         }
         else
-            card.MoveTransform(card.originPRS, true, 0.3f).Forget();
+            card.MoveTransform(card.originPRS, true, 0.3f);
 
         card.GetComponent<Order>().SetMostFrontOrder(isLarge);
     }
@@ -231,23 +282,32 @@ public class CardManager : MonoBehaviour
     {
         draggable = false;
         if (cardState != CardState.CanMouseDrag)
+        {
+            card.block = false;
             return;
+        }
         if (GameManager.Instance.throwAwayCard)
         {
-            await ThrowAwayCard(card);
-            card.block = false;
-            card.gameObject.SetActive(false);
+            ThrowAwayCard(card).Forget();   //card.block 이 안에 있음.
             //GameManager.Instance.blockClick = false;
         }
         else
         {
             //comeBackCard = true;
             card.GetComponent<Order>().SetMostFrontOrder(false);
-            await card.MoveTransform(card.originPRS, true, 0.3f);
+            await card.TaskMoveTransform(card.originPRS, true, 0.3f);
             card.block = false;
             //draggable = false;
             //GameManager.Instance.blockClick = false;
         }
+    }
+
+    public void CardDrag(Card card)
+    {
+        if (cardState != CardState.CanMouseDrag || !draggable)
+            return;
+        Vector2 tempPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        card.transform.position = tempPos;
     }
 
     void SetCardState()
