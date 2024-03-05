@@ -12,10 +12,10 @@ public class CardManager : MonoBehaviour
     public static CardManager Instance { get; private set; }
     //public List<Card> Deck { get; private set; }
 
-    public List<CardData> cardDatas;
-    public List<Card> MainDeck;
-    public List<Card> DrawDeck;  // 현재 내가 뽑을 수 있는 카드
-    public List<Card> CardDummy;  // 카드 더미(사용 또는 버림)
+    //public List<CardData> cardDatas;
+    public List<CardData> MainDeck;
+    public List<CardData> DrawDeck;  // 현재 내가 뽑을 수 있는 카드
+    public List<CardData> CardDummy;  // 카드 더미(사용 또는 버림)
     public List<Card> HandCard; // 내 손에 있는 카드
 
     [SerializeField] CardSO cardSO;
@@ -61,8 +61,8 @@ public class CardManager : MonoBehaviour
             //setCard.Data.Descript = cardInfo.description;
             //setCard.Data.Sprite = cardInfo.sprite;
             //print(setCard.Data.Name);
-            cardDatas.Add(cardData);
-            MainDeck[i].Data = cardData;
+            //cardDatas.Add(cardData);
+            MainDeck[i] = cardData;
             //print(MainDeck[i].Data.Name);
         }
     }
@@ -99,20 +99,20 @@ public class CardManager : MonoBehaviour
         for (int i = 0; i < DrawDeck.Count; i++)
         {
             int rand = Random.Range(0, DrawDeck.Count);
-            Card temp = DrawDeck[i];
+            CardData temp = DrawDeck[i];
             DrawDeck[i] = DrawDeck[rand];
             DrawDeck[rand] = temp;
         }
     }
-    public Card DrawCard()
+    public CardData DrawCard()
     {
         if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기
             SetupCardDeck();
 
-        if (DrawDeck.Count == 0)    // 덱을 섞은 후에도 뽑을 카드가 없으면 리턴
-            return null;
+        //if (DrawDeck.Count == 0)    // 덱을 섞은 후에도 뽑을 카드가 없으면 리턴
+        //    return null;
 
-        Card card = DrawDeck[0];
+        CardData card = DrawDeck[0];
         DrawDeck.RemoveAt(0);
         return card;
 
@@ -120,13 +120,14 @@ public class CardManager : MonoBehaviour
 
     public void AddCard()
     {
-        Card drawCard = DrawCard();
-        if (drawCard == null)
-            return;
+        CardData drawCard = DrawCard();
+        //if (drawCard == null)
+        //    return;
         GameObject cardObject = PoolManager.instance.Pool.Get();
         //GameObject cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity);
         Card card = cardObject.GetComponent<Card>();
-        card.Setup(drawCard.Data);
+        card.Data = drawCard;
+        card.Setup(drawCard);
         HandCard.Add(card);
 
         SetOriginOrder();
@@ -139,7 +140,7 @@ public class CardManager : MonoBehaviour
         {
             targetCard.MoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardScale.cardScale * 0.5f), true, 0.3f);
 
-            CardDummy.Add(targetCard);
+            CardDummy.Add(targetCard.Data);
         }
         
         await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
@@ -164,7 +165,7 @@ public class CardManager : MonoBehaviour
     {
 
 
-        CardDummy.Add(throwCard);
+        CardDummy.Add(throwCard.Data);
 
         HandCard.Remove(throwCard);
 
