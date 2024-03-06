@@ -5,16 +5,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Pool;
 
-[System.Serializable]
-public struct CardData
-{
-    public string Name; // = "이름";
-    public int Cost; // = 0;
-    public string Descript; // = "카드 종류에 대한 설명";
-    public Sprite Sprite; // = "카드 이미지";
-}
 public enum CardType
 {
     Food,
@@ -26,13 +17,14 @@ public enum CardType
 }
 public class Card : MonoBehaviour
 {
-    public IObjectPool<GameObject> Pool { get; set; }
 
     [SerializeField] SpriteRenderer card;
     [SerializeField] SpriteRenderer character;
     [SerializeField] TMP_Text nameText;
     [SerializeField] TMP_Text costText;
     [SerializeField] TMP_Text desText;
+
+    //[SerializeField] CardSO cardSO;
 
     public PRS originPRS;
     //private Animator _anim;
@@ -52,15 +44,22 @@ public class Card : MonoBehaviour
     //    //    CardManager.Instance.sortBtn.interactable = false;
     //    //Destroy(a);
     //}
-
     public void Setup(CardData data)
     {
-        nameText.text = data.Name;
-        //costText.text = data.Cost.ToString();
-        costText.text = GameManager.Instance.num.ToString();
-        GameManager.Instance.num++;
-        desText.text = data.Descript;
-        character.sprite = data.Sprite;
+        Data.Name = data.Name;
+        Data.Cost = data.Cost;
+        Data.Descript = data.Descript;
+        Data.Sprite = data.Sprite;
+
+        DataSetup();
+    }
+
+    public void DataSetup()
+    {
+        nameText.text = Data.Name;
+        costText.text = Data.Cost.ToString();
+        desText.text = Data.Descript;
+        character.sprite = Data.Sprite;
     }
 
     public async UniTask TaskMoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)
@@ -277,11 +276,6 @@ public class Card : MonoBehaviour
         //Vector2 _temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         //transform.position = _temp/*new Vector3(_temp.x, _temp.y, -5f)*/;
 
-    }
-
-    void CardRelease()
-    {
-        Pool.Release(this.gameObject);
     }
 
 }

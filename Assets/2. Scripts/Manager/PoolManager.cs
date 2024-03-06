@@ -1,68 +1,66 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Pool;
 
 public class PoolManager : MonoBehaviour
 {
-    public static PoolManager instance;
-
-    public int defaultCapacity = 10;
-    public int maxPoolSize = 10;
-    public GameObject cardPrefab;
-
+    [SerializeField] GameObject cardPrefab;
     [SerializeField] Transform cardSpawnPoint;
     [SerializeField] Transform HandCard;
+    [SerializeField] CardSO cardSO;
+    Queue<GameObject> CardPool = new Queue<GameObject>(); //카드 담을 큐
+    public static PoolManager instance = null;
 
-    public IObjectPool<GameObject> Pool { get; private set; }
-
-    private void Awake()
+    void Awake()
     {
-        if (instance == null)
-            instance = this;
-        else
-            Destroy(this.gameObject);
-
-
-        Init();
-    }
-
-    private void Init()
-    {
-        Pool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool,
-        OnDestroyPoolObject, true, defaultCapacity, maxPoolSize);
-
-        // 미리 오브젝트 생성 해놓기
-        for (int i = 0; i < defaultCapacity; i++)
+        if (null == instance)
         {
-            Card card = CreatePooledItem().GetComponent<Card>();
-            card.Pool.Release(card.gameObject);
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+            for (int i = 0; i < cardSO.cards.Length; i++)
+            {
+                GameObject cardObject = CreateCard(/*cardSO.cards[i]*/); //초기에 카드 생성
+                CardPool.Enqueue(cardObject);
+            }
+        }
+        else
+        {
+            Destroy(this.gameObject);
         }
     }
-
-    // 생성
-    private GameObject CreatePooledItem()
+    GameObject CreateCard(/*CardData cardData*/) //초기 OR 카드 풀에 남은 카드가 부족할 때, 카드를 생성하기위해 호출되는 함수
     {
-        GameObject poolGo = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, HandCard);
-        poolGo.GetComponent<Card>().Pool = this.Pool;
-        return poolGo;
+        GameObject cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, HandCard);
+        //Card card = cardObject.GetComponent<Card>();
+        //card.Setup(cardData);
+        //CardManager.Instance.MainDeck.Add(card);
+        cardObject.gameObject.SetActive(false);
+
+        return cardObject;
     }
-
-    // 사용
-    private void OnTakeFromPool(GameObject poolGo)
+    public GameObject GetCard(/*CardData cardData*/) //카드가 필요할 때 다른 스크립트에서 호출되는 함수
     {
-        poolGo.SetActive(true);
+        if (CardPool.Count > 0) //현재 큐에 남아있는 카드가 있다면,
+        {
+            GameObject cardPool = CardPool.Dequeue();
+
+            cardPool.gameObject.SetActive(true);
+            //cardPool.transform.SetParent(null);
+            return cardPool;
+        }
+        else //큐에 남아있는 카드가 없을 때 새로 만들어서 사용
+        {
+            GameObject cardPool = CreateCard(/*cardData*/);
+
+            cardPool.gameObject.SetActive(true);
+            //cardPool.transform.SetParent(null);
+            return cardPool;
+        }
     }
-
-    // 반환
-    private void OnReturnedToPool(GameObject poolGo)
+    public void ReturnObjectToQueue(GameObject cardObject) //사용이 완료 된 카드를 다시 큐에 넣을때 호출 파라미터->비활성화 할 카드
     {
-        poolGo.SetActive(false);
-    }
-
-    // 삭제
-    private void OnDestroyPoolObject(GameObject poolGo)
-    {
-        Destroy(poolGo);
+        cardObject.gameObject.SetActive(false);
+        //cardObject.transform.SetParent(instance.transform);
+        CardPool.Enqueue(cardObject); //다시 큐에 넣음
     }
 }

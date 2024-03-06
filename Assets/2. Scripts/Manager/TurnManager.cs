@@ -30,9 +30,9 @@ public class TurnManager : MonoBehaviour
         isLoading = true;
         for (int i = 0; i < startCardCount; i++)
         {
-            OnAddCard?.Invoke();
             if (CardManager.Instance.HandCard.Count >= 10)
                 break;
+            OnAddCard?.Invoke();
             await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
         }
         isLoading = false;

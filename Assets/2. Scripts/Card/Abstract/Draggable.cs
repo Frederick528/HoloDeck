@@ -10,7 +10,7 @@ public abstract class Draggable : MonoBehaviour
 
     public int level;
     public const int MaxLevel = 6;
-    private bool _isInitialized = false;
+    //private bool _isInitialized = false;
 
 
     protected virtual void OnMouseDown()

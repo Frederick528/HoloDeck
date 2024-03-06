@@ -12,11 +12,10 @@ public class CardManager : MonoBehaviour
     public static CardManager Instance { get; private set; }
     //public List<Card> Deck { get; private set; }
 
-    //public List<CardData> cardDatas;
-    public List<CardData> MainDeck;
-    public List<CardData> DrawDeck;  // ÇöÀç ³»°¡ »ÌÀ» ¼ö ÀÖ´Â Ä«µå
-    public List<CardData> CardDummy;  // Ä«µå ´õ¹Ì(»ç¿ë ¶Ç´Â ¹ö¸²)
-    public List<Card> HandCard; // ³» ¼Õ¿¡ ÀÖ´Â Ä«µå
+    public List<Card> MainDeck;
+    public List<Card> DrawDeck;  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ Ä«ï¿½ï¿½
+    public List<Card> CardDummy;  // Ä«ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½)
+    public List<Card> HandCard; // ï¿½ï¿½ ï¿½Õ¿ï¿½ ï¿½Ö´ï¿½ Ä«ï¿½ï¿½
 
     [SerializeField] CardSO cardSO;
 
@@ -37,35 +36,61 @@ public class CardManager : MonoBehaviour
 
     private void Start()
     {
-        SetupStartCardDeck();
+        for (int i = 0; i < cardSO.cards.Length; i++)
+        {
+            GameObject cardObject = PoolManager.instance.GetCard();
+            Card card = cardObject.GetComponent<Card>();
+            card.Setup(cardSO.cards[i]);
+            PoolManager.instance.ReturnObjectToQueue(cardObject);
+            MainDeck.Add(card);
+        }
+        StartBattle();
     }
     private void Update()
     {
         SetCardState();
-    }
-
-    void SetupStartCardDeck()   // ³ªÁß¿¡ ¹«Á¶°Ç °íÃÄ¾ß ÇÔ.
-    {
-        //MainDeck = new List<Card>();
-        CardData cardData;
-        for (int i = 0; i < cardSO.cards.Length; i++)
+        if (Input.GetKeyDown(KeyCode.K))
         {
-            //Card setCard = cardPrefab.GetComponent<Card>();
-            CardInfo cardInfo = cardSO.cards[i];
-            cardData.Name = cardInfo.name;
-            cardData.Cost = cardInfo.cost;
-            cardData.Descript = cardInfo.description;
-            cardData.Sprite = cardInfo.sprite;
-            //setCard.Data.Name = cardInfo.name;
-            //setCard.Data.Cost = cardInfo.cost;
-            //setCard.Data.Descript = cardInfo.description;
-            //setCard.Data.Sprite = cardInfo.sprite;
-            //print(setCard.Data.Name);
-            //cardDatas.Add(cardData);
-            MainDeck[i] = cardData;
-            //print(MainDeck[i].Data.Name);
+            for (int i = 0; i < DrawDeck.Count; i++)
+            {
+                print(DrawDeck[i].Data.Name);
+            }
         }
     }
+
+    //void SetupStartCardDeck()   // ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ä¾ï¿½ ï¿½ï¿½.
+    //{
+    //    //MainDeck = new List<Card>();
+    //    //CardData cardData;
+    //    for (int i = 0; i < cardSO.cards.Length; i++)
+    //    {
+    //        Card startCard = new Card();
+    //        //GameObject cardObject = PoolManager.instance.Pool.Get();
+    //        //Card setCard = cardObject.GetComponent<Card>();
+    //        //Card setCard = cardPrefab.GetComponent<Card>();
+    //        //CardInfo cardInfo = cardSO.cards[i];
+
+    //        //cardData.Name = cardInfo.name;
+    //        //cardData.Cost = cardInfo.cost;
+    //        //cardData.Descript = cardInfo.description;
+    //        //cardData.Sprite = cardInfo.sprite;
+
+    //        //startCard.Data.Name = cardInfo.name;
+    //        //startCard.Data.Cost = cardInfo.cost;
+    //        //startCard.Data.Descript = cardInfo.description;
+    //        //startCard.Data.Sprite = cardInfo.sprite;
+    //        //print(setCard.Data.Name);
+    //        //cardDatas.Add(cardData);
+    //        //MainDeck[i].Data = cardData;
+    //        MainDeck.Add(startCard);
+    //        //print(MainDeck[i].Data.Name);
+
+
+    //        //card.Setup(cardSO.cards[i]);
+    //        //card.Setup(card.Data);
+    //        //MainDeck.Add(card);
+    //    }
+    //}
 
     public void StartBattle()
     {
@@ -106,10 +131,10 @@ public class CardManager : MonoBehaviour
     }
     public CardData DrawCard()
     {
-        if (DrawDeck.Count == 0)    // »ÌÀ» Ä«µå°¡ ¾øÀ¸¸é ¹ö·ÁÁø Ä«µå¸¦ ´Ù½Ã ºÒ·¯¿À°í, µ¦ ¼¯±â
+        if (DrawDeck.Count == 0)    // ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½å°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½å¸¦ ï¿½Ù½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             SetupCardDeck();
 
-        //if (DrawDeck.Count == 0)    // µ¦À» ¼¯Àº ÈÄ¿¡µµ »ÌÀ» Ä«µå°¡ ¾øÀ¸¸é ¸®ÅÏ
+        //if (DrawDeck.Count == 0)    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ä¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½å°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         //    return null;
 
         CardData card = DrawDeck[0];
@@ -118,16 +143,53 @@ public class CardManager : MonoBehaviour
 
     }
 
+    public Card DrawCard(CardData cardData)
+    {
+        if (DrawDeck.Count == 0)    // ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½å°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½å¸¦ ï¿½Ù½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            SetupCardDeck();
+
+        if (DrawDeck.Count == 0)    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ä¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½å°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            return null;
+
+        for (int i = 0; i < DrawDeck.Count; i++)
+        {
+            if (DrawDeck[i].Data.Equals(cardData))
+            {
+                Card card = DrawDeck[i];
+                DrawDeck.RemoveAt(i);
+                return card;
+            }
+        }
+        return null;
+    }
+
     public void AddCard()
     {
-        CardData drawCard = DrawCard();
-        //if (drawCard == null)
-        //    return;
-        GameObject cardObject = PoolManager.instance.Pool.Get();
+        Card drawCard = DrawCard();
+
+        if (drawCard == null)
+            return;
+        GameObject cardObject = PoolManager.instance.GetCard(/*drawCard.Data*/);
         //GameObject cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity);
         Card card = cardObject.GetComponent<Card>();
-        card.Data = drawCard;
-        card.Setup(drawCard);
+        //if (string.IsNullOrEmpty(card.Data.Name))
+        //{
+        //    card.Data = drawCard.Data;
+        //    card.Setup(drawCard.Data);
+        //}
+        //if (card.Data.Equals(drawCard.Data))
+
+        //print(drawCard.Data.Name);
+        //card.Setup(drawCard.Data);
+
+        card.Setup(drawCard.Data);
+        print(card.Data.Name);
+        print(card.Data.Name);
+        print(card.Data.Name);
+        print(card.Data.Name);
+        print(card.Data.Name);
+        print(card.Data.Name);
+
         HandCard.Add(card);
 
         SetOriginOrder();
@@ -148,7 +210,8 @@ public class CardManager : MonoBehaviour
         foreach (Card targetCard in HandCard)
         {
             targetCard.block = false;
-            targetCard.Pool.Release(targetCard.gameObject);
+            //targetCard.gameObject.SetActive(false);
+            PoolManager.instance.ReturnObjectToQueue(targetCard.gameObject);
             targetCard.transform.position = cardSpawnPoint.position;
         }
 
@@ -175,7 +238,7 @@ public class CardManager : MonoBehaviour
         await throwCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardScale.cardScale * 0.5f), true, 0.3f);
 
         throwCard.block = false;
-        throwCard.Pool.Release(throwCard.gameObject);
+        PoolManager.instance.ReturnObjectToQueue(throwCard.gameObject);
         throwCard.transform.position = cardSpawnPoint.position;
     }
 
@@ -229,8 +292,8 @@ public class CardManager : MonoBehaviour
             Vector3 targetPos = Vector3.Lerp(leftTr.position, rightTr.position, cardLerps[i]);
             targetPos.z = -i * 5;
 
-            float curve = Mathf.Sqrt(Mathf.Pow(height, 2) - Mathf.Pow(cardLerps[i] - 0.5f, 2));   // ¿øÀÇ ¹æÁ¤½Ä
-            //float curve = Mathf.Sqrt(Mathf.Pow(height, 2) * (1 - (Mathf.Pow(cardLerps[i] - 0.5f, 2) / Mathf.Pow(leftTr.position.x, 2))));   // Å¸¿øÀÇ ¹æÁ¤½Ä
+            float curve = Mathf.Sqrt(Mathf.Pow(height, 2) - Mathf.Pow(cardLerps[i] - 0.5f, 2));   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            //float curve = Mathf.Sqrt(Mathf.Pow(height, 2) * (1 - (Mathf.Pow(cardLerps[i] - 0.5f, 2) / Mathf.Pow(leftTr.position.x, 2))));   // Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
             targetPos.y += 2 * curve - 0.5f;
             Quaternion targetRot = Quaternion.Slerp(leftTr.rotation, rightTr.rotation, cardLerps[i]);
@@ -289,7 +352,7 @@ public class CardManager : MonoBehaviour
         }
         if (GameManager.Instance.throwAwayCard)
         {
-            ThrowAwayCard(card).Forget();   //card.block ÀÌ ¾È¿¡ ÀÖÀ½.
+            ThrowAwayCard(card).Forget();   //card.block ï¿½ï¿½ ï¿½È¿ï¿½ ï¿½ï¿½ï¿½ï¿½.
             //GameManager.Instance.blockClick = false;
         }
         else
