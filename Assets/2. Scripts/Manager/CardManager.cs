@@ -124,20 +124,20 @@ public class CardManager : MonoBehaviour
         for (int i = 0; i < DrawDeck.Count; i++)
         {
             int rand = Random.Range(0, DrawDeck.Count);
-            CardData temp = DrawDeck[i];
+            Card temp = DrawDeck[i];
             DrawDeck[i] = DrawDeck[rand];
             DrawDeck[rand] = temp;
         }
     }
-    public CardData DrawCard()
+    public Card DrawCard()
     {
         if (DrawDeck.Count == 0)    // ���� ī�尡 ������ ������ ī�带 �ٽ� �ҷ�����, �� ����
             SetupCardDeck();
 
-        //if (DrawDeck.Count == 0)    // ���� ���� �Ŀ��� ���� ī�尡 ������ ����
-        //    return null;
+        if (DrawDeck.Count == 0)    // ���� ���� �Ŀ��� ���� ī�尡 ������ ����
+            return null;
 
-        CardData card = DrawDeck[0];
+        Card card = DrawDeck[0];
         DrawDeck.RemoveAt(0);
         return card;
 
@@ -202,7 +202,7 @@ public class CardManager : MonoBehaviour
         {
             targetCard.MoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardScale.cardScale * 0.5f), true, 0.3f);
 
-            CardDummy.Add(targetCard.Data);
+            CardDummy.Add(targetCard);
         }
         
         await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
@@ -228,7 +228,7 @@ public class CardManager : MonoBehaviour
     {
 
 
-        CardDummy.Add(throwCard.Data);
+        CardDummy.Add(throwCard);
 
         HandCard.Remove(throwCard);
 
