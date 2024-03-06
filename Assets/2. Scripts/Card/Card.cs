@@ -5,16 +5,16 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Pool;
+//using UnityEngine.Pool;
 
 [System.Serializable]
-public struct CardData
-{
-    public string Name; // = "이름";
-    public int Cost; // = 0;
-    public string Descript; // = "카드 종류에 대한 설명";
-    public Sprite Sprite; // = "카드 이미지";
-}
+//public struct CardData
+//{
+//    public string Name; // = "이름";
+//    public int Cost; // = 0;
+//    public string Descript; // = "카드 종류에 대한 설명";
+//    public Sprite Sprite; // = "카드 이미지";
+//}
 public enum CardType
 {
     Food,
@@ -26,7 +26,7 @@ public enum CardType
 }
 public class Card : MonoBehaviour
 {
-    public IObjectPool<GameObject> Pool { get; set; }
+    //public IObjectPool<GameObject> Pool { get; set; }
 
     [SerializeField] SpriteRenderer card;
     [SerializeField] SpriteRenderer character;
@@ -55,12 +55,17 @@ public class Card : MonoBehaviour
 
     public void Setup(CardData data)
     {
-        nameText.text = data.Name;
-        //costText.text = data.Cost.ToString();
-        costText.text = GameManager.Instance.num.ToString();
-        GameManager.Instance.num++;
-        desText.text = data.Descript;
-        character.sprite = data.Sprite;
+        Data.Name = data.Name;
+        Data.Cost = data.Cost;
+        Data.Descript = data.Descript;
+        Data.Sprite = data.Sprite;
+
+        nameText.text = Data.Name;
+        costText.text = Data.Cost.ToString();
+        //costText.text = GameManager.Instance.num.ToString();
+        //GameManager.Instance.num++;
+        desText.text = Data.Descript;
+        character.sprite = Data.Sprite;
     }
 
     public async UniTask TaskMoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)
@@ -279,9 +284,9 @@ public class Card : MonoBehaviour
 
     }
 
-    void CardRelease()
-    {
-        Pool.Release(this.gameObject);
-    }
+    //void CardRelease()
+    //{
+    //    Pool.Release(this.gameObject);
+    //}
 
 }

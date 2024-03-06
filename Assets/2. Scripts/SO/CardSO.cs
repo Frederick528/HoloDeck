@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class CardInfo
+public class CardData
 {
-    public string name;
-    public int cost;
-    public string description;
-    public Sprite sprite;
+    public string Name;
+    public int Cost;
+    public string Descript;
+    public Sprite Sprite;
 }
 
 [CreateAssetMenu(fileName = "CardSO", menuName = "Scriptable Object/CardSO")]
 public class CardSO : ScriptableObject
 {
-    public CardInfo[] cards;
+    public CardData[] cards;
 }
