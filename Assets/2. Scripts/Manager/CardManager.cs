@@ -13,6 +13,7 @@ public class CardManager : MonoBehaviour
     //public List<Card> Deck { get; private set; }
 
     public List<GameObject> MainDeck;   // 덱 정보를 데이터 값으로 저장(배틀 중 추가된 카드는 적용X)
+    //public List<Card> MainCardDeck;     // 덱에 있는 카드 정보를 데이터 값으로 저장(배틀 중 추가된 카드는 적용X) (MainDeck과 같이 카드 추가)
     public List<GameObject> DrawDeck;   // 현재 내가 뽑을 수 있는 카드
     public List<GameObject> CardDummy;  // 카드 더미(사용 또는 버림)
     public List<GameObject> HandCard;   // 내 손에 있는 카드
@@ -46,6 +47,7 @@ public class CardManager : MonoBehaviour
     private void Start()
     {
         SetupStartCardDeck();
+        //StartBattle();    // 현재 Battle.cs에서 진행중
     }
     private void Update()
     {
@@ -59,6 +61,10 @@ public class CardManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             AddDeck(cardSO.cards[0], EAddDeck.Draw);
+        }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            AddDeck(cardSO.cards[1], EAddDeck.Draw);
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
@@ -74,6 +80,14 @@ public class CardManager : MonoBehaviour
         {
             AddCard(cardSO.cards[0]);
         }
+        if (Input.GetKeyDown(KeyCode.Alpha8))
+        {
+            EndBattle();
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            StartBattle();
+        }
     }
 
     void SetupStartCardDeck()   // 시작할 때, 메인덱을 설정하는 함수 (게임 시작 이후에는 사용하지 않음.)
@@ -84,7 +98,8 @@ public class CardManager : MonoBehaviour
 
     void AddDeck(CardData cardData, EAddDeck eAddDeck)     // 덱에 카드를 추가할 때 사용, 핸드로 카드를 가져올 때는 AddCard 함수 사용.
     {
-        GameObject cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, Deck);
+        GameObject cardObject = PoolManager.instance.Pool.Get();
+            /*Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, Deck);*/
         Card setCard = cardObject.GetComponent<Card>();
 
         cardObject.name = cardData.Name;    // 시각화 용도
@@ -95,6 +110,7 @@ public class CardManager : MonoBehaviour
             case EAddDeck.Main:
                 cardObject.transform.localScale = CardScale.cardScale * 0.5f;
                 MainDeck.Add(cardObject);
+                //MainCardDeck.Add(setCard);
                 break;
 
             case EAddDeck.Draw:
@@ -128,13 +144,39 @@ public class CardManager : MonoBehaviour
     {
         SetupDrawDeck(true);
         TurnManager.OnAddCard += AddCard;
+        TurnManager.Instance.StartTurnTask().Forget();
     }
-    public void EndBattle()
+    public void EndBattle()         // 리팩토링 필요해보임.
     {
         TurnManager.OnAddCard -= AddCard;
+        TurnManager.Instance.EndTurn();
         DrawDeck.Clear();
         CardDummy.Clear();
-        HandCard.Clear();
+        //HandCard.Clear();
+        for (int i = 0; i < Deck.childCount; i++)
+        {
+            if (!Deck.GetChild(i).gameObject.activeSelf)
+                continue;
+            Card card = Deck.GetComponentsInChildren<Card>(true)[i];
+            //GameObject cardObject = Deck.GetChild(i).gameObject;
+            if (MainDeck.Contains(card.gameObject))
+                continue;
+            card.Pool.Release(card.gameObject);
+            //MainCardDeck.Add(card);
+            //cardObject.GetComponent<Card>().CardRelease();
+
+        }
+        //foreach (Card card in MainCardDeck)
+        //{
+        //    card.Pool.Release(card.gameObject);
+        //}
+        //MainCardDeck.Clear();
+
+        //foreach (Card card in MainCardDeck)
+        //{
+        //    AddDeck(card.Data, EAddDeck.Main);
+        //}
+
     }
     void SetupDrawDeck(bool start = false)  // 드로우덱 섞기(start가 true일 경우, 메인덱에서 가져옴. false일 경우, 카드더미에서 가져옴.)
     {

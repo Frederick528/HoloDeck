@@ -40,7 +40,6 @@ public class GameManager : MonoBehaviour
             Time.timeScale = 10;
         }
         else { Time.timeScale = 1; }
-        TurnManager.Instance.StartTurnTask().Forget();
         //SoundManager.instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     }
 

@@ -1045,7 +1045,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1169153008
 Transform:
   m_ObjectHideFlags: 0
@@ -1074,10 +1074,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultCapacity: 10
-  maxPoolSize: 10
   cardPrefab: {fileID: 6399435079816834892, guid: 3d900da5eb4eb634094479cea5b69518, type: 3}
   cardSpawnPoint: {fileID: 511494626}
-  HandCard: {fileID: 450157531}
+  deck: {fileID: 205385172}
 --- !u!1 &1393313956
 GameObject:
   m_ObjectHideFlags: 0

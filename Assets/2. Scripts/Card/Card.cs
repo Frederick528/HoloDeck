@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
-//using UnityEngine.Pool;
+using UnityEngine.Pool;
 
 [System.Serializable]
 //public struct CardData
@@ -26,7 +26,7 @@ public enum CardType
 }
 public class Card : MonoBehaviour
 {
-    //public IObjectPool<GameObject> Pool { get; set; }
+    public IObjectPool<GameObject> Pool { get; set; }
 
     [SerializeField] SpriteRenderer card;
     [SerializeField] SpriteRenderer character;
@@ -284,9 +284,9 @@ public class Card : MonoBehaviour
 
     }
 
-    //void CardRelease()
-    //{
-    //    Pool.Release(this.gameObject);
-    //}
+    public void CardRelease()
+    {
+        Pool.Release(this.gameObject);
+    }
 
 }
