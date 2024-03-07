@@ -1,4 +1,4 @@
-
+ï»¿
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
@@ -12,18 +12,18 @@ public class CardManager : MonoBehaviour
     public static CardManager Instance { get; private set; }
     //public List<Card> Deck { get; private set; }
 
-    public List<GameObject> MainDeck;   // µ¦ Á¤º¸¸¦ µ¥ÀÌÅÍ °ªÀ¸·Î ÀúÀå(¹èÆ² Áß Ãß°¡µÈ Ä«µå´Â Àû¿ëX)
-    //public List<Card> MainCardDeck;     // µ¦¿¡ ÀÖ´Â Ä«µå Á¤º¸¸¦ µ¥ÀÌÅÍ °ªÀ¸·Î ÀúÀå(¹èÆ² Áß Ãß°¡µÈ Ä«µå´Â Àû¿ëX) (MainDeck°ú °°ÀÌ Ä«µå Ãß°¡)
-    public List<GameObject> DrawDeck;   // ÇöÀç ³»°¡ »ÌÀ» ¼ö ÀÖ´Â Ä«µå
-    public List<GameObject> CardDummy;  // Ä«µå ´õ¹Ì(»ç¿ë ¶Ç´Â ¹ö¸²)
-    public List<GameObject> HandCard;   // ³» ¼Õ¿¡ ÀÖ´Â Ä«µå
+    public List<GameObject> MainDeck;   // ë± ì •ë³´ë¥¼ ë°ì´í„° ê°’ìœ¼ë¡œ ì €ì¥(ë°°í‹€ ì¤‘ ì¶”ê°€ëœ ì¹´ë“œëŠ” ì ìš©X)
+    //public List<Card> MainCardDeck;     // ë±ì— ìˆëŠ” ì¹´ë“œ ì •ë³´ë¥¼ ë°ì´í„° ê°’ìœ¼ë¡œ ì €ì¥(ë°°í‹€ ì¤‘ ì¶”ê°€ëœ ì¹´ë“œëŠ” ì ìš©X) (MainDeckê³¼ ê°™ì´ ì¹´ë“œ ì¶”ê°€)
+    public List<GameObject> DrawDeck;   // í˜„ì¬ ë‚´ê°€ ë½‘ì„ ìˆ˜ ìˆëŠ” ì¹´ë“œ
+    public List<GameObject> CardDummy;  // ì¹´ë“œ ë”ë¯¸(ì‚¬ìš© ë˜ëŠ” ë²„ë¦¼)
+    public List<GameObject> HandCard;   // ë‚´ ì†ì— ìˆëŠ” ì¹´ë“œ
 
     [SerializeField] CardSO cardSO;
 
     [SerializeField] Transform cardSpawnPoint;
     [SerializeField] Transform cardDummyTr;
 
-    [SerializeField] Transform Deck;    // ¼ÒÈ¯µÈ µ¦ Ä«µåµé
+    [SerializeField] Transform Deck;    // ì†Œí™˜ëœ ë± ì¹´ë“œë“¤
 
     [SerializeField] Transform myCardLeft;
     [SerializeField] Transform myCardRight;
@@ -47,11 +47,11 @@ public class CardManager : MonoBehaviour
     private void Start()
     {
         SetupStartCardDeck();
-        //StartBattle();    // ÇöÀç Battle.cs¿¡¼­ ÁøÇàÁß
+        //StartBattle();    // í˜„ì¬ Battle.csì—ì„œ ì§„í–‰ì¤‘
     }
     private void Update()
     {
-        SetCardState();     // UniRx ÀÌ¿ëÇØ¼­ µû·Î Ã³¸®ÇÒ °Í
+        SetCardState();     // UniRx ì´ìš©í•´ì„œ ë”°ë¡œ ì²˜ë¦¬í•  ê²ƒ
 
 
         if (Input.GetKeyDown(KeyCode.Alpha0))
@@ -70,13 +70,13 @@ public class CardManager : MonoBehaviour
         {
             AddDeck(cardSO.cards[0], EAddDeck.Dummy);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha3))       // Ä«µå Ã£¾Æ¼­ »Ì±â (¼öÁ¤ ÇÊ¿äÇØº¸ÀÓ. µ¦¿¡¼­ ÀÎµ¦½º·Î GameObject¸¦ ÁöÁ¤ÇØ¼­ ³Ö¾îÁÙ°Å¸é ±»ÀÌ drawCard ÇÔ¼ö¿¡¼­ Ä«µå¸¦ È®ÀÎÇØ º¼ ÇÊ¿ä°¡ ¾øÀ½.)
+        if (Input.GetKeyDown(KeyCode.Alpha3))       // ì¹´ë“œ ì°¾ì•„ì„œ ë½‘ê¸° (ìˆ˜ì • í•„ìš”í•´ë³´ì„. ë±ì—ì„œ ì¸ë±ìŠ¤ë¡œ GameObjectë¥¼ ì§€ì •í•´ì„œ ë„£ì–´ì¤„ê±°ë©´ êµ³ì´ drawCard í•¨ìˆ˜ì—ì„œ ì¹´ë“œë¥¼ í™•ì¸í•´ ë³¼ í•„ìš”ê°€ ì—†ìŒ.)
         {
-            AddCard(Deck.GetComponentsInChildren<Card>()[2].gameObject);  // ÀüÅõµ¦¿¡¼­ °¡Á®¿À´Â °æ¿ì
-            //AddCard(DrawDeck[2]);   // µå·Î¿ìµ¦¿¡¼­ °¡Á®¿À´Â °æ¿ì
-            //AddCard(CardDummy[0]);  // ¹ö¸° Ä«µåµ¦¿¡ ÀÖ´Â Ä«µå°¡ µå·Î¿ìµ¦¿¡µµ ÀÖÀ» °æ¿ì => Àû¿ë ¾ÈµÊ. ÁÖ¼Ò ¹®Á¦ÀÎ µí
+            AddCard(Deck.GetComponentsInChildren<Card>()[2].gameObject);  // ì „íˆ¬ë±ì—ì„œ ê°€ì ¸ì˜¤ëŠ” ê²½ìš°
+            //AddCard(DrawDeck[2]);   // ë“œë¡œìš°ë±ì—ì„œ ê°€ì ¸ì˜¤ëŠ” ê²½ìš°
+            //AddCard(CardDummy[0]);  // ë²„ë¦° ì¹´ë“œë±ì— ìˆëŠ” ì¹´ë“œê°€ ë“œë¡œìš°ë±ì—ë„ ìˆì„ ê²½ìš° => ì ìš© ì•ˆë¨. ì£¼ì†Œ ë¬¸ì œì¸ ë“¯
         }
-        if (Input.GetKeyDown(KeyCode.Alpha4))       // Ä«µå »ı¼º
+        if (Input.GetKeyDown(KeyCode.Alpha4))       // ì¹´ë“œ ìƒì„±
         {
             AddCard(cardSO.cards[0]);
         }
@@ -90,19 +90,19 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    void SetupStartCardDeck()   // ½ÃÀÛÇÒ ¶§, ¸ŞÀÎµ¦À» ¼³Á¤ÇÏ´Â ÇÔ¼ö (°ÔÀÓ ½ÃÀÛ ÀÌÈÄ¿¡´Â »ç¿ëÇÏÁö ¾ÊÀ½.)
+    void SetupStartCardDeck()   // ì‹œì‘í•  ë•Œ, ë©”ì¸ë±ì„ ì„¤ì •í•˜ëŠ” í•¨ìˆ˜ (ê²Œì„ ì‹œì‘ ì´í›„ì—ëŠ” ì‚¬ìš©í•˜ì§€ ì•ŠìŒ.)
     {
         for (int i = 0; i < cardSO.cards.Length; i++)
             AddDeck(cardSO.cards[i], EAddDeck.Main);
     }
 
-    void AddDeck(CardData cardData, EAddDeck eAddDeck)     // µ¦¿¡ Ä«µå¸¦ Ãß°¡ÇÒ ¶§ »ç¿ë, ÇÚµå·Î Ä«µå¸¦ °¡Á®¿Ã ¶§´Â AddCard ÇÔ¼ö »ç¿ë.
+    void AddDeck(CardData cardData, EAddDeck eAddDeck)     // ë±ì— ì¹´ë“œë¥¼ ì¶”ê°€í•  ë•Œ ì‚¬ìš©, í•¸ë“œë¡œ ì¹´ë“œë¥¼ ê°€ì ¸ì˜¬ ë•ŒëŠ” AddCard í•¨ìˆ˜ ì‚¬ìš©.
     {
         GameObject cardObject = PoolManager.instance.Pool.Get();
             /*Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, Deck);*/
         Card setCard = cardObject.GetComponent<Card>();
 
-        cardObject.name = cardData.Name;    // ½Ã°¢È­ ¿ëµµ
+        cardObject.name = cardData.Name;    // ì‹œê°í™” ìš©ë„
 
         setCard.Setup(cardData);
         switch (eAddDeck)
@@ -124,7 +124,7 @@ public class CardManager : MonoBehaviour
                 CardDummy.Add(cardObject);
                 break;
 
-            case EAddDeck.Hand:                 // ÇÚµå·Î °¡Á®¿À´Â °Ç Ä«µå Á¤·Ä ¶§¹®¿¡ AddCard ÇÔ¼ö¸¦ ÀÌ¿ëÇØ¼­¸¸ Á¢±ÙÇÒ °Í.
+            case EAddDeck.Hand:                 // í•¸ë“œë¡œ ê°€ì ¸ì˜¤ëŠ” ê±´ ì¹´ë“œ ì •ë ¬ ë•Œë¬¸ì— AddCard í•¨ìˆ˜ë¥¼ ì´ìš©í•´ì„œë§Œ ì ‘ê·¼í•  ê²ƒ.
                 if (HandCard.Count < 10)
                 {
                     cardObject.transform.position = Vector3.zero;
@@ -140,13 +140,13 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    public void StartBattle()       // ¹èÆ² ½ÃÀÛ½Ã, µ¦ ¼¯±â ¹× ¾×¼Ç Ãß°¡
+    public void StartBattle()       // ë°°í‹€ ì‹œì‘ì‹œ, ë± ì„ê¸° ë° ì•¡ì…˜ ì¶”ê°€
     {
         SetupDrawDeck(true);
         TurnManager.OnAddCard += AddCard;
         TurnManager.Instance.StartTurnTask().Forget();
     }
-    public void EndBattle()         // ¸®ÆÑÅä¸µ ÇÊ¿äÇØº¸ÀÓ.
+    public void EndBattle()         // ë¦¬íŒ©í† ë§ í•„ìš”í•´ë³´ì„.
     {
         TurnManager.OnAddCard -= AddCard;
         TurnManager.Instance.EndTurn();
@@ -178,7 +178,7 @@ public class CardManager : MonoBehaviour
         //}
 
     }
-    void SetupDrawDeck(bool start = false)  // µå·Î¿ìµ¦ ¼¯±â(start°¡ trueÀÏ °æ¿ì, ¸ŞÀÎµ¦¿¡¼­ °¡Á®¿È. falseÀÏ °æ¿ì, Ä«µå´õ¹Ì¿¡¼­ °¡Á®¿È.)
+    void SetupDrawDeck(bool start = false)  // ë“œë¡œìš°ë± ì„ê¸°(startê°€ trueì¼ ê²½ìš°, ë©”ì¸ë±ì—ì„œ ê°€ì ¸ì˜´. falseì¼ ê²½ìš°, ì¹´ë“œë”ë¯¸ì—ì„œ ê°€ì ¸ì˜´.)
     {
         if (!start)
         {
@@ -211,10 +211,10 @@ public class CardManager : MonoBehaviour
     
     public GameObject DrawCard()
     {
-        if (DrawDeck.Count == 0)    // »ÌÀ» Ä«µå°¡ ¾øÀ¸¸é ¹ö·ÁÁø Ä«µå¸¦ ´Ù½Ã ºÒ·¯¿À°í, µ¦ ¼¯±â
+        if (DrawDeck.Count == 0)    // ë½‘ì„ ì¹´ë“œê°€ ì—†ìœ¼ë©´ ë²„ë ¤ì§„ ì¹´ë“œë¥¼ ë‹¤ì‹œ ë¶ˆëŸ¬ì˜¤ê³ , ë± ì„ê¸°
             SetupDrawDeck();
 
-        if (DrawDeck.Count == 0)    // µ¦À» ¼¯Àº ÈÄ¿¡µµ »ÌÀ» Ä«µå°¡ ¾øÀ¸¸é ¸®ÅÏ
+        if (DrawDeck.Count == 0)    // ë±ì„ ì„ì€ í›„ì—ë„ ë½‘ì„ ì¹´ë“œê°€ ì—†ìœ¼ë©´ ë¦¬í„´
             return null;
 
         GameObject card = DrawDeck[0];
@@ -224,10 +224,10 @@ public class CardManager : MonoBehaviour
 
     GameObject DrawCard(GameObject drawCard)
     {
-        if (DrawDeck.Count == 0)    // »ÌÀ» Ä«µå°¡ ¾øÀ¸¸é ¹ö·ÁÁø Ä«µå¸¦ ´Ù½Ã ºÒ·¯¿À°í, µ¦ ¼¯±â
+        if (DrawDeck.Count == 0)    // ë½‘ì„ ì¹´ë“œê°€ ì—†ìœ¼ë©´ ë²„ë ¤ì§„ ì¹´ë“œë¥¼ ë‹¤ì‹œ ë¶ˆëŸ¬ì˜¤ê³ , ë± ì„ê¸°
             SetupDrawDeck();
 
-        if (DrawDeck.Count == 0)    // µ¦À» ¼¯Àº ÈÄ¿¡µµ »ÌÀ» Ä«µå°¡ ¾øÀ¸¸é ¸®ÅÏ
+        if (DrawDeck.Count == 0)    // ë±ì„ ì„ì€ í›„ì—ë„ ë½‘ì„ ì¹´ë“œê°€ ì—†ìœ¼ë©´ ë¦¬í„´
             return null;
 
         for (int i = 0; i < DrawDeck.Count; i++)
@@ -242,7 +242,7 @@ public class CardManager : MonoBehaviour
         return null;
     }
 
-    public void AddCard()   // ¼ÕÆĞ·Î µå·Î¿ìÇÒ Ä«µå
+    public void AddCard()   // ì†íŒ¨ë¡œ ë“œë¡œìš°í•  ì¹´ë“œ
     {
         GameObject drawCard = DrawCard();
         if (drawCard == null)
@@ -256,7 +256,7 @@ public class CardManager : MonoBehaviour
         CardAlignment();
     }
 
-    void AddCard(GameObject addCard)    // µ¦¿¡¼­ ¼ÕÆĞ·Î Ä«µå¸¦ °¡Á®¿È.
+    void AddCard(GameObject addCard)    // ë±ì—ì„œ ì†íŒ¨ë¡œ ì¹´ë“œë¥¼ ê°€ì ¸ì˜´.
     {
         GameObject drawCard = DrawCard(addCard);
         if (drawCard == null)
@@ -271,7 +271,7 @@ public class CardManager : MonoBehaviour
 
     }
 
-    void AddCard(CardData addCard)  // Ä«µå »ı¼º
+    void AddCard(CardData addCard)  // ì¹´ë“œ ìƒì„±
     {
         AddDeck(addCard, EAddDeck.Hand);
 
@@ -373,8 +373,8 @@ public class CardManager : MonoBehaviour
             Vector3 targetPos = Vector3.Lerp(leftTr.position, rightTr.position, cardLerps[i]);
             targetPos.z = -i * 5;
 
-            float curve = Mathf.Sqrt(Mathf.Pow(height, 2) - Mathf.Pow(cardLerps[i] - 0.5f, 2));   // ¿øÀÇ ¹æÁ¤½Ä
-            //float curve = Mathf.Sqrt(Mathf.Pow(height, 2) * (1 - (Mathf.Pow(cardLerps[i] - 0.5f, 2) / Mathf.Pow(leftTr.position.x, 2))));   // Å¸¿øÀÇ ¹æÁ¤½Ä
+            float curve = Mathf.Sqrt(Mathf.Pow(height, 2) - Mathf.Pow(cardLerps[i] - 0.5f, 2));   // ì›ì˜ ë°©ì •ì‹
+            //float curve = Mathf.Sqrt(Mathf.Pow(height, 2) * (1 - (Mathf.Pow(cardLerps[i] - 0.5f, 2) / Mathf.Pow(leftTr.position.x, 2))));   // íƒ€ì›ì˜ ë°©ì •ì‹
 
             targetPos.y += 2 * curve - 0.5f;
             Quaternion targetRot = Quaternion.Slerp(leftTr.rotation, rightTr.rotation, cardLerps[i]);
@@ -433,7 +433,7 @@ public class CardManager : MonoBehaviour
         }
         if (GameManager.Instance.throwAwayCard)
         {
-            ThrowAwayCard(card).Forget();   //card.block ÀÌ ¾È¿¡ ÀÖÀ½.
+            ThrowAwayCard(card).Forget();   //card.block ì´ ì•ˆì— ìˆìŒ.
             //GameManager.Instance.blockClick = false;
         }
         else

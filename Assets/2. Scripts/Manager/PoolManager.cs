@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -33,7 +33,7 @@ public class PoolManager : MonoBehaviour
         Pool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool,
         OnDestroyPoolObject, true, defaultCapacity/*, maxPoolSize*/);
 
-        // ¹Ì¸® ¿ÀºêÁ§Æ® »ı¼º ÇØ³õ±â
+        // ë¯¸ë¦¬ ì˜¤ë¸Œì íŠ¸ ìƒì„± í•´ë†“ê¸°
         for (int i = 0; i < defaultCapacity; i++)
         {
             Card card = CreatePooledItem().GetComponent<Card>();
@@ -41,7 +41,7 @@ public class PoolManager : MonoBehaviour
         }
     }
 
-    // »ı¼º
+    // ìƒì„±
     private GameObject CreatePooledItem()
     {
         GameObject poolGo = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, deck);
@@ -49,19 +49,19 @@ public class PoolManager : MonoBehaviour
         return poolGo;
     }
 
-    // »ç¿ë
+    // ì‚¬ìš©
     private void OnTakeFromPool(GameObject poolGo)
     {
         poolGo.SetActive(true);
     }
 
-    // ¹İÈ¯
+    // ë°˜í™˜
     private void OnReturnedToPool(GameObject poolGo)
     {
         poolGo.SetActive(false);
     }
 
-    // »èÁ¦
+    // ì‚­ì œ
     private void OnDestroyPoolObject(GameObject poolGo)
     {
         Destroy(poolGo);

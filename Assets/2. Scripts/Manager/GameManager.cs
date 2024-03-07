@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
         
         //if (!CardDataDeserializer.TryGetData(1015, out CardData row))
         //{
-        //    Debug.Log("µ¥ÀÌÅÍ Å×ÀÌºíÀ» ºÒ·¯¿À´Â °úÁ¤¿¡¼­ ¹®Á¦°¡ ¹ß»ıÇß½À´Ï´Ù.");
+        //    Debug.Log("ë°ì´í„° í…Œì´ë¸”ì„ ë¶ˆëŸ¬ì˜¤ëŠ” ê³¼ì •ì—ì„œ ë¬¸ì œê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤.");
         //}
     }
 

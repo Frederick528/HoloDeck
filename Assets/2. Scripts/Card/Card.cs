@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,10 +10,10 @@ using UnityEngine.Pool;
 [System.Serializable]
 //public struct CardData
 //{
-//    public string Name; // = "ÀÌ¸§";
+//    public string Name; // = "ì´ë¦„";
 //    public int Cost; // = 0;
-//    public string Descript; // = "Ä«µå Á¾·ù¿¡ ´ëÇÑ ¼³¸í";
-//    public Sprite Sprite; // = "Ä«µå ÀÌ¹ÌÁö";
+//    public string Descript; // = "ì¹´ë“œ ì¢…ë¥˜ì— ëŒ€í•œ ì„¤ëª…";
+//    public Sprite Sprite; // = "ì¹´ë“œ ì´ë¯¸ì§€";
 //}
 public enum CardType
 {
@@ -147,8 +147,8 @@ public class Card : MonoBehaviour
         }
 
         //if (!CardDataDeserializer.TryGetData(ID, out _data))
-        //    Debug.Log("µ¥ÀÌÅÍ¸¦ ºÒ·¯¿À´Â µµÁß¿¡ ¹®Á¦°¡ ¹ß»ıÇß½À´Ï´Ù." +
-        //              $"\nÄ«µå ID : {ID}");
+        //    Debug.Log("ë°ì´í„°ë¥¼ ë¶ˆëŸ¬ì˜¤ëŠ” ë„ì¤‘ì— ë¬¸ì œê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤." +
+        //              $"\nì¹´ë“œ ID : {ID}");
 
         this.GetComponentInChildren<TMP_Text>().text = Data.Name;
 
@@ -200,8 +200,8 @@ public class Card : MonoBehaviour
     //    }
 
     //    //if (!CardDataDeserializer.TryGetData(ID, out _data))
-    //    //    Debug.Log("µ¥ÀÌÅÍ¸¦ ºÒ·¯¿À´Â µµÁß¿¡ ¹®Á¦°¡ ¹ß»ıÇß½À´Ï´Ù." +
-    //    //              $"\nÄ«µå ID : {ID}");
+    //    //    Debug.Log("ë°ì´í„°ë¥¼ ë¶ˆëŸ¬ì˜¤ëŠ” ë„ì¤‘ì— ë¬¸ì œê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤." +
+    //    //              $"\nì¹´ë“œ ID : {ID}");
 
     //    this.GetComponentInChildren<TMP_Text>().text = Data.KR;
 
