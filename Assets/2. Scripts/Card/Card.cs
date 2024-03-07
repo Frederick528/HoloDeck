@@ -1,11 +1,20 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Pool;
 
+[System.Serializable]
+//public struct CardData
+//{
+//    public string Name; // = "ì´ë¦„";
+//    public int Cost; // = 0;
+//    public string Descript; // = "ì¹´ë“œ ì¢…ë¥˜ì— ëŒ€í•œ ì„¤ëª…";
+//    public Sprite Sprite; // = "ì¹´ë“œ ì´ë¯¸ì§€";
+//}
 public enum CardType
 {
     Food,
@@ -17,14 +26,13 @@ public enum CardType
 }
 public class Card : MonoBehaviour
 {
+    public IObjectPool<GameObject> Pool { get; set; }
 
     [SerializeField] SpriteRenderer card;
     [SerializeField] SpriteRenderer character;
     [SerializeField] TMP_Text nameText;
     [SerializeField] TMP_Text costText;
     [SerializeField] TMP_Text desText;
-
-    //[SerializeField] CardSO cardSO;
 
     public PRS originPRS;
     //private Animator _anim;
@@ -44,6 +52,7 @@ public class Card : MonoBehaviour
     //    //    CardManager.Instance.sortBtn.interactable = false;
     //    //Destroy(a);
     //}
+
     public void Setup(CardData data)
     {
         Data.Name = data.Name;
@@ -51,13 +60,10 @@ public class Card : MonoBehaviour
         Data.Descript = data.Descript;
         Data.Sprite = data.Sprite;
 
-        DataSetup();
-    }
-
-    public void DataSetup()
-    {
         nameText.text = Data.Name;
         costText.text = Data.Cost.ToString();
+        //costText.text = GameManager.Instance.num.ToString();
+        //GameManager.Instance.num++;
         desText.text = Data.Descript;
         character.sprite = Data.Sprite;
     }
@@ -141,8 +147,8 @@ public class Card : MonoBehaviour
         }
 
         //if (!CardDataDeserializer.TryGetData(ID, out _data))
-        //    Debug.Log("µ¥ÀÌÅÍ¸¦ ºÒ·¯¿À´Â µµÁß¿¡ ¹®Á¦°¡ ¹ß»ıÇß½À´Ï´Ù." +
-        //              $"\nÄ«µå ID : {ID}");
+        //    Debug.Log("ë°ì´í„°ë¥¼ ë¶ˆëŸ¬ì˜¤ëŠ” ë„ì¤‘ì— ë¬¸ì œê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤." +
+        //              $"\nì¹´ë“œ ID : {ID}");
 
         this.GetComponentInChildren<TMP_Text>().text = Data.Name;
 
@@ -194,8 +200,8 @@ public class Card : MonoBehaviour
     //    }
 
     //    //if (!CardDataDeserializer.TryGetData(ID, out _data))
-    //    //    Debug.Log("µ¥ÀÌÅÍ¸¦ ºÒ·¯¿À´Â µµÁß¿¡ ¹®Á¦°¡ ¹ß»ıÇß½À´Ï´Ù." +
-    //    //              $"\nÄ«µå ID : {ID}");
+    //    //    Debug.Log("ë°ì´í„°ë¥¼ ë¶ˆëŸ¬ì˜¤ëŠ” ë„ì¤‘ì— ë¬¸ì œê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤." +
+    //    //              $"\nì¹´ë“œ ID : {ID}");
 
     //    this.GetComponentInChildren<TMP_Text>().text = Data.KR;
 
@@ -276,6 +282,11 @@ public class Card : MonoBehaviour
         //Vector2 _temp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         //transform.position = _temp/*new Vector3(_temp.x, _temp.y, -5f)*/;
 
+    }
+
+    public void CardRelease()
+    {
+        Pool.Release(this.gameObject);
     }
 
 }

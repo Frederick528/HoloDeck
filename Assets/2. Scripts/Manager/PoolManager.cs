@@ -1,66 +1,69 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class PoolManager : MonoBehaviour
 {
-    [SerializeField] GameObject cardPrefab;
+    public static PoolManager instance;
+
+    public int defaultCapacity = 10;
+    //public int maxPoolSize = 10;
+    public GameObject cardPrefab;
+
     [SerializeField] Transform cardSpawnPoint;
-    [SerializeField] Transform HandCard;
-    [SerializeField] CardSO cardSO;
-    Queue<GameObject> CardPool = new Queue<GameObject>(); //Ä«µå ´ãÀ» Å¥
-    public static PoolManager instance = null;
+    [SerializeField] Transform deck;
+    //[SerializeField] Transform HandCard;
 
-    void Awake()
+    public IObjectPool<GameObject> Pool { get; private set; }
+
+    private void Awake()
     {
-        if (null == instance)
-        {
+        if (instance == null)
             instance = this;
-            DontDestroyOnLoad(this.gameObject);
-            for (int i = 0; i < cardSO.cards.Length; i++)
-            {
-                GameObject cardObject = CreateCard(/*cardSO.cards[i]*/); //ÃÊ±â¿¡ Ä«µå »ı¼º
-                CardPool.Enqueue(cardObject);
-            }
-        }
         else
-        {
             Destroy(this.gameObject);
-        }
-    }
-    GameObject CreateCard(/*CardData cardData*/) //ÃÊ±â OR Ä«µå Ç®¿¡ ³²Àº Ä«µå°¡ ºÎÁ·ÇÒ ¶§, Ä«µå¸¦ »ı¼ºÇÏ±âÀ§ÇØ È£ÃâµÇ´Â ÇÔ¼ö
-    {
-        GameObject cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, HandCard);
-        //Card card = cardObject.GetComponent<Card>();
-        //card.Setup(cardData);
-        //CardManager.Instance.MainDeck.Add(card);
-        cardObject.gameObject.SetActive(false);
 
-        return cardObject;
+
+        Init();
     }
-    public GameObject GetCard(/*CardData cardData*/) //Ä«µå°¡ ÇÊ¿äÇÒ ¶§ ´Ù¸¥ ½ºÅ©¸³Æ®¿¡¼­ È£ÃâµÇ´Â ÇÔ¼ö
+
+    private void Init()
     {
-        if (CardPool.Count > 0) //ÇöÀç Å¥¿¡ ³²¾ÆÀÖ´Â Ä«µå°¡ ÀÖ´Ù¸é,
+        Pool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool,
+        OnDestroyPoolObject, true, defaultCapacity/*, maxPoolSize*/);
+
+        // ë¯¸ë¦¬ ì˜¤ë¸Œì íŠ¸ ìƒì„± í•´ë†“ê¸°
+        for (int i = 0; i < defaultCapacity; i++)
         {
-            GameObject cardPool = CardPool.Dequeue();
-
-            cardPool.gameObject.SetActive(true);
-            //cardPool.transform.SetParent(null);
-            return cardPool;
-        }
-        else //Å¥¿¡ ³²¾ÆÀÖ´Â Ä«µå°¡ ¾øÀ» ¶§ »õ·Î ¸¸µé¾î¼­ »ç¿ë
-        {
-            GameObject cardPool = CreateCard(/*cardData*/);
-
-            cardPool.gameObject.SetActive(true);
-            //cardPool.transform.SetParent(null);
-            return cardPool;
+            Card card = CreatePooledItem().GetComponent<Card>();
+            card.Pool.Release(card.gameObject);
         }
     }
-    public void ReturnObjectToQueue(GameObject cardObject) //»ç¿ëÀÌ ¿Ï·á µÈ Ä«µå¸¦ ´Ù½Ã Å¥¿¡ ³ÖÀ»¶§ È£Ãâ ÆÄ¶ó¹ÌÅÍ->ºñÈ°¼ºÈ­ ÇÒ Ä«µå
+
+    // ìƒì„±
+    private GameObject CreatePooledItem()
     {
-        cardObject.gameObject.SetActive(false);
-        //cardObject.transform.SetParent(instance.transform);
-        CardPool.Enqueue(cardObject); //´Ù½Ã Å¥¿¡ ³ÖÀ½
+        GameObject poolGo = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, deck);
+        poolGo.GetComponent<Card>().Pool = this.Pool;
+        return poolGo;
+    }
+
+    // ì‚¬ìš©
+    private void OnTakeFromPool(GameObject poolGo)
+    {
+        poolGo.SetActive(true);
+    }
+
+    // ë°˜í™˜
+    private void OnReturnedToPool(GameObject poolGo)
+    {
+        poolGo.SetActive(false);
+    }
+
+    // ì‚­ì œ
+    private void OnDestroyPoolObject(GameObject poolGo)
+    {
+        Destroy(poolGo);
     }
 }

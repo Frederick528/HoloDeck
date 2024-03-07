@@ -1,14 +1,14 @@
-//public struct CardData
+ï»¿//public struct CardData
 //{
-//    public string KR; //= "ÇÑ±¹¾î ÅØ½ºÆ®";
+//    public string KR; //= "í•œêµ­ì–´ í…ìŠ¤íŠ¸";
 //    public string EN; //= "English";
 //    public int Date; //= 0;
 //    public int Hunger; //= 0;
 //    public int Thirst; //= 0;
-//    public string Descript; //= "Ä«µå Á¾·ù¿¡ ´ëÇÑ ¼³¸í";
-//    public string Effect; //= "½ÇÁ¦·Î ÀÛµ¿ÇÒ È¿°ú¿¡ ´ëÇÑ ¼³¸í";
-//    public string Info; // = "Ä«µå¿¡ ´ëÇÑ ¼³¸í";
-//    public string Craft; //= "Á¶ÇÕ ½Ä";
-//    public string CraftResult; //= "Á¶ÇÕ °á°ú ¾ÆÀÌÅÛ";
-//    public string CraftEffect; // "Á¶ÇÕÇÑ ¾ÆÀÌÅÛ »ç¿ë È¿°ú";
+//    public string Descript; //= "ì¹´ë“œ ì¢…ë¥˜ì— ëŒ€í•œ ì„¤ëª…";
+//    public string Effect; //= "ì‹¤ì œë¡œ ì‘ë™í•  íš¨ê³¼ì— ëŒ€í•œ ì„¤ëª…";
+//    public string Info; // = "ì¹´ë“œì— ëŒ€í•œ ì„¤ëª…";
+//    public string Craft; //= "ì¡°í•© ì‹";
+//    public string CraftResult; //= "ì¡°í•© ê²°ê³¼ ì•„ì´í…œ";
+//    public string CraftEffect; // "ì¡°í•©í•œ ì•„ì´í…œ ì‚¬ìš© íš¨ê³¼";
 //}
