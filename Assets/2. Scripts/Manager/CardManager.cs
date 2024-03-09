@@ -32,6 +32,7 @@ public class CardManager : MonoBehaviour
 
     Card selectCard;
     bool draggable;
+    bool canPush = true;
     enum ECardState { Nothing, CanMouseOver, CanMouseDrag }
 
     enum EAddDeck { 
@@ -357,12 +358,12 @@ public class CardManager : MonoBehaviour
         }
         else
         {
-            float interval = cardCount < 7f ? 1f / 6 : 1f / cardCount;
+            float interval = cardCount < 7f ? 1f / 7 : 1f / cardCount;
             float cardPos = 0f;
             for (int i = 0; i < cardCount; i++)
             {
                 if (i == 0)
-                    cardPos += cardCount < 7f ? (interval * (3.5f - cardCount * 0.5f)) : interval * 0.5f;
+                    cardPos += cardCount < 7f ? (interval * (4f - cardCount * 0.5f)) : interval * 0.5f;
                 else
                     cardPos += interval;
                 cardLerps[i] = cardPos;
@@ -377,7 +378,7 @@ public class CardManager : MonoBehaviour
             float curve = Mathf.Sqrt(Mathf.Pow(height, 2) - Mathf.Pow(cardLerps[i] - 0.5f, 2));   // 원의 방정식
             //float curve = Mathf.Sqrt(Mathf.Pow(height, 2) * (1 - (Mathf.Pow(cardLerps[i] - 0.5f, 2) / Mathf.Pow(leftTr.position.x, 2))));   // 타원의 방정식
 
-            targetPos.y += 2 * curve - 0.5f;
+            targetPos.y += 3f * curve - 1.5f;
             Quaternion targetRot = Quaternion.Slerp(leftTr.rotation, rightTr.rotation, cardLerps[i]);
 
             results.Add(new PRS(targetPos, targetRot, scale));
@@ -393,6 +394,7 @@ public class CardManager : MonoBehaviour
             return;
         selectCard = card;
         LargeCard(true, card);
+        PushCard(true, card);
     }
     public void CardMouseExit(Card card)
     {
@@ -400,6 +402,7 @@ public class CardManager : MonoBehaviour
             return;
         selectCard = null;
         LargeCard(false, card);
+        PushCard(false, card);
     }
 
 
@@ -407,14 +410,52 @@ public class CardManager : MonoBehaviour
     {
         if (isLarge)
         {
-            card.transform.DOKill();
-            Vector3 largePos = new Vector3(card.originPRS.pos.x, -3.2f, -100f);
+            Vector3 largePos = new Vector3(card.originPRS.pos.x, -3.32f, -100f);
             card.MoveTransform(new PRS(largePos, Quaternion.identity, CardScale.cardScale * 1.2f), false);
         }
         else
             card.MoveTransform(card.originPRS, true, 0.3f);
 
         card.GetComponent<Order>().SetMostFrontOrder(isLarge);
+    }
+
+    void PushCard(bool isPush, Card card)
+    {   
+        if (isPush && canPush)
+        {
+            int cardIndex = -1;
+            for (int i = 0; i < HandCard.Count; i++)
+            {
+                if (HandCard[i] == card.gameObject)
+                {
+                    cardIndex = i;
+                    break;
+                }
+            }
+            if (cardIndex == -1)
+                return;
+            for (int i = 1; i < HandCard.Count; i++)
+            {
+                if (cardIndex - i >= 0)
+                {
+                    //Vector3 movenegative = 
+                    HandCard[cardIndex - i].transform.DOMoveX(HandCard[cardIndex - i].GetComponent<Card>().originPRS.pos.x - 0.5f/i, 0.1f);
+                }
+                if (cardIndex + i < HandCard.Count)
+                {
+                    HandCard[cardIndex + i].transform.DOMoveX(HandCard[cardIndex + i].GetComponent<Card>().originPRS.pos.x + 0.5f/i, 0.1f);
+                }
+            }
+            canPush = false;
+        }
+        else if (!isPush)
+        {
+            foreach (GameObject gameObject in HandCard)
+            {
+                gameObject.GetComponent<Card>().MoveTransform(gameObject.GetComponent<Card>().originPRS, true, 0.3f);
+            } 
+            canPush = true;
+        }
     }
 
     public void CardMouseDown(Card card)
