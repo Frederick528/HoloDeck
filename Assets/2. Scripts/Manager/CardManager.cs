@@ -516,5 +516,6 @@ public class CardManager : MonoBehaviour
             cardState = ECardState.CanMouseDrag;
     }
 
+
     #endregion
 }
