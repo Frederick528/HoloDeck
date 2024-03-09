@@ -410,6 +410,7 @@ public class CardManager : MonoBehaviour
     {
         if (isLarge)
         {
+            card.transform.DOKill();
             Vector3 largePos = new Vector3(card.originPRS.pos.x, -3.32f, -100f);
             card.MoveTransform(new PRS(largePos, Quaternion.identity, CardScale.cardScale * 1.2f), false);
         }
