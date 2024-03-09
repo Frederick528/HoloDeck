@@ -435,29 +435,29 @@ public class CardManager : MonoBehaviour
             }
             if (cardIndex == -1)
                 return;
-            card.transform.DOKill();
-            for (int i = 1; i < HandCard.Count; i++)
+            for (int i = 1; i < HandCard.Count; i++)    // 나중에 수정 필요해보임.
             {
                 
                 if (cardIndex - i >= 0)
                 {
-                    HandCard[cardIndex - i].transform.DOMoveX(HandCard[cardIndex - i].GetComponent<Card>().originPRS.pos.x - 0.5f/i, 0.1f);
+                    HandCard[cardIndex - i].transform.DOMoveX(HandCard[cardIndex - i].GetComponent<Card>().originPRS.pos.x - 0.5f/i, 0.3f);
                 }
                 if (cardIndex + i < HandCard.Count)
                 {
-                    HandCard[cardIndex + i].transform.DOMoveX(HandCard[cardIndex + i].GetComponent<Card>().originPRS.pos.x + 0.5f/i, 0.1f);
+                    HandCard[cardIndex + i].transform.DOMoveX(HandCard[cardIndex + i].GetComponent<Card>().originPRS.pos.x + 0.5f/i, 0.3f);
                 }
             }
             canPush = false;
         }
     }
 
-    void PullCard()
+    void PullCard()     // PushCard()보다 움직임 속도가 빨라야 함. 즉, dotweenTime 값은 더 작아야 함.
     {   
         canPush = true;
         foreach (GameObject gameObject in HandCard)
         {
-            gameObject.GetComponent<Card>().MoveTransform(gameObject.GetComponent<Card>().originPRS, true, 0.3f);
+            gameObject.transform.DOKill();
+            gameObject.GetComponent<Card>().MoveTransform(gameObject.GetComponent<Card>().originPRS, true, 0.2f);
         }
         
     }
