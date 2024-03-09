@@ -394,7 +394,7 @@ public class CardManager : MonoBehaviour
             return;
         selectCard = card;
         LargeCard(true, card);
-        PushCard(true, card);
+        PushCard(card);
     }
     public void CardMouseExit(Card card)
     {
@@ -402,7 +402,7 @@ public class CardManager : MonoBehaviour
             return;
         selectCard = null;
         LargeCard(false, card);
-        PushCard(false, card);
+        PullCard();
     }
 
 
@@ -420,9 +420,9 @@ public class CardManager : MonoBehaviour
         card.GetComponent<Order>().SetMostFrontOrder(isLarge);
     }
 
-    void PushCard(bool isPush, Card card)
+    void PushCard(Card card)
     {   
-        if (isPush && canPush)
+        if (canPush)
         {
             int cardIndex = -1;
             for (int i = 0; i < HandCard.Count; i++)
@@ -435,11 +435,12 @@ public class CardManager : MonoBehaviour
             }
             if (cardIndex == -1)
                 return;
+            card.transform.DOKill();
             for (int i = 1; i < HandCard.Count; i++)
             {
+                
                 if (cardIndex - i >= 0)
                 {
-                    //Vector3 movenegative = 
                     HandCard[cardIndex - i].transform.DOMoveX(HandCard[cardIndex - i].GetComponent<Card>().originPRS.pos.x - 0.5f/i, 0.1f);
                 }
                 if (cardIndex + i < HandCard.Count)
@@ -449,14 +450,16 @@ public class CardManager : MonoBehaviour
             }
             canPush = false;
         }
-        else if (!isPush)
+    }
+
+    void PullCard()
+    {   
+        canPush = true;
+        foreach (GameObject gameObject in HandCard)
         {
-            foreach (GameObject gameObject in HandCard)
-            {
-                gameObject.GetComponent<Card>().MoveTransform(gameObject.GetComponent<Card>().originPRS, true, 0.3f);
-            } 
-            canPush = true;
+            gameObject.GetComponent<Card>().MoveTransform(gameObject.GetComponent<Card>().originPRS, true, 0.3f);
         }
+        
     }
 
     public void CardMouseDown(Card card)
@@ -484,11 +487,13 @@ public class CardManager : MonoBehaviour
         {
             //comeBackCard = true;
             card.GetComponent<Order>().SetMostFrontOrder(false);
+            PullCard();
             await card.TaskMoveTransform(card.originPRS, true, 0.3f);
             card.block = false;
             //draggable = false;
             //GameManager.Instance.blockClick = false;
         }
+
     }
 
     public void CardDrag(Card card)
