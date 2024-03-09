@@ -17,6 +17,9 @@ public class Arrow : MonoBehaviour
 
     [Tooltip("The scale multiplier for arrow nodes")]
     public float scaleFactor = 1f;
+
+    [Tooltip("The arrow renderer list")]
+    public List<SpriteRenderer> arrowRenderer = new();
     #endregion
     
     #region Private Fields
@@ -35,9 +38,11 @@ public class Arrow : MonoBehaviour
         for (int i = 0; i < this.ArrowNodeNum; ++i)
         {
             this.arrowNodes.Add(Instantiate(this.ArrowNodePrefab, this.transform).GetComponent<Transform>());
+            arrowRenderer.Add(arrowNodes[i].GetComponent<SpriteRenderer>());
         }
 
         this.arrowNodes.Add(Instantiate(this.ArrowHeadPrefab, this.transform).GetComponent<Transform>());
+        arrowRenderer.Add(arrowNodes[^1].GetComponent<SpriteRenderer>());
 
         this.arrowNodes.ForEach(a => a.GetComponent<Transform>().position = new Vector2(-0.5f, -0.5f));
 
@@ -45,12 +50,13 @@ public class Arrow : MonoBehaviour
         {
             this.controlPoints.Add(Vector2.zero);
         }
+        this.gameObject.SetActive(false);
     }
 
     private void Update()
     {
         
-        this.controlPoints[0] = new Vector2(this.origin.position.x, this.origin.position.y - 1.5f);
+        this.controlPoints[0] = new Vector2(this.origin.position.x, this.origin.position.y - 3.32f);
 
         this.controlPoints[3] = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         this.controlPoints[1] = this.controlPoints[0] + (this.controlPoints[3] - this.controlPoints[0]) * this.controlPointFactors[0];

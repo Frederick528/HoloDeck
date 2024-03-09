@@ -19,6 +19,9 @@ public class CardManager : MonoBehaviour
     public List<GameObject> CardDummy;  // 카드 더미(사용 또는 버림)
     public List<GameObject> HandCard;   // 내 손에 있는 카드
 
+    public bool isSingleTarget;
+    public bool useSingleTargetCard;
+    
     [SerializeField] CardSO cardSO;
 
     [SerializeField] Transform cardSpawnPoint;
@@ -30,8 +33,14 @@ public class CardManager : MonoBehaviour
     [SerializeField] Transform myCardRight;
     [SerializeField] ECardState cardState;
 
+    [SerializeField] GameObject arrow;
+    
+    [SerializeField] GameObject cardPrefab;
+
     Card selectCard;
     bool draggable;
+    bool isUseCard;
+    
     bool canPush = true;
     enum ECardState { Nothing, CanMouseOver, CanMouseDrag }
 
@@ -42,9 +51,10 @@ public class CardManager : MonoBehaviour
         MainNDrawNDummyNHand
     }
 
+
+    
     private void Awake() => Instance = this;
 
-    public GameObject cardPrefab;
 
     private void Start()
     {
@@ -104,7 +114,7 @@ public class CardManager : MonoBehaviour
             /*Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, Deck);*/
         Card setCard = cardObject.GetComponent<Card>();
 
-        cardObject.name = cardData.Name;    // 시각화 용도
+        cardObject.name = cardData.name;    // 시각화 용도
 
         setCard.Setup(cardData);
         switch (eAddDeck)
@@ -473,16 +483,19 @@ public class CardManager : MonoBehaviour
     public async UniTask CardMouseUp(Card card)
     {
         draggable = false;
+        arrow.SetActive(false);
         if (cardState != ECardState.CanMouseDrag)
         {
             card.block = false;
             return;
         }
-        if (GameManager.Instance.throwAwayCard)
+        if (isUseCard && card.Data.cardTag != CardTag.SingleAttack)
         {
             ThrowAwayCard(card).Forget();   //card.block 이 안에 있음.
             //GameManager.Instance.blockClick = false;
         }
+        else if (isUseCard /*&& card.Data.cardTag != CardTag.SingleAttack */&& useSingleTargetCard)
+            ThrowAwayCard(card).Forget();
         else
         {
             //comeBackCard = true;
@@ -500,8 +513,40 @@ public class CardManager : MonoBehaviour
     {
         if (cardState != ECardState.CanMouseDrag || !draggable)
             return;
-        Vector2 tempPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        card.transform.position = tempPos;
+
+        DetectCardArea();
+
+        if (isUseCard && card.Data.cardTag == CardTag.SingleAttack && !isSingleTarget)
+        {
+            arrow.SetActive(true);
+            PullCard();
+            card.transform.DOKill();
+            card.transform.position = new Vector2(0, -3.32f);
+            isSingleTarget = true;
+        }
+        else if (isUseCard && card.Data.cardTag != CardTag.SingleAttack)
+        {
+            Vector2 tempPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            card.transform.position = tempPos;
+        }
+        else if (!isUseCard && isSingleTarget)
+        {
+            arrow.SetActive(false);
+            isSingleTarget = false;
+        }
+        else if (!isUseCard)
+        {
+            Vector2 tempPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            card.transform.position = tempPos;
+        }
+    }
+
+    void DetectCardArea()
+    {
+        RaycastHit2D[] hits = Physics2D.RaycastAll(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward);
+        int layer = LayerMask.NameToLayer("UsedCardArea");
+        isUseCard = Array.Exists(hits, x => x.collider.gameObject.layer == layer);
+
     }
 
     void SetCardState()

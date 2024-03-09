@@ -7,23 +7,13 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
 
-[System.Serializable]
 //public struct CardData
 //{
-//    public string Name; // = "이름";
-//    public int Cost; // = 0;
-//    public string Descript; // = "카드 종류에 대한 설명";
+//    public string name; // = "이름";
+//    public int cost; // = 0;
+//    public string descript; // = "카드 종류에 대한 설명";
 //    public Sprite Sprite; // = "카드 이미지";
 //}
-public enum CardType
-{
-    Food,
-    Water,
-    Wood,
-    Stone,
-    Combination,
-    Merchant
-}
 public class Card : MonoBehaviour
 {
     public IObjectPool<GameObject> Pool { get; set; }
@@ -38,7 +28,6 @@ public class Card : MonoBehaviour
     //private Animator _anim;
 
     public CardData Data; /*{ get; private set; }*/
-    public CardType cardType;
     public int ID;
 
     public bool block;
@@ -55,17 +44,16 @@ public class Card : MonoBehaviour
 
     public void Setup(CardData data)
     {
-        Data.Name = data.Name;
-        Data.Cost = data.Cost;
-        Data.Descript = data.Descript;
-        Data.Sprite = data.Sprite;
+        Data.name = data.name;
+        Data.cost = data.cost;
+        Data.descript = data.descript;
+        Data.sprite = data.sprite;
+        Data.cardTag = data.cardTag;
 
-        nameText.text = Data.Name;
-        costText.text = Data.Cost.ToString();
-        //costText.text = GameManager.Instance.num.ToString();
-        //GameManager.Instance.num++;
-        desText.text = Data.Descript;
-        character.sprite = Data.Sprite;
+        nameText.text = Data.name;
+        costText.text = Data.cost.ToString();
+        desText.text = Data.descript;
+        character.sprite = Data.sprite;
     }
 
     public async UniTask TaskMoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)
@@ -101,132 +89,6 @@ public class Card : MonoBehaviour
             transform.localScale = prs.scale;
         }
     }
-
-    public void Init(int level)
-    {
-        //base.Init(level);
-
-        ID = level;
-
-        switch (cardType)
-        {
-            case CardType.Food:
-                ID += 1010;
-                GetComponent<MeshRenderer>().material =
-                    Resources.Load<Material>($"Prefabs/Materials/Food/{ID}");
-                break;
-            case CardType.Water:
-                ID += 1020;
-                GetComponent<MeshRenderer>().material =
-                    Resources.Load<Material>($"Prefabs/Materials/Water/{ID}");
-                break;
-            case CardType.Wood:
-                ID += 2010;
-                GetComponent<MeshRenderer>().material =
-                    Resources.Load<Material>($"Prefabs/Materials/Wood/{ID}");
-                break;
-            case CardType.Stone:
-                ID += 2020;
-                GetComponent<MeshRenderer>().material =
-                    Resources.Load<Material>($"Prefabs/Materials/Stone/{ID}");
-                break;
-            case CardType.Combination:
-                ID = 3000;
-                GetComponent<MeshRenderer>().material =
-                    Resources.Load<Material>($"Prefabs/Materials/Combination/{ID}");
-                break;
-            case CardType.Merchant:
-                ID = 5000;
-                GetComponent<MeshRenderer>().material =
-                    Resources.Load<Material>($"Prefabs/Materials/Merchant/{ID}");
-                break;
-            default:
-                GetComponent<MeshRenderer>().material =
-                    Resources.Load<Material>("Prefabs/Materials/Black");
-                break;
-        }
-
-        //if (!CardDataDeserializer.TryGetData(ID, out _data))
-        //    Debug.Log("데이터를 불러오는 도중에 문제가 발생했습니다." +
-        //              $"\n카드 ID : {ID}");
-
-        this.GetComponentInChildren<TMP_Text>().text = Data.Name;
-
-    }
-    //public void Init(int ID, out bool temp)
-    //{
-    //    temp = true;
-    //    this.ID = ID;
-    //    level = ID % 10;
-
-    //    switch (ID / 10)
-    //    {
-    //        case 101:
-    //            GetComponent<MeshRenderer>().material =
-    //                Resources.Load<Material>($"Prefabs/Materials/Food/{ID}");
-    //            cardType = CardType.Food;
-    //            break;
-    //        case 102:
-    //            GetComponent<MeshRenderer>().material =
-    //                Resources.Load<Material>($"Prefabs/Materials/Water/{ID}");
-    //            cardType = CardType.Water;
-    //            break;
-    //        case 201:
-    //            GetComponent<MeshRenderer>().material =
-    //                Resources.Load<Material>($"Prefabs/Materials/Wood/{ID}");
-    //            cardType = CardType.Wood;
-    //            break;
-    //        case 202:
-    //            GetComponent<MeshRenderer>().material =
-    //                Resources.Load<Material>($"Prefabs/Materials/Stone/{ID}");
-    //            cardType = CardType.Stone;
-    //            break;
-    //        case 300:
-    //            GetComponent<MeshRenderer>().material =
-    //                Resources.Load<Material>($"Prefabs/Materials/Combination/{ID}");
-    //            cardType = CardType.Combination;
-    //            level = 5;
-    //            break;
-    //        case 500:
-    //            GetComponent<MeshRenderer>().material =
-    //                Resources.Load<Material>($"Prefabs/Materials/Merchant/{ID}");
-    //            cardType = CardType.Merchant;
-    //            level = 5;
-    //            break;
-    //        default:
-    //            GetComponent<MeshRenderer>().material =
-    //                Resources.Load<Material>("Prefabs/Materials/Black");
-    //            break;
-    //    }
-
-    //    //if (!CardDataDeserializer.TryGetData(ID, out _data))
-    //    //    Debug.Log("데이터를 불러오는 도중에 문제가 발생했습니다." +
-    //    //              $"\n카드 ID : {ID}");
-
-    //    this.GetComponentInChildren<TMP_Text>().text = Data.KR;
-
-    //}
-
-    //private void InitCheck()
-    //{
-
-    //    var v = from card in CardManager.Cards
-    //            where card.ID % 10 == this.ID % 10
-    //            select card;
-
-    //}
-
-
-    //private CardGroup CreateParent(Transform targetPos)
-    //{
-    //    var emptyParent = new GameObject("CardGroup");
-    //    emptyParent.transform.SetParent(CardManager.Instance.transform);
-    //    emptyParent.transform.localPosition = targetPos.transform.localPosition;
-    //    var temp = emptyParent.AddComponent<CardGroup>();
-
-    //    return temp;
-    //}
-
 
     void OnMouseOver()
     {
