@@ -142,12 +142,14 @@ public class CardManager : MonoBehaviour
 
     public void StartBattle()       // 배틀 시작시, 덱 섞기 및 액션 추가
     {
+        UiManager.instance.SetupTop(true);
         SetupDrawDeck(true);
         TurnManager.OnAddCard += AddCard;
         TurnManager.Instance.StartTurnTask().Forget();
     }
     public void EndBattle()         // 리팩토링 필요해보임.
     {
+        UiManager.instance.SetupTop(false);
         TurnManager.OnAddCard -= AddCard;
         TurnManager.Instance.EndTurn();
         DrawDeck.Clear();
@@ -415,6 +417,46 @@ public class CardManager : MonoBehaviour
         card.GetComponent<Order>().SetMostFrontOrder(isLarge);
     }
 
+<<<<<<< Updated upstream
+=======
+    void PushCard(Card card)
+    {   
+        if (canPush)
+        {
+            int cardIndex = -1;
+            for (int i = 0; i < HandCard.Count; i++)
+            {
+                if (HandCard[i] == card.gameObject)
+                {
+                    cardIndex = i;
+                    break;
+                }
+            }
+            if (cardIndex == -1)
+                return;
+            for (int i = 1; i < HandCard.Count; i++)    // 나중에 수정 필요해보임.
+            {
+                if (cardIndex - i >= 0)
+                    HandCard[cardIndex - i].transform.DOMoveX(HandCard[cardIndex - i].GetComponent<Card>().originPRS.pos.x - 0.5f/i, 0.3f);
+                if (cardIndex + i < HandCard.Count)
+                    HandCard[cardIndex + i].transform.DOMoveX(HandCard[cardIndex + i].GetComponent<Card>().originPRS.pos.x + 0.5f/i, 0.3f);
+            }
+            canPush = false;
+        }
+    }
+
+    void PullCard()     // PushCard()보다 움직임 속도가 빨라야 함. 즉, dotweenTime 값은 더 작아야 함.
+    {   
+        canPush = true;
+        foreach (GameObject gameObject in HandCard)
+        {
+            gameObject.transform.DOKill();
+            gameObject.GetComponent<Card>().MoveTransform(gameObject.GetComponent<Card>().originPRS, true, 0.2f);
+        }
+        
+    }
+
+>>>>>>> Stashed changes
     public void CardMouseDown(Card card)
     {
         if (cardState != ECardState.CanMouseDrag)
