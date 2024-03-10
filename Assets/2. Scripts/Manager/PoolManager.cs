@@ -5,7 +5,7 @@ using UnityEngine.Pool;
 
 public class PoolManager : MonoBehaviour
 {
-    public static PoolManager instance;
+    public static PoolManager instance { get; private set; }
 
     public int defaultCapacity = 10;
     //public int maxPoolSize = 10;

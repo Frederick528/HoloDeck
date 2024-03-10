@@ -49,10 +49,10 @@ public class TurnManager : MonoBehaviour
         isLoading = false;
     }
 
-    public void EndTurn()
+    public async UniTask EndTurn()
     {
         //myTurn = false;
+        await CardManager.Instance.ThrowAwayCard();
         isLoading = true;
-        CardManager.Instance.ThrowAwayCard().Forget();
     }
 }

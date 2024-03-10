@@ -13,14 +13,16 @@ public class CardManager : MonoBehaviour
     public static CardManager Instance { get; private set; }
     //public List<Card> Deck { get; private set; }
 
-    public List<GameObject> MainDeck;   // 덱 정보를 데이터 값으로 저장(배틀 중 추가된 카드는 적용X)
+    public List<Card> MainDeck;   // 덱 정보를 데이터 값으로 저장(배틀 중 추가된 카드는 적용X)
     //public List<Card> MainCardDeck;     // 덱에 있는 카드 정보를 데이터 값으로 저장(배틀 중 추가된 카드는 적용X) (MainDeck과 같이 카드 추가)
-    public List<GameObject> DrawDeck;   // 현재 내가 뽑을 수 있는 카드
-    public List<GameObject> CardDummy;  // 카드 더미(사용 또는 버림)
-    public List<GameObject> HandCard;   // 내 손에 있는 카드
+    public List<Card> DrawDeck;   // 현재 내가 뽑을 수 있는 카드
+    public List<Card> CardDummy;  // 카드 더미(사용 또는 버림)
+    public List<Card> HandCard;   // 내 손에 있는 카드
 
     public bool isSingleTarget;
     public bool useSingleTargetCard;
+
+    public Enemy targetEnemy;
     
     [SerializeField] CardSO cardSO;
 
@@ -84,7 +86,7 @@ public class CardManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))       // 카드 찾아서 뽑기 (수정 필요해보임. 덱에서 인덱스로 GameObject를 지정해서 넣어줄거면 굳이 drawCard 함수에서 카드를 확인해 볼 필요가 없음.)
         {
-            AddCard(Deck.GetComponentsInChildren<Card>()[2].gameObject);  // 전투덱에서 가져오는 경우
+            //AddCard(Deck.GetComponentsInChildren<Card>()[2].gameObject);  // 전투덱에서 가져오는 경우
             //AddCard(DrawDeck[2]);   // 드로우덱에서 가져오는 경우
             //AddCard(CardDummy[0]);  // 버린 카드덱에 있는 카드가 드로우덱에도 있을 경우 => 적용 안됨. 주소 문제인 듯
         }
@@ -114,6 +116,7 @@ public class CardManager : MonoBehaviour
             /*Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, Deck);*/
         Card setCard = cardObject.GetComponent<Card>();
 
+        setCard.name = cardData.name;
         cardObject.name = cardData.name;    // 시각화 용도
 
         setCard.Setup(cardData);
@@ -121,31 +124,31 @@ public class CardManager : MonoBehaviour
         {
             case EAddDeck.Main:
                 cardObject.transform.localScale = CardScale.cardScale * 0.5f;
-                MainDeck.Add(cardObject);
+                MainDeck.Add(setCard);
                 //MainCardDeck.Add(setCard);
                 break;
 
             case EAddDeck.Draw:
                 cardObject.transform.localScale = CardScale.cardScale * 0.5f;
-                DrawDeck.Add(cardObject);
+                DrawDeck.Add(setCard);
                 ShuffleDeck();
                 break;
 
             case EAddDeck.Dummy:
                 cardObject.transform.localScale = CardScale.cardScale * 0.5f;
-                CardDummy.Add(cardObject);
+                CardDummy.Add(setCard);
                 break;
 
             case EAddDeck.Hand:                 // 핸드로 가져오는 건 카드 정렬 때문에 AddCard 함수를 이용해서만 접근할 것.
                 if (HandCard.Count < 10)
                 {
                     cardObject.transform.position = Vector3.zero;
-                    HandCard.Add(cardObject);
+                    HandCard.Add(setCard);
                 }
                 else
                 {
                     cardObject.transform.localScale = CardScale.cardScale * 0.5f;
-                    CardDummy.Add(cardObject);
+                    CardDummy.Add(setCard);
                 }
                 break;
 
@@ -161,7 +164,7 @@ public class CardManager : MonoBehaviour
     public void EndBattle()         // 리팩토링 필요해보임.
     {
         TurnManager.OnAddCard -= AddCard;
-        TurnManager.Instance.EndTurn();
+        TurnManager.Instance.EndTurn().Forget();
         DrawDeck.Clear();
         CardDummy.Clear();
         //HandCard.Clear();
@@ -171,9 +174,9 @@ public class CardManager : MonoBehaviour
                 continue;
             Card card = Deck.GetComponentsInChildren<Card>(true)[i];
             //GameObject cardObject = Deck.GetChild(i).gameObject;
-            if (MainDeck.Contains(card.gameObject))
+            if (MainDeck.Contains(card))
                 continue;
-            card.Pool.Release(card.gameObject);
+            card.CardRelease();
             //MainCardDeck.Add(card);
             //cardObject.GetComponent<Card>().CardRelease();
 
@@ -215,13 +218,13 @@ public class CardManager : MonoBehaviour
         for (int i = 0; i < DrawDeck.Count; i++)
         {
             int rand = Random.Range(0, DrawDeck.Count);
-            GameObject temp = DrawDeck[i];
+            Card temp = DrawDeck[i];
             DrawDeck[i] = DrawDeck[rand];
             DrawDeck[rand] = temp;
         }
     }
     
-    public GameObject DrawCard()
+    public Card DrawCard()
     {
         if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기
             SetupDrawDeck();
@@ -229,12 +232,12 @@ public class CardManager : MonoBehaviour
         if (DrawDeck.Count == 0)    // 덱을 섞은 후에도 뽑을 카드가 없으면 리턴
             return null;
 
-        GameObject card = DrawDeck[0];
+        Card card = DrawDeck[0];
         DrawDeck.RemoveAt(0);
         return card;
     }
 
-    GameObject DrawCard(GameObject drawCard)
+    Card DrawCard(Card drawCard)
     {
         if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기
             SetupDrawDeck();
@@ -246,7 +249,7 @@ public class CardManager : MonoBehaviour
         {
             if (DrawDeck[i] == drawCard)
             {
-                GameObject card = DrawDeck[i];
+                Card card = DrawDeck[i];
                 DrawDeck.RemoveAt(i);
                 return card;
             }
@@ -256,26 +259,26 @@ public class CardManager : MonoBehaviour
 
     public void AddCard()   // 손패로 드로우할 카드
     {
-        GameObject drawCard = DrawCard();
+        Card drawCard = DrawCard();
         if (drawCard == null)
             return;
         //GameObject cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity);
-        Card card = drawCard.GetComponent<Card>();
-        card.Setup(card.Data);
+        //Card card = drawCard.GetComponent<Card>();
+        //drawCard.Setup(drawCard.Data);
         HandCard.Add(drawCard);
 
         SetOriginOrder();
         CardAlignment();
     }
 
-    void AddCard(GameObject addCard)    // 덱에서 손패로 카드를 가져옴.
+    void AddCard(Card addCard)    // 덱에서 손패로 카드를 가져옴.
     {
-        GameObject drawCard = DrawCard(addCard);
+        Card drawCard = DrawCard(addCard);
         if (drawCard == null)
             return;
 
-        Card card = drawCard.GetComponent<Card>();
-        card.Setup(card.Data);
+        //Card card = drawCard.GetComponent<Card>();
+        //drawCard.Setup(drawCard.Data);
         HandCard.Add(drawCard);
 
         SetOriginOrder();
@@ -291,11 +294,12 @@ public class CardManager : MonoBehaviour
         CardAlignment();
     }
 
-    public async UniTaskVoid ThrowAwayCard()
+    public async UniTask ThrowAwayCard()
     {
-        foreach (GameObject targetCard in HandCard)
+        foreach (Card targetCard in HandCard)
         {
-            targetCard.GetComponent<Card>().MoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardScale.cardScale * 0.5f), true, 0.3f);
+            targetCard.block = true;
+            targetCard.MoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardScale.cardScale * 0.5f), true, 0.3f);
 
             CardDummy.Add(targetCard);
         }
@@ -303,10 +307,10 @@ public class CardManager : MonoBehaviour
         
         await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
 
-        foreach (GameObject targetCard in HandCard)
+        foreach (Card targetCard in HandCard)
         {
-            targetCard.GetComponent<Card>().block = false;
-            targetCard.GetComponent<Card>().transform.position = cardSpawnPoint.position;
+            targetCard.block = false;
+            targetCard.transform.position = cardSpawnPoint.position;
         }
         HandCard.Clear();
 
@@ -322,16 +326,16 @@ public class CardManager : MonoBehaviour
     {
 
 
-        CardDummy.Add(throwCard.gameObject);
+        CardDummy.Add(throwCard);
 
-        HandCard.Remove(throwCard.gameObject);
+        HandCard.Remove(throwCard);
 
         SetOriginOrder();
         CardAlignment();
 
         await throwCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardScale.cardScale * 0.5f), true, 0.3f);
 
-        throwCard.block = false;
+        //throwCard.block = false;
         throwCard.transform.position = cardSpawnPoint.position;
     }
 
@@ -339,7 +343,7 @@ public class CardManager : MonoBehaviour
     {
         for (int i = 0; i < HandCard.Count; i++)
         {
-            GameObject targetCard = HandCard[i];
+            Card targetCard = HandCard[i];
             targetCard?.GetComponent<Order>().SetOriginOrder(i);
         }
     }
@@ -347,17 +351,17 @@ public class CardManager : MonoBehaviour
     void CardAlignment()
     {
         List<PRS> originCardPRSs = new List<PRS>();
-        originCardPRSs = RoundAlignment(myCardLeft, myCardRight, HandCard.Count, 0.5f, CardScale.cardScale);
+        originCardPRSs = RoundAlignment(myCardLeft, myCardRight, HandCard.Count/*, 0.5f*/, CardScale.cardScale);
         for (int i = 0; i < HandCard.Count; i++)
         {
-            var targetCard = HandCard[i].GetComponent<Card>();
+            Card targetCard = HandCard[i];
 
             targetCard.originPRS = originCardPRSs[i];
             targetCard.MoveTransform(targetCard.originPRS, true, 0.3f);
         }
     }
 
-    List<PRS> RoundAlignment(Transform leftTr, Transform rightTr, int cardCount, float height, Vector3 scale)
+    List<PRS> RoundAlignment(Transform leftTr, Transform rightTr, int cardCount/*, float height*/, Vector3 scale)
     {
         float[] cardLerps = new float[cardCount];
         List<PRS> results = new List<PRS>(cardCount);
@@ -385,8 +389,8 @@ public class CardManager : MonoBehaviour
             Vector3 targetPos = Vector3.Lerp(leftTr.position, rightTr.position, cardLerps[i]);
             targetPos.z = -i * 5;
 
-            float curve = Mathf.Sqrt(Mathf.Pow(height, 2) - Mathf.Pow(cardLerps[i] - 0.5f, 2));   // 원의 방정식
-            //float curve = Mathf.Sqrt(Mathf.Pow(height, 2) * (1 - (Mathf.Pow(cardLerps[i] - 0.5f, 2) / Mathf.Pow(leftTr.position.x, 2))));   // 타원의 방정식
+            float curve = Mathf.Sqrt(Mathf.Pow(/*height*/0.5f, 2) - Mathf.Pow(cardLerps[i] - 0.5f, 2));   // 원의 방정식
+            //float curve = Mathf.Sqrt(Mathf.Pow(/*height*/0.5f, 2) * (1 - (Mathf.Pow(cardLerps[i] - 0.5f, 2) / Mathf.Pow(leftTr.position.x, 2))));   // 타원의 방정식
 
             targetPos.y += 3f * curve - 1.5f;
             Quaternion targetRot = Quaternion.Slerp(leftTr.rotation, rightTr.rotation, cardLerps[i]);
@@ -437,7 +441,7 @@ public class CardManager : MonoBehaviour
             int cardIndex = -1;
             for (int i = 0; i < HandCard.Count; i++)
             {
-                if (HandCard[i] == card.gameObject)
+                if (HandCard[i] == card)
                 {
                     cardIndex = i;
                     break;
@@ -450,11 +454,11 @@ public class CardManager : MonoBehaviour
                 
                 if (cardIndex - i >= 0)
                 {
-                    HandCard[cardIndex - i].transform.DOMoveX(HandCard[cardIndex - i].GetComponent<Card>().originPRS.pos.x - 0.5f/i, 0.3f);
+                    HandCard[cardIndex - i].transform.DOMoveX(HandCard[cardIndex - i].originPRS.pos.x - 0.5f/i, 0.3f);
                 }
                 if (cardIndex + i < HandCard.Count)
                 {
-                    HandCard[cardIndex + i].transform.DOMoveX(HandCard[cardIndex + i].GetComponent<Card>().originPRS.pos.x + 0.5f/i, 0.3f);
+                    HandCard[cardIndex + i].transform.DOMoveX(HandCard[cardIndex + i].originPRS.pos.x + 0.5f/i, 0.3f);
                 }
             }
             canPush = false;
@@ -464,10 +468,10 @@ public class CardManager : MonoBehaviour
     void PullCard()     // PushCard()보다 움직임 속도가 빨라야 함. 즉, dotweenTime 값은 더 작아야 함.
     {   
         canPush = true;
-        foreach (GameObject gameObject in HandCard)
+        foreach (Card card in HandCard)
         {
-            gameObject.transform.DOKill();
-            gameObject.GetComponent<Card>().MoveTransform(gameObject.GetComponent<Card>().originPRS, true, 0.2f);
+            card.transform.DOKill();
+            card.MoveTransform(card.originPRS, true, 0.2f);
         }
         
     }
@@ -482,21 +486,27 @@ public class CardManager : MonoBehaviour
 
     public async UniTask CardMouseUp(Card card)
     {
-        draggable = false;
-        arrow.SetActive(false);
+        //draggable = false;
+        //arrow.SetActive(false);
         if (cardState != ECardState.CanMouseDrag)
         {
-            card.block = false;
+            //card.block = false;
             return;
         }
-        if (isUseCard && card.Data.cardTag != CardTag.SingleAttack)
+        draggable = false;
+        arrow.SetActive(false);
+        if (isUseCard && card.Data.cardTag != CardTag.SingleAttack)     // 단일타격을 제외한 나머지
         {
-            ThrowAwayCard(card).Forget();   //card.block 이 안에 있음.
+            await ThrowAwayCard(card);
+            card.block = false;
             //GameManager.Instance.blockClick = false;
         }
-        else if (isUseCard /*&& card.Data.cardTag != CardTag.SingleAttack */&& useSingleTargetCard)
-            ThrowAwayCard(card).Forget();
-        else
+        else if (isUseCard /*&& card.Data.cardTag != CardTag.SingleAttack */&& useSingleTargetCard)     // 단일타격이 성공했을 경우
+        {
+            await ThrowAwayCard(card);
+            card.block = false;
+        }
+        else        // 사용되지 않은 경우
         {
             //comeBackCard = true;
             card.GetComponent<Order>().SetMostFrontOrder(false);

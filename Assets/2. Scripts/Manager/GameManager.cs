@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.W))
         {
-            TurnManager.Instance.EndTurn();
+            TurnManager.Instance.EndTurn().Forget();
         }
 #endif
     }
