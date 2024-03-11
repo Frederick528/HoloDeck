@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -37,7 +37,7 @@ public class TurnManager : MonoBehaviour
         }
         isLoading = false;
     }
-    public async UniTask DrawTask()
+    public async UniTask DrawTask() // 단일 뽑기
     {
         if (CardManager.Instance.HandCard.Count >= 10)
             return;
@@ -48,11 +48,25 @@ public class TurnManager : MonoBehaviour
 
         isLoading = false;
     }
+    public async UniTask DrawTask(int drawCardCount)    // 여러 개 뽑기
+    {
+        for (int i = 0; i < drawCardCount; i++)
+        {
+            if (CardManager.Instance.HandCard.Count >= 10)
+                return;
+            isLoading = true;
 
-    public void EndTurn()
+            OnAddCard?.Invoke();
+            await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
+
+            isLoading = false;
+        }
+    }
+
+    public async UniTask EndTurn()
     {
         //myTurn = false;
+        await CardManager.Instance.ThrowAwayCard();
         isLoading = true;
-        CardManager.Instance.ThrowAwayCard().Forget();
     }
 }

@@ -1,14 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+public enum CardTag
+{
+    SingleAttack,
+    MultiAttack,
+    Skill
+}
 [System.Serializable]
 public class CardData
 {
-    public string Name;
-    public int Cost;
-    public string Descript;
-    public Sprite Sprite;
+    public string name;
+    public int id;
+    public int cost;
+    public int damage;
+    public int enhancedDamage;
+    public int defence;
+    public int enhancedDefence;
+    public int count;
+    public int enhancedCount;
+    public int draw;
+    public int enhancedDraw;
+    public string descript;
+    public Sprite sprite;
+    public CardTag cardTag;
 }
 
 [CreateAssetMenu(fileName = "CardSO", menuName = "Scriptable Object/CardSO")]
