@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public abstract class Entitiy : MonoBehaviour
 {
     [SerializeField] protected SpriteRenderer entitySprite;
-    [SerializeField] protected Slider slider;   // ³ªÁß¿¡ ÀÌ¹ÌÁö·Î º¯°æ
+    [SerializeField] protected Slider slider;   // ë‚˜ì¤‘ì— ì´ë¯¸ì§€ë¡œ ë³€ê²½
     [SerializeField] protected TMP_Text hpText;
 
 
@@ -18,6 +18,7 @@ public abstract class Entitiy : MonoBehaviour
     {
         maxHp = hp;
         curHp = maxHp;
+        slider.maxValue = maxHp;
         slider.value = maxHp;
         hpText.text = maxHp.ToString();
     }
@@ -25,10 +26,18 @@ public abstract class Entitiy : MonoBehaviour
     {
         curHp -= dmg;
         if (curHp <= 0)
+        {
             Destroy(gameObject);
+        }
     }
     public virtual void Heal(int amount)
     {
         curHp = Mathf.Clamp(curHp + amount, 0, maxHp);
+    }
+
+    private void Update()   // (ìˆ˜ì •í•  ê²ƒ) UniRXë¡œ ë³€ê²½
+    {
+        slider.value = curHp;
+        hpText.text = curHp.ToString();
     }
 }

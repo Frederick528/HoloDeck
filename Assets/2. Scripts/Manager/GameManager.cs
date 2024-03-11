@@ -58,6 +58,10 @@ public class GameManager : MonoBehaviour
         {
             TurnManager.Instance.EndTurn().Forget();
         }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            EnemyManager.Instance.SpawnEnemy(80);
+        }
 #endif
     }
 }

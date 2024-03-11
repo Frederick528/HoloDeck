@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager Instance { get; private set; }
-    [SerializeField] List<Enemy> enemies;
+    public  List<Enemy> enemies;
     [SerializeField] GameObject enemyPrefab;
     [SerializeField] List<Vector3> enemySpawnPosition;
     //[SerializeField] Enemy enemy;
@@ -14,12 +14,13 @@ public class EnemyManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        Instance = this;
         enemySpawnPosition.Add(new Vector3(7, 1.5f));
     }
 
     private void Start()
     {
-        SpawnEnemy(80);
+        
     }
 
     public void SpawnEnemy(int enemyMaxHp, int spawnPosIndex = 0)

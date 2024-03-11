@@ -11,7 +11,16 @@ public enum CardTag
 public class CardData
 {
     public string name;
+    public int id;
     public int cost;
+    public int damage;
+    public int enhancedDamage;
+    public int defence;
+    public int enhancedDefence;
+    public int count;
+    public int enhancedCount;
+    public int draw;
+    public int enhancedDraw;
     public string descript;
     public Sprite sprite;
     public CardTag cardTag;

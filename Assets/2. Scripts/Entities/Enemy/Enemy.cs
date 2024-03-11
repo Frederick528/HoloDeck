@@ -31,15 +31,16 @@ public class Enemy : Entitiy
         }
     }
 
+    public override void TakeDamage(int dmg)
+    {
+        if (curHp - dmg <= 0)
+            EnemyManager.Instance.enemies.Remove(this);
+        base.TakeDamage(dmg);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         arrow = FindObjectOfType<Arrow>(true);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

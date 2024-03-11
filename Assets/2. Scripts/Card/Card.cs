@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -32,6 +33,10 @@ public class Card : MonoBehaviour
 
     public bool block;
 
+    CardAbility cardAbility = new();
+
+    public Action<Card> cardAction;
+
     // Start is called before the first frame update
 
     //private void OnEnable()
@@ -45,7 +50,16 @@ public class Card : MonoBehaviour
     public void Setup(CardData data)
     {
         Data.name = data.name;
+        Data.id = data.id;
         Data.cost = data.cost;
+        Data.damage = data.damage;
+        Data.enhancedDamage = data.enhancedDamage;
+        Data.defence = data.defence;
+        Data.enhancedDefence = data.enhancedDefence;
+        Data.count = data.count;
+        Data.enhancedCount = data.enhancedCount;
+        Data.draw = data.draw;
+        Data.enhancedDraw = data.enhancedDraw;
         Data.descript = data.descript;
         Data.sprite = data.sprite;
         Data.cardTag = data.cardTag;
@@ -54,6 +68,8 @@ public class Card : MonoBehaviour
         costText.text = Data.cost.ToString();
         desText.text = Data.descript;
         character.sprite = Data.sprite;
+
+        cardAction = cardAbility.SetCardAbility(Data.id);
     }
 
     public async UniTask TaskMoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)

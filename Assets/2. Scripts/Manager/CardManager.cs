@@ -23,7 +23,7 @@ public class CardManager : MonoBehaviour
     public bool useSingleTargetCard;
 
     public Enemy targetEnemy;
-    
+
     [SerializeField] CardSO cardSO;
 
     [SerializeField] Transform cardSpawnPoint;
@@ -104,10 +104,18 @@ public class CardManager : MonoBehaviour
         }
     }
 
+    CardData FindCardInCardSO(int id)   // id 값으로 카드데이터 가져오기
+    {
+        return Array.Find(cardSO.cards, x => x.id == id);
+    }
+
     void SetupStartCardDeck()   // 시작할 때, 메인덱을 설정하는 함수 (게임 시작 이후에는 사용하지 않음.)
     {
         for (int i = 0; i < cardSO.cards.Length; i++)
             AddDeck(cardSO.cards[i], EAddDeck.Main);
+
+        AddDeck(FindCardInCardSO(1000), EAddDeck.Main);
+        AddDeck(FindCardInCardSO(1001), EAddDeck.Main);
     }
 
     void AddDeck(CardData cardData, EAddDeck eAddDeck)     // 덱에 카드를 추가할 때 사용, 핸드로 카드를 가져올 때는 AddCard 함수 사용.
@@ -158,12 +166,14 @@ public class CardManager : MonoBehaviour
     public void StartBattle()       // 배틀 시작시, 덱 섞기 및 액션 추가
     {
         SetupDrawDeck(true);
-        TurnManager.OnAddCard += AddCard;
+        TurnManager.OnAddCard += async () =>
+            await AddCard();
         TurnManager.Instance.StartTurnTask().Forget();
     }
     public void EndBattle()         // 리팩토링 필요해보임.
     {
-        TurnManager.OnAddCard -= AddCard;
+        TurnManager.OnAddCard -= async () =>
+            await AddCard();
         TurnManager.Instance.EndTurn().Forget();
         DrawDeck.Clear();
         CardDummy.Clear();
@@ -224,10 +234,13 @@ public class CardManager : MonoBehaviour
         }
     }
     
-    public Card DrawCard()
+    public async UniTask<Card> DrawCard()
     {
-        if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기
+        if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기. 이 경우에는 카드 뽑기가 0.5초 후 가능 (카드 버려지는 시간인 0.3초보단 높게 잡아야 함.)
+        {
             SetupDrawDeck();
+            await UniTask.Delay(TimeSpan.FromSeconds(0.5f));
+        }
 
         if (DrawDeck.Count == 0)    // 덱을 섞은 후에도 뽑을 카드가 없으면 리턴
             return null;
@@ -237,29 +250,36 @@ public class CardManager : MonoBehaviour
         return card;
     }
 
-    Card DrawCard(Card drawCard)
+    public async UniTask<Card> DrawCard(Card drawCard)
     {
-        if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기
+        if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기. 이 경우에는 카드 뽑기가 0.5초 후 가능 (카드 버려지는 시간인 0.3초보단 높게 잡아야 함.)
+        {
             SetupDrawDeck();
+            await UniTask.Delay(TimeSpan.FromSeconds(0.5f));
+        }
 
         if (DrawDeck.Count == 0)    // 덱을 섞은 후에도 뽑을 카드가 없으면 리턴
             return null;
 
-        for (int i = 0; i < DrawDeck.Count; i++)
-        {
-            if (DrawDeck[i] == drawCard)
-            {
-                Card card = DrawDeck[i];
-                DrawDeck.RemoveAt(i);
-                return card;
-            }
-        }
-        return null;
+        Card card = DrawDeck.Find(x => x == drawCard);
+        DrawDeck.Remove(card);
+        return card;
+
+        //for (int i = 0; i < DrawDeck.Count; i++)
+        //{
+        //    if (DrawDeck[i] == drawCard)
+        //    {
+        //        Card card = DrawDeck[i];
+        //        DrawDeck.RemoveAt(i);
+        //        return card;
+        //    }
+        //}
+        //return null;
     }
 
-    public void AddCard()   // 손패로 드로우할 카드
+    public async UniTask AddCard()   // 손패로 드로우할 카드
     {
-        Card drawCard = DrawCard();
+        Card drawCard = await DrawCard();
         if (drawCard == null)
             return;
         //GameObject cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity);
@@ -271,9 +291,9 @@ public class CardManager : MonoBehaviour
         CardAlignment();
     }
 
-    void AddCard(Card addCard)    // 덱에서 손패로 카드를 가져옴.
+    public async UniTask AddCard(Card addCard)    // 덱에서 손패로 카드를 가져옴.
     {
-        Card drawCard = DrawCard(addCard);
+        Card drawCard = await DrawCard(addCard);
         if (drawCard == null)
             return;
 
@@ -322,10 +342,25 @@ public class CardManager : MonoBehaviour
         //}
     }
 
+    public async UniTask UsedCard(Card usedCard)
+    {
+        CardDummy.Add(usedCard);
+
+        HandCard.Remove(usedCard);
+
+        SetOriginOrder();
+        CardAlignment();
+        
+        usedCard.cardAction?.Invoke(usedCard);
+
+        await usedCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardScale.cardScale * 0.5f), true, 0.3f);
+
+        //throwCard.block = false;
+        usedCard.transform.position = cardSpawnPoint.position;
+    }
+
     public async UniTask ThrowAwayCard(Card throwCard)
     {
-
-
         CardDummy.Add(throwCard);
 
         HandCard.Remove(throwCard);
@@ -438,17 +473,19 @@ public class CardManager : MonoBehaviour
     {   
         if (canPush)
         {
-            int cardIndex = -1;
-            for (int i = 0; i < HandCard.Count; i++)
-            {
-                if (HandCard[i] == card)
-                {
-                    cardIndex = i;
-                    break;
-                }
-            }
+            //int cardIndex = -1;
+            //for (int i = 0; i < HandCard.Count; i++)
+            //{
+            //    if (HandCard[i] == card)
+            //    {
+            //        cardIndex = i;
+            //        break;
+            //    }
+            //}
+            int cardIndex = HandCard.IndexOf(card);
             if (cardIndex == -1)
                 return;
+
             for (int i = 1; i < HandCard.Count; i++)    // 나중에 수정 필요해보임.
             {
                 
@@ -497,13 +534,15 @@ public class CardManager : MonoBehaviour
         arrow.SetActive(false);
         if (isUseCard && card.Data.cardTag != CardTag.SingleAttack)     // 단일타격을 제외한 나머지
         {
-            await ThrowAwayCard(card);
+            //card.cardAction?.Invoke(card);
+            await UsedCard(card);
             card.block = false;
             //GameManager.Instance.blockClick = false;
         }
         else if (isUseCard /*&& card.Data.cardTag != CardTag.SingleAttack */&& useSingleTargetCard)     // 단일타격이 성공했을 경우
         {
-            await ThrowAwayCard(card);
+            //card.cardAction?.Invoke(card);
+            await UsedCard(card);
             card.block = false;
         }
         else        // 사용되지 않은 경우
