@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class UiManager : MonoBehaviour
 {
-    public static UiManager instance;
+    public static UiManager instance { get; private set; }
 
-    [SerializeField] GameObject Top;
-    [SerializeField] TextMeshProUGUI TopHealthText;
+    [SerializeField] GameObject top;
+    [SerializeField] TextMeshProUGUI topHealthText;     // TMP텍스트로 변경가능성있음
 
 
     private void Awake() => instance = this;
@@ -16,13 +16,13 @@ public class UiManager : MonoBehaviour
     public void SetupTop(bool state)
     {
         if (state)
-            Top.SetActive(true);
+            top.SetActive(true);
         else
-            Top.SetActive(false);
+            top.SetActive(false);
     }
 
     public void AddHPText(int value, int crtHealth, int maxHealth)
     {
-        TopHealthText.text = string.Format("{0}/{1}", crtHealth + value, maxHealth);
+        topHealthText.text = string.Format("{0}/{1}", crtHealth + value, maxHealth);
     }
 }
