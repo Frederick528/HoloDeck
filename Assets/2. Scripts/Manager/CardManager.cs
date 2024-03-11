@@ -165,15 +165,20 @@ public class CardManager : MonoBehaviour
 
     public void StartBattle()       // 배틀 시작시, 덱 섞기 및 액션 추가
     {
+        UiManager.instance.SetupTop(true);
         SetupDrawDeck(true);
-        TurnManager.OnAddCard += async () =>
+        TurnManager.OnAddCard = async () =>
             await AddCard();
+        // TurnManager.OnAddCard += async () =>
+        //     await AddCard();
         TurnManager.Instance.StartTurnTask().Forget();
     }
     public void EndBattle()         // 리팩토링 필요해보임.
     {
-        TurnManager.OnAddCard -= async () =>
-            await AddCard();
+        UiManager.instance.SetupTop(false);
+        TurnManager.OnAddCard = null;
+        // TurnManager.OnAddCard -= async () =>
+        //     await AddCard();
         TurnManager.Instance.EndTurn().Forget();
         DrawDeck.Clear();
         CardDummy.Clear();
@@ -468,7 +473,6 @@ public class CardManager : MonoBehaviour
 
         card.GetComponent<Order>().SetMostFrontOrder(isLarge);
     }
-
     void PushCard(Card card)
     {   
         if (canPush)
@@ -488,15 +492,10 @@ public class CardManager : MonoBehaviour
 
             for (int i = 1; i < HandCard.Count; i++)    // 나중에 수정 필요해보임.
             {
-                
                 if (cardIndex - i >= 0)
-                {
                     HandCard[cardIndex - i].transform.DOMoveX(HandCard[cardIndex - i].originPRS.pos.x - 0.5f/i, 0.3f);
-                }
                 if (cardIndex + i < HandCard.Count)
-                {
                     HandCard[cardIndex + i].transform.DOMoveX(HandCard[cardIndex + i].originPRS.pos.x + 0.5f/i, 0.3f);
-                }
             }
             canPush = false;
         }
@@ -512,7 +511,6 @@ public class CardManager : MonoBehaviour
         }
         
     }
-
     public void CardMouseDown(Card card)
     {
         if (cardState != ECardState.CanMouseDrag)
