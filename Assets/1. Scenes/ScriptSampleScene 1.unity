@@ -2059,7 +2059,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1544690154
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2203,8 +2203,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2606e6dbfbd9714a88d20f35c91a26e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Top: {fileID: 1544690153}
-  TopHealthText: {fileID: 371180963}
+  top: {fileID: 1544690153}
+  topHealthText: {fileID: 371180963}
 --- !u!1 &1748855195
 GameObject:
   m_ObjectHideFlags: 0
