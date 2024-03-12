@@ -62,11 +62,12 @@ public class CardAbility
 
     void SingleAttack(Card card)
     {
-        CardManager.Instance.targetEnemy.TakeDamage(card.Data.damage);
+        Enemy enemy = CardManager.Instance.targetEnemy;
+        enemy.TakeDamage(card.Data.damage);
     }
     void MultiAttack(Card card)
     {
-        for (int i = 0; i < EnemyManager.Instance.enemies.Count; i++)
+        for (int i = EnemyManager.Instance.enemies.Count - 1; i >= 0; i--)
         {
             EnemyManager.Instance.enemies[i].TakeDamage(card.Data.damage);
         }
