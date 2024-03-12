@@ -21,6 +21,7 @@ public class CardData
     public int enhancedCount;
     public int draw;
     public int enhancedDraw;
+    [TextArea(1,5)]
     public string descript;
     public Sprite sprite;
     public CardTag cardTag;
