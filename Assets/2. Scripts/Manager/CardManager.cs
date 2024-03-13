@@ -106,6 +106,7 @@ public class CardManager : MonoBehaviour
 
     CardData FindCardInCardSO(int id)   // id 값으로 카드데이터 가져오기
     {
+        //return cardSO.cards.Find(x => x.id == id);
         return Array.Find(cardSO.cards, x => x.id == id);
     }
 

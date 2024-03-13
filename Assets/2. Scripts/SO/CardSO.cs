@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 public enum CardTag
 {
     SingleAttack,
@@ -13,6 +14,7 @@ public class CardData
     public string name;
     public int id;
     public int cost;
+    public int enhancedCost;
     public int damage;
     public int enhancedDamage;
     public int defence;
@@ -23,6 +25,8 @@ public class CardData
     public int enhancedDraw;
     [TextArea(1,5)]
     public string descript;
+    [TextArea(1, 5)]
+    public string enhancedDescript;
     public Sprite sprite;
     public CardTag cardTag;
 }
@@ -30,5 +34,7 @@ public class CardData
 [CreateAssetMenu(fileName = "CardSO", menuName = "Scriptable Object/CardSO")]
 public class CardSO : ScriptableObject
 {
+    public Sprite[] cardSprites;
+
     public CardData[] cards;
 }

@@ -12,10 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b620d7a90ab39544c93be59b611da5e7, type: 3}
   m_Name: CardSO
   m_EditorClassIdentifier: 
+  cardSprites:
+  - {fileID: 21300000, guid: a36507a88e8baf94cb7bc81524278354, type: 3}
+  - {fileID: 21300000, guid: 910ba3ea31cf8dd42865664190476d5b, type: 3}
+  - {fileID: 21300000, guid: ed69be0c0c59de34e84a6662f8398a9a, type: 3}
+  - {fileID: 21300000, guid: 45f608585a0131145be8357f19a324bc, type: 3}
+  - {fileID: 21300000, guid: 1749defbb8d59764e86d80ba6df959b8, type: 3}
   cards:
-  - name: Amelia
+  - name: Amelia Waston
     id: 1000
-    cost: 0
+    cost: 1
+    enhancedCost: 1
     damage: 5
     enhancedDamage: 7
     defence: 0
@@ -24,54 +31,30 @@ MonoBehaviour:
     enhancedCount: 1
     draw: 0
     enhancedDraw: 0
-    descript: Wastion
+    descript: This is Ame
+    enhancedDescript: This is Ame
     sprite: {fileID: 21300000, guid: a36507a88e8baf94cb7bc81524278354, type: 3}
     cardTag: 0
-  - name: Calliope
-    id: 2000
-    cost: 1
-    damage: 2
-    enhancedDamage: 3
-    defence: 0
-    enhancedDefence: 0
-    count: 2
-    enhancedCount: 3
-    draw: 0
-    enhancedDraw: 0
-    descript: Mori
-    sprite: {fileID: 21300000, guid: 45f608585a0131145be8357f19a324bc, type: 3}
-    cardTag: 1
-  - name: Gura
-    id: 3000
-    cost: 2
-    damage: 0
-    enhancedDamage: 0
-    defence: 0
-    enhancedDefence: 0
-    count: 0
-    enhancedCount: 0
-    draw: 2
-    enhancedDraw: 3
-    descript: Gawr
-    sprite: {fileID: 21300000, guid: 1749defbb8d59764e86d80ba6df959b8, type: 3}
-    cardTag: 2
-  - name: Ina'nis
+  - name: Ninomae Ina'nis
     id: 1001
     cost: 1
+    enhancedCost: 1
     damage: 3
     enhancedDamage: 4
     defence: 0
     enhancedDefence: 0
     count: 1
-    enhancedCount: 2
+    enhancedCount: 1
     draw: 1
     enhancedDraw: 2
-    descript: Ninomae
+    descript: This is Tako
+    enhancedDescript: This is Wah
     sprite: {fileID: 21300000, guid: 910ba3ea31cf8dd42865664190476d5b, type: 3}
     cardTag: 0
-  - name: Kiara
+  - name: Takanashi Kiara
     id: 1002
-    cost: 0
+    cost: 2
+    enhancedCost: 2
     damage: 3
     enhancedDamage: 5
     defence: 0
@@ -80,6 +63,39 @@ MonoBehaviour:
     enhancedCount: 3
     draw: 0
     enhancedDraw: 0
-    descript: Takanashi
+    descript: This is Kikkeriki
+    enhancedDescript: This is Kikkeriki
     sprite: {fileID: 21300000, guid: ed69be0c0c59de34e84a6662f8398a9a, type: 3}
     cardTag: 0
+  - name: Calliope Mori
+    id: 2000
+    cost: 2
+    enhancedCost: 2
+    damage: 2
+    enhancedDamage: 3
+    defence: 0
+    enhancedDefence: 0
+    count: 2
+    enhancedCount: 3
+    draw: 0
+    enhancedDraw: 0
+    descript: This is Reaper
+    enhancedDescript: This is Rapper
+    sprite: {fileID: 21300000, guid: 45f608585a0131145be8357f19a324bc, type: 3}
+    cardTag: 1
+  - name: Gawr Gura
+    id: 3000
+    cost: 1
+    enhancedCost: 1
+    damage: 0
+    enhancedDamage: 0
+    defence: 0
+    enhancedDefence: 0
+    count: 0
+    enhancedCount: 0
+    draw: 2
+    enhancedDraw: 3
+    descript: This is Shark
+    enhancedDescript: This is Shark
+    sprite: {fileID: 0}
+    cardTag: 2
