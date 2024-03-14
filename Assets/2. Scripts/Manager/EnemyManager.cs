@@ -7,7 +7,7 @@ public class EnemyManager : MonoBehaviour
     public static EnemyManager Instance { get; private set; }
     public  List<Enemy> enemies;
     [SerializeField] GameObject enemyPrefab;
-    [SerializeField] List<Transform> enemySpawnPosition;
+    public List<Transform> enemySpawnPosition;
     //[SerializeField] Enemy enemy;
 
 
@@ -27,14 +27,15 @@ public class EnemyManager : MonoBehaviour
         
     }
 
-    public void SpawnEnemy(int enemyMaxHp, int spawnPosIndex = 0)
+    public bool SpawnEnemy(int enemyMaxHp, int spawnPosIndex = 0)
     {
         if (!enemySpawnPosition[spawnPosIndex].gameObject.activeSelf)
-            return;
+            return false;
         GameObject enemyObject = Instantiate(enemyPrefab, enemySpawnPosition[spawnPosIndex].position, Quaternion.identity);
         Enemy enemy = enemyObject.GetComponent<Enemy>();
         enemies.Add(enemy);
-        enemy.SetupEntity(enemyMaxHp);
+        enemy.SetupEnemy(enemyMaxHp, spawnPosIndex);
         enemySpawnPosition[spawnPosIndex].gameObject.SetActive(false);
+        return true;
     }
 }

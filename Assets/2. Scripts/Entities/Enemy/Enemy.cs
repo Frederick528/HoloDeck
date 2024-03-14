@@ -5,6 +5,7 @@ using UnityEngine;
 public class Enemy : Entitiy
 {
     Arrow arrow;
+    int spawnPos;
     void OnMouseEnter()
     {
         if (CardManager.Instance.isSingleTarget)
@@ -31,10 +32,19 @@ public class Enemy : Entitiy
         }
     }
 
+    public void SetupEnemy(int hp, int pos)
+    {
+        base.SetupEntity(hp);
+        spawnPos = pos;
+    }
+
     public override void TakeDamage(int dmg)
     {
         if (curHp - dmg <= 0)
+        {
             EnemyManager.Instance.enemies.Remove(this);
+            EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);
+        }
         base.TakeDamage(dmg);
     }
 

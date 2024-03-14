@@ -60,7 +60,13 @@ public class GameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
-            EnemyManager.Instance.SpawnEnemy(10, num);
+            int i = 0;
+            while (!EnemyManager.Instance.SpawnEnemy(10, i))
+            {
+                i++;
+                if (i > EnemyManager.Instance.enemySpawnPosition.Count - 1)
+                    break; 
+            }
         }
 #endif
     }
