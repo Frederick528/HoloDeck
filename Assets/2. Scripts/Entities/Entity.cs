@@ -1,16 +1,17 @@
-ï»¿using System.Collections;
+using Cysharp.Threading.Tasks;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class Entitiy : MonoBehaviour
+public abstract class Entity : MonoBehaviour
 {
     [SerializeField] protected SpriteRenderer entitySprite;
-    [SerializeField] protected Slider slider;   // ë‚˜ì¤‘ì— ì´ë¯¸ì§€ë¡œ ë³€ê²½
+    [SerializeField] protected Slider slider;   // ³ªÁß¿¡ ÀÌ¹ÌÁö·Î º¯°æ
     [SerializeField] protected TMP_Text hpText;
 
-
+    protected Animator animator;
     protected int maxHp;
     protected int curHp;
 
@@ -25,17 +26,25 @@ public abstract class Entitiy : MonoBehaviour
     public virtual void TakeDamage(int dmg)
     {
         curHp -= dmg;
+        //animator.Play("Hit", 0);  // Å¸°İ ´çÇÏ´Â ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
         if (curHp <= 0)
         {
-            Destroy(gameObject);
+            DieAnimation().Forget();
         }
+    }
+    public virtual async UniTaskVoid DieAnimation()
+    {
+        //animator.Play("Die", 0);  // »ç¸Á ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
+        await UniTask.Delay(10);
+        //await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1);
+        Destroy(gameObject);
     }
     public virtual void Heal(int amount)
     {
         curHp = Mathf.Clamp(curHp + amount, 0, maxHp);
     }
 
-    private void Update()   // (ìˆ˜ì •í•  ê²ƒ) UniRXë¡œ ë³€ê²½
+    private void Update()   // (¼öÁ¤ÇÒ °Í) UniRX·Î º¯°æ
     {
         slider.value = curHp;
         hpText.text = curHp.ToString();

@@ -5,9 +5,10 @@ using UnityEngine;
 public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager Instance { get; private set; }
-    public  List<Enemy> enemies;
+    public List<Enemy> enemies;
     [SerializeField] GameObject enemyPrefab;
     public List<Transform> enemySpawnPosition;
+    public Enemy targetEnemy;
     //[SerializeField] Enemy enemy;
 
 

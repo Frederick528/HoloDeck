@@ -14,7 +14,7 @@ public class ReadSpreadSheet : MonoBehaviour
     //public SpriteRenderer gameSprite;
     //public Sprite[] s = new Sprite[5];
 
-    string imagePath = "Assets/9. Images/CharacterSprite";
+    //string imagePath = "Assets/9. Images/CharacterSprite";
 
     private void Start()
     {

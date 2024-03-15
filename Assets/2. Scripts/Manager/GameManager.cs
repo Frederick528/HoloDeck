@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
 
     public int num;
 
+    public Player player;
+
     void Awake()
     {
         if (Instance == null)
@@ -37,7 +39,7 @@ public class GameManager : MonoBehaviour
     {
         if (fastMode)
         {
-            Time.timeScale = 10;
+            Time.timeScale = 0.5f;
         }
         else { Time.timeScale = 1; }
         //SoundManager.instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
@@ -56,7 +58,11 @@ public class GameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.W))
         {
-            TurnManager.Instance.EndTurn().Forget();
+            TurnManager.Instance.EndTurnTask().Forget();
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            TurnManager.Instance.MyTurnTask(5).Forget();
         }
         if (Input.GetKeyDown(KeyCode.S))
         {

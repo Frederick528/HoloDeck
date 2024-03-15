@@ -22,8 +22,6 @@ public class CardManager : MonoBehaviour
     public bool isSingleTarget;
     public bool useSingleTargetCard;
 
-    public Enemy targetEnemy;
-
     [SerializeField] CardSO cardSO;
 
     [SerializeField] Transform cardSpawnPoint;
@@ -180,7 +178,7 @@ public class CardManager : MonoBehaviour
         TurnManager.OnAddCard = null;
         // TurnManager.OnAddCard -= async () =>
         //     await AddCard();
-        TurnManager.Instance.EndTurn().Forget();
+        TurnManager.Instance.EndTurnTask().Forget();
         DrawDeck.Clear();
         CardDummy.Clear();
         //HandCard.Clear();
@@ -520,7 +518,7 @@ public class CardManager : MonoBehaviour
         card.block = true;
     }
 
-    public async UniTask CardMouseUp(Card card)
+    public void CardMouseUp(Card card)
     {
         //draggable = false;
         //arrow.SetActive(false);
@@ -533,28 +531,42 @@ public class CardManager : MonoBehaviour
         arrow.SetActive(false);
         if (isUseCard && card.Data.cardTag != CardTag.SingleAttack)     // 단일타격을 제외한 나머지
         {
-            //card.cardAction?.Invoke(card);
-            await UsedCard(card);
-            card.block = false;
-            //GameManager.Instance.blockClick = false;
+            UseCard(card).Forget();
         }
         else if (isUseCard /*&& card.Data.cardTag != CardTag.SingleAttack */&& useSingleTargetCard)     // 단일타격이 성공했을 경우
         {
-            //card.cardAction?.Invoke(card);
-            await UsedCard(card);
-            card.block = false;
+            UseCard(card).Forget();
         }
         else        // 사용되지 않은 경우
         {
-            //comeBackCard = true;
-            card.GetComponent<Order>().SetMostFrontOrder(false);
-            PullCard();
-            await card.TaskMoveTransform(card.originPRS, true, 0.3f);
-            card.block = false;
-            //draggable = false;
-            //GameManager.Instance.blockClick = false;
+            PutDownCard(card).Forget();
         }
 
+    }
+
+    async UniTask UseCard(Card card)
+    {
+        //card.cardAction?.Invoke(card);
+        if (GameManager.Instance.player.curHolo < card.Data.cost)
+        {
+            PutDownCard(card).Forget();
+            return;
+        }
+        GameManager.Instance.player.ChangeHoloValue(-card.Data.cost);
+        await UsedCard(card);
+        card.block = false;
+        //GameManager.Instance.blockClick = false;
+    }
+
+    async UniTask PutDownCard(Card card)
+    {
+        //comeBackCard = true;
+        card.GetComponent<Order>().SetMostFrontOrder(false);
+        PullCard();
+        await card.TaskMoveTransform(card.originPRS, true, 0.3f);
+        card.block = false;
+        //draggable = false;
+        //GameManager.Instance.blockClick = false;
     }
 
     public void CardDrag(Card card)

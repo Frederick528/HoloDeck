@@ -33,14 +33,7 @@ public class CardAbility
                 cardAction = SingleAttack;
                 break;
             case 2000:
-                cardAction = ContinuousMultiAttack;
-                //cardAction = (card) =>
-                //{
-                //    for (int i = 0; i < card.Data.count; i++)
-                //    {
-                //        MultiAttack(card);
-                //    }
-                //};
+                cardAction = (card) => ContinuousMultiAttack(card).Forget();
                 break;
             case 3000:
                 cardAction = ContinuousDrawSkill;
@@ -53,7 +46,7 @@ public class CardAbility
                 };
                 break;
             case 1002:
-                cardAction = ContinuousSinglettack;
+                cardAction = (card) => ContinuousSinglettack(card).Forget();
                 break;
             default: cardAction = null; break;
         }
@@ -62,7 +55,7 @@ public class CardAbility
 
     void SingleAttack(Card card)
     {
-        Enemy enemy = CardManager.Instance.targetEnemy;
+        Enemy enemy = EnemyManager.Instance.targetEnemy;
         enemy.TakeDamage(card.Data.damage);
     }
     void MultiAttack(Card card)
@@ -72,28 +65,33 @@ public class CardAbility
             EnemyManager.Instance.enemies[i].TakeDamage(card.Data.damage);
         }
     }
-    void ContinuousSinglettack(Card card)
+    async UniTaskVoid ContinuousSinglettack(Card card)
     {
-        Enemy enemy = CardManager.Instance.targetEnemy;
+        Enemy enemy = EnemyManager.Instance.targetEnemy;
         enemy.TakeDamage(card.Data.damage);
         for (int i = 1; i < card.Data.count; i++)
         {
-            DelayTask().ContinueWith(() =>
-            {
-                if (enemy != null)
-                    enemy.TakeDamage(card.Data.damage);
-            });
+            await DelayTask();
+            if (enemy != null)
+                enemy.TakeDamage(card.Data.damage);
+            //DelayTask().ContinueWith(() =>
+            //{
+            //    if (enemy != null)
+            //        enemy.TakeDamage(card.Data.damage);
+            //});
         }
     }
-    void ContinuousMultiAttack(Card card)
+    async UniTaskVoid ContinuousMultiAttack(Card card)
     {
         MultiAttack(card);
         for (int j = 1; j < card.Data.count; j++)
         {
-            DelayTask().ContinueWith(() =>
-            {
-                MultiAttack(card);
-            });
+            await DelayTask();
+            MultiAttack(card);
+            //DelayTask().ContinueWith(() =>    //ContinueWith() 사용시 UniTask가 종종 최대 15초까지 안 끄나는 오류 발생
+            //{
+            //    MultiAttack(card);
+            //});
         }
     }
     void DrawSkill(Card card)

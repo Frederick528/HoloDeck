@@ -1,8 +1,9 @@
+﻿using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : Entitiy
+public class Enemy : Entity
 {
     Arrow arrow;
     int spawnPos;
@@ -11,7 +12,7 @@ public class Enemy : Entitiy
         if (CardManager.Instance.isSingleTarget)
         {
             CardManager.Instance.useSingleTargetCard = true;
-            CardManager.Instance.targetEnemy = this;
+            EnemyManager.Instance.targetEnemy = this;
             for (int i = 0; i < arrow.arrowRenderer.Count; i++)
             {
                 arrow.arrowRenderer[i].color = Color.red;
@@ -24,7 +25,7 @@ public class Enemy : Entitiy
         if (CardManager.Instance.isSingleTarget)
         {
             CardManager.Instance.useSingleTargetCard = false;
-            CardManager.Instance.targetEnemy = null;
+            EnemyManager.Instance.targetEnemy = null;
             for (int i = 0; i < arrow.arrowRenderer.Count; i++)
             {
                 arrow.arrowRenderer[i].color = Color.white;
@@ -40,12 +41,15 @@ public class Enemy : Entitiy
 
     public override void TakeDamage(int dmg)
     {
-        if (curHp - dmg <= 0)
+        base.TakeDamage(dmg);   // 죽는 애니매이션 이후 삭제(만약 죽는 애니메이션이 0초라면, 오류가 날 수 있음.)
+        if (curHp <= 0)
         {
             EnemyManager.Instance.enemies.Remove(this);
             EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);
+            //await DieAnimation();
+            //Destroy(gameObject);
         }
-        base.TakeDamage(dmg);
+        
     }
 
     // Start is called before the first frame update

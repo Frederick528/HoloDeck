@@ -28,14 +28,14 @@ public class Card : MonoBehaviour
     public PRS originPRS;
     //private Animator _anim;
 
-    public CardData Data; /*{ get; private set; }*/
+    public CardData Data;
     public int ID;
 
     public bool block;
 
     CardAbility cardAbility = new();
 
-    public Action<Card> cardAction;
+    public Action<Card> cardAction { get; private set; }
 
     // Start is called before the first frame update
 
@@ -132,7 +132,7 @@ public class Card : MonoBehaviour
 
     void OnMouseUp()
     {
-        CardManager.Instance.CardMouseUp(this).Forget();
+        CardManager.Instance.CardMouseUp(this);
 
 
         //if (comeBackCard || TurnManager.Instance.isLoading)
