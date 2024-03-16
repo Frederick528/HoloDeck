@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -79,7 +79,15 @@ public class ReadSpreadSheet : MonoBehaviour
             data.enhancedDraw = ConvertInt32(cells[11]);
             data.descript = cells[12];
             data.enhancedDescript = cells[13];
-            data.sprite = Array.Find(cardSO.cardSprites, x => x.name == data.id.ToString());
+            try
+            {
+                data.sprite = Array.Find(cardSO.cardSprites, x => x.name == data.id.ToString());
+            }
+            catch (UnassignedReferenceException)
+            {
+                data.sprite = null;
+                Debug.Log("ìŠ¤í”„ë¼ì´íŠ¸ê°€ ì—†ìŠµë‹ˆë‹¤.");
+            }
             data.cardTag = (CardTag)Enum.Parse(typeof(CardTag) ,cells[14]);
 
             cardSO.cards[i] = data;
@@ -94,7 +102,7 @@ public class ReadSpreadSheet : MonoBehaviour
     //    foreach (string imagePath in imageFiles)
     //    {
     //        string imageName = Path.GetFileNameWithoutExtension(imagePath);
-    //        // ÆÄÀÏÀ» ¹ÙÀÌÆ® ¹è¿­·Î ÀĞ¾î¿È
+    //        // íŒŒì¼ì„ ë°”ì´íŠ¸ ë°°ì—´ë¡œ ì½ì–´ì˜´
     //        byte[] imageData = File.ReadAllBytes(imagePath);
     //        Texture2D texture = new Texture2D(1, 1);
     //        texture.LoadImage(imageData);
@@ -107,7 +115,7 @@ public class ReadSpreadSheet : MonoBehaviour
     //    }
     //}
 
-    int ConvertInt32(string str)    // ±¸±Û½ºÇÁ·¹µå½ÃÆ®´Â ¿¢¼¿ ºó Ä­À» ""·Î °¡Á®¿À±â ¶§¹®¿¡ Convert.ToInt32°¡ ¿¡·¯°¡ ¶ä.
+    int ConvertInt32(string str)    // êµ¬ê¸€ìŠ¤í”„ë ˆë“œì‹œíŠ¸ëŠ” ì—‘ì…€ ë¹ˆ ì¹¸ì„ ""ë¡œ ê°€ì ¸ì˜¤ê¸° ë•Œë¬¸ì— Convert.ToInt32ê°€ ì—ëŸ¬ê°€ ëœ¸.
     {
         int value = Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
         return value;

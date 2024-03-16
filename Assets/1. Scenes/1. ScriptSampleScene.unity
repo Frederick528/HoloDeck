@@ -1181,7 +1181,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turnType: 0
-  startCardCount: 4
+  startCardCount: 5
   isLoading: 0
   myTurn: 1
 --- !u!1 &589534111

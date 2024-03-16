@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
     {
         if (fastMode)
         {
-            Time.timeScale = 0.5f;
+            Time.timeScale = 2f;
         }
         else { Time.timeScale = 1; }
         //SoundManager.instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
-            TurnManager.Instance.MyTurnTask(5).Forget();
+            TurnManager.Instance.StartTurnTask().Forget();
         }
         if (Input.GetKeyDown(KeyCode.S))
         {

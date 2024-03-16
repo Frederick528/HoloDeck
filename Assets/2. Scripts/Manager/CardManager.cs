@@ -130,19 +130,19 @@ public class CardManager : MonoBehaviour
         switch (eAddDeck)
         {
             case EAddDeck.Main:
-                cardObject.transform.localScale = CardScale.cardScale * 0.5f;
+                cardObject.transform.localScale = CardUtils.CardScale * 0.5f;
                 MainDeck.Add(setCard);
                 //MainCardDeck.Add(setCard);
                 break;
 
             case EAddDeck.Draw:
-                cardObject.transform.localScale = CardScale.cardScale * 0.5f;
+                cardObject.transform.localScale = CardUtils.CardScale * 0.5f;
                 DrawDeck.Add(setCard);
                 ShuffleDeck();
                 break;
 
             case EAddDeck.Dummy:
-                cardObject.transform.localScale = CardScale.cardScale * 0.5f;
+                cardObject.transform.localScale = CardUtils.CardScale * 0.5f;
                 CardDummy.Add(setCard);
                 break;
 
@@ -154,7 +154,7 @@ public class CardManager : MonoBehaviour
                 }
                 else
                 {
-                    cardObject.transform.localScale = CardScale.cardScale * 0.5f;
+                    cardObject.transform.localScale = CardUtils.CardScale * 0.5f;
                     CardDummy.Add(setCard);
                 }
                 break;
@@ -166,7 +166,7 @@ public class CardManager : MonoBehaviour
     {
         UiManager.instance.SetupTop(true);
         SetupDrawDeck(true);
-        TurnManager.OnAddCard = async () =>
+        TurnManager.OnAddCard += async () =>
             await AddCard();
         // TurnManager.OnAddCard += async () =>
         //     await AddCard();
@@ -175,9 +175,8 @@ public class CardManager : MonoBehaviour
     public void EndBattle()         // 리팩토링 필요해보임.
     {
         UiManager.instance.SetupTop(false);
-        TurnManager.OnAddCard = null;
-        // TurnManager.OnAddCard -= async () =>
-        //     await AddCard();
+        //TurnManager.OnAddCard = null;
+        TurnManager.OnAddCard -= TurnManager.OnAddCard;
         TurnManager.Instance.EndTurnTask().Forget();
         DrawDeck.Clear();
         CardDummy.Clear();
@@ -211,17 +210,17 @@ public class CardManager : MonoBehaviour
     {
         if (!start)
         {
-            for (int i = 0; i < CardDummy.Count; i++)
+            foreach (Card card in CardDummy)
             {
-                DrawDeck.Add(CardDummy[i]);
+                DrawDeck.Add(card);
             }
             CardDummy.Clear();
         }
         else
         {
-            for (int i = 0; i < MainDeck.Count; i++)
+            foreach (Card card in MainDeck)
             {
-                DrawDeck.Add(MainDeck[i]);
+                DrawDeck.Add(card);
             }
         }
         ShuffleDeck();
@@ -243,7 +242,7 @@ public class CardManager : MonoBehaviour
         if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기. 이 경우에는 카드 뽑기가 0.5초 후 가능 (카드 버려지는 시간인 0.3초보단 높게 잡아야 함.)
         {
             SetupDrawDeck();
-            await UniTask.Delay(TimeSpan.FromSeconds(0.5f));
+            await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.LoadCardDummyDelay));
         }
 
         if (DrawDeck.Count == 0)    // 덱을 섞은 후에도 뽑을 카드가 없으면 리턴
@@ -259,7 +258,7 @@ public class CardManager : MonoBehaviour
         if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기. 이 경우에는 카드 뽑기가 0.5초 후 가능 (카드 버려지는 시간인 0.3초보단 높게 잡아야 함.)
         {
             SetupDrawDeck();
-            await UniTask.Delay(TimeSpan.FromSeconds(0.5f));
+            await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.LoadCardDummyDelay));
         }
 
         if (DrawDeck.Count == 0)    // 덱을 섞은 후에도 뽑을 카드가 없으면 리턴
@@ -323,13 +322,13 @@ public class CardManager : MonoBehaviour
         foreach (Card targetCard in HandCard)
         {
             targetCard.block = true;
-            targetCard.MoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardScale.cardScale * 0.5f), true, 0.3f);
+            targetCard.MoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.ThrowAwayCardDelay);
 
             CardDummy.Add(targetCard);
         }
 
         
-        await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
+        await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.ThrowAwayCardDelay));
 
         foreach (Card targetCard in HandCard)
         {
@@ -357,7 +356,7 @@ public class CardManager : MonoBehaviour
         
         usedCard.cardAction?.Invoke(usedCard);
 
-        await usedCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardScale.cardScale * 0.5f), true, 0.3f);
+        await usedCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.ThrowAwayCardDelay);
 
         //throwCard.block = false;
         usedCard.transform.position = cardSpawnPoint.position;
@@ -372,7 +371,7 @@ public class CardManager : MonoBehaviour
         SetOriginOrder();
         CardAlignment();
 
-        await throwCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardScale.cardScale * 0.5f), true, 0.3f);
+        await throwCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.ThrowAwayCardDelay);
 
         //throwCard.block = false;
         throwCard.transform.position = cardSpawnPoint.position;
@@ -390,13 +389,13 @@ public class CardManager : MonoBehaviour
     void CardAlignment()
     {
         List<PRS> originCardPRSs = new List<PRS>();
-        originCardPRSs = RoundAlignment(myCardLeft, myCardRight, HandCard.Count/*, 0.5f*/, CardScale.cardScale);
+        originCardPRSs = RoundAlignment(myCardLeft, myCardRight, HandCard.Count/*, 0.5f*/, CardUtils.CardScale);
         for (int i = 0; i < HandCard.Count; i++)
         {
             Card targetCard = HandCard[i];
 
             targetCard.originPRS = originCardPRSs[i];
-            targetCard.MoveTransform(targetCard.originPRS, true, 0.3f);
+            targetCard.MoveTransform(targetCard.originPRS, true, CardUtils.CardAlignmentDelay);
         }
     }
 
@@ -465,39 +464,38 @@ public class CardManager : MonoBehaviour
         {
             card.transform.DOKill();
             Vector3 largePos = new Vector3(card.originPRS.pos.x, -3.32f, -100f);
-            card.MoveTransform(new PRS(largePos, Quaternion.identity, CardScale.cardScale * 1.2f), false);
+            card.MoveTransform(new PRS(largePos, Quaternion.identity, CardUtils.CardScale * 1.2f), false);
         }
         else
-            card.MoveTransform(card.originPRS, true, 0.3f);
+            card.MoveTransform(card.originPRS, true, CardUtils.CardAlignmentDelay);
 
         card.GetComponent<Order>().SetMostFrontOrder(isLarge);
     }
     void PushCard(Card card)
-    {   
-        if (canPush)
-        {
-            //int cardIndex = -1;
-            //for (int i = 0; i < HandCard.Count; i++)
-            //{
-            //    if (HandCard[i] == card)
-            //    {
-            //        cardIndex = i;
-            //        break;
-            //    }
-            //}
-            int cardIndex = HandCard.IndexOf(card);
-            if (cardIndex == -1)
-                return;
+    {
+        if (!canPush)
+            return;
+        //int cardIndex = -1;
+        //for (int i = 0; i < HandCard.Count; i++)
+        //{
+        //    if (HandCard[i] == card)
+        //    {
+        //        cardIndex = i;
+        //        break;
+        //    }
+        //}
+        int cardIndex = HandCard.IndexOf(card);
+        if (cardIndex == -1)
+            return;
 
-            for (int i = 1; i < HandCard.Count; i++)    // 나중에 수정 필요해보임.
-            {
-                if (cardIndex - i >= 0)
-                    HandCard[cardIndex - i].transform.DOMoveX(HandCard[cardIndex - i].originPRS.pos.x - 0.5f/i, 0.3f);
-                if (cardIndex + i < HandCard.Count)
-                    HandCard[cardIndex + i].transform.DOMoveX(HandCard[cardIndex + i].originPRS.pos.x + 0.5f/i, 0.3f);
-            }
-            canPush = false;
+        for (int i = 1; i < HandCard.Count; i++)    // 나중에 수정 필요해보임.
+        {
+            if (cardIndex - i >= 0)
+                HandCard[cardIndex - i].transform.DOMoveX(HandCard[cardIndex - i].originPRS.pos.x - 0.5f/i, CardUtils.CardAlignmentDelay);
+            if (cardIndex + i < HandCard.Count)
+                HandCard[cardIndex + i].transform.DOMoveX(HandCard[cardIndex + i].originPRS.pos.x + 0.5f/i, CardUtils.CardAlignmentDelay);
         }
+        canPush = false;
     }
 
     void PullCard()     // PushCard()보다 움직임 속도가 빨라야 함. 즉, dotweenTime 값은 더 작아야 함.
@@ -563,7 +561,7 @@ public class CardManager : MonoBehaviour
         //comeBackCard = true;
         card.GetComponent<Order>().SetMostFrontOrder(false);
         PullCard();
-        await card.TaskMoveTransform(card.originPRS, true, 0.3f);
+        await card.TaskMoveTransform(card.originPRS, true, CardUtils.CardAlignmentDelay);
         card.block = false;
         //draggable = false;
         //GameManager.Instance.blockClick = false;

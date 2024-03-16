@@ -7,6 +7,7 @@ using UnityEngine;
 public class CardAbility
 {
     public Action<Card> cardAction;
+    const float attackSpeed = 0.3f;
     //public Dictionary<CardTag, Action<int>> cardAction = new()
     //{
     //    {CardTag.SingleAttack, CardManager.Instance.targetEnemy.TakeDamage},
@@ -30,25 +31,25 @@ public class CardAbility
         switch (id)
         {
             case 1000:
-                cardAction = SingleAttack;
+                cardAction += SingleAttack;
                 break;
             case 2000:
-                cardAction = (card) => ContinuousMultiAttack(card).Forget();
+                cardAction += (card) => ContinuousMultiAttack(card).Forget();
                 break;
             case 3000:
-                cardAction = ContinuousDrawSkill;
+                cardAction += ContinuousDrawSkill;
                 break;
             case 1001:
-                cardAction = (card) =>
+                cardAction += (card) =>
                 {
                     SingleAttack(card);
                     DrawSkill(card);
                 };
                 break;
             case 1002:
-                cardAction = (card) => ContinuousSinglettack(card).Forget();
+                cardAction += (card) => ContinuousSinglettack(card).Forget();
                 break;
-            default: cardAction = null; break;
+            default: cardAction += null; break;
         }
         return cardAction;
     }
@@ -110,6 +111,6 @@ public class CardAbility
 
     async UniTask DelayTask()
     {
-        await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
+        await UniTask.Delay(TimeSpan.FromSeconds(attackSpeed));
     }
 }
