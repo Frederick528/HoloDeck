@@ -28,6 +28,8 @@ public class TurnManager : MonoBehaviour
     {
         //GameSetup();
         GameManager.Instance.player.ChangeHoloValue(GameManager.Instance.player.maxHolo);
+        myTurn = true;
+        UiManager.instance.ChangeTurnButtonText(myTurn);
         isLoading = true;
         for (int i = 0; i < startCardCount; i++)
         {
@@ -46,8 +48,6 @@ public class TurnManager : MonoBehaviour
             await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.CardAlignmentDelay));        // OnAddCard에서 진행되는 await 따로 실행
         }
         isLoading = false;
-        myTurn = true;
-        UiManager.instance.ChangeTurnButtonText(myTurn);
     }
     public async UniTask DrawTask() // 단일 뽑기 (수정 필요: OnAddCard에 있는 await가 작용하지 않아서, 카드덱이 0개일 경우, 0.5초 뒤에 뽑는 것이 적용되지 않음.)
     {
@@ -107,7 +107,11 @@ public class TurnManager : MonoBehaviour
     //}
     public async UniTask EnemyTurnTask()
     {
-        await StartTurnTask();
+        // 적 턴 시작, 적 코드 작성
+        // 적 턴이 끝나면 내 턴 시작.
+        // 적 턴은 비동기함수 하나로 통침.
+        await UniTask.Delay(TimeSpan.FromSeconds(1f));  // 지금은 적 코드가 없으므로 대신 딜레이 코드 추가
+        StartTurnTask().Forget();
         // await MyTurnTask(4);
     }
 }
