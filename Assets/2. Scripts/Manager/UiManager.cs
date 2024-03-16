@@ -7,22 +7,26 @@ public class UiManager : MonoBehaviour
 {
     public static UiManager instance { get; private set; }
 
-    [SerializeField] GameObject top;
+    [SerializeField] List<GameObject> battleUi;
     [SerializeField] TextMeshProUGUI topHealthText;     // TMP텍스트로 변경가능성있음
+    [SerializeField] TextMeshProUGUI turnEndButtonText;
 
 
     private void Awake() => instance = this;
 
-    public void SetupTop(bool state)
+    public void SetupBattleUi(bool state)
     {
-        if (state)
-            top.SetActive(true);
-        else
-            top.SetActive(false);
+        foreach (GameObject gameObject in battleUi)
+        {
+            gameObject.SetActive(state);
+        }
     }
 
-    public void AddHPText(int value, int crtHealth, int maxHealth)
+    public void ChangeTurnButtonText(bool turn)
     {
-        topHealthText.text = string.Format("{0}/{1}", crtHealth + value, maxHealth);
+        if (turn)
+            turnEndButtonText.text = "Turn End";
+        else
+            turnEndButtonText.text = "Enemy's Turn";
     }
 }

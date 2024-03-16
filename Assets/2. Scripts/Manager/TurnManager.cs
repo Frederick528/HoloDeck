@@ -47,6 +47,7 @@ public class TurnManager : MonoBehaviour
         }
         isLoading = false;
         myTurn = true;
+        UiManager.instance.ChangeTurnButtonText(myTurn);
     }
     public async UniTask DrawTask() // 단일 뽑기 (수정 필요: OnAddCard에 있는 await가 작용하지 않아서, 카드덱이 0개일 경우, 0.5초 뒤에 뽑는 것이 적용되지 않음.)
     {
@@ -92,8 +93,10 @@ public class TurnManager : MonoBehaviour
     public async UniTask EndTurnTask()
     {
         myTurn = false;
+        UiManager.instance.ChangeTurnButtonText(myTurn);
         await CardManager.Instance.ThrowAwayCard();
         isLoading = true;
+        EnemyTurnTask().Forget();
     }
     //public async UniTask MyTurnTask(int drawCardValue)  // 나중에 스타트턴이랑 합칠 예정
     //{
@@ -102,4 +105,9 @@ public class TurnManager : MonoBehaviour
     //    //isLoading = false;    // 위 코드에서 isLoading = false로 변경
     //    //myTurn = true;
     //}
+    public async UniTask EnemyTurnTask()
+    {
+        await StartTurnTask();
+        // await MyTurnTask(4);
+    }
 }
