@@ -3359,8 +3359,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2606e6dbfbd9714a88d20f35c91a26e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  battleUi:
+  gameUi:
   - {fileID: 1544690153}
+  battleUi:
   - {fileID: 871150778}
   - {fileID: 994984367}
   - {fileID: 1013614009}
