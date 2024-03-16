@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        UiManager.instance.SetupGameUi(true);
         if (fastMode)
         {
             Time.timeScale = 2f;

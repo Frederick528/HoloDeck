@@ -7,6 +7,7 @@ public class UiManager : MonoBehaviour
 {
     public static UiManager instance { get; private set; }
 
+    [SerializeField] List<GameObject> gameUi;
     [SerializeField] List<GameObject> battleUi;
     [SerializeField] TextMeshProUGUI topHealthText;     // TMP텍스트로 변경가능성있음
     [SerializeField] TextMeshProUGUI turnEndButtonText;
@@ -14,6 +15,13 @@ public class UiManager : MonoBehaviour
 
     private void Awake() => instance = this;
 
+    public void SetupGameUi(bool state)
+    {
+        foreach (GameObject gameObject in gameUi)
+        {
+            gameObject.SetActive(state);
+        }
+    }
     public void SetupBattleUi(bool state)
     {
         foreach (GameObject gameObject in battleUi)
