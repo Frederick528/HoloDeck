@@ -164,7 +164,7 @@ public class CardManager : MonoBehaviour
 
     public void StartBattle()       // 배틀 시작시, 덱 섞기 및 액션 추가
     {
-        UiManager.instance.SetupTop(true);
+        UiManager.instance.SetupBattleUi(true);
         SetupDrawDeck(true);
         TurnManager.OnAddCard = async () =>
             await AddCard();
@@ -174,7 +174,7 @@ public class CardManager : MonoBehaviour
     }
     public void EndBattle()         // 리팩토링 필요해보임.
     {
-        UiManager.instance.SetupTop(false);
+        UiManager.instance.SetupBattleUi(false);
         TurnManager.OnAddCard = null;
         // TurnManager.OnAddCard -= async () =>
         //     await AddCard();

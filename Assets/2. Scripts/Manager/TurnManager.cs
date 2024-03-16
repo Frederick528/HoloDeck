@@ -74,8 +74,10 @@ public class TurnManager : MonoBehaviour
     public async UniTask EndTurnTask()
     {
         myTurn = false;
+        UiManager.instance.ChangeTurnButtonText(myTurn);
         await CardManager.Instance.ThrowAwayCard();
         isLoading = true;
+        EnemyTurnTask().Forget();
     }
     public async UniTask MyTurnTask(int drawCardValue)
     {
@@ -83,5 +85,10 @@ public class TurnManager : MonoBehaviour
         await StartTurnTask();
         //isLoading = false;    // 위 코드에서 isLoading = false로 변경
         myTurn = true;
+        UiManager.instance.ChangeTurnButtonText(myTurn);
+    }
+    public async UniTask EnemyTurnTask()
+    {
+        await MyTurnTask(4);
     }
 }
