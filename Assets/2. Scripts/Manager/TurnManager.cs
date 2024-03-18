@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TurnManager : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class TurnManager : MonoBehaviour
         //GameSetup();
         GameManager.Instance.player.ChangeHoloValue(GameManager.Instance.player.maxHolo);
         myTurn = true;
+        ButtonManager.instance.TurnEndButtonInvert(true);
         UiManager.instance.ChangeTurnButtonText(myTurn);
         isLoading = true;
         for (int i = 0; i < startCardCount; i++)
