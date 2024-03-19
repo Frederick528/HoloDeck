@@ -3685,21 +3685,9 @@ MonoBehaviour:
   - {x: 1, y: 0, z: 0}
   - {x: -1, y: 0, z: 0}
   - {x: 0, y: 0, z: -1}
-  direction8:
-  - {x: 0, y: 0, z: 1}
-  - {x: 0, y: 0, z: -1}
-  - {x: -1, y: 0, z: 0}
-  - {x: 1, y: 0, z: 0}
-  - {x: -1, y: 0, z: -1}
-  - {x: 1, y: 0, z: -1}
-  - {x: -1, y: 0, z: 1}
-  - {x: 1, y: 0, z: 1}
   validMapList: []
-  minMapCnt: 49
-  maxMapCnt: 49
-  currMapCnt: 0
+  creatMapCnt: 10
   maxDistance: 3
-  validMapCount: 0
   startMapPosition: {x: 0, y: 0, z: 0}
   bossMapPosition: {x: 0, y: 0, z: 0}
   map:
