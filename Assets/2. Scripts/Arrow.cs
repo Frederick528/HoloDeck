@@ -20,6 +20,7 @@ public class Arrow : MonoBehaviour
 
     [Tooltip("The arrow renderer list")]
     public List<SpriteRenderer> arrowRenderer = new();
+    
     #endregion
     
     #region Private Fields
@@ -77,7 +78,7 @@ public class Arrow : MonoBehaviour
                 this.arrowNodes[i].rotation = Quaternion.Euler(euler);
             }
             
-            var scale = this.scaleFactor * (1f - 0.06f * (this.arrowNodes.Count - 1 - i));
+            var scale = this.scaleFactor * (1f - 0.04f * (this.arrowNodes.Count - 1 - i));
             this.arrowNodes[i].localScale = new Vector3(scale, scale, 1f);
         }
 
