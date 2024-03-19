@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class SettingMap : MonoBehaviour
@@ -35,6 +36,10 @@ public class SettingMap : MonoBehaviour
 
     public List<GameObject> map;
 
+    Queue<Vector3Int> queue = new();
+
+    int times = 0;
+
     private void Start()
     {
         creatMapCnt = (int)Mathf.Clamp(creatMapCnt, 1, Mathf.Pow(maxDistance * 2 + 1, 2));
@@ -63,8 +68,7 @@ public class SettingMap : MonoBehaviour
             Vector3Int position = new Vector3Int(validMapList[randMapIdx].center_Position.x, 0, validMapList[randMapIdx].center_Position.z);
             MakeMapArray(position);
         }
-        FindMapDistance(startMapPosition, startMapPosition);
-
+        FindMapDistanceQueue(startMapPosition);
         SortMapList(validMapList);
 
         //// 특수방 BOSS 방 생성
@@ -84,43 +88,72 @@ public class SettingMap : MonoBehaviour
         //single.parent_Position = pos;
         single.mapType = "Single";
         single.isValidMap = true;
+        single.isCheck = false;
 
         return single;
     }
 
     // 시작 방에서 해당 방까지의 거리 계산
-    public void FindMapDistance(Vector3Int currentPos, Vector3Int prePos)
+    // public void FindMapDistance(Vector3Int currentPos, Vector3Int prePos)
+    // {
+    //     // currentPos = 현재 위치
+    //     // prePos     = 이전 위치
+    //     print($"{currentPos.z}, {currentPos.x}");
+    //     if (!PossibleArr(currentPos))
+    //         return;
+        
+    //     int _distance = posArr[currentPos.z, currentPos.x].distance;
+
+        
+    //     for (int i = 0; i < direction4.Count; i++)
+    //     {
+    //         Vector3Int adjustPosition = currentPos + direction4[i];
+
+    //         if (PossibleArr(adjustPosition) && adjustPosition != prePos)
+    //         {
+    //             // 새로운 위치가 활성화가 되었을 경우
+    //             if (posArr[adjustPosition.z, adjustPosition.x] != null)
+    //             {
+    //                 // 새로운 위치가 탐색했던 곳일 경우
+    //                 if (posArr[adjustPosition.z, adjustPosition.x].distance != -1)
+    //                 {
+    //                     if ((_distance + 1) <= posArr[adjustPosition.z, adjustPosition.x].distance)
+    //                     {
+    //                         posArr[adjustPosition.z, adjustPosition.x].distance = _distance + 1;
+    //                         times++;
+    //                         FindMapDistance(adjustPosition, currentPos);
+    //                     }
+    //                 }// 새로운 위치가 탐색하지 않은 곳일 경우
+    //                 else
+    //                 {
+    //                     posArr[adjustPosition.z, adjustPosition.x].distance = _distance + 1;
+    //                     times++;
+    //                     FindMapDistance(adjustPosition, currentPos);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+    
+    //더 나은 알고리즘
+    public void FindMapDistanceQueue(Vector3Int currentPos)
     {
-        // currentPos = 현재 위치
-        // prePos     = 이전 위치
-        if (!PossibleArr(currentPos))
-            return;
+        int _distance = 0;
+        queue.Enqueue(currentPos);
+        posArr[currentPos.z, currentPos.x].isCheck = true;
+        posArr[currentPos.z, currentPos.x].distance = _distance;
 
-        int _distance = posArr[currentPos.z, currentPos.x].distance;
-
-        for (int i = 0; i < direction4.Count; i++)
+        while (queue.Count != 0)
         {
-            Vector3Int adjustPosition = currentPos + direction4[i];
-
-            if (PossibleArr(adjustPosition) && adjustPosition != prePos)
+            Vector3Int node = queue.Dequeue();
+            foreach (Vector3Int movVec in direction4)
             {
-                // 새로운 위치가 활성화가 되었을 경우
-                if (posArr[adjustPosition.z, adjustPosition.x].isValidMap)
+                Vector3Int adjustPosition = node + movVec;
+                if (posArr[adjustPosition.z, adjustPosition.x] != null && !posArr[adjustPosition.z, adjustPosition.x].isCheck && PossibleArr(adjustPosition))
                 {
-                    // 새로운 위치가 탐색했던 곳일 경우
-                    if (posArr[adjustPosition.z, adjustPosition.x].distance != -1)
-                    {
-                        if ((_distance + 1) <= posArr[adjustPosition.z, adjustPosition.x].distance)
-                        {
-                            posArr[adjustPosition.z, adjustPosition.x].distance = _distance + 1;
-                            FindMapDistance(adjustPosition, currentPos);
-                        }
-                    }// 새로운 위치가 탐색하지 않은 곳일 경우
-                    else
-                    {
-                        posArr[adjustPosition.z, adjustPosition.x].distance = _distance + 1;
-                        FindMapDistance(adjustPosition, currentPos);
-                    }
+                    posArr[adjustPosition.z, adjustPosition.x].isCheck = true;
+                    posArr[adjustPosition.z, adjustPosition.x].distance = posArr[node.z, node.x].distance + 1;
+                    queue.Enqueue(adjustPosition);
                 }
             }
         }
@@ -371,6 +404,7 @@ public class SettingMap : MonoBehaviour
         posArr[start.z, start.x].connectDirect.Add(direction);
 
         posArr[move.z, move.x].isValidMap = true;
+        posArr[move.z, move.x].isCheck = false;
         posArr[move.z, move.x].mapName = "Single";
         posArr[move.z, move.x].mapType = "Single";
         posArr[move.z, move.x].center_Position = start + direction;
