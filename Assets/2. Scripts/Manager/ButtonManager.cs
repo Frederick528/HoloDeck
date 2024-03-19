@@ -10,7 +10,7 @@ public class ButtonManager : MonoBehaviour
 
     private void Awake() => instance = this;
 
-    [SerializeField] GameObject turnEndButton;
+    [SerializeField] Button turnEndButton;
 
     public void TurnEndButtonTask()
     {
