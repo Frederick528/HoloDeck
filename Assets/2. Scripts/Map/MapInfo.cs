@@ -17,15 +17,14 @@ public class MapInfo
     public string mapName;
     public string mapType;
 
-    // ÇöÀç ¹æ(°³º°)ÀÇ À§Ä¡
+    // í˜„ì¬ ë°©(ê°œë³„)ì˜ ìœ„ì¹˜
     public Vector3Int center_Position;
-    //// ºÎ¸ğ ¹æÀÇ À§Ä¡
     //public Vector3Int parent_Position;
-    //// ÇØ´ç ¹æ(ÅëÇÕ)ÀÇ Áß¾Ó À§Ä¡
     //public Vector3 mergeCenter_Position;
-    // ÇØ´ç ¹æÀÇ »óÅÂ ¼³Á¤(true : ¹æ ¼ÂÆÃ, false : ºó¹æ)
+
     public bool isValidMap;
-    // ½ÃÀÛ ¹æ¿¡¼­ ºÎÅÍ ÇØ´ç ¹æ±îÁöÀÇ °Å¸®
-    public float distance = -1;
+    //ë„ˆë¹„ ìš°ì„ íƒìƒ‰ ì•Œê³ ë¦¬ì¦˜ì—ì„œ í™•ì¸í–ˆëŠ”ì§€ ì²´í¬
+    public bool isCheck = false;
+    public int distance = -1;
 
 }
