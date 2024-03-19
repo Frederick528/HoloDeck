@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -134,7 +135,7 @@ public class SettingMap : MonoBehaviour
     //         }
     //     }
     // }
-    
+
     //더 나은 알고리즘
     public void FindMapDistanceQueue(Vector3Int currentPos)
     {
@@ -286,6 +287,7 @@ public class SettingMap : MonoBehaviour
         for (int i = 0; i < validMapList.Count; i++)
         {
             map[i].SetActive(true);
+            map[i].transform.GetChild(0).GetComponent<TextMeshPro>().text = validMapList[i].distance.ToString();
             Vector3 mapPos;
             mapPos = validMapList[i].center_Position - startMapPosition;
             map[i].transform.position = new Vector3(mapPos.x, mapPos.z, 0);
