@@ -5,7 +5,13 @@ using UnityEngine;
 [System.Serializable]
 public class MapInfo
 {
-    public List<Vector3Int> connectDirect = new();
+    public List<Vector3Int> haveDirect = new List<Vector3Int>
+    {
+        new Vector3Int( 0, 0,  1),       // down
+        new Vector3Int( 1, 0,  0),       // right
+        new Vector3Int(-1, 0,  0),       // left
+        new Vector3Int( 0, 0, -1)        // up
+    };
 
     public string mapID;
     public string mapName;
@@ -18,8 +24,8 @@ public class MapInfo
     //// 해당 방(통합)의 중앙 위치
     //public Vector3 mergeCenter_Position;
     // 해당 방의 상태 설정(true : 방 셋팅, false : 빈방)
-    public bool isValidMap = false;
+    public bool isValidMap;
     // 시작 방에서 부터 해당 방까지의 거리
-    public int distance = -1;
+    public float distance = -1;
 
 }
