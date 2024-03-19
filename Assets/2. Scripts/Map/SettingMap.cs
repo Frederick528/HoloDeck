@@ -8,10 +8,10 @@ public class SettingMap : MonoBehaviour
 {
     public List<Vector3Int> direction4 = new List<Vector3Int>
     {
-        new Vector3Int( 0, 0,  1),       // down
+        new Vector3Int( 0, 1,  0),       // down
         new Vector3Int( 1, 0,  0),       // right
         new Vector3Int(-1, 0,  0),       // left
-        new Vector3Int( 0, 0, -1)        // up
+        new Vector3Int( 0, -1, 0)        // up
     };
     //public Vector3Int downPatten = new Vector3Int(0, 0, 1);
     //public Vector3Int upPatten = new Vector3Int(0, 0, -1);
@@ -52,18 +52,18 @@ public class SettingMap : MonoBehaviour
         availableMapList.Clear();
         //RealaseMap();  // 초기화
 
-        startMapPosition = new Vector3Int(maxDistance, 0, maxDistance);                        // 시작 좌표
+        startMapPosition = new Vector3Int(maxDistance, maxDistance, 0);                        // 시작 좌표
 
-        posArr[startMapPosition.z, startMapPosition.x] = AddSingleMap(new MapInfo(), startMapPosition, "Single");
-        posArr[startMapPosition.z, startMapPosition.x].distance = 0;
-        validMapList.Add(posArr[startMapPosition.z, startMapPosition.x]);
-        availableMapList.Add(posArr[startMapPosition.z, startMapPosition.x]);
+        posArr[startMapPosition.x, startMapPosition.y] = AddSingleMap(new MapInfo(), startMapPosition, "Single");
+        posArr[startMapPosition.x, startMapPosition.y].distance = 0;
+        validMapList.Add(posArr[startMapPosition.x, startMapPosition.y]);
+        availableMapList.Add(posArr[startMapPosition.x, startMapPosition.y]);
 
         while (!MapCountCheck())
         {
             int randMapIdx = Random.Range(0, availableMapList.Count - 1);
 
-            Vector3Int position = new Vector3Int(availableMapList[randMapIdx].center_Position.x, 0, availableMapList[randMapIdx].center_Position.z);
+            Vector3Int position = new Vector3Int(availableMapList[randMapIdx].center_Position.x, availableMapList[randMapIdx].center_Position.y, 0);
             MakeMapArray(position);
         }
         SetupPosition();
@@ -88,11 +88,11 @@ public class SettingMap : MonoBehaviour
             if (bossMap.distance < bossMapList[i].distance)
                 bossMap = bossMapList[i];
         }
-        print((bossMap.center_Position - startMapPosition));
-        map.Find(x =>
-            x.transform.position.x == (bossMap.center_Position - startMapPosition).x
-            && x.transform.position.y == (bossMap.center_Position - startMapPosition).z
-        ).GetComponent<SpriteRenderer>().color = Color.red;
+        //map.Find(x =>
+        //    x.transform.position.x == (bossMap.center_Position - startMapPosition).x
+        //    && x.transform.position.y == (bossMap.center_Position - startMapPosition).z
+        //).GetComponent<SpriteRenderer>().color = Color.red;
+        map.Find(x => x.transform.position == (bossMap.center_Position - startMapPosition)).GetComponent<SpriteRenderer>().color = Color.red;
     }
 
     public MapInfo AddSingleMap(MapInfo Map, Vector3Int pos, string name)
@@ -162,7 +162,7 @@ public class SettingMap : MonoBehaviour
     public bool PossibleArr(Vector3Int pos)
     {
         if ((0 <= (pos).x && (pos).x < (maxDistance * 2 + 1))
-            && (0 <= (pos).z && (pos).z < (maxDistance * 2 + 1)))
+            && (0 <= (pos).y && (pos).y < (maxDistance * 2 + 1)))
         {
             return true;
         }
@@ -275,7 +275,8 @@ public class SettingMap : MonoBehaviour
             map[i].SetActive(true);
             Vector3 mapPos;
             mapPos = validMapList[i].center_Position - startMapPosition;
-            map[i].transform.position = new Vector3(mapPos.x, mapPos.z, 0);
+            //map[i].transform.position = new Vector3(mapPos.x, mapPos.z, 0);
+            map[i].transform.position = mapPos;
         }
 
     }
@@ -321,20 +322,20 @@ public class SettingMap : MonoBehaviour
 
         if (PossibleArr(next))
         {
-            if (posArr[next.z, next.x] != null)
+            if (posArr[next.x, next.y] != null)
             {
-                posArr[pos.z, pos.x].haveDirect.Remove(move);
-                posArr[next.z, next.x].haveDirect.Remove(-move);
-                if (posArr[pos.z, pos.x].haveDirect.Count == 0)
-                    availableMapList.Remove(posArr[pos.z, pos.x]);
-                if (posArr[next.z, next.x].haveDirect.Count == 0)
-                    availableMapList.Remove(posArr[next.z, next.x]);
+                posArr[pos.x, pos.y].haveDirect.Remove(move);
+                posArr[next.x, next.y].haveDirect.Remove(-move);
+                if (posArr[pos.x, pos.y].haveDirect.Count == 0)
+                    availableMapList.Remove(posArr[pos.x, pos.y]);
+                if (posArr[next.x, next.y].haveDirect.Count == 0)
+                    availableMapList.Remove(posArr[next.x, next.y]);
                 return false;
             }
         }
         else
             return false;
-        posArr[next.z, next.x] = new MapInfo();
+        posArr[next.x, next.y] = new MapInfo();
         return true;
     }
 
@@ -389,8 +390,7 @@ public class SettingMap : MonoBehaviour
         //    return;
 
         //Vector3Int direction = direction4[Random.Range(0, direction4.Count)];
-        Vector3Int direction = posArr[start.z, start.x].haveDirect[Random.Range(0, posArr[start.z, start.x].haveDirect.Count)];
-        print("sss");
+        Vector3Int direction = posArr[start.x, start.y].haveDirect[Random.Range(0, posArr[start.x, start.y].haveDirect.Count)];
 
         if (!PossiblePatten(start, direction))
             return;
@@ -403,23 +403,23 @@ public class SettingMap : MonoBehaviour
         //currCenterPos = new Vector3((float)(startPosition.x + otherPosition.x) / 2, 0, (float)(startPosition.z + otherPosition.z) / 2);
 
         Vector3Int move = start + direction;
-        posArr[start.z, start.x].haveDirect.Remove(direction);
+        posArr[start.x, start.y].haveDirect.Remove(direction);
 
-        posArr[move.z, move.x].isValidMap = true;
-        posArr[move.z, move.x].mapName = "Room";
-        posArr[move.z, move.x].mapType = "Single";
-        posArr[move.z, move.x].center_Position = start + direction;
+        posArr[move.x, move.y].isValidMap = true;
+        posArr[move.x, move.y].mapName = "Room";
+        posArr[move.x, move.y].mapType = "Single";
+        posArr[move.x, move.y].center_Position = start + direction;
         //posArr[move.z, move.x].parent_Position = start + direction;
         //posArr[move.z, move.x].mergeCenter_Position = start + currCenterPos;
-        posArr[move.z, move.x].haveDirect.Remove(-direction);
-        posArr[move.z, move.x].distance = -1;
-        posArr[move.z, move.x] = SingleMap(posArr[move.z, move.x], posArr[move.z, move.x].mapName);
+        posArr[move.x, move.y].haveDirect.Remove(-direction);
+        posArr[move.x, move.y].distance = -1;
+        posArr[move.x, move.y] = SingleMap(posArr[move.x, move.y], posArr[move.x, move.y].mapName);
 
-        validMapList.Add(posArr[move.z, move.x]);
-        availableMapList.Add(posArr[move.z, move.x]);
+        validMapList.Add(posArr[move.x, move.y]);
+        availableMapList.Add(posArr[move.x, move.y]);
 
-        if (posArr[start.z, start.x].haveDirect.Count == 0)
-            availableMapList.Remove(posArr[start.z, start.x]);
+        if (posArr[start.x, start.y].haveDirect.Count == 0)
+            availableMapList.Remove(posArr[start.x, start.y]);
         //lastMove = move;
 
         // 방의 갯수 증가

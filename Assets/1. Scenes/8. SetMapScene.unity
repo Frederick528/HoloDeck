@@ -3686,8 +3686,9 @@ MonoBehaviour:
   - {x: -1, y: 0, z: 0}
   - {x: 0, y: 0, z: -1}
   validMapList: []
+  availableMapList: []
   creatMapCnt: 10
-  maxDistance: 3
+  maxDistance: 10
   startMapPosition: {x: 0, y: 0, z: 0}
   bossMapPosition: {x: 0, y: 0, z: 0}
   map:
