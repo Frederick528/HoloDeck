@@ -1,8 +1,9 @@
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TurnManager : MonoBehaviour
 {
@@ -24,35 +25,95 @@ public class TurnManager : MonoBehaviour
     //    turnType = TurnType.My;
     //}
 
-    public async UniTask StartTurnTask()
+    public async UniTask StartTurnTask()        // 시작 뽑기 (수정 필요: OnAddCard가 액션이라 Invoke 사용시, await가 작용하지 않아 카드덱이 0개일 경우, 0.5초 뒤에 뽑는 것이 적용되지 않음.)
     {
         //GameSetup();
+        GameManager.Instance.player.ChangeHoloValue(GameManager.Instance.player.maxHolo);
+        myTurn = true;
+        ButtonManager.instance.TurnEndButtonInvert(true);
+        UiManager.instance.ChangeTurnButtonText(myTurn);
         isLoading = true;
         for (int i = 0; i < startCardCount; i++)
         {
             if (CardManager.Instance.HandCard.Count >= 10)
                 break;
-            OnAddCard?.Invoke();
-            await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
+            if (CardManager.Instance.DrawDeck.Count == 0)
+            {
+                OnAddCard?.Invoke();
+                await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.LoadCardDummyDelay));    // OnAddCard에서 진행되는 await 따로 실행
+            }
+            else
+            {
+                OnAddCard?.Invoke();
+            }
+
+            await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.CardAlignmentDelay));        // OnAddCard에서 진행되는 await 따로 실행
         }
         isLoading = false;
     }
-    public async UniTask DrawTask()
+    public async UniTask DrawTask() // 단일 뽑기 (수정 필요: OnAddCard에 있는 await가 작용하지 않아서, 카드덱이 0개일 경우, 0.5초 뒤에 뽑는 것이 적용되지 않음.)
     {
         if (CardManager.Instance.HandCard.Count >= 10)
             return;
         isLoading = true;
 
-        OnAddCard?.Invoke();
-        await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
+        if (CardManager.Instance.DrawDeck.Count == 0)
+        {
+            OnAddCard?.Invoke();
+            await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.LoadCardDummyDelay));    // OnAddCard에서 진행되는 await 따로 실행
+        }
+        else
+        {
+            OnAddCard?.Invoke();
+        }
 
+        await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.CardAlignmentDelay));        // OnAddCard에서 진행되는 await 따로 실행
+        isLoading = false;
+    }
+    public async UniTask DrawTask(int drawCardCount)    // 여러 개 뽑기 (수정 필요: 단일 뽑기와 똑같은 문제)
+    {
+        isLoading = true;
+        for (int i = 0; i < drawCardCount; i++)
+        {
+            if (CardManager.Instance.HandCard.Count >= 10)
+                break;
+            if (CardManager.Instance.DrawDeck.Count == 0)
+            {
+                OnAddCard?.Invoke();
+                await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.LoadCardDummyDelay));    // OnAddCard에서 진행되는 await 따로 실행
+            }
+            else
+            {
+                OnAddCard?.Invoke();
+            }
+
+            await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.CardAlignmentDelay));        // OnAddCard에서 진행되는 await 따로 실행
+        }
         isLoading = false;
     }
 
-    public void EndTurn()
+    public async UniTask EndTurnTask()
     {
-        //myTurn = false;
+        myTurn = false;
+        UiManager.instance.ChangeTurnButtonText(myTurn);
+        await CardManager.Instance.ThrowAwayCard();
         isLoading = true;
-        CardManager.Instance.ThrowAwayCard().Forget();
+        EnemyTurnTask().Forget();
+    }
+    //public async UniTask MyTurnTask(int drawCardValue)  // 나중에 스타트턴이랑 합칠 예정
+    //{
+    //    GameManager.Instance.player.ChangeHoloValue(GameManager.Instance.player.maxHolo);
+    //    await StartTurnTask();
+    //    //isLoading = false;    // 위 코드에서 isLoading = false로 변경
+    //    //myTurn = true;
+    //}
+    public async UniTask EnemyTurnTask()
+    {
+        // 적 턴 시작, 적 코드 작성
+        // 적 턴이 끝나면 내 턴 시작.
+        // 적 턴은 비동기함수 하나로 통침.
+        await UniTask.Delay(TimeSpan.FromSeconds(1f));  // 지금은 적 코드가 없으므로 대신 딜레이 코드 추가
+        StartTurnTask().Forget();
+        // await MyTurnTask(4);
     }
 }

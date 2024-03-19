@@ -457,11 +457,11 @@ MonoBehaviour:
     rot: {x: 0, y: 0, z: 0, w: 0}
     scale: {x: 0, y: 0, z: 0}
   Data:
-    Name: 
-    Cost: 0
-    Descript: 
-    Sprite: {fileID: 0}
-  cardType: 0
+    name: 
+    cost: 0
+    descript: 
+    sprite: {fileID: 0}
+    cardTag: 0
   ID: 0
   block: 0
 --- !u!61 &6399435079816834888
