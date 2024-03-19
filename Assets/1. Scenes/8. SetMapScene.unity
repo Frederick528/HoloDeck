@@ -11978,14 +11978,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   direction4:
-  - {x: 0, y: 0, z: 1}
+  - {x: 0, y: 1, z: 0}
   - {x: 1, y: 0, z: 0}
   - {x: -1, y: 0, z: 0}
-  - {x: 0, y: 0, z: -1}
+  - {x: 0, y: -1, z: 0}
   validMapList: []
   availableMapList: []
-  creatMapCnt: 10
-  maxDistance: 10
+  creatMapCnt: 100
+  maxDistance: 15
   startMapPosition: {x: 0, y: 0, z: 0}
   bossMapPosition: {x: 0, y: 0, z: 0}
   map:

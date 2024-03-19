@@ -40,8 +40,6 @@ public class SettingMap : MonoBehaviour
 
     Queue<Vector3Int> queue = new();
 
-    int times = 0;
-
     private void Start()
     {
         creatMapCnt = (int)Mathf.Clamp(creatMapCnt, 1, Mathf.Pow(maxDistance * 2 + 1, 2));
@@ -67,41 +65,42 @@ public class SettingMap : MonoBehaviour
 
         while (!MapCountCheck())
         {
+            print("SSSS");
             int randMapIdx = Random.Range(0, availableMapList.Count - 1);
 
             Vector3Int position = new Vector3Int(availableMapList[randMapIdx].center_Position.x, availableMapList[randMapIdx].center_Position.y, 0);
             MakeMapArray(position);
         }
-        SetupPosition();
-
-        CreateBossMap();
-        //FindMapDistance(startMapPosition, startMapPosition);
-
         FindMapDistanceQueue(startMapPosition);
-        
+
         SortMapList(validMapList);
+
+        SetupPosition();
+        
+        //CreateBossMap();
+        //FindMapDistance(startMapPosition, startMapPosition);
 
         //// 특수방 BOSS 방 생성
         //AddBossMap();
 
     }
 
-    public void CreateBossMap()
-    {
-        List<MapInfo> bossMapList = availableMapList.FindAll(x => x.haveDirect.Count == 3);
-        MapInfo bossMap = new MapInfo();
-        for (int i = bossMapList.Count - 1; i >= 0; i--)
-        {
-            bossMapList[i].distance = Vector3.Distance(bossMapList[i].center_Position, startMapPosition);
-            if (bossMap.distance < bossMapList[i].distance)
-                bossMap = bossMapList[i];
-        }
-        //map.Find(x =>
-        //    x.transform.position.x == (bossMap.center_Position - startMapPosition).x
-        //    && x.transform.position.y == (bossMap.center_Position - startMapPosition).z
-        //).GetComponent<SpriteRenderer>().color = Color.red;
-        map.Find(x => x.transform.position == (bossMap.center_Position - startMapPosition)).GetComponent<SpriteRenderer>().color = Color.red;
-    }
+    //public void CreateBossMap()
+    //{
+    //    List<MapInfo> bossMapList = availableMapList.FindAll(x => x.haveDirect.Count == 3);
+    //    MapInfo bossMap = new MapInfo();
+    //    for (int i = bossMapList.Count - 1; i >= 0; i--)
+    //    {
+    //        bossMapList[i].distance = Vector3.Distance(bossMapList[i].center_Position, startMapPosition);
+    //        if (bossMap.distance < bossMapList[i].distance)
+    //            bossMap = bossMapList[i];
+    //    }
+    //    //map.Find(x =>
+    //    //    x.transform.position.x == (bossMap.center_Position - startMapPosition).x
+    //    //    && x.transform.position.y == (bossMap.center_Position - startMapPosition).z
+    //    //).GetComponent<SpriteRenderer>().color = Color.red;
+    //    map.Find(x => x.transform.position == (bossMap.center_Position - startMapPosition)).GetComponent<SpriteRenderer>().color = Color.red;
+    //}
 
     public MapInfo AddSingleMap(MapInfo Map, Vector3Int pos, string name)
     {
@@ -164,8 +163,8 @@ public class SettingMap : MonoBehaviour
     {
         int _distance = 0;
         queue.Enqueue(currentPos);
-        posArr[currentPos.z, currentPos.x].isCheck = true;
-        posArr[currentPos.z, currentPos.x].distance = _distance;
+        posArr[currentPos.x, currentPos.y].isCheck = true;
+        posArr[currentPos.x, currentPos.y].distance = _distance;
 
         while (queue.Count != 0)
         {
@@ -173,10 +172,10 @@ public class SettingMap : MonoBehaviour
             foreach (Vector3Int movVec in direction4)
             {
                 Vector3Int adjustPosition = node + movVec;
-                if (posArr[adjustPosition.z, adjustPosition.x] != null && !posArr[adjustPosition.z, adjustPosition.x].isCheck && PossibleArr(adjustPosition))
+                if (posArr[adjustPosition.x, adjustPosition.y] != null && !posArr[adjustPosition.x, adjustPosition.y].isCheck && PossibleArr(adjustPosition))
                 {
-                    posArr[adjustPosition.z, adjustPosition.x].isCheck = true;
-                    posArr[adjustPosition.z, adjustPosition.x].distance = posArr[node.z, node.x].distance + 1;
+                    posArr[adjustPosition.x, adjustPosition.y].isCheck = true;
+                    posArr[adjustPosition.x, adjustPosition.y].distance = posArr[node.x, node.y].distance + 1;
                     queue.Enqueue(adjustPosition);
                 }
             }
@@ -447,7 +446,7 @@ public class SettingMap : MonoBehaviour
         posArr[move.x, move.y].mapName = "Room";
         posArr[move.x, move.y].mapType = "Single";
         posArr[move.x, move.y].center_Position = start + direction;
-        posArr[move.z, move.x].isCheck = false;
+        posArr[move.x, move.y].isCheck = false;
         //posArr[move.z, move.x].parent_Position = start + direction;
         //posArr[move.z, move.x].mergeCenter_Position = start + currCenterPos;
         posArr[move.x, move.y].haveDirect.Remove(-direction);

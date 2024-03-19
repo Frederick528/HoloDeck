@@ -11,12 +11,12 @@ public class Battle : MonoBehaviour
     //{
     //    myTurn ??= new MyTurn();
     //}
-    //void Start()
-    //{
-    //    CardManager.Instance.StartBattle();
-    //}
+    void Start()
+    {
+        CardManager.Instance.StartBattle();
+    }
 
     // Update is called once per frame
 
-    
+
 }
