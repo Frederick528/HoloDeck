@@ -77,7 +77,7 @@ public class SettingMap : MonoBehaviour
 
         SetupPosition();
         
-        //CreateBossMap();
+        CreateBossMap();
         //FindMapDistance(startMapPosition, startMapPosition);
 
         //// 특수방 BOSS 방 생성
@@ -85,22 +85,10 @@ public class SettingMap : MonoBehaviour
 
     }
 
-    //public void CreateBossMap()
-    //{
-    //    List<MapInfo> bossMapList = availableMapList.FindAll(x => x.haveDirect.Count == 3);
-    //    MapInfo bossMap = new MapInfo();
-    //    for (int i = bossMapList.Count - 1; i >= 0; i--)
-    //    {
-    //        bossMapList[i].distance = Vector3.Distance(bossMapList[i].center_Position, startMapPosition);
-    //        if (bossMap.distance < bossMapList[i].distance)
-    //            bossMap = bossMapList[i];
-    //    }
-    //    //map.Find(x =>
-    //    //    x.transform.position.x == (bossMap.center_Position - startMapPosition).x
-    //    //    && x.transform.position.y == (bossMap.center_Position - startMapPosition).z
-    //    //).GetComponent<SpriteRenderer>().color = Color.red;
-    //    map.Find(x => x.transform.position == (bossMap.center_Position - startMapPosition)).GetComponent<SpriteRenderer>().color = Color.red;
-    //}
+    public void CreateBossMap()
+    {
+        map.Find(x => x.transform.position == (validMapList[^1].center_Position - startMapPosition)).GetComponent<SpriteRenderer>().color = Color.red;
+    }
 
     public MapInfo AddSingleMap(MapInfo Map, Vector3Int pos, string name)
     {
@@ -172,7 +160,7 @@ public class SettingMap : MonoBehaviour
             foreach (Vector3Int movVec in direction4)
             {
                 Vector3Int adjustPosition = node + movVec;
-                if (posArr[adjustPosition.x, adjustPosition.y] != null && !posArr[adjustPosition.x, adjustPosition.y].isCheck && PossibleArr(adjustPosition))
+                if (PossibleArr(adjustPosition) && posArr[adjustPosition.x, adjustPosition.y] != null && !posArr[adjustPosition.x, adjustPosition.y].isCheck)
                 {
                     posArr[adjustPosition.x, adjustPosition.y].isCheck = true;
                     posArr[adjustPosition.x, adjustPosition.y].distance = posArr[node.x, node.y].distance + 1;
@@ -206,47 +194,47 @@ public class SettingMap : MonoBehaviour
             return false;
     }
 
-    public void AddBossMap()
-    {
-        SortMapList(validMapList);
+    //public void AddBossMap()
+    //{
+    //    SortMapList(validMapList);
 
-        bool selectBossMapStatus = false;
+    //    bool selectBossMapStatus = false;
 
-        for (int idx = validMapList.Count - 1; 0 < idx; idx--)
-        {
-            if (!selectBossMapStatus)
-            {
-                int setLIstCnt = idx;
-                Vector3Int pos = validMapList[setLIstCnt].center_Position;
+    //    for (int idx = validMapList.Count - 1; 0 < idx; idx--)
+    //    {
+    //        if (!selectBossMapStatus)
+    //        {
+    //            int setLIstCnt = idx;
+    //            Vector3Int pos = validMapList[setLIstCnt].center_Position;
 
-                for (int i = 0; i < direction4.Count; i++)
-                {
-                    selectBossMapStatus = false;
-                    Vector3Int bossMapPos = posArr[pos.z, pos.x].center_Position + direction4[i];
+    //            for (int i = 0; i < direction4.Count; i++)
+    //            {
+    //                selectBossMapStatus = false;
+    //                Vector3Int bossMapPos = posArr[pos.z, pos.x].center_Position + direction4[i];
 
-                    if (PossibleArr(bossMapPos))
-                    {
-                        if ((AroundMapCount(bossMapPos) < 2)
-                            && !posArr[bossMapPos.z, bossMapPos.x].isValidMap)
-                        {
-                            posArr[bossMapPos.z, bossMapPos.x].mapName = "Boss";
-                            posArr[bossMapPos.z, bossMapPos.x].isValidMap = true;
-                            posArr[bossMapPos.z, bossMapPos.x].center_Position = bossMapPos;
-                            //posArr[bossMapPos.z, bossMapPos.x].parent_Position = bossMapPos;
-                            //posArr[bossMapPos.z, bossMapPos.x].mergeCenter_Position = bossMapPos;
-                            posArr[bossMapPos.z, bossMapPos.x].distance = posArr[pos.z, pos.x].distance + 1;
-                            posArr[bossMapPos.z, bossMapPos.x].mapType = "Single";
+    //                if (PossibleArr(bossMapPos))
+    //                {
+    //                    if ((AroundMapCount(bossMapPos) < 2)
+    //                        && !posArr[bossMapPos.z, bossMapPos.x].isValidMap)
+    //                    {
+    //                        posArr[bossMapPos.z, bossMapPos.x].mapName = "Boss";
+    //                        posArr[bossMapPos.z, bossMapPos.x].isValidMap = true;
+    //                        posArr[bossMapPos.z, bossMapPos.x].center_Position = bossMapPos;
+    //                        //posArr[bossMapPos.z, bossMapPos.x].parent_Position = bossMapPos;
+    //                        //posArr[bossMapPos.z, bossMapPos.x].mergeCenter_Position = bossMapPos;
+    //                        posArr[bossMapPos.z, bossMapPos.x].distance = posArr[pos.z, pos.x].distance + 1;
+    //                        posArr[bossMapPos.z, bossMapPos.x].mapType = "Single";
 
-                            bossMapPosition = bossMapPos;
-                            selectBossMapStatus = true;
+    //                        bossMapPosition = bossMapPos;
+    //                        selectBossMapStatus = true;
 
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
+    //                        break;
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
 
     //// 방의 배열을 초기화
     //public void RealaseMapPos()
