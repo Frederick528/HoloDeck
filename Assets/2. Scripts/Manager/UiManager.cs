@@ -11,6 +11,7 @@ public class UiManager : MonoBehaviour
     [SerializeField] List<GameObject> battleUi;
     [SerializeField] TextMeshProUGUI topHealthText;     // TMP텍스트로 변경가능성있음
     [SerializeField] TextMeshProUGUI turnEndButtonText;
+    [SerializeField] GameObject map;
 
 
     private void Awake() => instance = this;
@@ -36,5 +37,9 @@ public class UiManager : MonoBehaviour
             turnEndButtonText.text = "Turn End";
         else
             turnEndButtonText.text = "Enemy's Turn";
+    }
+    public void LookMap()
+    {
+        map.SetActive(!map.activeSelf);
     }
 }

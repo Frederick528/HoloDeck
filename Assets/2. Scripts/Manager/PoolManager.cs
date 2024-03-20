@@ -10,12 +10,16 @@ public class PoolManager : MonoBehaviour
     public int defaultCapacity = 10;
     //public int maxPoolSize = 10;
     public GameObject cardPrefab;
+    public GameObject mapPrefab;
 
     [SerializeField] Transform cardSpawnPoint;
     [SerializeField] Transform deck;
+
+    [SerializeField] Transform map;
     //[SerializeField] Transform HandCard;
 
-    public IObjectPool<GameObject> Pool { get; private set; }
+    public IObjectPool<GameObject> CardPool { get; private set; }
+    public IObjectPool<GameObject> MapPool { get; private set; }
 
     private void Awake()
     {
@@ -30,23 +34,33 @@ public class PoolManager : MonoBehaviour
 
     private void Init()
     {
-        Pool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool,
+        MapPool = new ObjectPool<GameObject>(CreateMapPooledItem, OnTakeFromPool, OnReturnedToPool,
+        OnDestroyPoolObject, true, defaultCapacity/*, maxPoolSize*/);
+        CardPool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool,
         OnDestroyPoolObject, true, defaultCapacity/*, maxPoolSize*/);
 
         // 미리 오브젝트 생성 해놓기
         for (int i = 0; i < defaultCapacity; i++)
         {
             Card card = CreatePooledItem().GetComponent<Card>();
-            card.Pool.Release(card.gameObject);
+            card.CardRelease();
+            Map map = CreatePooledItem().GetComponent<Map>();
+            map.MapRelease();
         }
     }
 
     // 생성
     private GameObject CreatePooledItem()
     {
-        GameObject poolGo = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, deck);
-        poolGo.GetComponent<Card>().Pool = this.Pool;
-        return poolGo;
+        GameObject cardPoolGo = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, deck);
+        cardPoolGo.GetComponent<Card>().CardPool = this.CardPool;
+        return cardPoolGo;
+    }
+    private GameObject CreateMapPooledItem()
+    {
+        GameObject mapPoolGo = Instantiate(mapPrefab, Vector3.one * 0.5f, Quaternion.identity, map);
+        mapPoolGo.GetComponent<Map>().MapPool = this.MapPool;
+        return mapPoolGo;
     }
 
     // 사용

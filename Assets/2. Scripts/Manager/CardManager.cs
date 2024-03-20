@@ -118,7 +118,7 @@ public class CardManager : MonoBehaviour
 
     void AddDeck(CardData cardData, EAddDeck eAddDeck)     // 덱에 카드를 추가할 때 사용, 핸드로 카드를 가져올 때는 AddCard 함수 사용.
     {
-        GameObject cardObject = PoolManager.instance.Pool.Get();
+        GameObject cardObject = PoolManager.instance.CardPool.Get();
             /*Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, Deck);*/
         Card setCard = cardObject.GetComponent<Card>();
 
@@ -199,7 +199,7 @@ public class CardManager : MonoBehaviour
         }
         //foreach (Card card in MainCardDeck)
         //{
-        //    card.Pool.Release(card.gameObject);
+        //    card.CardPool.Release(card.gameObject);
         //}
         //MainCardDeck.Clear();
 
@@ -344,7 +344,7 @@ public class CardManager : MonoBehaviour
         //foreach (Card dummyCard in CardDummy)
         //{
         //    dummyCard.block = false;
-        //    dummyCard.Pool.Release(dummyCard.gameObject);
+        //    dummyCard.CardPool.Release(dummyCard.gameObject);
         //}
     }
 

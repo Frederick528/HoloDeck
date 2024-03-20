@@ -18,7 +18,9 @@ public class MapInfo
     public string mapType;
 
     // 현재 방(개별)의 위치
-    public Vector3Int center_Position;
+    public Vector3Int array_Position;
+    // transform Pos
+    public Vector3Int transform_Position;
     //public Vector3Int parent_Position;
     //public Vector3 mergeCenter_Position;
 

@@ -75,6 +75,10 @@ public class GameManager : MonoBehaviour
                     break; 
             }
         }
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            UiManager.instance.LookMap();
+        }
 #endif
     }
 }

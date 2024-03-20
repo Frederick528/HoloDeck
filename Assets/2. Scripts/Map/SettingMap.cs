@@ -36,7 +36,7 @@ public class SettingMap : MonoBehaviour
 
     public MapInfo[,] posArr;                       // 방 좌표에 대한 2차원 배열
 
-    public List<GameObject> map;
+    public List<Map> map;
 
     Queue<Vector3Int> queue = new();
 
@@ -59,16 +59,17 @@ public class SettingMap : MonoBehaviour
         startMapPosition = new Vector3Int(maxDistance, maxDistance, 0);                        // 시작 좌표
 
         posArr[startMapPosition.x, startMapPosition.y] = AddSingleMap(new MapInfo(), startMapPosition, "Single");
-        posArr[startMapPosition.x, startMapPosition.y].distance = 0;
-        validMapList.Add(posArr[startMapPosition.x, startMapPosition.y]);
-        availableMapList.Add(posArr[startMapPosition.x, startMapPosition.y]);
+        //posArr[startMapPosition.x, startMapPosition.y].distance = 0;
+        //validMapList.Add(posArr[startMapPosition.x, startMapPosition.y]);
+        //availableMapList.Add(posArr[startMapPosition.x, startMapPosition.y]);
 
         while (!MapCountCheck())
         {
+            print("SS");
             int randMapIdx = Random.Range(0, availableMapList.Count - 1);
 
-            Vector3Int position = new Vector3Int(availableMapList[randMapIdx].center_Position.x, availableMapList[randMapIdx].center_Position.y, 0);
-            MakeMapArray(position);
+            Vector3Int arrPosition = new Vector3Int(availableMapList[randMapIdx].array_Position.x, availableMapList[randMapIdx].array_Position.y, 0);
+            MakeMapArray(arrPosition);
         }
         FindMapDistanceQueue(startMapPosition);
 
@@ -86,21 +87,25 @@ public class SettingMap : MonoBehaviour
 
     public void CreateBossMap()
     {
-        map.Find(x => x.transform.position == (validMapList[^1].center_Position - startMapPosition)).GetComponent<SpriteRenderer>().color = Color.red;
+        map.Find(x => x.transform.position == (validMapList[^1].transform_Position)).GetComponent<SpriteRenderer>().color = Color.red;
     }
 
-    public MapInfo AddSingleMap(MapInfo Map, Vector3Int pos, string name)
+    public MapInfo AddSingleMap(MapInfo map, Vector3Int pos, string name)
     {
-        MapInfo single = Map;
-        single.mapID = name + "(" + pos.x + ", " + pos.y + ", " + pos.z + ")";
-        single.mapName = name;
-        single.center_Position = pos;
+        //MapInfo single = Map;
+        map.mapID = name + "(" + pos.x + ", " + pos.y + ", " + pos.z + ")";
+        map.mapName = name;
+        map.array_Position = pos;
+        map.transform_Position = pos - startMapPosition;
         //single.parent_Position = pos;
-        single.mapType = "Single";
-        single.isValidMap = true;
-        single.isCheck = false;
+        map.mapType = "Single";
+        map.isValidMap = true;
+        map.isCheck = false;
 
-        return single;
+        validMapList.Add(map);
+        availableMapList.Add(map);
+
+        return map;
     }
 
     // 시작 방에서 해당 방까지의 거리 계산
@@ -203,12 +208,12 @@ public class SettingMap : MonoBehaviour
     //        if (!selectBossMapStatus)
     //        {
     //            int setLIstCnt = idx;
-    //            Vector3Int pos = validMapList[setLIstCnt].center_Position;
+    //            Vector3Int pos = validMapList[setLIstCnt].array_Position;
 
     //            for (int i = 0; i < direction4.Count; i++)
     //            {
     //                selectBossMapStatus = false;
-    //                Vector3Int bossMapPos = posArr[pos.z, pos.x].center_Position + direction4[i];
+    //                Vector3Int bossMapPos = posArr[pos.z, pos.x].array_Position + direction4[i];
 
     //                if (PossibleArr(bossMapPos))
     //                {
@@ -217,7 +222,7 @@ public class SettingMap : MonoBehaviour
     //                    {
     //                        posArr[bossMapPos.z, bossMapPos.x].mapName = "Boss";
     //                        posArr[bossMapPos.z, bossMapPos.x].isValidMap = true;
-    //                        posArr[bossMapPos.z, bossMapPos.x].center_Position = bossMapPos;
+    //                        posArr[bossMapPos.z, bossMapPos.x].array_Position = bossMapPos;
     //                        //posArr[bossMapPos.z, bossMapPos.x].parent_Position = bossMapPos;
     //                        //posArr[bossMapPos.z, bossMapPos.x].mergeCenter_Position = bossMapPos;
     //                        posArr[bossMapPos.z, bossMapPos.x].distance = posArr[pos.z, pos.x].distance + 1;
@@ -278,7 +283,7 @@ public class SettingMap : MonoBehaviour
         //            Vector3Int tmpArrayPosition = new Vector3Int(i, 0, j);
 
         //            posArr[j, i] = SingleMap(posArr[j, i], posArr[j, i].mapName);
-        //            posArr[j, i].center_Position = tmpArrayPosition - startMapPosition;
+        //            posArr[j, i].array_Position = tmpArrayPosition - startMapPosition;
         //            //posArr[j, i].parent_Position = posArr[j, i].parent_Position - startMapPosition;
         //            //posArr[j, i].mergeCenter_Position = posArr[j, i].mergeCenter_Position - startMapPosition;
 
@@ -289,18 +294,26 @@ public class SettingMap : MonoBehaviour
         //validMapCount = validMapList.Count;
 
 
-        foreach (GameObject mapObject in map)
-            mapObject.SetActive(false);
+        foreach (Map mapObject in map)
+            mapObject.MapRelease();
 
-        for (int i = 0; i < validMapList.Count; i++)
+        foreach (MapInfo validMap in validMapList)
         {
-            map[i].SetActive(true);
-            map[i].transform.GetChild(0).GetComponent<TextMeshPro>().text = validMapList[i].distance.ToString();
-            Vector3 mapPos;
-            mapPos = validMapList[i].center_Position - startMapPosition;
-            //map[i].transform.position = new Vector3(mapPos.x, mapPos.z, 0);
-            map[i].transform.position = mapPos;
+            GameObject mapObject = PoolManager.instance.MapPool.Get();
+            mapObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = validMap.distance.ToString();
+            mapObject.transform.position = validMap.transform_Position;
+            map.Add(mapObject.GetComponent<Map>());
         }
+
+        //for (int i = 0; i < validMapList.Count; i++)
+        //{
+        //    map[i].SetActive(true);
+        //    map[i].transform.GetChild(0).GetComponent<TextMeshPro>().text = validMapList[i].distance.ToString();
+        //    Vector3 mapPos;
+        //    mapPos = validMapList[i].array_Position - startMapPosition;
+        //    //map[i].transform.position = new Vector3(mapPos.x, mapPos.z, 0);
+        //    map[i].transform.position = mapPos;
+        //}
 
     }
     //public void AddMapLIst()
@@ -322,9 +335,10 @@ public class SettingMap : MonoBehaviour
     public MapInfo SingleMap(MapInfo pos, string name)
     {
         MapInfo single = pos;
-        single.mapID = name + "(" + pos.center_Position.x + ", " + pos.center_Position.y + ", " + pos.center_Position.z + ")";
+        single.mapID = name + "(" + pos.array_Position.x + ", " + pos.array_Position.y + ", " + pos.array_Position.z + ")";
         single.mapName = name;
-        single.center_Position = pos.center_Position;
+        single.array_Position = pos.array_Position;
+        single.transform_Position = pos.array_Position - startMapPosition;
         //single.mergeCenter_Position = pos.mergeCenter_Position;
         single.mapType = pos.mapType;
         single.distance = pos.distance;
@@ -357,52 +371,57 @@ public class SettingMap : MonoBehaviour
             }
         }
         else
+        {
+            posArr[pos.x, pos.y].haveDirect.Remove(move);
+            if (posArr[pos.x, pos.y].haveDirect.Count == 0)
+                availableMapList.Remove(posArr[pos.x, pos.y]);
             return false;
-        posArr[next.x, next.y] = new MapInfo();
+        }
+        //posArr[next.x, next.y] = new MapInfo();
         return true;
     }
 
-    public int AroundMapCount(Vector3Int pos)
-    {
-        int count = 0;
+    //public int AroundMapCount(Vector3Int pos)
+    //{
+    //    int count = 0;
 
-        // LEFT
-        if ((0 <= (pos.x - 1) && (pos.x - 1) < (maxDistance * 2 + 1)))
-        {
-            if (posArr[pos.z, pos.x - 1].isValidMap)
-            {
-                count += 1;
-            }
-        }
+    //    // LEFT
+    //    if ((0 <= (pos.x - 1) && (pos.x - 1) < (maxDistance * 2 + 1)))
+    //    {
+    //        if (posArr[pos.z, pos.x - 1].isValidMap)
+    //        {
+    //            count += 1;
+    //        }
+    //    }
 
-        // RIGHT
-        if ((0 <= (pos.x + 1) && (pos.x + 1) < (maxDistance * 2 + 1)))
-        {
-            if (posArr[pos.z, pos.x + 1].isValidMap)
-            {
-                count += 1;
-            }
-        }
+    //    // RIGHT
+    //    if ((0 <= (pos.x + 1) && (pos.x + 1) < (maxDistance * 2 + 1)))
+    //    {
+    //        if (posArr[pos.z, pos.x + 1].isValidMap)
+    //        {
+    //            count += 1;
+    //        }
+    //    }
 
-        // TOP
-        if ((0 <= (pos.z - 1) && (pos.z - 1) < (maxDistance * 2 + 1)))
-        {
-            if (posArr[pos.z - 1, pos.x].isValidMap)
-            {
-                count += 1;
-            }
-        }
-        // DOWN
-        if ((0 <= (pos.z + 1) && (pos.z + 1) < (maxDistance * 2 + 1)))
-        {
-            if (posArr[pos.z + 1, pos.x].isValidMap)
-            {
-                count += 1;
-            }
-        }
+    //    // TOP
+    //    if ((0 <= (pos.z - 1) && (pos.z - 1) < (maxDistance * 2 + 1)))
+    //    {
+    //        if (posArr[pos.z - 1, pos.x].isValidMap)
+    //        {
+    //            count += 1;
+    //        }
+    //    }
+    //    // DOWN
+    //    if ((0 <= (pos.z + 1) && (pos.z + 1) < (maxDistance * 2 + 1)))
+    //    {
+    //        if (posArr[pos.z + 1, pos.x].isValidMap)
+    //        {
+    //            count += 1;
+    //        }
+    //    }
 
-        return count;
-    }
+    //    return count;
+    //}
 
 
 
@@ -411,7 +430,6 @@ public class SettingMap : MonoBehaviour
     {
         //if (start.x >= (maxDistance * 2 + 1) || start.z >= (maxDistance * 2 + 1))
         //    return;
-
         //Vector3Int direction = direction4[Random.Range(0, direction4.Count)];
         Vector3Int direction = posArr[start.x, start.y].haveDirect[Random.Range(0, posArr[start.x, start.y].haveDirect.Count)];
 
@@ -426,21 +444,20 @@ public class SettingMap : MonoBehaviour
         //currCenterPos = new Vector3((float)(startPosition.x + otherPosition.x) / 2, 0, (float)(startPosition.z + otherPosition.z) / 2);
 
         Vector3Int move = start + direction;
+
+        posArr[move.x, move.y] = AddSingleMap(new MapInfo(), move, "Single");
         posArr[start.x, start.y].haveDirect.Remove(direction);
 
-        posArr[move.x, move.y].isValidMap = true;
-        posArr[move.x, move.y].mapName = "Room";
-        posArr[move.x, move.y].mapType = "Single";
-        posArr[move.x, move.y].center_Position = start + direction;
-        posArr[move.x, move.y].isCheck = false;
+        //posArr[move.x, move.y].isValidMap = true;
+        //posArr[move.x, move.y].mapID = $"map ({move.x}, {move.y})";
+        //posArr[move.x, move.y].mapName = "Room";
+        //posArr[move.x, move.y].mapType = "Single";
+        //posArr[move.x, move.y].array_Position = start + direction;
+        //posArr[move.x, move.y].isCheck = false;
+
         //posArr[move.z, move.x].parent_Position = start + direction;
         //posArr[move.z, move.x].mergeCenter_Position = start + currCenterPos;
         posArr[move.x, move.y].haveDirect.Remove(-direction);
-        posArr[move.x, move.y].distance = -1;
-        posArr[move.x, move.y] = SingleMap(posArr[move.x, move.y], posArr[move.x, move.y].mapName);
-
-        validMapList.Add(posArr[move.x, move.y]);
-        availableMapList.Add(posArr[move.x, move.y]);
 
         if (posArr[start.x, start.y].haveDirect.Count == 0)
             availableMapList.Remove(posArr[start.x, start.y]);

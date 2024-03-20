@@ -17,7 +17,7 @@ using UnityEngine.Pool;
 //}
 public class Card : MonoBehaviour
 {
-    public IObjectPool<GameObject> Pool { get; set; }
+    public IObjectPool<GameObject> CardPool { get; set; }
 
     [SerializeField] SpriteRenderer card;
     [SerializeField] SpriteRenderer character;
@@ -164,7 +164,7 @@ public class Card : MonoBehaviour
 
     public void CardRelease()
     {
-        Pool.Release(this.gameObject);
+        CardPool.Release(this.gameObject);
     }
 
 }

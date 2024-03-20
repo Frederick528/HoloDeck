@@ -56,7 +56,7 @@
 
 //    public void LoadMap(MapInfo settingMap)
 //    {
-//        if (DoesMapExist(settingMap.center_Position.x, settingMap.center_Position.y, settingMap.center_Position.z))
+//        if (DoesMapExist(settingMap.array_Position.x, settingMap.array_Position.y, settingMap.array_Position.z))
 //        {
 //            return;
 //        }
@@ -66,9 +66,9 @@
 //        GameObject room = Instantiate(MapPrefabsSet.Instance.roomPrefabs[roomPreName]);
 
 //        room.transform.position = new Vector3(
-//                    (settingMap.center_Position.x * room.transform.GetComponent<Map>().Width),
-//                     settingMap.center_Position.y,
-//                    (settingMap.center_Position.z * room.transform.GetComponent<Map>().Height)
+//                    (settingMap.array_Position.x * room.transform.GetComponent<Map>().Width),
+//                     settingMap.array_Position.y,
+//                    (settingMap.array_Position.z * room.transform.GetComponent<Map>().Height)
 //        );
 
 //        room.transform.localScale = new Vector3(
@@ -76,8 +76,8 @@
 //                     1,
 //                    (room.transform.GetComponent<Map>().Height / 10)
 //        );
-//        room.transform.GetComponent<Map>().center_Position = settingMap.center_Position;
-//        room.name = globalMapTitle + "-" + settingMap.roomName + " " + settingMap.center_Position.x + ", " + settingMap.center_Position.z;
+//        room.transform.GetComponent<Map>().array_Position = settingMap.array_Position;
+//        room.name = globalMapTitle + "-" + settingMap.roomName + " " + settingMap.array_Position.x + ", " + settingMap.array_Position.z;
 
 //        room.transform.GetComponent<Map>().roomName = settingMap.roomName;
 //        room.transform.GetComponent<Map>().roomType = settingMap.roomType;
@@ -94,14 +94,14 @@
 //    // 빈 데이터 혹은 삭제된 방이 있을 경우를 위한 예외처리
 //    public bool DoesMapExist(int x, int y, int z)
 //    {
-//        return loadedMaps.Find(item => item.center_Position.x == x && item.center_Position.y == y && item.center_Position.z == z) != null;
+//        return loadedMaps.Find(item => item.array_Position.x == x && item.array_Position.y == y && item.array_Position.z == z) != null;
 //    }
 
 //    //    
 //    public Map FindMap(int x, int y, int z)
 //    {
 //        // List.Find : item 변수 조건에 맞는 Map을 찾아 반환
-//        return loadedMaps.Find(item => item.center_Position.x == x && item.center_Position.y == y && item.center_Position.z == z);
+//        return loadedMaps.Find(item => item.array_Position.x == x && item.array_Position.y == y && item.array_Position.z == z);
 //    }
 
 //    // 해당 Map에서 Player가 있는 방을 반환
