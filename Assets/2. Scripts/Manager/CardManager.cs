@@ -165,20 +165,22 @@ public class CardManager : MonoBehaviour
     {
         UiManager.instance.SetupBattleUi(true);
         SetupDrawDeck(true);
-        TurnManager.OnAddCard += async () =>
-            await AddCard();
-        // TurnManager.OnAddCard += async () =>
-        //     await AddCard();
+        //TurnManager.OnAddCard += async () =>
+        //    await AddCard();
+        TurnManager.OnAddCard += () =>
+            AddCard().Forget();
         TurnManager.Instance.StartTurnTask().Forget();
     }
     public void EndBattle()         // 리팩토링 필요해보임.
     {
         UiManager.instance.SetupBattleUi(false);
         TurnManager.OnAddCard -= TurnManager.OnAddCard;
+        //TurnManager.OnAddCard -= () =>
+        //    AddCard().Forget();
         //TurnManager.OnAddCard = null;
         // TurnManager.OnAddCard -= async () =>
         //     await AddCard();
-        TurnManager.Instance.EndTurnTask().Forget();
+        TurnManager.Instance.EndTurnTask(true).Forget();
         DrawDeck.Clear();
         CardDummy.Clear();
         //HandCard.Clear();

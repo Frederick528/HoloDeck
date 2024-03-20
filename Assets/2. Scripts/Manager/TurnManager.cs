@@ -92,13 +92,13 @@ public class TurnManager : MonoBehaviour
         isLoading = false;
     }
 
-    public async UniTask EndTurnTask()
+    public async UniTask EndTurnTask(bool endBattle = false)
     {
         myTurn = false;
         UiManager.instance.ChangeTurnButtonText(myTurn);
         await CardManager.Instance.ThrowAwayCard();
         isLoading = true;
-        EnemyTurnTask().Forget();
+        EnemyTurnTask(endBattle).Forget();
     }
     //public async UniTask MyTurnTask(int drawCardValue)  // 나중에 스타트턴이랑 합칠 예정
     //{
@@ -107,8 +107,10 @@ public class TurnManager : MonoBehaviour
     //    //isLoading = false;    // 위 코드에서 isLoading = false로 변경
     //    //myTurn = true;
     //}
-    public async UniTask EnemyTurnTask()
+    public async UniTask EnemyTurnTask(bool endBattle)
     {
+        if (endBattle)
+            return;
         // 적 턴 시작, 적 코드 작성
         // 적 턴이 끝나면 내 턴 시작.
         // 적 턴은 비동기함수 하나로 통침.
