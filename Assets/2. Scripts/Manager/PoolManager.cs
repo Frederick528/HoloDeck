@@ -36,21 +36,21 @@ public class PoolManager : MonoBehaviour
     {
         MapPool = new ObjectPool<GameObject>(CreateMapPooledItem, OnTakeFromPool, OnReturnedToPool,
         OnDestroyPoolObject, true, defaultCapacity/*, maxPoolSize*/);
-        CardPool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool,
+        CardPool = new ObjectPool<GameObject>(CreateCardPooledItem, OnTakeFromPool, OnReturnedToPool,
         OnDestroyPoolObject, true, defaultCapacity/*, maxPoolSize*/);
 
         // 미리 오브젝트 생성 해놓기
         for (int i = 0; i < defaultCapacity; i++)
         {
-            Card card = CreatePooledItem().GetComponent<Card>();
-            card.CardRelease();
-            Map map = CreatePooledItem().GetComponent<Map>();
+            Map map = CreateMapPooledItem().GetComponent<Map>();
             map.MapRelease();
+            Card card = CreateCardPooledItem().GetComponent<Card>();
+            card.CardRelease();
         }
     }
 
     // 생성
-    private GameObject CreatePooledItem()
+    private GameObject CreateCardPooledItem()
     {
         GameObject cardPoolGo = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, deck);
         cardPoolGo.GetComponent<Card>().CardPool = this.CardPool;
