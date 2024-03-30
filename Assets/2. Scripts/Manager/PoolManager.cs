@@ -19,7 +19,7 @@ public class PoolManager : MonoBehaviour
     //[SerializeField] Transform HandCard;
 
     public IObjectPool<GameObject> CardPool { get; private set; }
-    public IObjectPool<GameObject> MapPool { get; private set; }
+    //public IObjectPool<GameObject> MapPool { get; private set; }
 
     private void Awake()
     {
@@ -34,16 +34,16 @@ public class PoolManager : MonoBehaviour
 
     private void Init()
     {
-        MapPool = new ObjectPool<GameObject>(CreateMapPooledItem, OnTakeFromPool, OnReturnedToPool,
-        OnDestroyPoolObject, true, defaultCapacity/*, maxPoolSize*/);
+        //MapPool = new ObjectPool<GameObject>(CreateMapPooledItem, OnTakeFromPool, OnReturnedToPool,
+        //OnDestroyPoolObject, true, defaultCapacity/*, maxPoolSize*/);
         CardPool = new ObjectPool<GameObject>(CreateCardPooledItem, OnTakeFromPool, OnReturnedToPool,
         OnDestroyPoolObject, true, defaultCapacity/*, maxPoolSize*/);
 
         // 미리 오브젝트 생성 해놓기
         for (int i = 0; i < defaultCapacity; i++)
         {
-            Map map = CreateMapPooledItem().GetComponent<Map>();
-            map.MapRelease();
+            //Map map = CreateMapPooledItem().GetComponent<Map>();
+            //map.MapRelease();
             Card card = CreateCardPooledItem().GetComponent<Card>();
             card.CardRelease();
         }
@@ -56,12 +56,12 @@ public class PoolManager : MonoBehaviour
         cardPoolGo.GetComponent<Card>().CardPool = this.CardPool;
         return cardPoolGo;
     }
-    private GameObject CreateMapPooledItem()
-    {
-        GameObject mapPoolGo = Instantiate(mapPrefab, Vector3.one * 0.5f, Quaternion.identity, map);
-        mapPoolGo.GetComponent<Map>().MapPool = this.MapPool;
-        return mapPoolGo;
-    }
+    //private GameObject CreateMapPooledItem()
+    //{
+    //    GameObject mapPoolGo = Instantiate(mapPrefab, Vector3.one * 0.5f, Quaternion.identity, map);
+    //    mapPoolGo.GetComponent<Map>().MapPool = this.MapPool;
+    //    return mapPoolGo;
+    //}
 
     // 사용
     private void OnTakeFromPool(GameObject poolGo)

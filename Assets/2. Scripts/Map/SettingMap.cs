@@ -5,6 +5,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SettingMap : MonoBehaviour
 {
@@ -36,9 +37,14 @@ public class SettingMap : MonoBehaviour
 
     public MapInfo[,] posArr;                       // 방 좌표에 대한 2차원 배열
 
-    public List<Map> map;
+    public List<Map> maps;
 
     Queue<Vector3Int> queue = new();
+
+    int mapDistance = 100;
+
+    [SerializeField] GameObject mapPrefab;
+    [SerializeField] Transform mapCanvas;
 
     private void Start()
     {
@@ -65,7 +71,6 @@ public class SettingMap : MonoBehaviour
 
         while (!MapCountCheck())
         {
-            print("SS");
             int randMapIdx = Random.Range(0, availableMapList.Count - 1);
 
             Vector3Int arrPosition = new Vector3Int(availableMapList[randMapIdx].array_Position.x, availableMapList[randMapIdx].array_Position.y, 0);
@@ -76,7 +81,9 @@ public class SettingMap : MonoBehaviour
         SortMapList(validMapList);
 
         SetupPosition();
-        
+
+        SetupVisited();
+
         CreateBossMap();
         //FindMapDistance(startMapPosition, startMapPosition);
 
@@ -87,7 +94,8 @@ public class SettingMap : MonoBehaviour
 
     public void CreateBossMap()
     {
-        map.Find(x => x.transform.position == (validMapList[^1].transform_Position)).GetComponent<SpriteRenderer>().color = Color.red;
+        maps[^1].GetComponent<Image>().color = Color.red;
+        //map.Find(x => x.transform.position == (validMapList[^1].transform_Position * mapDistance)).GetComponent<Image>().color = Color.red;
     }
 
     public MapInfo AddSingleMap(MapInfo map, Vector3Int pos, string name)
@@ -96,7 +104,7 @@ public class SettingMap : MonoBehaviour
         map.mapID = name + "(" + pos.x + ", " + pos.y + ", " + pos.z + ")";
         map.mapName = name;
         map.array_Position = pos;
-        map.transform_Position = pos - startMapPosition;
+        map.transform_Position = pos * mapDistance - startMapPosition * mapDistance + new Vector3Int(Screen.width/2, Screen.height/2);
         //single.parent_Position = pos;
         map.mapType = "Single";
         map.isValidMap = true;
@@ -293,17 +301,22 @@ public class SettingMap : MonoBehaviour
         //}
         //validMapCount = validMapList.Count;
 
-
-        foreach (Map mapObject in map)
-            mapObject.MapRelease();
-
-        foreach (MapInfo validMap in validMapList)
+        foreach (MapInfo validMap in validMapList)  // 코드 무조건 수정해야 함. Map에 있는 버튼을 못 받아와서 따로 버튼을 Get해줌.
         {
-            GameObject mapObject = PoolManager.instance.MapPool.Get();
-            mapObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = validMap.distance.ToString();
+            GameObject mapObject = Instantiate(mapPrefab, Vector3.one * 0.5f, Quaternion.identity, mapCanvas);/*PoolManager.instance.MapPool.Get();*/
+            //mapObject.transform.GetComponentInChildren<TextMeshProUGUI>().text = validMap.distance.ToString();
+            mapObject.GetComponent<Image>().color = Color.black;
             mapObject.transform.position = validMap.transform_Position;
-            map.Add(mapObject.GetComponent<Map>());
+            Map map = mapObject.GetComponent<Map>();
+            map.GetComponent<Button>().interactable = false;
+            maps.Add(map);
+            mapObject.gameObject.SetActive(false);
         }
+        //foreach (Map mapObject in maps)
+        //    mapObject.gameObject.SetActive(false); /*MapRelease();*/
+        maps[0].gameObject.SetActive(true);
+        maps[0].GetComponent<Image>().color= Color.white;
+        maps[0].GetComponent<Button>().interactable = true;
 
         //for (int i = 0; i < validMapList.Count; i++)
         //{
@@ -315,6 +328,10 @@ public class SettingMap : MonoBehaviour
         //    map[i].transform.position = mapPos;
         //}
 
+    }
+    void SetupVisited()
+    {
+        maps[0].gameObject.SetActive(true);
     }
     //public void AddMapLIst()
     //{
@@ -338,7 +355,7 @@ public class SettingMap : MonoBehaviour
         single.mapID = name + "(" + pos.array_Position.x + ", " + pos.array_Position.y + ", " + pos.array_Position.z + ")";
         single.mapName = name;
         single.array_Position = pos.array_Position;
-        single.transform_Position = pos.array_Position - startMapPosition;
+        single.transform_Position = pos.array_Position - startMapPosition + new Vector3Int(Screen.width/2, Screen.height/2);
         //single.mergeCenter_Position = pos.mergeCenter_Position;
         single.mapType = pos.mapType;
         single.distance = pos.distance;

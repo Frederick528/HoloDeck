@@ -51,3 +51,6 @@ TagManager:
   - name: Arrow
     uniqueID: 2445369295
     locked: 0
+  - name: Map
+    uniqueID: 3316035405
+    locked: 0

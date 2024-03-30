@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.UI;
 
 public class Map : MonoBehaviour
 {
@@ -12,59 +13,35 @@ public class Map : MonoBehaviour
     //public GameObject currMap;
     public bool visited = false;
 
-    public IObjectPool<GameObject> MapPool { get; set; }
+    //public IObjectPool<GameObject> MapPool { get; set; }
+    public Button btn;
 
-    //void Start()
+    void Start()
+    {
+        btn = GetComponent<Button>();
+        btn.onClick.AddListener(() =>
+        {
+            print("SS");
+        });
+    }
+
+    //public void VisitiedMap(bool boolean, bool currBool)
     //{
-    //    transform.gameObject.SetActive(false);
-    //    //floorMap.GetComponentInChildren<MeshRenderer>().material = MapController.Instance.DefaultBackground;
-
-    //    minimapWallset(false);
+    //    transform.gameObject.SetActive(boolean);
+    //    if (currBool)
+    //    {
+    //        visited = true;
+    //    }
     //}
 
-    public void VisitiedMap(bool boolean, bool currBool)
-    {
-        transform.gameObject.SetActive(boolean);
-        if (currBool)
-        {
-            visited = true;
-        }
+    //public void VisitiedCurrMap()
+    //{
+    //    GetComponent<Image>().color = Color.white;
+    //    visited = true;
+    //}
 
-        minimapWallset(true);
-    }
-
-    public void VisitiedCurrMap(bool boolean)
-    {
-        // 4. 현재 위치 밝게 처리
-        //if (boolean)
-        //    floorMap.GetComponentInChildren<MeshRenderer>().material = MapController.Instance.currMaterial;
-        //else
-        //{
-        //    if (visited)
-        //        floorMap.GetComponentInChildren<MeshRenderer>().material = MapController.Instance.VisitedBack;
-        //    else
-        //        floorMap.GetComponentInChildren<MeshRenderer>().material = MapController.Instance.DefaultBackground;
-        //}
-    }
-
-    public void minimapWallset(bool boolean)
-    {
-        //if (visited || boolean)
-        //    for (int i = 0; i < walls.Count; i++)
-        //    {
-        //        if (walls[i].isSetUp)
-        //            walls[i].transform.gameObject.SetActive(boolean);
-        //    }
-        //else
-        //    for (int i = 0; i < walls.Count; i++)
-        //    {
-        //        if (walls[i].isSetUp)
-        //            walls[i].transform.gameObject.SetActive(boolean);
-        //    }
-    }
-
-    public void MapRelease()
-    {
-        MapPool.Release(this.gameObject);
-    }
+    //public void MapRelease()
+    //{
+    //    MapPool.Release(this.gameObject);
+    //}
 }
