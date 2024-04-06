@@ -136,6 +136,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   visited: 0
+  btn: {fileID: 5990977913093158265}
+  img: {fileID: 6599197913873770386}
 --- !u!1 &8293779811856995564
 GameObject:
   m_ObjectHideFlags: 0

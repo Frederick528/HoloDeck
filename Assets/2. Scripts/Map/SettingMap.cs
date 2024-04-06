@@ -94,7 +94,8 @@ public class SettingMap : MonoBehaviour
 
     public void CreateBossMap()
     {
-        maps[^1].GetComponent<Image>().color = Color.red;
+        maps[^1].GetComponentInChildren<TMP_Text>().text = "Boss";
+        maps[^1].GetComponentInChildren<TMP_Text>().color = Color.red;
         //map.Find(x => x.transform.position == (validMapList[^1].transform_Position * mapDistance)).GetComponent<Image>().color = Color.red;
     }
 
@@ -107,7 +108,7 @@ public class SettingMap : MonoBehaviour
         map.transform_Position = pos * mapDistance - startMapPosition * mapDistance + new Vector3Int(Screen.width/2, Screen.height/2);
         //single.parent_Position = pos;
         map.mapType = "Single";
-        map.isValidMap = true;
+        //map.isValidMap = true;
         map.isCheck = false;
 
         validMapList.Add(map);
@@ -301,22 +302,45 @@ public class SettingMap : MonoBehaviour
         //}
         //validMapCount = validMapList.Count;
 
-        foreach (MapInfo validMap in validMapList)  // 코드 무조건 수정해야 함. Map에 있는 버튼을 못 받아와서 따로 버튼을 Get해줌.
+        foreach (MapInfo validMap in validMapList)
         {
             GameObject mapObject = Instantiate(mapPrefab, Vector3.one * 0.5f, Quaternion.identity, mapCanvas);/*PoolManager.instance.MapPool.Get();*/
-            //mapObject.transform.GetComponentInChildren<TextMeshProUGUI>().text = validMap.distance.ToString();
-            mapObject.GetComponent<Image>().color = Color.black;
-            mapObject.transform.position = validMap.transform_Position;
             Map map = mapObject.GetComponent<Map>();
-            map.GetComponent<Button>().interactable = false;
+            //mapObject.transform.GetComponentInChildren<TextMeshProUGUI>().text = validMap.distance.ToString();
+            mapObject.transform.position = validMap.transform_Position;
+
+            //map.img.color = Color.black;
+            map.btn.interactable = false;
+            map.array_Position = validMap.array_Position;
+
             maps.Add(map);
             mapObject.gameObject.SetActive(false);
+        }
+        foreach (Map map in maps)
+        {
+            map.btn.onClick.AddListener(() =>
+            {
+                map.SeeMap(direction4, maps);
+            });
         }
         //foreach (Map mapObject in maps)
         //    mapObject.gameObject.SetActive(false); /*MapRelease();*/
         maps[0].gameObject.SetActive(true);
-        maps[0].GetComponent<Image>().color= Color.white;
-        maps[0].GetComponent<Button>().interactable = true;
+        //maps[0].img.color = Color.white;
+        maps[0].btn.interactable = true;
+        maps[0].SeeMap(direction4, maps);
+        maps[0].ClearMap();
+        //foreach (Vector3Int direction in direction4)
+        //{
+        //    Map connectMap = maps.Find(x => x.array_Position == maps[0].array_Position + direction);
+        //    if (connectMap != null)
+        //    {
+        //        connectMap.gameObject.SetActive(true);
+        //        connectMap.img.color = Color.white;
+        //        connectMap.btn.interactable = true;
+        //    }
+        //}
+        
 
         //for (int i = 0; i < validMapList.Count; i++)
         //{
