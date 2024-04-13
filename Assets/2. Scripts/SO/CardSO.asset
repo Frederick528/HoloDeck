@@ -33,7 +33,7 @@ MonoBehaviour:
     enhancedDraw: 0
     descript: This is Ame
     enhancedDescript: This is Ame
-    sprite: {fileID: 21300000, guid: a36507a88e8baf94cb7bc81524278354, type: 3}
+    sprite: {fileID: 0}
     cardTag: 0
   - name: Ninomae Ina'nis
     id: 1001
@@ -49,7 +49,7 @@ MonoBehaviour:
     enhancedDraw: 2
     descript: This is Tako
     enhancedDescript: This is Wah
-    sprite: {fileID: 21300000, guid: 910ba3ea31cf8dd42865664190476d5b, type: 3}
+    sprite: {fileID: 0}
     cardTag: 0
   - name: Takanashi Kiara
     id: 1002
@@ -65,7 +65,7 @@ MonoBehaviour:
     enhancedDraw: 0
     descript: This is Kikkeriki
     enhancedDescript: This is Kikkeriki
-    sprite: {fileID: 21300000, guid: ed69be0c0c59de34e84a6662f8398a9a, type: 3}
+    sprite: {fileID: 0}
     cardTag: 0
   - name: Calliope Mori
     id: 2000
@@ -81,7 +81,7 @@ MonoBehaviour:
     enhancedDraw: 0
     descript: This is Reaper
     enhancedDescript: This is Rapper
-    sprite: {fileID: 21300000, guid: 45f608585a0131145be8357f19a324bc, type: 3}
+    sprite: {fileID: 0}
     cardTag: 1
   - name: Gawr Gura
     id: 3000
@@ -97,5 +97,5 @@ MonoBehaviour:
     enhancedDraw: 3
     descript: This is Shark
     enhancedDescript: This is Shark
-    sprite: {fileID: 21300000, guid: 1749defbb8d59764e86d80ba6df959b8, type: 3}
+    sprite: {fileID: 0}
     cardTag: 2

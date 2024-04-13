@@ -3559,7 +3559,7 @@ MonoBehaviour:
   - {fileID: 1013614009}
   topHealthText: {fileID: 371180963}
   turnEndButtonText: {fileID: 509701314}
-  map: {fileID: 504136876}
+  map: {fileID: 1702222677}
 --- !u!1 &1748855195
 GameObject:
   m_ObjectHideFlags: 0
