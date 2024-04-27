@@ -13,7 +13,7 @@ public class Battle : MonoBehaviour
     //}
     void Start()
     {
-        CardManager.Instance.StartBattle();
+        TurnManager.Instance.StartBattle();
     }
 
     // Update is called once per frame

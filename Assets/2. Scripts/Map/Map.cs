@@ -10,24 +10,30 @@ public class Map : MonoBehaviour
     //public GameObject floorMap;
     //public bool visitedMap = false;
 
-    //public GameObject currMap;
+    //public GameObject currStage;
     public bool visited = false;
+    public bool cleared = false;
 
     //public IObjectPool<GameObject> MapPool { get; set; }
     public Button btn;
     public Image img;
     public Vector3Int array_Position;
-    public List<Map> aroundMap = new();
+    public List<Map> aroundStage = new();
+
+    public IStage
+        stage;
+
+    public StageContext stageContext;
 
 
-    public void SeeMap(List<Vector3Int> direction4, List<Map> maps)
+    public void LookingStage(List<Vector3Int> direction4, List<Map> maps)
     {
         foreach (Vector3Int direction in direction4)
         {
             Map connectMap = maps.Find(x => x.array_Position == array_Position + direction);
             if (connectMap != null)
             {
-                aroundMap.Add(connectMap);
+                aroundStage.Add(connectMap);
                 connectMap.gameObject.SetActive(true);
                 //connectMap.img.color = Color.white;
                 //connectMap.btn.interactable = true;
@@ -36,11 +42,18 @@ public class Map : MonoBehaviour
     }
     public void ClearMap()
     {
-        foreach (Map map in aroundMap)
+        img.color = Color.green;
+        cleared = true;
+        foreach (Map map in aroundStage)
         {
             //map.img.color = Color.white;
             map.btn.interactable = true;
         }
+    }
+
+    public void EnterStage()
+    {
+
     }
 
     //public void VisitiedMap(bool boolean, bool currBool)

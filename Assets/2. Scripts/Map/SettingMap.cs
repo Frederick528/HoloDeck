@@ -4,6 +4,7 @@ using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -38,6 +39,10 @@ public class SettingMap : MonoBehaviour
     public MapInfo[,] posArr;                       // 방 좌표에 대한 2차원 배열
 
     public List<Map> maps;
+
+    public static Map currStage;        // 치트를 위해 잠시 static으로 변경. 나중에 변경해야 함.
+
+    public static bool canMove;         // 치트를 위해 잠시 static으로 변경. 나중에 변경해야 함.
 
     Queue<Vector3Int> queue = new();
 
@@ -84,7 +89,7 @@ public class SettingMap : MonoBehaviour
 
         SetupVisited();
 
-        CreateBossMap();
+        SettingStage();
         //FindMapDistance(startMapPosition, startMapPosition);
 
         //// 특수방 BOSS 방 생성
@@ -92,13 +97,98 @@ public class SettingMap : MonoBehaviour
 
     }
 
-    public void CreateBossMap()
+    public void SettingStage()
     {
-        maps[^1].GetComponentInChildren<TMP_Text>().text = "Boss";
-        maps[^1].GetComponentInChildren<TMP_Text>().color = Color.red;
+        List<Map> stageList = maps.ToList();
+        int index;
+
+        // Start
+        stageList[0].stage = stageList[0].AddComponent<StartStage>();
+        SetClickStage(stageList[0]);
+        stageList[0].GetComponentInChildren<TMP_Text>().text = "Start";
+        stageList[0].GetComponentInChildren<TMP_Text>().color = Color.gray;
+        stageList.RemoveAt(0);
+
+        // Boss
+        stageList[^1].stage = stageList[^1].AddComponent<BossStage>();
+        SetClickStage(stageList[^1]);
+        stageList[^1].GetComponentInChildren<TMP_Text>().text = "Boss";
+        stageList[^1].GetComponentInChildren<TMP_Text>().color = Color.red;
+        stageList.RemoveAt(stageList.Count-1);
         //map.Find(x => x.transform.position == (validMapList[^1].transform_Position * mapDistance)).GetComponent<Image>().color = Color.red;
+
+        // Treasure
+        index = Random.Range(0, stageList.Count);
+        stageList[index].stage = stageList[index].AddComponent<TreasureStage>();
+        SetClickStage(stageList[index]);
+        stageList[index].GetComponentInChildren<TMP_Text>().text = "Treasure";
+        stageList[index].GetComponentInChildren<TMP_Text>().color = Color.yellow;
+        stageList.RemoveAt(index);
+
+        // Shop
+        index = Random.Range(0, stageList.Count);
+        stageList[index].stage = stageList[index].AddComponent<ShopStage>();
+        SetClickStage(stageList[index]);
+        stageList[index].GetComponentInChildren<TMP_Text>().text = "Shop";
+        stageList[index].GetComponentInChildren<TMP_Text>().color = Color.blue;
+        stageList.RemoveAt(index);
+
+        foreach (Map stage in stageList)
+        {
+            int percent = Random.Range(0, 4);
+            switch (percent)
+            {
+                case 0:
+                case 1:
+                case 2:
+                    stage.stage = stage.AddComponent<EnemyStage>();
+                    SetClickStage(stage);
+                    stage.GetComponentInChildren<TMP_Text>().text = "Enemy";
+                    break;
+
+                case 3:
+                    stage.stage = stage.AddComponent<EventStage>();
+                    SetClickStage(stage);
+                    stage.GetComponentInChildren<TMP_Text>().text = "Event";
+                    stage.GetComponentInChildren<TMP_Text>().color = Color.cyan;
+                    break;
+            }
+        }
+
+
     }
 
+    void SetClickStage(Map stage)
+    {
+        stage.stageContext = new StageContext(stage);
+
+        stage.btn.onClick.AddListener(() =>
+        {
+            if (!canMove)
+                return;
+            else if (!stage.cleared)
+            {
+                canMove = false;
+                stage.LookingStage(direction4, maps);
+            }
+
+            // 방 입장 코드 추가
+            stage.stageContext.Transition(stage.stage);
+
+            currStage = stage;
+
+            // 이동 모션 코드 추가
+
+            UiManager.instance.LookMap();
+        });
+    }
+
+
+    public static void ClearStage()
+    {
+        currStage.ClearMap();
+        canMove = true;
+    }
     public MapInfo AddSingleMap(MapInfo map, Vector3Int pos, string name)
     {
         //MapInfo single = Map;
@@ -316,20 +406,33 @@ public class SettingMap : MonoBehaviour
             maps.Add(map);
             mapObject.gameObject.SetActive(false);
         }
-        foreach (Map map in maps)
-        {
-            map.btn.onClick.AddListener(() =>
-            {
-                map.SeeMap(direction4, maps);
-            });
-        }
+        //foreach (Map map in maps)
+        //{
+        //    map.btn.onClick.AddListener(() =>
+        //    {
+        //        if (!canMove)
+        //            return;
+        //        else if (map.cleared)
+        //        {
+        //            currStage = map;
+        //            UiManager.instance.LookMap();
+        //            return;
+        //        }
+        //        canMove = false;
+        //        map.LookingStage(direction4, maps);
+
+        //        currStage = map;
+
+        //        // 이동 모션 코드 추가
+        //        // 방 입장 코드 추가
+
+        //        UiManager.instance.LookMap();
+        //    });
+        //}
+
         //foreach (Map mapObject in maps)
         //    mapObject.gameObject.SetActive(false); /*MapRelease();*/
-        maps[0].gameObject.SetActive(true);
-        //maps[0].img.color = Color.white;
-        maps[0].btn.interactable = true;
-        maps[0].SeeMap(direction4, maps);
-        maps[0].ClearMap();
+        
         //foreach (Vector3Int direction in direction4)
         //{
         //    Map connectMap = maps.Find(x => x.array_Position == maps[0].array_Position + direction);
@@ -355,7 +458,13 @@ public class SettingMap : MonoBehaviour
     }
     void SetupVisited()
     {
-        maps[0].gameObject.SetActive(true);
+        // 시작 장소 활성화 코드 5줄
+        currStage = maps[0];
+        currStage.gameObject.SetActive(true);
+        //currStage.img.color = Color.white;
+        currStage.btn.interactable = true;
+        currStage.LookingStage(direction4, maps);
+        ClearStage();
     }
     //public void AddMapLIst()
     //{

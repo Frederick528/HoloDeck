@@ -73,10 +73,10 @@ public class CardManager : MonoBehaviour
         {
             AddDeck(cardSO.cards[0], EAddDeck.Draw);
         }
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            AddDeck(cardSO.cards[1], EAddDeck.Draw);
-        }
+        //if (Input.GetKeyDown(KeyCode.C))
+        //{
+        //    AddDeck(cardSO.cards[1], EAddDeck.Draw);
+        //}
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             AddDeck(cardSO.cards[0], EAddDeck.Dummy);
@@ -93,11 +93,11 @@ public class CardManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha8))
         {
-            EndBattle();
+            TurnManager.Instance.EndBattle();
         }
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
-            StartBattle();
+            TurnManager.Instance.StartBattle();
         }
     }
 
@@ -161,26 +161,8 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    public void StartBattle()       // 배틀 시작시, 덱 섞기 및 액션 추가
+    public void ClearCard()
     {
-        UiManager.instance.SetupBattleUi(true);
-        SetupDrawDeck(true);
-        //TurnManager.OnAddCard += async () =>
-        //    await AddCard();
-        TurnManager.OnAddCard += () =>
-            AddCard().Forget();
-        TurnManager.Instance.StartTurnTask().Forget();
-    }
-    public void EndBattle()         // 리팩토링 필요해보임.
-    {
-        UiManager.instance.SetupBattleUi(false);
-        TurnManager.OnAddCard -= TurnManager.OnAddCard;
-        //TurnManager.OnAddCard -= () =>
-        //    AddCard().Forget();
-        //TurnManager.OnAddCard = null;
-        // TurnManager.OnAddCard -= async () =>
-        //     await AddCard();
-        TurnManager.Instance.EndTurnTask(true).Forget();
         DrawDeck.Clear();
         CardDummy.Clear();
         //HandCard.Clear();
@@ -197,19 +179,8 @@ public class CardManager : MonoBehaviour
             //cardObject.GetComponent<Card>().CardRelease();
 
         }
-        //foreach (Card card in MainCardDeck)
-        //{
-        //    card.CardPool.Release(card.gameObject);
-        //}
-        //MainCardDeck.Clear();
-
-        //foreach (Card card in MainCardDeck)
-        //{
-        //    AddDeck(card.Data, EAddDeck.Main);
-        //}
-
     }
-    void SetupDrawDeck(bool start = false)  // 드로우덱 섞기(start가 true일 경우, 메인덱에서 가져옴. false일 경우, 카드더미에서 가져옴.)
+    public void SetupDrawDeck(bool start = false)  // 드로우덱 섞기(start가 true일 경우, 메인덱에서 가져옴. false일 경우, 카드더미에서 가져옴.)
     {
         if (!start)
         {

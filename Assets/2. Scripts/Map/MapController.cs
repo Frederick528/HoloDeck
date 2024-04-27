@@ -12,7 +12,7 @@
 //    public string globalMapTitle = "Basement";
 
 //    public MapInfo currentLoadMapData;
-//    public Map currMap;
+//    public Map currStage;
 
 //    public List<Map> loadedMaps = new List<Map>();
 
@@ -107,9 +107,9 @@
 //    // 해당 Map에서 Player가 있는 방을 반환
 //    public void OnPlayerEnterMap(Map room)
 //    {
-//        CameraFollow.Instance.currMap = room;
+//        CameraFollow.Instance.currStage = room;
 
-//        currMap = room;
+//        currStage = room;
 
 //        for (int i = 0; i < loadedMaps.Count; i++)
 //        {

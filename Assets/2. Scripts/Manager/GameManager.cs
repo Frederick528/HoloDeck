@@ -79,6 +79,10 @@ public class GameManager : MonoBehaviour
         {
             UiManager.instance.LookMap();
         }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            SettingMap.ClearStage();
+        }
 #endif
     }
 }

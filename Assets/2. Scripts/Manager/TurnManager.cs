@@ -94,12 +94,14 @@ public class TurnManager : MonoBehaviour
 
     public async UniTask EndTurnTask(bool endBattle = false)
     {
-        if (endBattle)
-            return;
         myTurn = false;
         UiManager.instance.ChangeTurnButtonText(myTurn);
         await CardManager.Instance.ThrowAwayCard();
         isLoading = true;
+
+        if (endBattle)
+            return;
+
         EnemyTurnTask().Forget();
     }
     //public async UniTask MyTurnTask(int drawCardValue)  // 나중에 스타트턴이랑 합칠 예정
@@ -117,5 +119,56 @@ public class TurnManager : MonoBehaviour
         await UniTask.Delay(TimeSpan.FromSeconds(1f));  // 지금은 적 코드가 없으므로 대신 딜레이 코드 추가
         StartTurnTask().Forget();
         // await MyTurnTask(4);
+    }
+
+    public void StartBattle()       // 배틀 시작시, 덱 섞기 및 액션 추가
+    {
+        UiManager.instance.SetupBattleUi(true);
+        CardManager.Instance.SetupDrawDeck(true);
+        //TurnManager.OnAddCard += async () =>
+        //    await AddCard();
+        OnAddCard += () =>
+            CardManager.Instance.AddCard().Forget();
+        StartTurnTask().Forget();
+    }
+
+    public void EndBattle()         // 리팩토링 필요해보임.
+    {
+        UiManager.instance.SetupBattleUi(false);
+        OnAddCard = null;
+        //TurnManager.OnAddCard -= () =>
+        //    AddCard().Forget();
+        //TurnManager.OnAddCard = null;
+        // TurnManager.OnAddCard -= async () =>
+        //     await AddCard();
+        EndTurnTask(true).Forget();
+        //DrawDeck.Clear();
+        //CardDummy.Clear();
+        ////HandCard.Clear();
+        CardManager.Instance.ClearCard();
+        //for (int i = 0; i < Deck.childCount; i++)
+        //{
+        //    if (!Deck.GetChild(i).gameObject.activeSelf)
+        //        continue;
+        //    Card card = Deck.GetComponentsInChildren<Card>(true)[i];
+        //    //GameObject cardObject = Deck.GetChild(i).gameObject;
+        //    if (MainDeck.Contains(card))
+        //        continue;
+        //    card.CardRelease();
+        //    //MainCardDeck.Add(card);
+        //    //cardObject.GetComponent<Card>().CardRelease();
+
+        //}
+        //foreach (Card card in MainCardDeck)
+        //{
+        //    card.CardPool.Release(card.gameObject);
+        //}
+        //MainCardDeck.Clear();
+
+        //foreach (Card card in MainCardDeck)
+        //{
+        //    AddDeck(card.Data, EAddDeck.Main);
+        //}
+
     }
 }
