@@ -10,7 +10,13 @@ public class EnemyStage : MonoBehaviour, IStage
     {
         if (!_map)
             _map = map;
-        print("Enemy");
+        if (!map.cleared)
+        {
+            TurnManager.Instance.StartBattle();
+            EnemyManager.Instance.SpawnEnemy(15, 0);
+            EnemyManager.Instance.SpawnEnemy(15, 1);
+        }
+            print("Enemy");
     }
 
 }

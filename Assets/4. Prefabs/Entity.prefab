@@ -102,6 +102,7 @@ MonoBehaviour:
   entitySprite: {fileID: 8247430017888918520}
   slider: {fileID: 8247430019299966740}
   hpText: {fileID: 8247430018585589262}
+  col2d: {fileID: 8247430017888918522}
 --- !u!61 &8247430017888918522
 BoxCollider2D:
   m_ObjectHideFlags: 0

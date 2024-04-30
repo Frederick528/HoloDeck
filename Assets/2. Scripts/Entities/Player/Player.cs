@@ -32,10 +32,9 @@ public class Player : Entity
     public override void TakeDamage(int dmg)
     {
         base.TakeDamage(dmg);
-        if (curHp <= 0)
-        {
-            print("플레이어가 죽었습니다.");
-        }
+        if (curHp > 0)
+            return;
+        print("플레이어가 죽었습니다.");
     }
 
     public void ChangeHoloValue(int chargeOrUse)

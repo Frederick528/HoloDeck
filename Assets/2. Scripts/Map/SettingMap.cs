@@ -186,6 +186,7 @@ public class SettingMap : MonoBehaviour
 
     public static void ClearStage()
     {
+        TurnManager.Instance.EndBattle();
         currStage.ClearMap();
         canMove = true;
     }

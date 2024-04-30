@@ -51,10 +51,10 @@ public class Map : MonoBehaviour
         }
     }
 
-    public void EnterStage()
-    {
+    //public void EnterStage()
+    //{
 
-    }
+    //}
 
     //public void VisitiedMap(bool boolean, bool currBool)
     //{

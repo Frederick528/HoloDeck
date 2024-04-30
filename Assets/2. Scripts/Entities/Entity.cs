@@ -10,6 +10,7 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] protected SpriteRenderer entitySprite;
     [SerializeField] protected Slider slider;   // 나중에 이미지로 변경
     [SerializeField] protected TMP_Text hpText;
+    [SerializeField] protected BoxCollider2D col2d;
 
     protected Animator animator;
     protected int maxHp;
@@ -17,6 +18,7 @@ public abstract class Entity : MonoBehaviour
 
     public virtual void SetupEntity(int hp)
     {
+        //col2d = GetComponent<BoxCollider2D>();
         maxHp = hp;
         curHp = maxHp;
         slider.maxValue = maxHp;
@@ -27,15 +29,15 @@ public abstract class Entity : MonoBehaviour
     {
         curHp -= dmg;
         //animator.Play("Hit", 0);  // 타격 당하는 애니메이션 실행
-        if (curHp <= 0)
-        {
-            DieAnimation().Forget();
-        }
+        if (curHp > 0)
+            return;
+        col2d.enabled = false;
+        DieAnimation().Forget();
     }
     public virtual async UniTaskVoid DieAnimation()
     {
         //animator.Play("Die", 0);  // 사망 애니메이션 실행
-        await UniTask.Delay(10);
+        await UniTask.Delay(100);
         //await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1);
         Destroy(gameObject);
     }
