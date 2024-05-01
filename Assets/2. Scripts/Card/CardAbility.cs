@@ -40,11 +40,8 @@ public class CardAbility
                 cardAction += ContinuousDrawSkill;
                 break;
             case 1001:
-                cardAction += (card) =>
-                {
-                    SingleAttack(card);
-                    DrawSkill(card);
-                };
+                cardAction += SingleAttack;
+                cardAction += DrawSkill;
                 break;
             case 1002:
                 cardAction += (card) => ContinuousSinglettack(card).Forget();

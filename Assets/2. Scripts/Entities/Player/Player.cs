@@ -16,12 +16,6 @@ public class Player : Entity
         SetupPlayer(80, 3);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     void SetupPlayer(int hp, int startHoloValue)
     {
         base.SetupEntity(hp);
@@ -29,12 +23,12 @@ public class Player : Entity
         curHolo = maxHolo;
         holoValue.text = $"{curHolo} / {maxHolo}";
     }
-    public override void TakeDamage(int dmg)
+    public override bool TakeDamage(int dmg)
     {
-        base.TakeDamage(dmg);
-        if (curHp > 0)
-            return;
+        if (!base.TakeDamage(dmg))
+            return false;
         print("플레이어가 죽었습니다.");
+        return true;
     }
 
     public void ChangeHoloValue(int chargeOrUse)

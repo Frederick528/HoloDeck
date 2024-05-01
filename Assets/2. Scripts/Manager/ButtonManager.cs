@@ -20,6 +20,6 @@ public class ButtonManager : MonoBehaviour
 
     public void TurnEndButtonInvert(bool state)
     {
-        turnEndButton.GetComponent<Button>().interactable = state;
+        turnEndButton.interactable = state;
     }
 }

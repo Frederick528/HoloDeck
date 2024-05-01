@@ -583,7 +583,7 @@ public class CardManager : MonoBehaviour
 
     void SetCardState()
     {
-        if (TurnManager.Instance.isLoading)
+        if (TurnManager.Instance.isLoading.Value)
             cardState = ECardState.Nothing;
 
         else if (!TurnManager.Instance.myTurn)

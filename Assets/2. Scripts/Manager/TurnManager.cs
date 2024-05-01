@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,7 +16,7 @@ public class TurnManager : MonoBehaviour
 
     public static Action OnAddCard;
 
-    public bool isLoading;
+    public ReactiveProperty<bool> isLoading = new();
     public bool myTurn;
 
     enum TurnType { My, Enemy }
@@ -25,14 +26,26 @@ public class TurnManager : MonoBehaviour
     //    turnType = TurnType.My;
     //}
 
+    private void Start()
+    {
+        isLoading.Subscribe(isOn =>
+        {
+            ButtonManager.instance.TurnEndButtonInvert(!isOn);
+        });
+    }
+
+    public void SetBool(bool isOn)
+    {
+        isLoading.Value = isOn;
+    }
+
     public async UniTask StartTurnTask()        // 시작 뽑기 (수정 필요: OnAddCard가 액션이라 Invoke 사용시, await가 작용하지 않아 카드덱이 0개일 경우, 0.5초 뒤에 뽑는 것이 적용되지 않음.)
     {
         //GameSetup();
         GameManager.Instance.player.ChangeHoloValue(GameManager.Instance.player.maxHolo);
         myTurn = true;
-        ButtonManager.instance.TurnEndButtonInvert(true);
         UiManager.instance.ChangeTurnButtonText(myTurn);
-        isLoading = true;
+        SetBool(true);
         for (int i = 0; i < startCardCount; i++)
         {
             if (CardManager.Instance.HandCard.Count >= 10)
@@ -49,13 +62,13 @@ public class TurnManager : MonoBehaviour
 
             await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.CardAlignmentDelay));        // OnAddCard에서 진행되는 await 따로 실행
         }
-        isLoading = false;
+        SetBool(false);
     }
     public async UniTask DrawTask() // 단일 뽑기 (수정 필요: OnAddCard에 있는 await가 작용하지 않아서, 카드덱이 0개일 경우, 0.5초 뒤에 뽑는 것이 적용되지 않음.)
     {
         if (CardManager.Instance.HandCard.Count >= 10)
             return;
-        isLoading = true;
+        SetBool(true);
 
         if (CardManager.Instance.DrawDeck.Count == 0)
         {
@@ -68,11 +81,11 @@ public class TurnManager : MonoBehaviour
         }
 
         await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.CardAlignmentDelay));        // OnAddCard에서 진행되는 await 따로 실행
-        isLoading = false;
+        SetBool(false);
     }
     public async UniTask DrawTask(int drawCardCount)    // 여러 개 뽑기 (수정 필요: 단일 뽑기와 똑같은 문제)
     {
-        isLoading = true;
+        SetBool(true);
         for (int i = 0; i < drawCardCount; i++)
         {
             if (CardManager.Instance.HandCard.Count >= 10)
@@ -89,7 +102,7 @@ public class TurnManager : MonoBehaviour
 
             await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.CardAlignmentDelay));        // OnAddCard에서 진행되는 await 따로 실행
         }
-        isLoading = false;
+        SetBool(false);
     }
 
     public async UniTask EndTurnTask(bool endBattle = false)
@@ -97,7 +110,7 @@ public class TurnManager : MonoBehaviour
         myTurn = false;
         UiManager.instance.ChangeTurnButtonText(myTurn);
         await CardManager.Instance.ThrowAwayCard();
-        isLoading = true;
+        SetBool(true);
 
         if (endBattle)
             return;

@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,26 +14,39 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] protected BoxCollider2D col2d;
 
     protected Animator animator;
-    protected int maxHp;
-    protected int curHp;
+    protected ReactiveProperty<int> maxHp = new();
+    protected ReactiveProperty<int> curHp = new();
 
+    private void Awake()    // start로 할 경우, Subscribe가 실행되지 않음.
+    {
+        maxHp.Subscribe(hp =>
+        {
+            slider.maxValue = hp;
+        });
+        curHp.Subscribe(hp =>
+        {
+            slider.value = hp;
+            hpText.text = hp.ToString();
+        });
+    }
     public virtual void SetupEntity(int hp)
     {
         //col2d = GetComponent<BoxCollider2D>();
-        maxHp = hp;
-        curHp = maxHp;
-        slider.maxValue = maxHp;
-        slider.value = maxHp;
-        hpText.text = maxHp.ToString();
+        maxHp.Value = hp;
+        curHp.Value = maxHp.Value;
+        //slider.value = maxHp.Value;
+        //hpText.text = maxHp.ToString();
     }
-    public virtual void TakeDamage(int dmg)
+    public virtual bool TakeDamage(int dmg)
     {
-        curHp -= dmg;
+        curHp.Value -= dmg;
         //animator.Play("Hit", 0);  // 타격 당하는 애니메이션 실행
-        if (curHp > 0)
-            return;
+        if (curHp.Value > 0)
+            return false;
         col2d.enabled = false;
+        slider.gameObject.SetActive(false);
         DieAnimation().Forget();
+        return true;
     }
     public virtual async UniTaskVoid DieAnimation()
     {
@@ -43,12 +57,7 @@ public abstract class Entity : MonoBehaviour
     }
     public virtual void Heal(int amount)
     {
-        curHp = Mathf.Clamp(curHp + amount, 0, maxHp);
+        curHp.Value = Mathf.Clamp(curHp.Value + amount, 0, maxHp.Value);
     }
 
-    private void Update()   // (수정할 것) UniRX로 변경
-    {
-        slider.value = curHp;
-        hpText.text = curHp.ToString();
-    }
 }
