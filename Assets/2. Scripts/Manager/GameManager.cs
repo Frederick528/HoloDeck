@@ -7,9 +7,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     [SerializeField] bool fastMode;
-    public bool throwAwayCard;
-
-    public int num;
 
     public Player player;
 
@@ -38,16 +35,17 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         UiManager.instance.SetupGameUi(true);
-        if (fastMode)
-        {
-            Time.timeScale = 2f;
-        }
-        else { Time.timeScale = 1; }
         //SoundManager.instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     }
 
     void Update()
     {
+        if (fastMode)
+        {
+            Time.timeScale = 2f;
+        }
+        else { Time.timeScale = 1; }
+
 #if UNITY_EDITOR
         //if (Input.GetKeyDown(KeyCode.Space))
         //{
