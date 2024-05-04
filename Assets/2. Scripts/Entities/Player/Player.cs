@@ -13,12 +13,13 @@ public class Player : Entity
     // Start is called before the first frame update
     void Start()
     {
+        EntitySubScribe();
         SetupPlayer(80, 3);
     }
 
     void SetupPlayer(int hp, int startHoloValue)
     {
-        base.SetupEntity(hp);
+        SetupEntity(hp);
         maxHolo = startHoloValue;
         curHolo = maxHolo;
         holoValue.text = $"{curHolo} / {maxHolo}";

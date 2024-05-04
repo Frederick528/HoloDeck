@@ -1021,37 +1021,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &504136876
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 504136877}
-  m_Layer: 0
-  m_Name: Map
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &504136877
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 504136876}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 10
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &509701312
 GameObject:
   m_ObjectHideFlags: 0
@@ -1348,7 +1317,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   turnType: 0
   startCardCount: 5
-  isLoading: 0
+  isLoading:
+    value: 0
   myTurn: 1
 --- !u!1 &589534111
 GameObject:
@@ -2533,6 +2503,7 @@ MonoBehaviour:
   entitySprite: {fileID: 1013614011}
   slider: {fileID: 11716170}
   hpText: {fileID: 1560616348}
+  col2d: {fileID: 0}
   holoValue: {fileID: 1363634624}
 --- !u!1 &1091828536
 GameObject:
@@ -2797,7 +2768,7 @@ MonoBehaviour:
   mapPrefab: {fileID: 455166975700979651, guid: 8a245d32c37b69749b43e424568e4955, type: 3}
   cardSpawnPoint: {fileID: 511494626}
   deck: {fileID: 205385172}
-  map: {fileID: 504136877}
+  map: {fileID: 0}
 --- !u!1 &1189286150
 GameObject:
   m_ObjectHideFlags: 0
@@ -3500,7 +3471,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3605,8 +3576,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fastMode: 0
-  throwAwayCard: 0
-  num: 0
   player: {fileID: 1013614013}
 --- !u!1 &1780255929
 GameObject:

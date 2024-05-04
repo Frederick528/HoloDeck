@@ -23,7 +23,7 @@ public class ReadSpreadSheet : MonoBehaviour
     public static async UniTaskVoid LoadData(/*string address, string range, ulong sheetID*/)
     {
         using (UnityWebRequest www =
-            UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:O&gid=0"))
+            UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:O&gid=1809511646"))  // 0 = 원본, 1809511646 = 테스트용
             //UnityWebRequest.Get($"{address}/export?format=csv&range={range}&gid={sheetID}"))
         {
             await www.SendWebRequest();
@@ -40,7 +40,7 @@ public class ReadSpreadSheet : MonoBehaviour
     async UniTaskVoid LoadCardSO()
     {
         using (UnityWebRequest www =
-            UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:O&gid=0"))
+            UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:O&gid=1809511646"))  // 0 = 원본, 1809511646 = 테스트용
         //UnityWebRequest.Get($"{address}/export?format=csv&range={range}&gid={sheetID}"))
         {
             await www.SendWebRequest();

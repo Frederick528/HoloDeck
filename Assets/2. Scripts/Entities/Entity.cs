@@ -17,18 +17,18 @@ public abstract class Entity : MonoBehaviour
     protected ReactiveProperty<int> maxHp = new();
     protected ReactiveProperty<int> curHp = new();
 
-    private void Awake()    // start로 할 경우, Subscribe가 실행되지 않음.
-    {
-        maxHp.Subscribe(hp =>
-        {
-            slider.maxValue = hp;
-        });
-        curHp.Subscribe(hp =>
-        {
-            slider.value = hp;
-            hpText.text = hp.ToString();
-        });
-    }
+    //private void Awake()    // start로 할 경우, Subscribe가 실행되지 않음. Awake로 하면 위험할 것 같아서 일단 함수로 빼고 자식 오브젝트에서 Start로 호출
+    //{
+    //    maxHp.Subscribe(hp =>
+    //    {
+    //        slider.maxValue = hp;
+    //    });
+    //    curHp.Subscribe(hp =>
+    //    {
+    //        slider.value = hp;
+    //        hpText.text = hp.ToString();
+    //    });
+    //}
     public virtual void SetupEntity(int hp)
     {
         //col2d = GetComponent<BoxCollider2D>();
@@ -58,6 +58,19 @@ public abstract class Entity : MonoBehaviour
     public virtual void Heal(int amount)
     {
         curHp.Value = Mathf.Clamp(curHp.Value + amount, 0, maxHp.Value);
+    }
+
+    protected void EntitySubScribe()
+    {
+        maxHp.Subscribe(hp =>
+        {
+            slider.maxValue = hp;
+        });
+        curHp.Subscribe(hp =>
+        {
+            slider.value = hp;
+            hpText.text = hp.ToString();
+        });
     }
 
 }

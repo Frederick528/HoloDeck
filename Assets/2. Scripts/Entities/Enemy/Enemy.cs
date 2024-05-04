@@ -7,6 +7,7 @@ public class Enemy : Entity
 {
     Arrow arrow;
     int spawnPos;
+
     void OnMouseEnter()
     {
         if (CardManager.Instance.isSingleTarget)
@@ -35,7 +36,7 @@ public class Enemy : Entity
 
     public void SetupEnemy(int hp, int pos)
     {
-        base.SetupEntity(hp);
+        SetupEntity(hp);
         spawnPos = pos;
     }
 
@@ -82,6 +83,7 @@ public class Enemy : Entity
     // Start is called before the first frame update
     void Start()
     {
+        EntitySubScribe();
         arrow = FindObjectOfType<Arrow>(true);
     }
 }

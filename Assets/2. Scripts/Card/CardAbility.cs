@@ -46,7 +46,7 @@ public class CardAbility
             case 1002:
                 cardAction += (card) => ContinuousSinglettack(card).Forget();
                 break;
-            default: cardAction += null; break;
+            default: cardAction = null; break;
         }
         return cardAction;
     }
