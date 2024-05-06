@@ -36,6 +36,8 @@ public class CardManager : MonoBehaviour
     
     [SerializeField] GameObject cardPrefab;
 
+    [SerializeField] Transform cardRewardPanel;
+
     Card selectCard;
     bool draggable;
     bool isUseCard;
@@ -101,7 +103,13 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    CardData FindCardInCardSO(int id)   // id 값으로 카드데이터 가져오기
+    public void RewardCard(int[] reward)
+    {
+        for (int i = 0; i < 3; ++i)
+            cardRewardPanel.GetChild(i).GetComponent<UICard>().Setup(cardSO.cards[reward[i]]);
+    }
+
+    public CardData FindCardInCardSO(int id)   // id 값으로 카드데이터 가져오기
     {
         //return cardSO.cards.Find(x => x.id == id);
         return Array.Find(cardSO.cards, x => x.id == id);
@@ -112,8 +120,8 @@ public class CardManager : MonoBehaviour
         for (int i = 0; i < cardSO.cards.Length; i++)
             AddDeck(cardSO.cards[i], EAddDeck.Main);
 
-        AddDeck(FindCardInCardSO(1000), EAddDeck.Main);
-        AddDeck(FindCardInCardSO(1001), EAddDeck.Main);
+        AddDeck(FindCardInCardSO(1000), EAddDeck.Main);     // 이 부분은 제거할 것
+        AddDeck(FindCardInCardSO(1001), EAddDeck.Main);     // 이 부분은 제거할 것
     }
 
     void AddDeck(CardData cardData, EAddDeck eAddDeck)     // 덱에 카드를 추가할 때 사용, 핸드로 카드를 가져올 때는 AddCard 함수 사용.

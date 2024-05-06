@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
-            SettingMap.ClearStage();
+            MapManager.Instance.ClearStage();
         }
 #endif
     }

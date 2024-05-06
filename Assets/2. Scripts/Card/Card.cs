@@ -49,20 +49,21 @@ public class Card : MonoBehaviour
 
     public void Setup(CardData data)
     {
-        Data.name = data.name;
-        Data.id = data.id;
-        Data.cost = data.cost;
-        Data.damage = data.damage;
-        Data.enhancedDamage = data.enhancedDamage;
-        Data.defence = data.defence;
-        Data.enhancedDefence = data.enhancedDefence;
-        Data.count = data.count;
-        Data.enhancedCount = data.enhancedCount;
-        Data.draw = data.draw;
-        Data.enhancedDraw = data.enhancedDraw;
-        Data.descript = data.descript;
-        Data.sprite = data.sprite;
-        Data.cardTag = data.cardTag;
+        Data = data;
+        //Data.name = data.name;
+        //Data.id = data.id;
+        //Data.cost = data.cost;
+        //Data.damage = data.damage;
+        //Data.enhancedDamage = data.enhancedDamage;
+        //Data.defence = data.defence;
+        //Data.enhancedDefence = data.enhancedDefence;
+        //Data.count = data.count;
+        //Data.enhancedCount = data.enhancedCount;
+        //Data.draw = data.draw;
+        //Data.enhancedDraw = data.enhancedDraw;
+        //Data.descript = data.descript;
+        //Data.sprite = data.sprite;
+        //Data.cardTag = data.cardTag;
 
         nameText.text = Data.name;
         costText.text = Data.cost.ToString();

@@ -40,16 +40,13 @@ public class SettingMap : MonoBehaviour
 
     public List<Map> maps;
 
-    public static Map currStage;        // 치트를 위해 잠시 static으로 변경. 나중에 변경해야 함.
-
-    public static bool canMove;         // 치트를 위해 잠시 static으로 변경. 나중에 변경해야 함.
-
     Queue<Vector3Int> queue = new();
 
     int mapDistance = 100;
 
     [SerializeField] GameObject mapPrefab;
     [SerializeField] Transform mapCanvas;
+    [SerializeField] GameObject cardRewardCanvas;
 
     private void Start()
     {
@@ -87,7 +84,7 @@ public class SettingMap : MonoBehaviour
 
         SetupPosition();
 
-        SetupVisited();
+        MapManager.Instance.SetupStart(direction4, maps);
 
         SettingStage();
         //FindMapDistance(startMapPosition, startMapPosition);
@@ -164,18 +161,32 @@ public class SettingMap : MonoBehaviour
 
         stage.btn.onClick.AddListener(() =>
         {
-            if (!canMove)
+            if (!MapManager.Instance.canMove)
                 return;
             else if (!stage.cleared)
             {
-                canMove = false;
+                MapManager.Instance.canMove = false;
                 stage.LookingStage(direction4, maps);
             }
+
+            // 떠나려는 방에 보상이 떴는데, 그 보상을 받지 않고 떠난다면, 잠시 해당 스테이지 보상을 숨김. 
+            if (MapManager.Instance.currStage.rewardBox != -1 && !MapManager.Instance.currStage.rewarded)
+                MapManager.Instance.rewardCanvas.GetChild(MapManager.Instance.currStage.rewardBox).gameObject.SetActive(false);
+
+            // 보상과 상관없이 cardRewardCanvas는 새로운 방에 들어갈 때마다 숨김 처리.
+            cardRewardCanvas.SetActive(false);
 
             // 방 입장 코드 추가
             stage.stageContext.Transition(stage.stage);
 
-            currStage = stage;
+            // 들어간 방에 보상이 떴었는데, 예전에 보상을 받지 않았다면, 그 보상을 다시 시각화함.
+            if (stage.rewardBox != -1 && !stage.rewarded)
+            {
+                MapManager.Instance.rewardCanvas.GetChild(stage.rewardBox).gameObject.SetActive(true);
+                CardManager.Instance.RewardCard(stage.reward);
+            }
+
+            MapManager.Instance.currStage = stage;
 
             // 이동 모션 코드 추가
 
@@ -183,13 +194,6 @@ public class SettingMap : MonoBehaviour
         });
     }
 
-
-    public static void ClearStage()
-    {
-        TurnManager.Instance.EndBattle();
-        currStage.ClearMap();
-        canMove = true;
-    }
     public MapInfo AddSingleMap(MapInfo map, Vector3Int pos, string name)
     {
         //MapInfo single = Map;
@@ -457,16 +461,16 @@ public class SettingMap : MonoBehaviour
         //}
 
     }
-    void SetupVisited()
-    {
-        // 시작 장소 활성화 코드 5줄
-        currStage = maps[0];
-        currStage.gameObject.SetActive(true);
-        //currStage.img.color = Color.white;
-        currStage.btn.interactable = true;
-        currStage.LookingStage(direction4, maps);
-        ClearStage();
-    }
+    //void SetupVisited()
+    //{
+    //    // 시작 장소 활성화 코드 5줄
+    //    GameManager.Instance.currStage = maps[0];
+    //    GameManager.Instance.currStage.gameObject.SetActive(true);
+    //    //currStage.img.color = Color.white;
+    //    GameManager.Instance.currStage.btn.interactable = true;
+    //    GameManager.Instance.currStage.LookingStage(direction4, maps);
+    //    GameManager.Instance.ClearStage();
+    //}
     //public void AddMapLIst()
     //{
     //    validMapList.Clear();

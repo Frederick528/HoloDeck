@@ -50,11 +50,13 @@ public class Enemy : Entity
         for (int i = 0; i < EnemyManager.Instance.enemySpawnPosition.Count; ++i)
         {
             if (!EnemyManager.Instance.enemySpawnPosition[i].gameObject.activeSelf)     // 몬스터가 다 죽어있으면 밑에 if문으로 들어가서 게임이 클리어되고, 한 마리라도 살아있으면 리턴되어 그냥 몬스터만 죽고 끝.
-                return true; // 밑에가 클리어 코드라서 return을 쓰지만, 만약 다른 코드를 추가하게 된다면, return이 아닌 break를 사용할 것
+                return true;
             //spawn++;
         }
         //if (spawn == EnemyManager.Instance.enemySpawnPosition.Count)
-            SettingMap.ClearStage();
+        MapManager.Instance.ClearStage();
+        MapManager.Instance.RewardStage();
+
         return true;
         //await DieAnimation();
         //Destroy(gameObject);
