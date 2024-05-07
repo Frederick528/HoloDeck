@@ -47,7 +47,7 @@ public class SettingMap : MonoBehaviour
     [SerializeField] GameObject mapPrefab;
     [SerializeField] Transform mapCanvas;
     [SerializeField] GameObject cardRewardCanvas;
-
+    [SerializeField] GameObject enlargePanel;
     private void Start()
     {
         creatMapCnt = (int)Mathf.Clamp(creatMapCnt, 1, Mathf.Pow(maxDistance * 2 + 1, 2));
@@ -173,7 +173,8 @@ public class SettingMap : MonoBehaviour
             if (MapManager.Instance.currStage.rewardBox != -1 && !MapManager.Instance.currStage.rewarded)
                 MapManager.Instance.rewardCanvas.GetChild(MapManager.Instance.currStage.rewardBox).gameObject.SetActive(false);
 
-            // 보상과 상관없이 cardRewardCanvas는 새로운 방에 들어갈 때마다 숨김 처리.
+            // 보상과 상관없이 enlargePanel와 cardRewardCanvas는 새로운 방에 들어갈 때마다 숨김 처리.
+            enlargePanel.SetActive(false);
             cardRewardCanvas.SetActive(false);
 
             // 방 입장 코드 추가
@@ -183,7 +184,7 @@ public class SettingMap : MonoBehaviour
             if (stage.rewardBox != -1 && !stage.rewarded)
             {
                 MapManager.Instance.rewardCanvas.GetChild(stage.rewardBox).gameObject.SetActive(true);
-                CardManager.Instance.RewardCard(stage.reward);
+                CardManager.Instance.ShowRewardCard(stage.reward);
             }
 
             MapManager.Instance.currStage = stage;

@@ -8,6 +8,8 @@ public class MapManager : MonoBehaviour
 
     public Transform rewardCanvas;
 
+    public CardData rewardCardData;
+
     public Map currStage;
 
     public bool canMove;
@@ -32,8 +34,17 @@ public class MapManager : MonoBehaviour
         ClearStage();
     }
 
+    // Enemy와 Boss에서 사용되며, 사용시 방 보상 획득 가능
     public void RewardStage()
     {
         currStage.RewardBox();
+    }
+
+    public void RewardedCardBtn()
+    {
+        CardManager.Instance.AddDeck(rewardCardData, EAddDeck.Main);
+        currStage.rewarded = true;
+        currStage.RewardBox();
+        UiManager.instance.LookMap();
     }
 }

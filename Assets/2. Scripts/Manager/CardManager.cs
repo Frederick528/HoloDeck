@@ -45,13 +45,6 @@ public class CardManager : MonoBehaviour
     bool canPush = true;
     enum ECardState { Nothing, CanMouseOver, CanMouseDrag }
 
-    enum EAddDeck { 
-        Main, Draw, Dummy, Hand,
-        MainNDraw, MainNDummy, MainNHand, DrawNHand, DummyNHand,
-        MainNDrawNDummy, MainNDrawNHand, DrawNDummyNHand,
-        MainNDrawNDummyNHand
-    }
-
 
     
     private void Awake() => Instance = this;
@@ -103,7 +96,7 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    public void RewardCard(int[] reward)
+    public void ShowRewardCard(int[] reward)
     {
         for (int i = 0; i < 3; ++i)
             cardRewardPanel.GetChild(i).GetComponent<UICard>().Setup(cardSO.cards[reward[i]]);
@@ -120,11 +113,11 @@ public class CardManager : MonoBehaviour
         for (int i = 0; i < cardSO.cards.Length; i++)
             AddDeck(cardSO.cards[i], EAddDeck.Main);
 
-        AddDeck(FindCardInCardSO(1000), EAddDeck.Main);     // 이 부분은 제거할 것
-        AddDeck(FindCardInCardSO(1001), EAddDeck.Main);     // 이 부분은 제거할 것
+        //AddDeck(FindCardInCardSO(1000), EAddDeck.Main);     // 이 부분은 제거할 것
+        //AddDeck(FindCardInCardSO(1001), EAddDeck.Main);     // 이 부분은 제거할 것
     }
 
-    void AddDeck(CardData cardData, EAddDeck eAddDeck)     // 덱에 카드를 추가할 때 사용, 핸드로 카드를 가져올 때는 AddCard 함수 사용.
+    public void AddDeck(CardData cardData, EAddDeck eAddDeck)     // 덱에 카드를 추가할 때 사용, 핸드로 카드를 가져올 때는 AddCard 함수 사용.
     {
         GameObject cardObject = PoolManager.instance.CardPool.Get();
             /*Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, Deck);*/
@@ -329,14 +322,14 @@ public class CardManager : MonoBehaviour
 
     public async UniTask UsedCard(Card usedCard)
     {
+        usedCard.cardAction?.Invoke(usedCard);
+
         CardDummy.Add(usedCard);
 
         HandCard.Remove(usedCard);
 
         SetOriginOrder();
         CardAlignment();
-        
-        usedCard.cardAction?.Invoke(usedCard);
 
         await usedCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.ThrowAwayCardDelay);
 

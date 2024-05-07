@@ -24,3 +24,11 @@ public class CardUtils
     public static float LoadCardDummyDelay => 0.5f;
     public static float CardAlignmentDelay => 0.3f;
 }
+
+public enum EAddDeck
+{
+    Main, Draw, Dummy, Hand,
+    MainNDraw, MainNDummy, MainNHand, DrawNHand, DummyNHand,
+    MainNDrawNDummy, MainNDrawNHand, DrawNDummyNHand,
+    MainNDrawNDummyNHand
+}

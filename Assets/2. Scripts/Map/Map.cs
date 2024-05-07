@@ -15,8 +15,8 @@ public class Map : MonoBehaviour
     public bool cleared = false;
     public bool rewarded = false;
 
-    public int rewardBox = -1;
-    public int[] reward = new int[3];
+    public int rewardBox { get; private set; } = -1;
+    public int[] reward { get; private set; } = new int[3];
 
     //public IObjectPool<GameObject> MapPool { get; set; }
     public Button btn;
@@ -64,9 +64,12 @@ public class Map : MonoBehaviour
             reward[0] = Random.Range(0, 5);
             reward[1] = Random.Range(0, 5);
             reward[2] = Random.Range(0, 5);
-            CardManager.Instance.RewardCard(reward);
+            CardManager.Instance.ShowRewardCard(reward);
 
         }
+
+        else if (rewardBox != -1 && rewarded)
+            MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(false);
     }
 
     //public void EnterStage()
