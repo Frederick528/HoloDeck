@@ -3028,6 +3028,7 @@ MonoBehaviour:
     enhancedCount: 0
     draw: 0
     enhancedDraw: 0
+    cardUseDelay: 0
     descript: 
     enhancedDescript: 
     sprite: {fileID: 0}
@@ -3602,6 +3603,7 @@ MonoBehaviour:
   mapPrefab: {fileID: 4736686227007241525, guid: f37140b3fee163a4d9242fd1bffa2683, type: 3}
   mapCanvas: {fileID: 1702222681}
   cardRewardCanvas: {fileID: 2083588735}
+  enlargePanel: {fileID: 1972120905}
 --- !u!4 &789025647
 Transform:
   m_ObjectHideFlags: 0
@@ -5970,7 +5972,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1430514158
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6962,7 +6964,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 713989430}
         m_TargetAssemblyTypeName: MapManager, Assembly-CSharp
-        m_MethodName: RewardedStageBtn
+        m_MethodName: RewardedCardBtn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7764,18 +7766,6 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
         m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 713989430}
-        m_TargetAssemblyTypeName: MapManager, Assembly-CSharp
-        m_MethodName: RewardedBackBtn
-        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

@@ -6,6 +6,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using UnityEngine.UI;
 using DG.Tweening;
+using System.Linq;
 
 public class CardManager : MonoBehaviour
 {
@@ -180,23 +181,30 @@ public class CardManager : MonoBehaviour
             //cardObject.GetComponent<Card>().CardRelease();
 
         }
+        //foreach (Card card in MainDeck)
+        //{
+        //    card.transform.DOKill(false);
+        //    card.MoveTransform(new PRS(cardSpawnPoint.position, Quaternion.identity, CardUtils.CardScale), false);
+        //}
     }
     public void SetupDrawDeck(bool start = false)  // 드로우덱 섞기(start가 true일 경우, 메인덱에서 가져옴. false일 경우, 카드더미에서 가져옴.)
     {
         if (!start)
         {
-            foreach (Card card in CardDummy)
-            {
-                DrawDeck.Add(card);
-            }
+            DrawDeck = CardDummy.ToList();
+            //foreach (Card card in CardDummy)
+            //{
+            //    DrawDeck.Add(card);
+            //}
             CardDummy.Clear();
         }
         else
         {
-            foreach (Card card in MainDeck)
-            {
-                DrawDeck.Add(card);
-            }
+            DrawDeck = MainDeck.ToList();
+            //foreach (Card card in MainDeck)
+            //{
+            //    DrawDeck.Add(card);
+            //}
         }
         ShuffleDeck();
     }
@@ -308,7 +316,7 @@ public class CardManager : MonoBehaviour
         foreach (Card targetCard in HandCard)
         {
             targetCard.block = false;
-            targetCard.transform.position = cardSpawnPoint.position;
+            targetCard.MoveTransform(new PRS(cardSpawnPoint.position, Quaternion.identity, CardUtils.CardScale), false);
         }
         HandCard.Clear();
 
@@ -320,9 +328,16 @@ public class CardManager : MonoBehaviour
         //}
     }
 
+
     public async UniTask UsedCard(Card usedCard)
     {
         usedCard.cardAction?.Invoke(usedCard);
+
+        // 딜레이에 오류가 있는 것 같음. 다시 리펙토링 필요
+        await UniTask.Delay(TimeSpan.FromSeconds(usedCard.Data.cardUseDelay));
+
+        if (MapManager.Instance.currStage.cleared)
+            return;
 
         CardDummy.Add(usedCard);
 

@@ -23,7 +23,7 @@ public class ReadSpreadSheet : MonoBehaviour
     public static async UniTaskVoid LoadData(/*string address, string range, ulong sheetID*/)
     {
         using (UnityWebRequest www =
-            UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:O&gid=1809511646"))  // 0 = 원본, 1809511646 = 테스트용
+            UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:P&gid=1809511646"))  // 0 = 원본, 1809511646 = 테스트용
             //UnityWebRequest.Get($"{address}/export?format=csv&range={range}&gid={sheetID}"))
         {
             await www.SendWebRequest();
@@ -40,7 +40,7 @@ public class ReadSpreadSheet : MonoBehaviour
     async UniTaskVoid LoadCardSO()
     {
         using (UnityWebRequest www =
-            UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:O&gid=1809511646"))  // 0 = 원본, 1809511646 = 테스트용
+            UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:P&gid=1809511646"))  // 0 = 원본, 1809511646 = 테스트용
         //UnityWebRequest.Get($"{address}/export?format=csv&range={range}&gid={sheetID}"))
         {
             await www.SendWebRequest();
@@ -73,12 +73,13 @@ public class ReadSpreadSheet : MonoBehaviour
             data.enhancedDamage = ConvertInt32(cells[5]);
             data.defence = ConvertInt32(cells[6]);
             data.enhancedDefence = ConvertInt32(cells[7]);
-            data.count = ConvertInt32(cells[8]);
+            data.count = ConvertInt32(cells[8]);                                                    
             data.enhancedCount = ConvertInt32(cells[9]);
             data.draw = ConvertInt32(cells[10]);
             data.enhancedDraw = ConvertInt32(cells[11]);
-            data.descript = cells[12];
-            data.enhancedDescript = cells[13];
+            data.cardUseDelay = float.Parse(cells[12]);
+            data.descript = cells[13];
+            data.enhancedDescript = cells[14];
             try
             {
                 data.sprite = Array.Find(cardSO.cardSprites, x => x.name == data.id.ToString());
@@ -88,7 +89,7 @@ public class ReadSpreadSheet : MonoBehaviour
                 data.sprite = null;
                 Debug.Log("스프라이트가 없습니다.");
             }
-            data.cardTag = (CardTag)Enum.Parse(typeof(CardTag) ,cells[14]);
+            data.cardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[15]);
 
             cardSO.cards[i] = data;
             i++;

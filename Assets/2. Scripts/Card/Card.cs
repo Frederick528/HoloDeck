@@ -61,6 +61,7 @@ public class Card : MonoBehaviour
         //Data.enhancedCount = data.enhancedCount;
         //Data.draw = data.draw;
         //Data.enhancedDraw = data.enhancedDraw;
+        //Data.cardUseDelay = data.cardUseDelay;
         //Data.descript = data.descript;
         //Data.sprite = data.sprite;
         //Data.cardTag = data.cardTag;

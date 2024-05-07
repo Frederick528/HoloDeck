@@ -23,6 +23,7 @@ public class CardData
     public int enhancedCount;
     public int draw;
     public int enhancedDraw;
+    public float cardUseDelay;
     [TextArea(1,5)]
     public string descript;
     [TextArea(1, 5)]
