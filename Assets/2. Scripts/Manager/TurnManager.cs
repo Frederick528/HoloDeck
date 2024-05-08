@@ -113,7 +113,10 @@ public class TurnManager : MonoBehaviour
         SetBool(true);
 
         if (endBattle)
+        {
+            CardManager.Instance.ClearCard();
             return;
+        }
 
         EnemyTurnTask().Forget();
     }
@@ -158,7 +161,6 @@ public class TurnManager : MonoBehaviour
         //DrawDeck.Clear();
         //CardDummy.Clear();
         ////HandCard.Clear();
-        CardManager.Instance.ClearCard();
         //for (int i = 0; i < Deck.childCount; i++)
         //{
         //    if (!Deck.GetChild(i).gameObject.activeSelf)

@@ -175,17 +175,15 @@ public class CardManager : MonoBehaviour
             Card card = Deck.GetComponentsInChildren<Card>(true)[i];
             //GameObject cardObject = Deck.GetChild(i).gameObject;
             if (MainDeck.Contains(card))
+            {
+                card.MoveTransform(new PRS(cardSpawnPoint.position, Quaternion.identity, CardUtils.CardScale), false);
                 continue;
+            }
             card.CardRelease();
             //MainCardDeck.Add(card);
             //cardObject.GetComponent<Card>().CardRelease();
 
         }
-        //foreach (Card card in MainDeck)
-        //{
-        //    card.transform.DOKill(false);
-        //    card.MoveTransform(new PRS(cardSpawnPoint.position, Quaternion.identity, CardUtils.CardScale), false);
-        //}
     }
     public void SetupDrawDeck(bool start = false)  // 드로우덱 섞기(start가 true일 경우, 메인덱에서 가져옴. false일 경우, 카드더미에서 가져옴.)
     {
@@ -332,16 +330,15 @@ public class CardManager : MonoBehaviour
     public async UniTask UsedCard(Card usedCard)
     {
         usedCard.cardAction?.Invoke(usedCard);
+        
+        HandCard.Remove(usedCard);
 
-        // 딜레이에 오류가 있는 것 같음. 다시 리펙토링 필요
         await UniTask.Delay(TimeSpan.FromSeconds(usedCard.Data.cardUseDelay));
 
         if (MapManager.Instance.currStage.cleared)
             return;
 
         CardDummy.Add(usedCard);
-
-        HandCard.Remove(usedCard);
 
         SetOriginOrder();
         CardAlignment();

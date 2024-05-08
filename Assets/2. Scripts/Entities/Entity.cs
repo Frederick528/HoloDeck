@@ -45,13 +45,12 @@ public abstract class Entity : MonoBehaviour
             return false;
         col2d.enabled = false;
         slider.gameObject.SetActive(false);
-        DieAnimation().Forget();
         return true;
     }
-    public virtual async UniTaskVoid DieAnimation()
+    public virtual async UniTask DieAnimation()
     {
         //animator.Play("Die", 0);  // 사망 애니메이션 실행
-        await UniTask.Delay(100);
+        await UniTask.Delay(1000);
         //await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1);
         Destroy(gameObject);
     }

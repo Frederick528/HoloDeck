@@ -40,13 +40,14 @@ public class Enemy : Entity
         spawnPos = pos;
     }
 
-    public override bool TakeDamage(int dmg)
+    public async UniTask<bool> TakeDamageEnemy(int dmg)
     {
-        if (!base.TakeDamage(dmg))   // 죽는 애니매이션 이후 삭제(만약 죽는 애니메이션이 0초라면, 오류가 날 수 있음.)
+        if (!base.TakeDamage(dmg))
             return false;
         //int spawn = 0;
         EnemyManager.Instance.enemies.Remove(this);
         EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);
+        await base.DieAnimation();  // 죽는 애니매이션 이후 클리어 확인(만약 죽는 애니메이션이 0초라면, 오류가 날 수 있음.)
         for (int i = 0; i < EnemyManager.Instance.enemySpawnPosition.Count; ++i)
         {
             if (!EnemyManager.Instance.enemySpawnPosition[i].gameObject.activeSelf)     // 몬스터가 다 죽어있으면 밑에 if문으로 들어가서 게임이 클리어되고, 한 마리라도 살아있으면 리턴되어 그냥 몬스터만 죽고 끝.

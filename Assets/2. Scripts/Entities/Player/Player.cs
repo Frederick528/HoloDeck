@@ -24,11 +24,12 @@ public class Player : Entity
         curHolo = maxHolo;
         holoValue.text = $"{curHolo} / {maxHolo}";
     }
-    public override bool TakeDamage(int dmg)
+    public async UniTask<bool> TakeDamagePlayer(int dmg)
     {
         if (!base.TakeDamage(dmg))
             return false;
         print("플레이어가 죽었습니다.");
+        await base.DieAnimation();
         return true;
     }
 
