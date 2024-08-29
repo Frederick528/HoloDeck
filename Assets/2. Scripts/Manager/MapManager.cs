@@ -23,6 +23,13 @@ public class MapManager : MonoBehaviour
         canMove = true;
     }
 
+    public void ClearStage(Map stage)
+    {
+        TurnManager.Instance.EndBattle();
+        stage.ClearMap();
+        canMove = true;
+    }
+
     public void SetupStart(List<Vector3Int> direction4, List<Map> maps)
     {
         // 시작 장소 활성화 코드 5줄

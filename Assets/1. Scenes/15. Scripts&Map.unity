@@ -3716,6 +3716,7 @@ MonoBehaviour:
   - {fileID: 1234606442}
   - {fileID: 78204457}
   targetEnemy: {fileID: 0}
+  arrow: {fileID: 0}
 --- !u!1 &871150778
 GameObject:
   m_ObjectHideFlags: 0
@@ -7511,6 +7512,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fastMode: 0
+  cardSO: {fileID: 11400000, guid: 41dad1336250ac04ead82446813d3850, type: 2}
   player: {fileID: 1013614013}
 --- !u!1 &1780255929
 GameObject:

@@ -21,6 +21,8 @@ public class CardManager : MonoBehaviour
 
     public bool isSingleTarget;
     public bool useSingleTargetCard;
+    
+    public ECardState cardState;
 
     [SerializeField] CardSO cardSO;
 
@@ -31,7 +33,6 @@ public class CardManager : MonoBehaviour
 
     [SerializeField] Transform myCardLeft;
     [SerializeField] Transform myCardRight;
-    [SerializeField] ECardState cardState;
 
     [SerializeField] GameObject arrow;
     
@@ -44,7 +45,7 @@ public class CardManager : MonoBehaviour
     bool isUseCard;
     
     bool canPush = true;
-    enum ECardState { Nothing, CanMouseOver, CanMouseDrag }
+    public enum ECardState { Nothing, CanMouseOver, CanMouseDrag }
 
 
     
@@ -56,46 +57,11 @@ public class CardManager : MonoBehaviour
         SetupStartCardDeck();
         //StartBattle();    // 현재 Battle.cs에서 진행중
     }
-    private void Update()
-    {
-        SetCardState();     // UniRx 이용해서 따로 처리할 것
+    //private void Update()
+    //{
+    //    SetCardState();     // UniRx 이용해서 따로 처리할 것
 
-
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            AddDeck(cardSO.cards[0], EAddDeck.Main);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            AddDeck(cardSO.cards[0], EAddDeck.Draw);
-        }
-        //if (Input.GetKeyDown(KeyCode.C))
-        //{
-        //    AddDeck(cardSO.cards[1], EAddDeck.Draw);
-        //}
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            AddDeck(cardSO.cards[0], EAddDeck.Dummy);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))       // 카드 찾아서 뽑기 (수정 필요해보임. 덱에서 인덱스로 GameObject를 지정해서 넣어줄거면 굳이 drawCard 함수에서 카드를 확인해 볼 필요가 없음.)
-        {
-            //AddCard(Deck.GetComponentsInChildren<Card>()[2].gameObject);  // 전투덱에서 가져오는 경우
-            //AddCard(DrawDeck[2]);   // 드로우덱에서 가져오는 경우
-            //AddCard(CardDummy[0]);  // 버린 카드덱에 있는 카드가 드로우덱에도 있을 경우 => 적용 안됨. 주소 문제인 듯
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha4))       // 카드 생성
-        {
-            AddCard(cardSO.cards[0]);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha8))
-        {
-            TurnManager.Instance.EndBattle();
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            TurnManager.Instance.StartBattle();
-        }
-    }
+    //}
 
     public void ShowRewardCard(int[] reward)
     {
@@ -150,8 +116,10 @@ public class CardManager : MonoBehaviour
             case EAddDeck.Hand:                 // 핸드로 가져오는 건 카드 정렬 때문에 AddCard 함수를 이용해서만 접근할 것.
                 if (HandCard.Count < 10)
                 {
+                    setCard.block = true;
                     cardObject.transform.position = Vector3.zero;
                     HandCard.Add(setCard);
+                    StartCoroutine(WaitUnblock(setCard, CardUtils.CardAlignmentDelay));
                 }
                 else
                 {
@@ -161,6 +129,12 @@ public class CardManager : MonoBehaviour
                 break;
 
         }
+    }
+
+    IEnumerator WaitUnblock(Card setCard, float waitTime)       //  .Forget() 추가하기 귀찮아서 그냥 코루틴으로 작성함.
+    {
+        yield return new WaitForSeconds(waitTime);
+        setCard.block = false;
     }
 
     public void ClearCard()
@@ -332,7 +306,7 @@ public class CardManager : MonoBehaviour
 
     }
 
-    void AddCard(CardData addCard)  // 카드 생성
+    public void AddCard(CardData addCard)  // 카드 생성
     {
         AddDeck(addCard, EAddDeck.Hand);
 
@@ -410,7 +384,7 @@ public class CardManager : MonoBehaviour
         throwCard.transform.position = cardSpawnPoint.position;
     }
 
-    void SetOriginOrder()
+    void SetOriginOrder()       // 카드가 보이는 순서 설정
     {
         for (int i = 0; i < HandCard.Count; i++)
         {
@@ -428,6 +402,8 @@ public class CardManager : MonoBehaviour
             Card targetCard = HandCard[i];
 
             targetCard.originPRS = originCardPRSs[i];
+            if (targetCard == selectCard)
+                continue;
             targetCard.MoveTransform(targetCard.originPRS, true, CardUtils.CardAlignmentDelay);
         }
     }
@@ -560,6 +536,7 @@ public class CardManager : MonoBehaviour
         }
         draggable = false;
         arrow.SetActive(false);
+        selectCard = null;
         if (isUseCard && card.Data.cardTag != CardTag.SingleAttack)     // 단일타격을 제외한 나머지
         {
             UseCard(card);
@@ -657,17 +634,17 @@ public class CardManager : MonoBehaviour
 
     }
 
-    void SetCardState()
-    {
-        if (TurnManager.Instance.isLoading.Value)
-            cardState = ECardState.Nothing;
+    //void SetCardState()
+    //{
+    //    if (TurnManager.Instance.isLoading.Value)
+    //        cardState = ECardState.Nothing;
 
-        else if (!TurnManager.Instance.myTurn)
-            cardState = ECardState.CanMouseOver;
+    //    else if (!TurnManager.Instance.myTurn)
+    //        cardState = ECardState.CanMouseOver;
 
-        else if (TurnManager.Instance.myTurn)
-            cardState = ECardState.CanMouseDrag;
-    }
+    //    else if (TurnManager.Instance.myTurn)
+    //        cardState = ECardState.CanMouseDrag;
+    //}
 
 
     #endregion

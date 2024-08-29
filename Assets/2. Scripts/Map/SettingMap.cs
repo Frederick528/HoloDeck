@@ -120,6 +120,7 @@ public class SettingMap : MonoBehaviour
         SetClickStage(stageList[index]);
         stageList[index].GetComponentInChildren<TMP_Text>().text = "Treasure";
         stageList[index].GetComponentInChildren<TMP_Text>().color = Color.yellow;
+        //stageList[index].ClearMap();
         stageList.RemoveAt(index);
 
         // Shop
@@ -128,6 +129,7 @@ public class SettingMap : MonoBehaviour
         SetClickStage(stageList[index]);
         stageList[index].GetComponentInChildren<TMP_Text>().text = "Shop";
         stageList[index].GetComponentInChildren<TMP_Text>().color = Color.blue;
+        //stageList[index].ClearMap();
         stageList.RemoveAt(index);
 
         foreach (Map stage in stageList)
@@ -165,8 +167,15 @@ public class SettingMap : MonoBehaviour
                 return;
             else if (!stage.cleared)
             {
-                MapManager.Instance.canMove = false;
                 stage.LookingStage(direction4, maps);
+                if (stage.GetComponent<TreasureStage>() != null || stage.GetComponent<ShopStage>() != null)
+                {
+                    MapManager.Instance.ClearStage(stage);      // stage.ClearMap()이랑 똑같은 의미. 그러나 ClearStage가 변경될 수 있으므로, 일단 Manager의 ClearStage 사용.
+                }
+                else
+                {
+                    MapManager.Instance.canMove = false;
+                }
             }
 
             // 떠나려는 방에 보상이 떴는데, 그 보상을 받지 않고 떠난다면, 잠시 해당 스테이지 보상을 숨김. 

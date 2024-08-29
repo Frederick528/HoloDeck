@@ -31,6 +31,13 @@ public class TurnManager : MonoBehaviour
         isLoading.Subscribe(isOn =>
         {
             ButtonManager.instance.TurnEndButtonInvert(!isOn);
+            if (isLoading.Value)
+                CardManager.Instance.cardState = CardManager.ECardState.Nothing;
+            else if (!myTurn)
+                CardManager.Instance.cardState = CardManager.ECardState.CanMouseOver;
+
+            else if (myTurn)
+                CardManager.Instance.cardState = CardManager.ECardState.CanMouseDrag;
         });
     }
 

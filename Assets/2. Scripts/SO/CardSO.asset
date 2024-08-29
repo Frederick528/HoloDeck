@@ -31,6 +31,7 @@ MonoBehaviour:
     enhancedCount: 1
     draw: 0
     enhancedDraw: 0
+    cardUseDelay: 0
     descript: This is Ame
     enhancedDescript: This is Ame
     sprite: {fileID: 0}
@@ -47,6 +48,7 @@ MonoBehaviour:
     enhancedCount: 1
     draw: 1
     enhancedDraw: 2
+    cardUseDelay: 0
     descript: This is Tako
     enhancedDescript: This is Wah
     sprite: {fileID: 0}
@@ -63,6 +65,7 @@ MonoBehaviour:
     enhancedCount: 3
     draw: 0
     enhancedDraw: 0
+    cardUseDelay: 0
     descript: This is Kikkeriki
     enhancedDescript: This is Kikkeriki
     sprite: {fileID: 0}
@@ -79,6 +82,7 @@ MonoBehaviour:
     enhancedCount: 3
     draw: 0
     enhancedDraw: 0
+    cardUseDelay: 0
     descript: This is Reaper
     enhancedDescript: This is Rapper
     sprite: {fileID: 0}
@@ -95,6 +99,7 @@ MonoBehaviour:
     enhancedCount: 0
     draw: 2
     enhancedDraw: 3
+    cardUseDelay: 0
     descript: This is Shark
     enhancedDescript: This is Shark
     sprite: {fileID: 0}
