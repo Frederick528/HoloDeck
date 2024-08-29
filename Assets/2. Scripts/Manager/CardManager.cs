@@ -42,7 +42,7 @@ public class CardManager : MonoBehaviour
 
     Card selectCard;
     bool draggable;
-    bool isUseCard;
+    bool isUseCard;     // 카드 사용존에 카드가 올라왔을 경우(카드를 놓으면 카드가 사용되는 위치)
     
     bool canPush = true;
     public enum ECardState { Nothing, CanMouseOver, CanMouseDrag }
@@ -528,14 +528,14 @@ public class CardManager : MonoBehaviour
     public void CardMouseUp(Card card)
     {
         //draggable = false;
-        //arrow.SetActive(false);
+        //arrow.SetActive(false); => ArrowCursor(false);
         if (cardState != ECardState.CanMouseDrag)
         {
             //card.block = false;
             return;
         }
         draggable = false;
-        arrow.SetActive(false);
+        ArrowCursor(false);
         selectCard = null;
         if (isUseCard && card.Data.cardTag != CardTag.SingleAttack)     // 단일타격을 제외한 나머지
         {
@@ -603,9 +603,9 @@ public class CardManager : MonoBehaviour
 
         if (isUseCard && card.Data.cardTag == CardTag.SingleAttack && !isSingleTarget)
         {
-            arrow.SetActive(true);
+            ArrowCursor(true);
             PullCard();
-            card.transform.DOKill();
+            card.transform.DOKill();        // 마우스 커서가 카드를 나갈 때 카드 크기가 원래대로 돌아가는 코드를 멈춰주는 함수.
             card.transform.position = new Vector2(0, -3.32f);
             isSingleTarget = true;
         }
@@ -616,7 +616,7 @@ public class CardManager : MonoBehaviour
         }
         else if (!isUseCard && isSingleTarget)
         {
-            arrow.SetActive(false);
+            ArrowCursor(false);
             isSingleTarget = false;
         }
         else if (!isUseCard)
@@ -646,6 +646,10 @@ public class CardManager : MonoBehaviour
     //        cardState = ECardState.CanMouseDrag;
     //}
 
-
+    void ArrowCursor(bool isOn)
+    {
+        arrow.SetActive(isOn);
+        Cursor.visible = !isOn;
+    }
     #endregion
 }
