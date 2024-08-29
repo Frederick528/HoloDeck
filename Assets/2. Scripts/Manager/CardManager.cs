@@ -236,7 +236,7 @@ public class CardManager : MonoBehaviour
 
     public async UniTask<Card> DrawCard(Card drawCard)
     {
-        if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기. 이 경우에는 카드 뽑기가 0.5초 후 가능 (카드 버려지는 시간인 0.3초보단 높게 잡아야 함.)
+        if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기. 이 경우에는 카드 뽑기가 LoadCardDummyDelay초 후 가능 (카드 버려지는 시간인 ThrowAwayCardDelay초보단 높게 잡아야 함.)
         {
             SetupDrawDeck();
             await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.LoadCardDummyDelay));
@@ -261,6 +261,30 @@ public class CardManager : MonoBehaviour
         //return null;
     }
 
+    public async UniTask<Card[]> DrawCards(int count)
+    {
+        if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기. 이 경우에는 카드 뽑기가 LoadCardDummyDelay초 후 가능 (카드 버려지는 시간인 ThrowAwayCardDelay초보단 높게 잡아야 함.)
+        {
+            SetupDrawDeck();
+            await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.LoadCardDummyDelay));
+        }
+
+
+        if (DrawDeck.Count == 0)    // 덱을 섞은 후에도 뽑을 카드가 없으면 리턴
+            return null;
+        
+        if (DrawDeck.Count < count)
+            count = DrawDeck.Count;
+
+        Card[] card = new Card[count];
+        for (int i = 0; i < count; ++i)
+        {
+            card[i] = DrawDeck[0];
+            DrawDeck.RemoveAt(0);
+        }
+        return card;
+    }
+
     public async UniTask AddCard()   // 손패로 드로우할 카드
     {
         Card drawCard = await DrawCard();
@@ -273,6 +297,24 @@ public class CardManager : MonoBehaviour
 
         SetOriginOrder();
         CardAlignment();
+    }
+
+    public async UniTask AddCards(int count)   // 손패로 드로우할 카드
+    {
+        Card[] drawCard = await DrawCards(count);
+        if (drawCard == null)
+            return;
+        //GameObject cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity);
+        //Card card = drawCard.GetComponent<Card>();
+        //drawCard.Setup(drawCard.Data);
+        for (int i = 0; i < drawCard.Length; ++i)
+        {
+            HandCard.Add(drawCard[i]);
+
+            SetOriginOrder();
+            CardAlignment();
+            await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.CardAlignmentDelay));
+        }
     }
 
     public async UniTask AddCard(Card addCard)    // 덱에서 손패로 카드를 가져옴.
@@ -333,10 +375,10 @@ public class CardManager : MonoBehaviour
         
         HandCard.Remove(usedCard);
 
-        await UniTask.Delay(TimeSpan.FromSeconds(usedCard.Data.cardUseDelay));
+        //await UniTask.Delay(TimeSpan.FromSeconds(usedCard.Data.cardUseDelay));
 
-        if (MapManager.Instance.currStage.cleared)
-            return;
+        //if (MapManager.Instance.currStage.cleared)
+        //    return;
 
         CardDummy.Add(usedCard);
 
@@ -347,6 +389,10 @@ public class CardManager : MonoBehaviour
 
         //throwCard.block = false;
         usedCard.transform.position = cardSpawnPoint.position;
+        usedCard.block = false;
+
+        //await UniTask.Delay(TimeSpan.FromSeconds(usedCard.Data.cardUseDelay));
+        //CardDummy.Add(usedCard);
     }
 
     public async UniTask ThrowAwayCard(Card throwCard)
@@ -516,11 +562,11 @@ public class CardManager : MonoBehaviour
         arrow.SetActive(false);
         if (isUseCard && card.Data.cardTag != CardTag.SingleAttack)     // 단일타격을 제외한 나머지
         {
-            UseCard(card).Forget();
+            UseCard(card);
         }
         else if (isUseCard /*&& card.Data.cardTag != CardTag.SingleAttack */&& useSingleTargetCard)     // 단일타격이 성공했을 경우
         {
-            UseCard(card).Forget();
+            UseCard(card);
         }
         else        // 사용되지 않은 경우
         {
@@ -529,7 +575,22 @@ public class CardManager : MonoBehaviour
 
     }
 
-    async UniTask UseCard(Card card)
+    //async UniTask UseCard(Card card)
+    //{
+    //    //card.cardAction?.Invoke(card);
+    //    if (GameManager.Instance.player.curHolo < card.Data.cost)
+    //    {
+    //        PutDownCard(card).Forget();
+    //        return;
+    //    }
+    //    GameManager.Instance.player.ChangeHoloValue(-card.Data.cost);
+    //    await UsedCard(card);
+    //    //await UsedCard(card);
+    //    //card.block = false;
+    //    //GameManager.Instance.blockClick = false;
+    //}
+
+    void UseCard(Card card)
     {
         //card.cardAction?.Invoke(card);
         if (GameManager.Instance.player.curHolo < card.Data.cost)
@@ -538,10 +599,12 @@ public class CardManager : MonoBehaviour
             return;
         }
         GameManager.Instance.player.ChangeHoloValue(-card.Data.cost);
-        await UsedCard(card);
-        card.block = false;
+        UsedCard(card).Forget();
+        //await UsedCard(card);
+        //card.block = false;
         //GameManager.Instance.blockClick = false;
     }
+
 
     async UniTask PutDownCard(Card card)
     {

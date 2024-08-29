@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class Enemy : Entity
 {
-    Arrow arrow;
     int spawnPos;
 
     void OnMouseEnter()
@@ -14,9 +13,9 @@ public class Enemy : Entity
         {
             CardManager.Instance.useSingleTargetCard = true;
             EnemyManager.Instance.targetEnemy = this;
-            for (int i = 0; i < arrow.arrowRenderer.Count; i++)
+            for (int i = 0; i < EnemyManager.Instance.arrow.arrowRenderer.Count; i++)
             {
-                arrow.arrowRenderer[i].color = Color.red;
+                EnemyManager.Instance.arrow.arrowRenderer[i].color = Color.red;
             }
         }
     }
@@ -27,9 +26,9 @@ public class Enemy : Entity
         {
             CardManager.Instance.useSingleTargetCard = false;
             EnemyManager.Instance.targetEnemy = null;
-            for (int i = 0; i < arrow.arrowRenderer.Count; i++)
+            for (int i = 0; i < EnemyManager.Instance.arrow.arrowRenderer.Count; i++)
             {
-                arrow.arrowRenderer[i].color = Color.white;
+                EnemyManager.Instance.arrow.arrowRenderer[i].color = Color.white;
             }
         }
     }
@@ -87,6 +86,6 @@ public class Enemy : Entity
     void Start()
     {
         EntitySubScribe();
-        arrow = FindObjectOfType<Arrow>(true);
+        //arrow = FindObjectOfType<Arrow>(true);
     }
 }

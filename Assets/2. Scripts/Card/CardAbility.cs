@@ -94,12 +94,14 @@ public class CardAbility
     }
     void DrawSkill(Card card)
     {
-        TurnManager.Instance.DrawTask().Forget();
+        //TurnManager.Instance.DrawTask().Forget();
+        CardManager.Instance.AddCard().Forget();
     }
 
     void ContinuousDrawSkill(Card card)
     {
-        TurnManager.Instance.DrawTask(card.Data.draw).Forget();
+        //TurnManager.Instance.DrawTask(card.Data.draw).Forget();
+        CardManager.Instance.AddCards(card.Data.draw).Forget();
     }
     void DefenceSkill(Card card)
     {

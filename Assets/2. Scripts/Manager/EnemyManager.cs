@@ -10,6 +10,7 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] GameObject enemyPrefab;
     public List<Transform> enemySpawnPosition;
     public Enemy targetEnemy;
+    public Arrow arrow;
     //[SerializeField] Enemy enemy;
 
 
@@ -26,7 +27,7 @@ public class EnemyManager : MonoBehaviour
 
     private void Start()
     {
-        
+        arrow = FindObjectOfType<Arrow>(true);
     }
 
     public bool SpawnEnemy(int enemyMaxHp, int spawnPosIndex = 0)
