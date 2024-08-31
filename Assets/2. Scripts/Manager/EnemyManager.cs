@@ -1,3 +1,4 @@
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
@@ -7,7 +8,7 @@ public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager Instance { get; private set; }
     public List<Enemy> enemies;
-    [SerializeField] GameObject enemyPrefab;
+    [SerializeField] EnemySO enemySO;
     public List<Transform> enemySpawnPosition;
     public Enemy targetEnemy;
     public Arrow arrow;
@@ -30,15 +31,21 @@ public class EnemyManager : MonoBehaviour
         arrow = FindObjectOfType<Arrow>(true);
     }
 
-    public bool SpawnEnemy(int enemyMaxHp, int spawnPosIndex = 0)
+    public bool SpawnEnemy(int enemyId, int spawnPosIndex = 0)       // 체력 설정이 아니라 ID를 통해 몬스터 종류와 체력, 공격력을 가져오는 형식으로 변경함.
     {
         if (!enemySpawnPosition[spawnPosIndex].gameObject.activeSelf)
             return false;
-        GameObject enemyObject = Instantiate(enemyPrefab, enemySpawnPosition[spawnPosIndex].position, Quaternion.identity);
+        EnemyData enemyData = FindEnemyInEnemySO(enemyId);
+        GameObject enemyObject = Instantiate(enemyData.enemyPrefab, enemySpawnPosition[spawnPosIndex].position, Quaternion.identity);
         Enemy enemy = enemyObject.GetComponent<Enemy>();
         enemies.Add(enemy);
-        enemy.SetupEnemy(enemyMaxHp, spawnPosIndex);
+        enemy.SetupEnemy(enemyData, spawnPosIndex);
         enemySpawnPosition[spawnPosIndex].gameObject.SetActive(false);
         return true;
+    }
+
+    public EnemyData FindEnemyInEnemySO(int id)   // id 값으로 적 데이터 가져오기
+    {
+        return Array.Find(enemySO.enemyDatas, x => x.id == id);
     }
 }

@@ -68,7 +68,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.S))
         {
             int i = 0;
-            while (!EnemyManager.Instance.SpawnEnemy(10, i))
+            while (!EnemyManager.Instance.SpawnEnemy(100, i))
             {
                 i++;
                 if (i > EnemyManager.Instance.enemySpawnPosition.Count - 1)

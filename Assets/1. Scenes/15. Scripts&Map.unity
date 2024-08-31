@@ -373,7 +373,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 65384706}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5, y: 1.5, z: 0}
+  m_LocalPosition: {x: 3, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3222,13 +3222,13 @@ MonoBehaviour:
   HandCard: []
   isSingleTarget: 0
   useSingleTargetCard: 0
+  cardState: 0
   cardSO: {fileID: 11400000, guid: 41dad1336250ac04ead82446813d3850, type: 2}
   cardSpawnPoint: {fileID: 511494626}
   cardDummyTr: {fileID: 612295331}
   Deck: {fileID: 205385172}
   myCardLeft: {fileID: 1666849163}
   myCardRight: {fileID: 1780255930}
-  cardState: 0
   arrow: {fileID: 178391750}
   cardPrefab: {fileID: 6399435079816834892, guid: 3d900da5eb4eb634094479cea5b69518, type: 3}
   cardRewardPanel: {fileID: 1514527392}
@@ -3708,7 +3708,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemies: []
-  enemyPrefab: {fileID: 8247430017888918525, guid: ccb0e527653309c418d97ed79c063927, type: 3}
+  enemySO: {fileID: 11400000, guid: 3bcdae0f294187b46889e43b613ea3e6, type: 2}
   enemySpawnPosition:
   - {fileID: 65384707}
   - {fileID: 1299410571}
@@ -5657,7 +5657,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1299410570}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3, y: 1.5, z: 0}
+  m_LocalPosition: {x: 5, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

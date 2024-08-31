@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : Entity
+public abstract class Enemy : Entity
 {
     int spawnPos;
+    protected EnemyData enemyData;
 
     void OnMouseEnter()
     {
@@ -33,9 +34,10 @@ public class Enemy : Entity
         }
     }
 
-    public void SetupEnemy(int hp, int pos)
+    public void SetupEnemy(EnemyData eD, int pos)     // 데이터를 받는 형식으로 변경함.
     {
-        SetupEntity(hp);
+        enemyData = eD;
+        SetupEntity(enemyData.hp);
         spawnPos = pos;
     }
 
@@ -63,6 +65,8 @@ public class Enemy : Entity
 
     }
 
+    public abstract void Pattern();
+
     //public void EnemyTakeDamage(int dmg)
     //{
     //    if (base.TakeDamage(dmg))   // 죽는 애니매이션 이후 삭제(만약 죽는 애니메이션이 0초라면, 오류가 날 수 있음.)
@@ -83,9 +87,10 @@ public class Enemy : Entity
     //}
 
     // Start is called before the first frame update
-    void Start()
-    {
-        EntitySubScribe();
-        //arrow = FindObjectOfType<Arrow>(true);
-    }
+
+    //void Start()      // 모든 상위 코드에 적용시켜야 함.
+    //{
+    //    EntitySubScribe();
+    //    //arrow = FindObjectOfType<Arrow>(true);
+    //}
 }

@@ -136,10 +136,15 @@ public class TurnManager : MonoBehaviour
     //}
     public async UniTask EnemyTurnTask()
     {
+        await UniTask.Delay(TimeSpan.FromSeconds(1f));  // 지금은 적 코드가 없으므로 대신 딜레이 코드 추가
+        for (int i = 0; i < EnemyManager.Instance.enemies.Count; ++i)
+        {
+            EnemyManager.Instance.enemies[i].Pattern();
+            await UniTask.Delay(TimeSpan.FromSeconds(1f));
+        }
         // 적 턴 시작, 적 코드 작성
         // 적 턴이 끝나면 내 턴 시작.
         // 적 턴은 비동기함수 하나로 통침.
-        await UniTask.Delay(TimeSpan.FromSeconds(1f));  // 지금은 적 코드가 없으므로 대신 딜레이 코드 추가
         StartTurnTask().Forget();
         // await MyTurnTask(4);
     }
