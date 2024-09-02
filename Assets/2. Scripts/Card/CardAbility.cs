@@ -54,24 +54,30 @@ public class CardAbility
     void SingleAttack(Card card)
     {
         Enemy enemy = EnemyManager.Instance.targetEnemy;
-        enemy.TakeDamageEnemy(card.Data.damage).Forget();
+        enemy.TakeDamageEnemy(card.Data.damage);
+        //enemy.TakeDamageEnemy(card.Data.damage).Forget();
     }
     void MultiAttack(Card card)
     {
         for (int i = EnemyManager.Instance.enemies.Count - 1; i >= 0; i--)
         {
-            EnemyManager.Instance.enemies[i].TakeDamageEnemy(card.Data.damage).Forget();
+            EnemyManager.Instance.enemies[i].TakeDamageEnemy(card.Data.damage);
+            //EnemyManager.Instance.enemies[i].TakeDamageEnemy(card.Data.damage).Forget();
         }
     }
     async UniTaskVoid ContinuousSinglettack(Card card)
     {
         Enemy enemy = EnemyManager.Instance.targetEnemy;
-        enemy.TakeDamageEnemy(card.Data.damage).Forget();
+        if (enemy.TakeDamageEnemy(card.Data.damage))
+            return;
+        //enemy.TakeDamageEnemy(card.Data.damage).Forget();
         for (int i = 1; i < card.Data.count; i++)
         {
             await DelayTask();
-            if (enemy != null)
-                enemy.TakeDamageEnemy(card.Data.damage).Forget();
+            if (enemy.TakeDamageEnemy(card.Data.damage))
+                return;
+            //if (enemy != null)
+                //enemy.TakeDamageEnemy(card.Data.damage).Forget();
             //DelayTask().ContinueWith(() =>
             //{
             //    if (enemy != null)

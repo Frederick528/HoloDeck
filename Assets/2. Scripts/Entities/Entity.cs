@@ -29,7 +29,7 @@ public abstract class Entity : MonoBehaviour
     //        hpText.text = hp.ToString();
     //    });
     //}
-    public virtual void SetupEntity(int hp)
+    public void SetupEntity(int hp)
     {
         //col2d = GetComponent<BoxCollider2D>();
         maxHp.Value = hp;
@@ -37,7 +37,7 @@ public abstract class Entity : MonoBehaviour
         //slider.value = maxHp.Value;
         //hpText.text = maxHp.ToString();
     }
-    public virtual bool TakeDamage(int dmg)
+    public bool TakeDamage(int dmg)
     {
         curHp.Value -= dmg;
         //animator.Play("Hit", 0);  // 타격 당하는 애니메이션 실행

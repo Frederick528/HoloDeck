@@ -10,6 +10,7 @@ public class UiManager : MonoBehaviour
     [SerializeField] List<GameObject> gameUi;
     [SerializeField] List<GameObject> battleUi;
     [SerializeField] TextMeshProUGUI topHealthText;     // TMP텍스트로 변경가능성있음
+    [SerializeField] TextMeshProUGUI topCoinText;
     [SerializeField] TextMeshProUGUI turnEndButtonText;
     [SerializeField] GameObject map;
 
@@ -41,5 +42,15 @@ public class UiManager : MonoBehaviour
     public void LookMap()
     {
         map.SetActive(!map.activeSelf);
+    }
+
+    public void SetHealth(int curHp, int maxHp)
+    {
+        topHealthText.text = $"{curHp} / {maxHp}";
+    }
+
+    public void SetCoin(int coin)
+    {
+        topCoinText.text = coin.ToString();
     }
 }

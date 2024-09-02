@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8247430017888918521}
   - component: {fileID: 8247430017888918520}
-  - component: {fileID: 8247430017888918523}
   - component: {fileID: 8247430017888918522}
   m_Layer: 0
   m_Name: Entity
@@ -87,22 +86,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &8247430017888918523
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8247430017888918525}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d15f606dfcd2e344eb030d0e06818d33, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  entitySprite: {fileID: 8247430017888918520}
-  slider: {fileID: 8247430019299966740}
-  hpText: {fileID: 8247430018585589262}
-  col2d: {fileID: 8247430017888918522}
 --- !u!61 &8247430017888918522
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -598,7 +581,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 0}
   m_FillRect: {fileID: 8247430019159072081}
   m_HandleRect: {fileID: 0}

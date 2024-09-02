@@ -40,11 +40,16 @@ public class GameManager : MonoBehaviour
         //SoundManager.instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     }
 
+    public void ChangeCoinValue(int coin)
+    {
+        player.Coin.Value += coin;
+    }
+
     void Update()
     {
         if (fastMode)
         {
-            Time.timeScale = 2f;
+            Time.timeScale = 3f;
         }
         else { Time.timeScale = 1; }
 
@@ -81,6 +86,11 @@ public class GameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
+            for (int i = EnemyManager.Instance.enemies.Count - 1; i >= 0; --i)
+            {
+                EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999);
+                //EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
+            }
             MapManager.Instance.ClearStage();
         }
 
@@ -119,6 +129,14 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             TurnManager.Instance.StartBattle();
+        }
+        if (Input.GetKeyDown(KeyCode.Equals))
+        {
+            ChangeCoinValue(100);
+        }
+        if (Input.GetKeyDown(KeyCode.Minus))
+        {
+            ChangeCoinValue(-100);
         }
 #endif
     }

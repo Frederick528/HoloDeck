@@ -19,6 +19,7 @@ MonoBehaviour:
     level: 1
     damage: 10
     hp: 15
+    dropCoin: 10
     descript: 
     sprite: {fileID: 0}
     enemyTag: 0
@@ -28,6 +29,7 @@ MonoBehaviour:
     level: 1
     damage: 15
     hp: 10
+    dropCoin: 10
     descript: 
     sprite: {fileID: 0}
     enemyTag: 0

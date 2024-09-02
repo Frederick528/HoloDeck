@@ -11,6 +11,7 @@ using System.Linq;
 public class CardManager : MonoBehaviour
 {
     public static CardManager Instance { get; private set; }
+    public Dictionary<int, CardData> CardDatas {  get; private set; } = new Dictionary<int, CardData>();
     //public List<Card> Deck { get; private set; }
 
     public List<Card> MainDeck;   // 덱 정보를 데이터 값으로 저장(배틀 중 추가된 카드는 적용X)
@@ -69,10 +70,21 @@ public class CardManager : MonoBehaviour
             cardRewardPanel.GetChild(i).GetComponent<UICard>().Setup(cardSO.cards[reward[i]]);
     }
 
-    public CardData FindCardInCardSO(int id)   // id 값으로 카드데이터 가져오기
+    public CardData FindCardData(int id)   // id 값으로 카드데이터 가져오기
     {
+        CardData _cardData;
+        if (CardDatas.TryGetValue(id, out _cardData))
+        {
+            return _cardData;
+        }
+        else
+        {
+            _cardData = Array.Find(cardSO.cards, x => x.id == id);
+            CardDatas.Add(id, _cardData);
+            return _cardData;
+        }
         //return cardSO.cards.Find(x => x.id == id);
-        return Array.Find(cardSO.cards, x => x.id == id);
+        //return Array.Find(cardSO.cards, x => x.id == id);
     }
 
     void SetupStartCardDeck()   // 시작할 때, 메인덱을 설정하는 함수 (게임 시작 이후에는 사용하지 않음.)
@@ -555,7 +567,7 @@ public class CardManager : MonoBehaviour
     //async UniTask UseCard(Card card)
     //{
     //    //card.cardAction?.Invoke(card);
-    //    if (GameManager.Instance.player.curHolo < card.Data.cost)
+    //    if (GameManager.Instance.player.CurHolo < card.Data.cost)
     //    {
     //        PutDownCard(card).Forget();
     //        return;
@@ -570,7 +582,7 @@ public class CardManager : MonoBehaviour
     void UseCard(Card card)
     {
         //card.cardAction?.Invoke(card);
-        if (GameManager.Instance.player.curHolo < card.Data.cost)
+        if (GameManager.Instance.player.CurHolo < card.Data.cost)
         {
             PutDownCard(card).Forget();
             return;

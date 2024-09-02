@@ -16,6 +16,7 @@ public class EnemyData
     public int level;
     public int damage;
     public int hp;
+    public int dropCoin;
     [TextArea(1, 5)]
     public string descript;
     public Sprite sprite;

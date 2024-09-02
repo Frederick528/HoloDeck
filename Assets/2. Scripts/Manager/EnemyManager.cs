@@ -7,11 +7,13 @@ using UnityEngine;
 public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager Instance { get; private set; }
+    public Dictionary<int, EnemyData> enemyDatas { get; private set; } = new Dictionary<int, EnemyData>();
     public List<Enemy> enemies;
-    [SerializeField] EnemySO enemySO;
     public List<Transform> enemySpawnPosition;
     public Enemy targetEnemy;
     public Arrow arrow;
+
+    [SerializeField] EnemySO enemySO;
     //[SerializeField] Enemy enemy;
 
 
@@ -35,17 +37,28 @@ public class EnemyManager : MonoBehaviour
     {
         if (!enemySpawnPosition[spawnPosIndex].gameObject.activeSelf)
             return false;
-        EnemyData enemyData = FindEnemyInEnemySO(enemyId);
-        GameObject enemyObject = Instantiate(enemyData.enemyPrefab, enemySpawnPosition[spawnPosIndex].position, Quaternion.identity);
-        Enemy enemy = enemyObject.GetComponent<Enemy>();
-        enemies.Add(enemy);
-        enemy.SetupEnemy(enemyData, spawnPosIndex);
+        EnemyData _enemyData = FindEnemyData(enemyId);
+        GameObject _enemyObject = Instantiate(_enemyData.enemyPrefab, enemySpawnPosition[spawnPosIndex].position, Quaternion.identity);
+        Enemy _enemy = _enemyObject.GetComponent<Enemy>();
+        enemies.Add(_enemy);
+        _enemy.SetupEnemy(_enemyData, spawnPosIndex);
         enemySpawnPosition[spawnPosIndex].gameObject.SetActive(false);
         return true;
     }
 
-    public EnemyData FindEnemyInEnemySO(int id)   // id 값으로 적 데이터 가져오기
+    public EnemyData FindEnemyData(int id)   // id 값으로 적 데이터 가져오기
     {
-        return Array.Find(enemySO.enemyDatas, x => x.id == id);
+        EnemyData _enemyData;
+        if (enemyDatas.TryGetValue(id, out _enemyData))
+        {
+            return _enemyData;
+        }
+        else
+        {
+            _enemyData = Array.Find(enemySO.enemyDatas, x => x.id == id);
+            enemyDatas.Add(id, _enemyData);
+            return _enemyData;
+        }
+        //return Array.Find(enemySO.enemyDatas, x => x.id == id);
     }
 }
