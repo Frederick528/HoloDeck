@@ -10,12 +10,12 @@ public class PoolManager : MonoBehaviour
     public int defaultCapacity = 10;
     //public int maxPoolSize = 10;
     public GameObject cardPrefab;
-    public GameObject mapPrefab;
+    //public GameObject mapPrefab;
 
     [SerializeField] Transform cardSpawnPoint;
     [SerializeField] Transform deck;
 
-    [SerializeField] Transform map;
+    //[SerializeField] Transform map;
     //[SerializeField] Transform HandCard;
 
     public IObjectPool<GameObject> CardPool { get; private set; }

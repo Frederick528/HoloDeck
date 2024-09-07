@@ -23,7 +23,7 @@ public class EnemyStage : MonoBehaviour, IStage
         switch (mapLV)
         {
             case 0:
-                EnemySpawnPattern(Random.Range(0, 2));
+                EnemySpawnPattern(Random.Range(0, 3));
                 break;
             case 1:
                 EnemySpawnPattern(Random.Range(100, 110));
@@ -47,6 +47,9 @@ public class EnemyStage : MonoBehaviour, IStage
                 EnemyManager.Instance.SpawnEnemy(100, 0);
                 EnemyManager.Instance.SpawnEnemy(100, 1);
                 EnemyManager.Instance.SpawnEnemy(100, 2);
+                break;
+            case 2:
+                EnemyManager.Instance.SpawnEnemy(102, 0);
                 break;
         }
     }

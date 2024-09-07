@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -16,7 +16,7 @@ public class Map : MonoBehaviour
     public bool rewarded = false;
 
     public int rewardBox { get; private set; } = -1;
-    public int[] reward { get; private set; } = new int[3];
+    public int[] reward { get; private set; } = new int[4];
 
     //public IObjectPool<GameObject> MapPool { get; set; }
     public Button btn;
@@ -61,9 +61,11 @@ public class Map : MonoBehaviour
         {
             rewardBox = Random.Range(0, 5);
             MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(true);
-            reward[0] = Random.Range(0, 5);
-            reward[1] = Random.Range(0, 5);
-            reward[2] = Random.Range(0, 5);
+            // 캐릭터별로 보상이 바뀌는 코드 넣어야 함.
+            reward[0] = Random.Range(100, 105);
+            reward[1] = Random.Range(100, 105);
+            reward[2] = Random.Range(100, 105);
+            reward[3] = Random.Range(100, 105);     // 유물 효과로 카드 선택지 +1
             CardManager.Instance.ShowRewardCard(reward);
 
         }

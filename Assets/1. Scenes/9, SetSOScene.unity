@@ -237,6 +237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardSO: {fileID: 11400000, guid: 41dad1336250ac04ead82446813d3850, type: 2}
+  enemySO: {fileID: 11400000, guid: 3bcdae0f294187b46889e43b613ea3e6, type: 2}
 --- !u!4 &1618557158
 Transform:
   m_ObjectHideFlags: 0

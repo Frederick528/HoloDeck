@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+Ôªøusing Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -9,15 +9,18 @@ using UnityEngine.UI;
 public abstract class Entity : MonoBehaviour
 {
     [SerializeField] protected SpriteRenderer entitySprite;
-    [SerializeField] protected Slider slider;   // ≥™¡ﬂø° ¿ÃπÃ¡ˆ∑Œ ∫Ø∞Ê
+    [SerializeField] protected Slider slider;   // ÎÇòÏ§ëÏóê Ïù¥ÎØ∏ÏßÄÎ°ú Î≥ÄÍ≤Ω
+    [SerializeField] protected GameObject armorObj;
     [SerializeField] protected TMP_Text hpText;
+    [SerializeField] protected TMP_Text armorText;
     [SerializeField] protected BoxCollider2D col2d;
 
     protected Animator animator;
     protected ReactiveProperty<int> maxHp = new();
     protected ReactiveProperty<int> curHp = new();
+    protected ReactiveProperty<int> armor = new();
 
-    //private void Awake()    // start∑Œ «“ ∞ÊøÏ, Subscribe∞° Ω««‡µ«¡ˆ æ ¿Ω. Awake∑Œ «œ∏È ¿ß«Ë«“ ∞Õ ∞∞æ∆º≠ ¿œ¥‹ «‘ºˆ∑Œ ª©∞Ì ¿⁄Ωƒ ø¿∫Í¡ß∆Æø°º≠ Start∑Œ »£√‚
+    //private void Awake()    // startÎ°ú Ìï† Í≤ΩÏö∞, SubscribeÍ∞Ä Ïã§ÌñâÎêòÏßÄ ÏïäÏùå. AwakeÎ°ú ÌïòÎ©¥ ÏúÑÌóòÌï† Í≤É Í∞ôÏïÑÏÑú ÏùºÎã® Ìï®ÏàòÎ°ú ÎπºÍ≥† ÏûêÏãù Ïò§Î∏åÏ†ùÌä∏ÏóêÏÑú StartÎ°ú Ìò∏Ï∂ú
     //{
     //    maxHp.Subscribe(hp =>
     //    {
@@ -39,8 +42,17 @@ public abstract class Entity : MonoBehaviour
     }
     public bool TakeDamage(int dmg)
     {
-        curHp.Value -= dmg;
-        //animator.Play("Hit", 0);  // ≈∏∞› ¥Á«œ¥¬ æ÷¥œ∏ﬁ¿Ãº« Ω««‡
+        if (armor.Value >= dmg)
+        {
+            armor.Value -= dmg;
+        }
+        else
+        {
+            dmg -= armor.Value;
+            armor.Value = 0;
+            curHp.Value -= dmg;
+        }
+        //animator.Play("Hit", 0);  // ÌÉÄÍ≤© ÎãπÌïòÎäî Ïï†ÎãàÎ©îÏù¥ÏÖò Ïã§Ìñâ
         if (curHp.Value > 0)
             return false;
         col2d.enabled = false;
@@ -49,7 +61,7 @@ public abstract class Entity : MonoBehaviour
     }
     public virtual async UniTask DieAnimation()
     {
-        //animator.Play("Die", 0);  // ªÁ∏¡ æ÷¥œ∏ﬁ¿Ãº« Ω««‡
+        //animator.Play("Die", 0);  // ÏÇ¨Îßù Ïï†ÎãàÎ©îÏù¥ÏÖò Ïã§Ìñâ
         await UniTask.Delay(1000);
         //await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1);
         Destroy(gameObject);
@@ -59,8 +71,19 @@ public abstract class Entity : MonoBehaviour
         curHp.Value = Mathf.Clamp(curHp.Value + amount, 0, maxHp.Value);
     }
 
+    public virtual void Defence(int amount)
+    {
+        armor.Value += amount;
+    }
+
+    public virtual void DefenceReset()
+    {
+        armor.Value = 0;
+    }
+
     protected void EntitySubScribe()
     {
+        StartEntity();
         maxHp.Subscribe(hp =>
         {
             slider.maxValue = hp;
@@ -70,6 +93,28 @@ public abstract class Entity : MonoBehaviour
             slider.value = hp;
             hpText.text = hp.ToString();
         });
+        armor.Subscribe(shield =>
+        {
+            if (shield <= 0)
+            {
+                armorObj.SetActive(false);
+            }
+            else
+            {
+                armorObj.SetActive(true);
+                armorText.text = shield.ToString();
+            }
+        });
+    }
+
+    protected void StartEntity()
+    {
+        entitySprite = GetComponent<SpriteRenderer>();
+        slider = GetComponentInChildren<Slider>();
+        armorObj = GameObject.Find("Armor");
+        hpText = GetComponentsInChildren<TMP_Text>()[0];
+        armorText = GetComponentsInChildren<TMP_Text>()[1];
+        col2d = GetComponent<BoxCollider2D>();
     }
 
 }

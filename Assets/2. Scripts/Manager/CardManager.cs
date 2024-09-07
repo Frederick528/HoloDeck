@@ -39,7 +39,7 @@ public class CardManager : MonoBehaviour
     
     [SerializeField] GameObject cardPrefab;
 
-    [SerializeField] Transform cardRewardPanel;
+    [SerializeField] Transform cardRewardContent;
 
     Card selectCard;
     bool draggable;
@@ -66,8 +66,8 @@ public class CardManager : MonoBehaviour
 
     public void ShowRewardCard(int[] reward)
     {
-        for (int i = 0; i < 3; ++i)
-            cardRewardPanel.GetChild(i).GetComponent<UICard>().Setup(cardSO.cards[reward[i]]);
+        for (int i = 0; i < reward.Length; ++i)
+            cardRewardContent.GetChild(i).GetComponent<UICard>().Setup(FindCardData(reward[i]));
     }
 
     public CardData FindCardData(int id)   // id 값으로 카드데이터 가져오기
@@ -89,7 +89,8 @@ public class CardManager : MonoBehaviour
 
     void SetupStartCardDeck()   // 시작할 때, 메인덱을 설정하는 함수 (게임 시작 이후에는 사용하지 않음.)
     {
-        for (int i = 0; i < cardSO.cards.Length; i++)
+        int _startDeck = 6;     // 여기 밑 코드 변경해야 함. 캐릭터별로 얻는 카드와 카드 ID가 달라지기 때문에 switch로 구별.
+        for (int i = 0; i < _startDeck; i++)
             AddDeck(cardSO.cards[i], EAddDeck.Main);
 
         //AddDeck(FindCardInCardSO(1000), EAddDeck.Main);     // 이 부분은 제거할 것
@@ -249,22 +250,31 @@ public class CardManager : MonoBehaviour
 
     public async UniTask<Card[]> DrawCards(int count)
     {
-        if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기. 이 경우에는 카드 뽑기가 LoadCardDummyDelay초 후 가능 (카드 버려지는 시간인 ThrowAwayCardDelay초보단 높게 잡아야 함.)
+        Card[] card = new Card[count];
+        int tempDraw = DrawDeck.Count;
+        if (DrawDeck.Count < count)    // 덱에 있는 카드가 뽑을 카드보다 적으면, 일단 덱에 있는 카드를 뽑고 덱 섞기. 이 경우에는 카드 뽑기가 LoadCardDummyDelay초 후 가능 (카드 버려지는 시간인 ThrowAwayCardDelay초보단 높게 잡아야 함.)
         {
+            for (int i = 0; i < DrawDeck.Count; ++i)
+            {
+                card[i] = DrawDeck[0];
+                DrawDeck.RemoveAt(0);
+            }
             SetupDrawDeck();
             await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.LoadCardDummyDelay));
         }
 
 
         if (DrawDeck.Count == 0)    // 덱을 섞은 후에도 뽑을 카드가 없으면 리턴
-            return null;
+            return card;
         
-        if (DrawDeck.Count < count)
-            count = DrawDeck.Count;
+        //if (DrawDeck.Count < count)
+        //    count = DrawDeck.Count;
 
-        Card[] card = new Card[count];
-        for (int i = 0; i < count; ++i)
+        //Card[] card = new Card[count];
+        for (int i = tempDraw; i < count; ++i)      // 위에서 리턴이 걸리지 않으면, 남은 카드를 뽑음. 남은 카드를 뽑던 중, 덱에 있는 카드가 없을 경우, 리턴
         {
+            if (DrawDeck.Count == 0)
+                return card;
             card[i] = DrawDeck[0];
             DrawDeck.RemoveAt(0);
         }
@@ -288,13 +298,16 @@ public class CardManager : MonoBehaviour
     public async UniTask AddCards(int count)   // 손패로 드로우할 카드
     {
         Card[] drawCard = await DrawCards(count);
-        if (drawCard == null)
-            return;
+        //if (drawCard == null)
+        //    return;
+
         //GameObject cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity);
         //Card card = drawCard.GetComponent<Card>();
         //drawCard.Setup(drawCard.Data);
         for (int i = 0; i < drawCard.Length; ++i)
         {
+            if (drawCard[i] == null)
+                return;
             HandCard.Add(drawCard[i]);
 
             SetOriginOrder();

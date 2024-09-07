@@ -30,21 +30,24 @@ public class CardAbility
     {
         switch (id)
         {
-            case 1000:
+            case 100:
                 cardAction += SingleAttack;
                 break;
-            case 2000:
-                cardAction += (card) => ContinuousMultiAttack(card).Forget();
-                break;
-            case 3000:
-                cardAction += ContinuousDrawSkill;
-                break;
-            case 1001:
+            case 101:
                 cardAction += SingleAttack;
                 cardAction += DrawSkill;
                 break;
-            case 1002:
+            case 102:
                 cardAction += (card) => ContinuousSinglettack(card).Forget();
+                break;
+            case 103:
+                cardAction += (card) => ContinuousMultiAttack(card).Forget();
+                break;
+            case 104:
+                cardAction += ContinuousDrawSkill;
+                break;
+            case 105:
+                cardAction += DefenceSkill;
                 break;
             default: cardAction = null; break;
         }
@@ -54,41 +57,68 @@ public class CardAbility
     void SingleAttack(Card card)
     {
         Enemy enemy = EnemyManager.Instance.targetEnemy;
-        enemy.TakeDamageEnemy(card.Data.damage);
+        if (!card.enhanced)
+            enemy.TakeDamageEnemy(card.Data.damage);
+        else
+            enemy.TakeDamageEnemy(card.Data.enhancedDamage);
         //enemy.TakeDamageEnemy(card.Data.damage).Forget();
     }
     void MultiAttack(Card card)
     {
-        for (int i = EnemyManager.Instance.enemies.Count - 1; i >= 0; i--)
+        if (!card.enhanced)
         {
-            EnemyManager.Instance.enemies[i].TakeDamageEnemy(card.Data.damage);
-            //EnemyManager.Instance.enemies[i].TakeDamageEnemy(card.Data.damage).Forget();
+            for (int i = EnemyManager.Instance.enemies.Count - 1; i >= 0; i--)
+            {
+                EnemyManager.Instance.enemies[i].TakeDamageEnemy(card.Data.damage);
+                //EnemyManager.Instance.enemies[i].TakeDamageEnemy(card.Data.damage).Forget();
+            }
+        }
+        else
+        {
+            for (int i = EnemyManager.Instance.enemies.Count - 1; i >= 0; i--)
+            {
+                EnemyManager.Instance.enemies[i].TakeDamageEnemy(card.Data.enhancedDamage);
+            }
         }
     }
     async UniTaskVoid ContinuousSinglettack(Card card)
     {
         Enemy enemy = EnemyManager.Instance.targetEnemy;
-        if (enemy.TakeDamageEnemy(card.Data.damage))
-            return;
-        //enemy.TakeDamageEnemy(card.Data.damage).Forget();
-        for (int i = 1; i < card.Data.count; i++)
+        if (!card.enhanced)
         {
-            await DelayTask();
             if (enemy.TakeDamageEnemy(card.Data.damage))
                 return;
-            //if (enemy != null)
-                //enemy.TakeDamageEnemy(card.Data.damage).Forget();
-            //DelayTask().ContinueWith(() =>
-            //{
-            //    if (enemy != null)
-            //        enemy.TakeDamage(card.Data.damage);
-            //});
+            //enemy.TakeDamageEnemy(card.Data.damage).Forget();
+            for (int i = 1; i < card.Data.count; i++)
+            {
+                await DelayTask();
+                if (enemy.TakeDamageEnemy(card.Data.damage))
+                    return;
+                //if (enemy != null)
+                    //enemy.TakeDamageEnemy(card.Data.damage).Forget();
+                //DelayTask().ContinueWith(() =>
+                //{
+                //    if (enemy != null)
+                //        enemy.TakeDamage(card.Data.damage);
+                //});
+            }
+        }
+        else
+        {
+            if (enemy.TakeDamageEnemy(card.Data.enhancedDamage))
+                return;
+            for (int i = 1; i < card.Data.enhancedCount; i++)
+            {
+                await DelayTask();
+                if (enemy.TakeDamageEnemy(card.Data.enhancedDamage))
+                    return;
+            }
         }
     }
     async UniTaskVoid ContinuousMultiAttack(Card card)
     {
         MultiAttack(card);
-        for (int j = 1; j < card.Data.count; j++)
+        for (int j = 1; j < (!card.enhanced ? card.Data.count : card.Data.enhancedCount); j++)
         {
             await DelayTask();
             MultiAttack(card);
@@ -104,14 +134,20 @@ public class CardAbility
         CardManager.Instance.AddCard().Forget();
     }
 
-    void ContinuousDrawSkill(Card card)
+    void ContinuousDrawSkill(Card card)     // 드로우 같은 경우, 덱에 남아있는 카드를 확인하기 위해 Data.count 값이 아닌 Data.draw 값으로 얼마나 뽑을지 정함.
     {
         //TurnManager.Instance.DrawTask(card.Data.draw).Forget();
-        CardManager.Instance.AddCards(card.Data.draw).Forget();
+        if (!card.enhanced)
+            CardManager.Instance.AddCards(card.Data.draw).Forget();
+        else
+            CardManager.Instance.AddCards(card.Data.enhancedDraw).Forget();
     }
     void DefenceSkill(Card card)
     {
-
+        if (!card.enhanced)
+            GameManager.Instance.player.Defence(card.Data.defence);
+        else
+            GameManager.Instance.player.Defence(card.Data.enhancedDefence);
     }
 
     async UniTask DelayTask()

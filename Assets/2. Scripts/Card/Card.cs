@@ -37,6 +37,8 @@ public class Card : MonoBehaviour
 
     public Action<Card> cardAction { get; private set; }
 
+    public bool enhanced = false;
+
     // Start is called before the first frame update
 
     //private void OnEnable()
@@ -71,6 +73,12 @@ public class Card : MonoBehaviour
         desText.text = Data.descript;
         character.sprite = Data.sprite;
 
+        cardAction = cardAbility.SetCardAbility(Data.id);
+    }
+
+    public void EnhancedCard()
+    {
+        enhanced = true;
         cardAction = cardAbility.SetCardAbility(Data.id);
     }
 

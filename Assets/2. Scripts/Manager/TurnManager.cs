@@ -49,9 +49,13 @@ public class TurnManager : MonoBehaviour
     public async UniTask StartTurnTask()        // 시작 뽑기 (수정 필요: OnAddCard가 액션이라 Invoke 사용시, await가 작용하지 않아 카드덱이 0개일 경우, 0.5초 뒤에 뽑는 것이 적용되지 않음.)
     {
         //GameSetup();
-        GameManager.Instance.player.ChangeHoloValue(GameManager.Instance.player.MaxHolo);
         myTurn = true;
+
+        GameManager.Instance.player.ChangeHoloValue(GameManager.Instance.player.MaxHolo);
+        GameManager.Instance.player.DefenceReset();
+
         UiManager.instance.ChangeTurnButtonText(myTurn);
+        
         SetBool(true);
         for (int i = 0; i < startCardCount; i++)
         {
