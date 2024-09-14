@@ -7,6 +7,8 @@ using Random = UnityEngine.Random;
 using UnityEngine.UI;
 using DG.Tweening;
 using System.Linq;
+using TMPro;
+using System.Security.Cryptography;
 
 public class CardManager : MonoBehaviour
 {
@@ -25,6 +27,8 @@ public class CardManager : MonoBehaviour
     
     public ECardState cardState;
 
+    public CardData rewardCardData;
+
     [SerializeField] CardSO cardSO;
 
     [SerializeField] Transform cardSpawnPoint;
@@ -41,6 +45,9 @@ public class CardManager : MonoBehaviour
 
     [SerializeField] Transform cardRewardContent;
 
+    [SerializeField] Transform shopCard;
+    [SerializeField] Transform shopCardPrice;
+
     Card selectCard;
     bool draggable;
     bool isUseCard;     // 카드 사용존에 카드가 올라왔을 경우(카드를 놓으면 카드가 사용되는 위치)
@@ -48,6 +55,7 @@ public class CardManager : MonoBehaviour
     bool canPush = true;
     public enum ECardState { Nothing, CanMouseOver, CanMouseDrag }
 
+    int shopCardIdx;
 
     
     private void Awake() => Instance = this;
@@ -68,6 +76,41 @@ public class CardManager : MonoBehaviour
     {
         for (int i = 0; i < reward.Length; ++i)
             cardRewardContent.GetChild(i).GetComponent<UICard>().Setup(FindCardData(reward[i]));
+    }
+
+    public void RewardedCardBtn()
+    {
+        AddDeck(rewardCardData, EAddDeck.Main);
+        MapManager.Instance.currStage.rewarded = true;
+        MapManager.Instance.currStage.RewardBox();
+        UiManager.instance.LookMap();
+    }
+
+    public void SettingCardShop()
+    {
+        for (int i = 0; i < shopCard.childCount; ++i)
+        {
+            CardData _cardData = FindCardData(Random.Range(100, 106));
+            shopCard.GetChild(i).GetComponent<UICard>().Setup(_cardData);
+            shopCardPrice.GetChild(i).GetComponent<TMP_Text>().text = _cardData.price.ToString();
+        }
+    }
+    public void BuyCardBtn()
+    {
+        if (GameManager.Instance.player.Coin.Value >= rewardCardData.price)
+        {
+            GameManager.Instance.player.Coin.Value -= rewardCardData.price;
+            AddDeck(rewardCardData, EAddDeck.Main);
+            shopCard.GetChild(shopCardIdx).GetComponent<UICard>().gameObject.SetActive(false);
+            shopCardPrice.GetChild(shopCardIdx).GetComponent<TMP_Text>().text = "";
+        }
+        else
+            print("돈부족");
+    }
+
+    public void BuyCardIdx(int idx)
+    {
+        shopCardIdx = idx;
     }
 
     public CardData FindCardData(int id)   // id 값으로 카드데이터 가져오기

@@ -11,5 +11,7 @@ public class ShopStage : MonoBehaviour, IStage
         if (!_map)
             _map = map;
         print("Shop");
+
+        MapManager.Instance.shopCanvas.gameObject.SetActive(true);
     }
 }

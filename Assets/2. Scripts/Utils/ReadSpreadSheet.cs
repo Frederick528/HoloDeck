@@ -101,7 +101,7 @@ public class ReadSpreadSheet : MonoBehaviour
             data.enhancedCount = ConvertInt32(cells[9]);
             data.draw = ConvertInt32(cells[10]);
             data.enhancedDraw = ConvertInt32(cells[11]);
-            //data.cardUseDelay = float.Parse(cells[12]);
+            data.price = ConvertInt32(cells[12]);
             data.descript = LineBreakStr(cells[13]);
             data.enhancedDescript = LineBreakStr(cells[14]);
             try

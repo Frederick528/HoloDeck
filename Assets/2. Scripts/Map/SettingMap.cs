@@ -48,6 +48,10 @@ public class SettingMap : MonoBehaviour
     [SerializeField] Transform mapCanvas;
     [SerializeField] GameObject cardRewardCanvas;
     [SerializeField] GameObject enlargePanel;
+
+    [SerializeField] GameObject shopCanvas;
+    [SerializeField] GameObject shopenlargePanel;
+    [SerializeField] GameObject shopPanel;
     private void Start()
     {
         creatMapCnt = (int)Mathf.Clamp(creatMapCnt, 1, Mathf.Pow(maxDistance * 2 + 1, 2));
@@ -126,6 +130,7 @@ public class SettingMap : MonoBehaviour
         // Shop
         index = Random.Range(0, stageList.Count);
         stageList[index].stage = stageList[index].AddComponent<ShopStage>();
+        CardManager.Instance.SettingCardShop();
         SetClickStage(stageList[index]);
         stageList[index].GetComponentInChildren<TMP_Text>().text = "Shop";
         stageList[index].GetComponentInChildren<TMP_Text>().color = Color.blue;
@@ -185,6 +190,10 @@ public class SettingMap : MonoBehaviour
             // 보상과 상관없이 enlargePanel와 cardRewardCanvas는 새로운 방에 들어갈 때마다 숨김 처리.
             enlargePanel.SetActive(false);
             cardRewardCanvas.SetActive(false);
+
+            shopPanel.SetActive(false);
+            shopenlargePanel.SetActive(false);
+            shopCanvas.SetActive(false);
 
             // 방 입장 코드 추가
             stage.stageContext.Transition(stage.stage);

@@ -7,8 +7,7 @@ public class MapManager : MonoBehaviour
     public static MapManager Instance { get; private set; }
 
     public Transform rewardCanvas;
-
-    public CardData rewardCardData;
+    public Transform shopCanvas;
 
     public Map currStage;
 
@@ -45,13 +44,5 @@ public class MapManager : MonoBehaviour
     public void RewardStage()
     {
         currStage.RewardBox();
-    }
-
-    public void RewardedCardBtn()
-    {
-        CardManager.Instance.AddDeck(rewardCardData, EAddDeck.Main);
-        currStage.rewarded = true;
-        currStage.RewardBox();
-        UiManager.instance.LookMap();
     }
 }

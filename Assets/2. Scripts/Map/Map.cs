@@ -62,10 +62,10 @@ public class Map : MonoBehaviour
             rewardBox = Random.Range(0, 5);
             MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(true);
             // 캐릭터별로 보상이 바뀌는 코드 넣어야 함.
-            reward[0] = Random.Range(100, 105);
-            reward[1] = Random.Range(100, 105);
-            reward[2] = Random.Range(100, 105);
-            reward[3] = Random.Range(100, 105);     // 유물 효과로 카드 선택지 +1
+            reward[0] = Random.Range(100, 106);
+            reward[1] = Random.Range(100, 106);
+            reward[2] = Random.Range(100, 106);
+            reward[3] = Random.Range(100, 106);     // 유물 효과로 카드 선택지 +1
             CardManager.Instance.ShowRewardCard(reward);
 
         }

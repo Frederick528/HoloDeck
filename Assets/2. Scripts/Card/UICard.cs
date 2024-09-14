@@ -26,7 +26,7 @@ public class UICard : MonoBehaviour
         {
             cardBtn.onClick.AddListener(() =>
             {
-                MapManager.Instance.rewardCardData = data;
+                CardManager.Instance.rewardCardData = data;
                 enlargeCard.Setup(data);
             });
 
