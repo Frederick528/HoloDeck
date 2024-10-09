@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -10,7 +11,7 @@ public class ReadSpreadSheet : MonoBehaviour
 {
     private static string dataCardGS;
     private static string dataEnemyGS;
-    private static Dictionary<int, CardData> dataDict = null;
+    //private static Dictionary<int, CardData> dataDict = null;
     public CardSO cardSO;
 
     public EnemySO enemySO;
@@ -24,23 +25,23 @@ public class ReadSpreadSheet : MonoBehaviour
         LoadCardSO().Forget();
         LoadEnemySO().Forget();
     }
-    public static async UniTaskVoid LoadData(/*string address, string range, ulong sheetID*/)
-    {
-        using (UnityWebRequest www =
-            //UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:P&gid=0"))  // 0 = 원본, 1809511646 = 테스트용
-            UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:P&gid=1809511646"))  // 0 = 원본, 1809511646 = 테스트용
-            //UnityWebRequest.Get($"{address}/export?format=csv&range={range}&gid={sheetID}"))
-        {
-            await www.SendWebRequest();
-            dataCardGS = www.downloadHandler.text;
+    //public static async UniTaskVoid LoadData(/*string address, string range, ulong sheetID*/)
+    //{
+    //    using (UnityWebRequest www =
+    //        //UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:P&gid=0"))  // 0 = 원본, 1809511646 = 테스트용
+    //        UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:P&gid=1809511646"))  // 0 = 원본, 1809511646 = 테스트용
+    //        //UnityWebRequest.Get($"{address}/export?format=csv&range={range}&gid={sheetID}"))
+    //    {
+    //        await www.SendWebRequest();
+    //        dataCardGS = www.downloadHandler.text;
 
 
-            if (www.isDone)
-            {
-                CreateDB();
-            }
-        }
-    }
+    //        if (www.isDone)
+    //        {
+    //            CreateDB();
+    //        }
+    //    }
+    //}
 
     async UniTaskVoid LoadCardSO()
     {
@@ -118,6 +119,7 @@ public class ReadSpreadSheet : MonoBehaviour
             cardSO.cards[i] = data;
             ++i;
         }
+        EditorUtility.SetDirty(cardSO);
     }
 
     void SetEnemySO()
@@ -150,6 +152,7 @@ public class ReadSpreadSheet : MonoBehaviour
             enemySO.enemyDatas[i] = data;
             ++i;
         }
+        EditorUtility.SetDirty(enemySO);
     }
 
     //private void SystemIOFileLoad()
@@ -184,32 +187,32 @@ public class ReadSpreadSheet : MonoBehaviour
         return _return;
     }
 
-    private static Dictionary<int, CardData> CreateDB()
-    {
-        string[] rows = dataCardGS.Split("\n");
-        Dictionary<int, CardData> cardDB = new Dictionary<int, CardData>();
-        foreach (string row in rows)
-        {
-            string[] cells = row.Split(",");
-            var data = new CardData();
-            data.name = cells[1];
-            data.descript = cells[2];
-            print(cells[2]);
+    //private static Dictionary<int, CardData> CreateDB()
+    //{
+    //    string[] rows = dataCardGS.Split("\n");
+    //    Dictionary<int, CardData> cardDB = new Dictionary<int, CardData>();
+    //    foreach (string row in rows)
+    //    {
+    //        string[] cells = row.Split(",");
+    //        var data = new CardData();
+    //        data.name = cells[1];
+    //        data.descript = cells[2];
+    //        print(cells[2]);
 
-            cardDB.Add(Convert.ToInt32(cells[0].ToString()), data);
-            //GameManager.Instance.ArtifactDict.Add(Convert.ToInt32(cells[0].ToString()), false);
-            //GameManager.Instance.ObtainableArtifact.Add(Convert.ToInt32(cells[0].ToString()));
-        }
-        dataDict = cardDB;
-        return dataDict;
-    }
-    public static bool TryGetData(int key, out CardData data)
-    {
-        dataDict ??= CreateDB();
-        var result = true;
-        data = dataDict[key];
-        return result;
-    }
+    //        cardDB.Add(Convert.ToInt32(cells[0].ToString()), data);
+    //        //GameManager.Instance.ArtifactDict.Add(Convert.ToInt32(cells[0].ToString()), false);
+    //        //GameManager.Instance.ObtainableArtifact.Add(Convert.ToInt32(cells[0].ToString()));
+    //    }
+    //    dataDict = cardDB;
+    //    return dataDict;
+    //}
+    //public static bool TryGetData(int key, out CardData data)
+    //{
+    //    dataDict ??= CreateDB();
+    //    var result = true;
+    //    data = dataDict[key];
+    //    return result;
+    //}
 
 
 }
