@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] CardSO cardSO;
 
+    [SerializeField] GameObject arrow;
+
     public Player player;
 
     void Awake()
@@ -38,6 +40,12 @@ public class GameManager : MonoBehaviour
     {
         UiManager.instance.SetupGameUi(true);
         //SoundManager.instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
+    }
+
+    public void ArrowCursor(bool isOn)
+    {
+        arrow.SetActive(isOn);
+        Cursor.visible = !isOn;
     }
 
     public void ChangeCoinValue(int coin)
@@ -137,6 +145,14 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Minus))
         {
             ChangeCoinValue(-100);
+        }
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            ItemManager.Instance.ItemAbility(5);
+        }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            PotionManager.Instance.GetPotion(2);
         }
 #endif
     }

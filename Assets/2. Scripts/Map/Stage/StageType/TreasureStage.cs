@@ -11,5 +11,7 @@ public class TreasureStage : MonoBehaviour, IStage
         if (!_map)
             _map = map;
         print("Treasure~!");
+
+        MapManager.Instance.Treasure();
     }
 }

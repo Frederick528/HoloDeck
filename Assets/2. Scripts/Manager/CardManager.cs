@@ -39,11 +39,11 @@ public class CardManager : MonoBehaviour
     [SerializeField] Transform myCardLeft;
     [SerializeField] Transform myCardRight;
 
-    [SerializeField] GameObject arrow;
+    //[SerializeField] GameObject arrow;
     
     [SerializeField] GameObject cardPrefab;
 
-    [SerializeField] Transform cardRewardContent;
+    public Transform cardRewardContent;
 
     [SerializeField] Transform shopCard;
     [SerializeField] Transform shopCardPrice;
@@ -603,13 +603,13 @@ public class CardManager : MonoBehaviour
             return;
         }
         draggable = false;
-        ArrowCursor(false);
+        GameManager.Instance.ArrowCursor(false);
         selectCard = null;
         if (isUseCard && card.Data.cardTag != CardTag.SingleAttack)     // 단일타격을 제외한 나머지
         {
             UseCard(card);
         }
-        else if (isUseCard /*&& card.Data.cardTag != CardTag.SingleAttack */&& useSingleTargetCard)     // 단일타격이 성공했을 경우
+        else if (isUseCard /*&& card.Data.cardTag != CardTag.SingleAttack */&& useSingleTargetCard)     // 단일타격이 가능할 경우
         {
             UseCard(card);
         }
@@ -671,7 +671,7 @@ public class CardManager : MonoBehaviour
 
         if (isUseCard && card.Data.cardTag == CardTag.SingleAttack && !isSingleTarget)
         {
-            ArrowCursor(true);
+            GameManager.Instance.ArrowCursor(true);
             PullCard();
             card.transform.DOKill();        // 마우스 커서가 카드를 나갈 때 카드 크기가 원래대로 돌아가는 코드를 멈춰주는 함수.
             card.transform.position = new Vector2(0, -3.32f);
@@ -684,7 +684,7 @@ public class CardManager : MonoBehaviour
         }
         else if (!isUseCard && isSingleTarget)
         {
-            ArrowCursor(false);
+            GameManager.Instance.ArrowCursor(false);
             isSingleTarget = false;
         }
         else if (!isUseCard)
@@ -698,7 +698,7 @@ public class CardManager : MonoBehaviour
     {
         RaycastHit2D[] hits = Physics2D.RaycastAll(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward);
         int layer = LayerMask.NameToLayer("UsedCardArea");
-        isUseCard = Array.Exists(hits, x => x.collider.gameObject.layer == layer);
+        isUseCard = Array.Exists(hits, x => x.collider.gameObject.layer == layer);      // 카드 사용 범위에 있을 경우, isUseCard = true
 
     }
 
@@ -714,10 +714,10 @@ public class CardManager : MonoBehaviour
     //        cardState = ECardState.CanMouseDrag;
     //}
 
-    void ArrowCursor(bool isOn)
-    {
-        arrow.SetActive(isOn);
-        Cursor.visible = !isOn;
-    }
+    //void ArrowCursor(bool isOn)
+    //{
+    //    arrow.SetActive(isOn);
+    //    Cursor.visible = !isOn;
+    //}
     #endregion
 }

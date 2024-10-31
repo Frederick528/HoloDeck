@@ -12,7 +12,8 @@ public class TurnManager : MonoBehaviour
     void Awake() => Instance = this;
 
     [SerializeField] TurnType turnType;
-    [SerializeField] int startCardCount;
+
+    int startCardCount = 5;
 
     public static Action OnAddCard;
 
@@ -44,6 +45,13 @@ public class TurnManager : MonoBehaviour
     public void SetBool(bool isOn)
     {
         isLoading.Value = isOn;
+    }
+
+    public void AddStartCardCount(int count)
+    {
+        startCardCount += count;
+        if (startCardCount < 0)
+            startCardCount = 0;
     }
 
     public async UniTask StartTurnTask()        // 시작 뽑기 (수정 필요: OnAddCard가 액션이라 Invoke 사용시, await가 작용하지 않아 카드덱이 0개일 경우, 0.5초 뒤에 뽑는 것이 적용되지 않음.)

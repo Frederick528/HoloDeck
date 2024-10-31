@@ -31,7 +31,7 @@ MonoBehaviour:
     enhancedCount: 1
     draw: 0
     enhancedDraw: 0
-    cardUseDelay: 0
+    price: 5
     descript: 5 Damage
     enhancedDescript: Name1
     sprite: {fileID: 0}
@@ -48,7 +48,7 @@ MonoBehaviour:
     enhancedCount: 1
     draw: 1
     enhancedDraw: 2
-    cardUseDelay: 0
+    price: 10
     descript: '3 Damage
 
       1 Draw'
@@ -67,7 +67,7 @@ MonoBehaviour:
     enhancedCount: 3
     draw: 0
     enhancedDraw: 0
-    cardUseDelay: 0
+    price: 20
     descript: 3 Damage X 2
     enhancedDescript: Name3
     sprite: {fileID: 0}
@@ -84,7 +84,7 @@ MonoBehaviour:
     enhancedCount: 3
     draw: 0
     enhancedDraw: 0
-    cardUseDelay: 0
+    price: 20
     descript: All 2 Damage X 2
     enhancedDescript: Name4
     sprite: {fileID: 0}
@@ -101,8 +101,25 @@ MonoBehaviour:
     enhancedCount: 0
     draw: 2
     enhancedDraw: 3
-    cardUseDelay: 0
+    price: 15
     descript: 2 Draw
     enhancedDescript: Name5
+    sprite: {fileID: 0}
+    cardTag: 2
+  - name: Name6
+    id: 105
+    cost: 1
+    enhancedCost: 1
+    damage: 0
+    enhancedDamage: 0
+    defence: 6
+    enhancedDefence: 11
+    count: 0
+    enhancedCount: 0
+    draw: 0
+    enhancedDraw: 0
+    price: 5
+    descript: 6 Armor
+    enhancedDescript: Name6
     sprite: {fileID: 0}
     cardTag: 2

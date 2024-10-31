@@ -53,4 +53,17 @@ public class Player : Entity
         CurHolo = Mathf.Clamp(CurHolo + chargeOrUse, 0, MaxHolo);
         holoValue.text = $"{CurHolo} / {MaxHolo}";
     }
+
+    public void AddHealth(int value)
+    {
+        maxHp.Value += value;
+        Heal(value);
+    }
+
+    public void AddHolo(int value)
+    {
+        MaxHolo += value;
+        if (MaxHolo < 0)
+            MaxHolo = 0;
+    }
 }

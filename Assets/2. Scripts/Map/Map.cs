@@ -17,6 +17,7 @@ public class Map : MonoBehaviour
 
     public int rewardBox { get; private set; } = -1;
     public int[] reward { get; private set; } = new int[4];
+    public int[] item { get; private set; } = new int[4];
 
     //public IObjectPool<GameObject> MapPool { get; set; }
     public Button btn;
@@ -59,14 +60,33 @@ public class Map : MonoBehaviour
     {
         if (rewardBox == -1)
         {
-            rewardBox = Random.Range(0, 5);
+            rewardBox = Random.Range(1, 5);
             MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(true);
             // 캐릭터별로 보상이 바뀌는 코드 넣어야 함.
-            reward[0] = Random.Range(100, 106);
+            reward[0] = Random.Range(100, 106);     // 나중에 중복은 제외하는 코드로 변경해야 함.
             reward[1] = Random.Range(100, 106);
             reward[2] = Random.Range(100, 106);
             reward[3] = Random.Range(100, 106);     // 유물 효과로 카드 선택지 +1
             CardManager.Instance.ShowRewardCard(reward);
+
+        }
+
+        else if (rewardBox != -1 && rewarded)
+            MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(false);
+    }
+
+    public void TreasureBox()
+    {
+        if (rewardBox == -1)
+        {
+            rewardBox = 0;
+            MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(true);
+            // 캐릭터별로 보상이 바뀌는 코드 넣어야 함.
+            item[0] = Random.Range(0, 4);     // 나중에 중복은 제외하는 코드로 변경해야 함.
+            item[1] = Random.Range(0, 4);
+            item[2] = Random.Range(0, 4);
+            item[3] = Random.Range(0, 4);     // 유물 효과로 아이템 선택지 +1
+            ItemManager.Instance.SettingItem(item);
 
         }
 

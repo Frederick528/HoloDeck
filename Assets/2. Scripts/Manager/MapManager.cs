@@ -45,4 +45,9 @@ public class MapManager : MonoBehaviour
     {
         currStage.RewardBox();
     }
+
+    public void Treasure()
+    {
+        currStage.TreasureBox();
+    }
 }

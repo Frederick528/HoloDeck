@@ -49,6 +49,8 @@ public class SettingMap : MonoBehaviour
     [SerializeField] GameObject cardRewardCanvas;
     [SerializeField] GameObject enlargePanel;
 
+    [SerializeField] GameObject itemRewardCanvas;
+
     [SerializeField] GameObject shopCanvas;
     [SerializeField] GameObject shopenlargePanel;
     [SerializeField] GameObject shopPanel;
@@ -185,16 +187,22 @@ public class SettingMap : MonoBehaviour
 
             // 떠나려는 방에 보상이 떴는데, 그 보상을 받지 않고 떠난다면, 잠시 해당 스테이지 보상을 숨김. 
             if (MapManager.Instance.currStage.rewardBox != -1 && !MapManager.Instance.currStage.rewarded)
+            {
                 MapManager.Instance.rewardCanvas.GetChild(MapManager.Instance.currStage.rewardBox).gameObject.SetActive(false);
+            }
 
             // 보상과 상관없이 enlargePanel와 cardRewardCanvas는 새로운 방에 들어갈 때마다 숨김 처리.
             enlargePanel.SetActive(false);
             cardRewardCanvas.SetActive(false);
 
+            itemRewardCanvas.SetActive(false);
+
             shopPanel.SetActive(false);
             shopenlargePanel.SetActive(false);
             shopCanvas.SetActive(false);
 
+            MapManager.Instance.currStage = stage;
+            
             // 방 입장 코드 추가
             stage.stageContext.Transition(stage.stage);
 
@@ -202,10 +210,12 @@ public class SettingMap : MonoBehaviour
             if (stage.rewardBox != -1 && !stage.rewarded)
             {
                 MapManager.Instance.rewardCanvas.GetChild(stage.rewardBox).gameObject.SetActive(true);
-                CardManager.Instance.ShowRewardCard(stage.reward);
+                if (stage.rewardBox != 0)
+                {
+                    CardManager.Instance.ShowRewardCard(stage.reward);
+                }
             }
 
-            MapManager.Instance.currStage = stage;
 
             // 이동 모션 코드 추가
 
