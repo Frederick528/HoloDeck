@@ -11,7 +11,11 @@ public class Player : Entity
     public int CurHolo { get; private set; }
 
     public ReactiveProperty<int> Coin { get; private set; } = new();
+    public ReactiveProperty<int> AttackPower { get; private set; } = new();
+    public ReactiveProperty<int> DefencePower { get; private set; } = new();
 
+    int _attackPower;
+    int _defencePower;
     [SerializeField] TMP_Text holoValue;
     // Start is called before the first frame update
     void Start()
@@ -29,6 +33,16 @@ public class Player : Entity
         Coin.Subscribe(coin =>
         {
             UiManager.instance.SetCoin(coin);
+        });
+
+        AttackPower.Subscribe(attackPower =>
+        {
+            CardManager.Instance.ChangeTotalCardDesc();
+        });
+
+        DefencePower.Subscribe(defencePower =>
+        {
+            CardManager.Instance.ChangeTotalCardDesc();
         });
     }
 
@@ -54,16 +68,24 @@ public class Player : Entity
         holoValue.text = $"{CurHolo} / {MaxHolo}";
     }
 
-    public void AddHealth(int value)
+    public void ChangeHealth(int value)
     {
         maxHp.Value += value;
         Heal(value);
     }
 
-    public void AddHolo(int value)
+    public void ChangeHolo(int value)
     {
         MaxHolo += value;
         if (MaxHolo < 0)
             MaxHolo = 0;
+    }
+    public void ChangeAttackPower(int value)
+    {
+        AttackPower.Value += value;
+    }
+    public void ChangeDefencePower(int value)
+    {
+        DefencePower.Value += value;
     }
 }

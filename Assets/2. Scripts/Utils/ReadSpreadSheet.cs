@@ -10,6 +10,7 @@ using UnityEngine.Networking;
 public class ReadSpreadSheet : MonoBehaviour
 {
     private static string dataCardGS;
+    //private static string dataEnhancedCardGS;
     private static string dataEnemyGS;
     //private static Dictionary<int, CardData> dataDict = null;
     public CardSO cardSO;
@@ -45,16 +46,25 @@ public class ReadSpreadSheet : MonoBehaviour
 
     async UniTaskVoid LoadCardSO()
     {
+        string address = "https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8";
+        string range = "A3:K8";
+        string cardSheetID = "1809511646";
+        string enhancedCardSheetID = "1928890928";
         using (UnityWebRequest wwwC =
-            //UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:P&gid=0"))  // 0 = 원본, 1809511646 = 테스트용
-            UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:P&gid=1809511646"))  // 0 = 원본, 1809511646 = 테스트용
-        //UnityWebRequest.Get($"{address}/export?format=csv&range={range}&gid={sheetID}"))
+            //UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:Q&gid=0"))  // 0 = 원본, 1809511646 = 테스트용
+            UnityWebRequest.Get($"{address}/export?format=csv&range={range}&gid={cardSheetID}"))
+        using (UnityWebRequest wwwEC =
+            UnityWebRequest.Get($"{address}/export?format=csv&range={range}&gid={enhancedCardSheetID}"))
         {
             await wwwC.SendWebRequest();
             dataCardGS = wwwC.downloadHandler.text;
+            print(dataCardGS);
 
+            await wwwEC.SendWebRequest();
+            dataCardGS += "\n" + wwwEC.downloadHandler.text;
+            print(dataCardGS);
 
-            if (wwwC.isDone)
+            if (wwwC.isDone && wwwEC.isDone)
             {
                 SetCardSO();
             }
@@ -82,41 +92,62 @@ public class ReadSpreadSheet : MonoBehaviour
     void SetCardSO()
     {
         string[] rows = dataCardGS.Split("\n");
-        cardSO.cards = new CardData[rows.Length];
-        //cardSO.cardSprites = new Sprite[rows.Length];
+        cardSO.Cards = new CardData[rows.Length];
+        //cardSO.CardSprites = new Sprite[rows.Length];
         //SystemIOFileLoad();
         int i = 0;
         foreach (string row in rows)
         {
             string[] cells = row.Split(",");
-            var data = new CardData();
-            data.id = ConvertInt32(cells[0]);
-            data.name = LineBreakStr(cells[1]);
-            data.cost = ConvertInt32(cells[2]);
-            data.enhancedCost = ConvertInt32(cells[3]);
-            data.damage = ConvertInt32(cells[4]);
-            data.enhancedDamage = ConvertInt32(cells[5]);
-            data.defence = ConvertInt32(cells[6]);
-            data.enhancedDefence = ConvertInt32(cells[7]);
-            data.count = ConvertInt32(cells[8]);                                                    
-            data.enhancedCount = ConvertInt32(cells[9]);
-            data.draw = ConvertInt32(cells[10]);
-            data.enhancedDraw = ConvertInt32(cells[11]);
-            data.price = ConvertInt32(cells[12]);
-            data.descript = LineBreakStr(cells[13]);
-            data.enhancedDescript = LineBreakStr(cells[14]);
+            CardData data = new CardData();
+            data.Id = ConvertInt32(cells[0]);
+            data.Name = LineBreakStr(cells[1]);
+            data.Cost = ConvertInt32(cells[2]);
+            data.Damage = ConvertInt32(cells[3]);
+            data.Defence = ConvertInt32(cells[4]);
+            data.Count = ConvertInt32(cells[5]);
+            data.Draw = ConvertInt32(cells[6]);
+            data.CardUseDelay = ConvertSingle(cells[7]);
+            data.Price = ConvertInt32(cells[8]);
+            data.Descript = LineBreakStr(cells[9]);
             try
             {
-                data.sprite = Array.Find(cardSO.cardSprites, x => x.name == data.id.ToString());
+                data.Sprite = Array.Find(cardSO.CardSprites, x => x.name == data.Id.ToString());
             }
             catch (UnassignedReferenceException)
             {
-                data.sprite = null;
+                data.Sprite = null;
                 Debug.Log("스프라이트가 없습니다.");
             }
-            data.cardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[15]);
+            data.CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[10]);
+            //data.Id = ConvertInt32(cells[0]);
+            //data.Name = LineBreakStr(cells[1]);
+            //data.Cost = ConvertInt32(cells[2]);
+            //data.EnhancedCost = ConvertInt32(cells[3]);
+            //data.Damage = ConvertInt32(cells[4]);
+            //data.EnhancedDamage = ConvertInt32(cells[5]);
+            //data.Defence = ConvertInt32(cells[6]);
+            //data.EnhancedDefence = ConvertInt32(cells[7]);
+            //data.Count = ConvertInt32(cells[8]);                                                    
+            //data.EnhancedCount = ConvertInt32(cells[9]);
+            //data.Draw = ConvertInt32(cells[10]);
+            //data.EnhancedDraw = ConvertInt32(cells[11]);
+            //data.CardUseDelay = ConvertSingle(cells[12]);
+            //data.Price = ConvertInt32(cells[13]);
+            //data.Descript = LineBreakStr(cells[14]);
+            //data.EnhancedDescript = LineBreakStr(cells[15]);
+            //try
+            //{
+            //    data.Sprite = Array.Find(cardSO.CardSprites, x => x.name == data.Id.ToString());
+            //}
+            //catch (UnassignedReferenceException)
+            //{
+            //    data.Sprite = null;
+            //    Debug.Log("스프라이트가 없습니다.");
+            //}
+            //data.CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[16]);
 
-            cardSO.cards[i] = data;
+            cardSO.Cards[i] = data;
             ++i;
         }
         EditorUtility.SetDirty(cardSO);
@@ -166,14 +197,20 @@ public class ReadSpreadSheet : MonoBehaviour
     //        byte[] imageData = File.ReadAllBytes(imagePath);
     //        Texture2D texture = new Texture2D(1, 1);
     //        texture.LoadImage(imageData);
-    //        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
-    //        sprite.name = imageName;
-    //        gameSprite.sprite = sprite;
-    //        s[j] = (sprite);
-    //        cardSO.cardSprites[j] = sprite;
+    //        Sprite Sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+    //        Sprite.Name = imageName;
+    //        gameSprite.Sprite = Sprite;
+    //        s[j] = (Sprite);
+    //        cardSO.CardSprites[j] = Sprite;
     //        j++;
     //    }
     //}
+
+    float ConvertSingle(string str)    // 구글스프레드시트는 엑셀 빈 칸을 ""로 가져오기 때문에 Convert.ToSingle가 에러가 뜸.
+    {
+        float _value = Convert.ToSingle(string.IsNullOrEmpty(str) ? null : str);
+        return _value;
+    }
 
     int ConvertInt32(string str)    // 구글스프레드시트는 엑셀 빈 칸을 ""로 가져오기 때문에 Convert.ToInt32가 에러가 뜸.
     {
@@ -195,8 +232,8 @@ public class ReadSpreadSheet : MonoBehaviour
     //    {
     //        string[] cells = row.Split(",");
     //        var data = new CardData();
-    //        data.name = cells[1];
-    //        data.descript = cells[2];
+    //        data.Name = cells[1];
+    //        data.Descript = cells[2];
     //        print(cells[2]);
 
     //        cardDB.Add(Convert.ToInt32(cells[0].ToString()), data);

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,33 +10,53 @@ public enum CardTag
     Skill
 }
 [System.Serializable]
-public class CardData
+public class CardData : ICloneable
 {
-    public string name;
-    public int id;
-    public int cost;
-    public int enhancedCost;
-    public int damage;
-    public int enhancedDamage;
-    public int defence;
-    public int enhancedDefence;
-    public int count;
-    public int enhancedCount;
-    public int draw;
-    public int enhancedDraw;
-    public int price;
-    [TextArea(1,5)]
-    public string descript;
+    public string Name;
+    public int Id;
+    public int Cost;
+    //public int EnhancedCost;
+    public int Damage;
+    //public int EnhancedDamage;
+    public int Defence;
+    //public int EnhancedDefence;
+    public int Count;
+    //public int EnhancedCount;
+    public int Draw;
+    //public int EnhancedDraw;
+    public float CardUseDelay;
+    public int Price;
     [TextArea(1, 5)]
-    public string enhancedDescript;
-    public Sprite sprite;
-    public CardTag cardTag;
+    public string Descript;
+    //[TextArea(1, 5)]
+    //public string EnhancedDescript;
+    public Sprite Sprite;
+    public CardTag CardTag;
+
+    public object Clone()
+    {
+        return new CardData
+        {
+            Name = Name,
+            Id = Id,
+            Cost = Cost,
+            Damage = Damage,
+            Defence = Defence,
+            Count = Count,
+            Draw = Draw,
+            CardUseDelay = CardUseDelay,
+            Price = Price,
+            Descript = Descript,
+            Sprite = Sprite,
+            CardTag = CardTag
+        };
+    }
 }
 
 [CreateAssetMenu(fileName = "CardSO", menuName = "Scriptable Object/CardSO")]
 public class CardSO : ScriptableObject
 {
-    public Sprite[] cardSprites;
+    public Sprite[] CardSprites;
 
-    public CardData[] cards;
+    public CardData[] Cards;
 }

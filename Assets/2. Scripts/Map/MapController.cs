@@ -7,7 +7,7 @@
 
 //public class MapController : MonoBehaviour
 //{
-//    public static MapController instance { get; private set; }
+//    public static MapController Instance { get; private set; }
 
 //    public string globalMapTitle = "Basement";
 
@@ -22,7 +22,7 @@
 
 
 //    public bool isLoadingMap = false;
-//    void Awake() => instance = this;
+//    void Awake() => Instance = this;
 
 //    public void CreatedMap()
 //    {
@@ -33,7 +33,7 @@
 
 //        loadedMaps.Clear();
 
-//        SettingMap.instance.CreatedMap();
+//        SettingMap.Instance.CreatedMap();
 //        SetMapPath();
 
 
@@ -77,7 +77,7 @@
 //                    (room.transform.GetComponent<Map>().Height / 10)
 //        );
 //        room.transform.GetComponent<Map>().array_Position = settingMap.array_Position;
-//        room.name = globalMapTitle + "-" + settingMap.roomName + " " + settingMap.array_Position.x + ", " + settingMap.array_Position.z;
+//        room.Name = globalMapTitle + "-" + settingMap.roomName + " " + settingMap.array_Position.x + ", " + settingMap.array_Position.z;
 
 //        room.transform.GetComponent<Map>().roomName = settingMap.roomName;
 //        room.transform.GetComponent<Map>().roomType = settingMap.roomType;

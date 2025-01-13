@@ -12,114 +12,151 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b620d7a90ab39544c93be59b611da5e7, type: 3}
   m_Name: CardSO
   m_EditorClassIdentifier: 
-  cardSprites:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  cards:
-  - name: Name1
-    id: 100
-    cost: 1
-    enhancedCost: 1
-    damage: 5
-    enhancedDamage: 7
-    defence: 0
-    enhancedDefence: 0
-    count: 1
-    enhancedCount: 1
-    draw: 0
-    enhancedDraw: 0
-    price: 5
-    descript: 5 Damage
-    enhancedDescript: Name1
-    sprite: {fileID: 0}
-    cardTag: 0
-  - name: Name2
-    id: 101
-    cost: 1
-    enhancedCost: 1
-    damage: 3
-    enhancedDamage: 4
-    defence: 0
-    enhancedDefence: 0
-    count: 1
-    enhancedCount: 1
-    draw: 1
-    enhancedDraw: 2
-    price: 10
-    descript: '3 Damage
+  CardSprites: []
+  Cards:
+  - Name: Name1
+    Id: 100
+    Cost: 1
+    Damage: 5
+    Defence: 0
+    Count: 1
+    Draw: 0
+    CardUseDelay: 2
+    Price: 5
+    Descript: '{Damage} Damage'
+    Sprite: {fileID: 0}
+    CardTag: 0
+  - Name: Name2
+    Id: 101
+    Cost: 1
+    Damage: 3
+    Defence: 0
+    Count: 1
+    Draw: 1
+    CardUseDelay: 2
+    Price: 10
+    Descript: '{Damage} Damage
 
-      1 Draw'
-    enhancedDescript: Name2
-    sprite: {fileID: 0}
-    cardTag: 0
-  - name: Name3
-    id: 102
-    cost: 2
-    enhancedCost: 2
-    damage: 3
-    enhancedDamage: 5
-    defence: 0
-    enhancedDefence: 0
-    count: 2
-    enhancedCount: 3
-    draw: 0
-    enhancedDraw: 0
-    price: 20
-    descript: 3 Damage X 2
-    enhancedDescript: Name3
-    sprite: {fileID: 0}
-    cardTag: 0
-  - name: Name4
-    id: 103
-    cost: 2
-    enhancedCost: 2
-    damage: 2
-    enhancedDamage: 3
-    defence: 0
-    enhancedDefence: 0
-    count: 2
-    enhancedCount: 3
-    draw: 0
-    enhancedDraw: 0
-    price: 20
-    descript: All 2 Damage X 2
-    enhancedDescript: Name4
-    sprite: {fileID: 0}
-    cardTag: 1
-  - name: Name5
-    id: 104
-    cost: 1
-    enhancedCost: 1
-    damage: 0
-    enhancedDamage: 0
-    defence: 0
-    enhancedDefence: 0
-    count: 0
-    enhancedCount: 0
-    draw: 2
-    enhancedDraw: 3
-    price: 15
-    descript: 2 Draw
-    enhancedDescript: Name5
-    sprite: {fileID: 0}
-    cardTag: 2
-  - name: Name6
-    id: 105
-    cost: 1
-    enhancedCost: 1
-    damage: 0
-    enhancedDamage: 0
-    defence: 6
-    enhancedDefence: 11
-    count: 0
-    enhancedCount: 0
-    draw: 0
-    enhancedDraw: 0
-    price: 5
-    descript: 6 Armor
-    enhancedDescript: Name6
-    sprite: {fileID: 0}
-    cardTag: 2
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    CardTag: 0
+  - Name: Name3
+    Id: 102
+    Cost: 2
+    Damage: 4
+    Defence: 0
+    Count: 2
+    Draw: 0
+    CardUseDelay: 2
+    Price: 20
+    Descript: '{Damage} Damage X {Count}'
+    Sprite: {fileID: 0}
+    CardTag: 0
+  - Name: Name4
+    Id: 103
+    Cost: 2
+    Damage: 2
+    Defence: 0
+    Count: 2
+    Draw: 0
+    CardUseDelay: 2
+    Price: 20
+    Descript: All {Damage} Damage X {Count}
+    Sprite: {fileID: 0}
+    CardTag: 1
+  - Name: Name5
+    Id: 104
+    Cost: 1
+    Damage: 0
+    Defence: 0
+    Count: 0
+    Draw: 2
+    CardUseDelay: 2
+    Price: 15
+    Descript: '{Draw} Draw'
+    Sprite: {fileID: 0}
+    CardTag: 2
+  - Name: Name6
+    Id: 105
+    Cost: 1
+    Damage: 0
+    Defence: 6
+    Count: 0
+    Draw: 0
+    CardUseDelay: 2
+    Price: 5
+    Descript: '{Defence} Armor'
+    Sprite: {fileID: 0}
+    CardTag: 2
+  - Name: EnhancedName1
+    Id: 1000
+    Cost: 1
+    Damage: 7
+    Defence: 0
+    Count: 1
+    Draw: 0
+    CardUseDelay: 0.2
+    Price: 20
+    Descript: Name1
+    Sprite: {fileID: 0}
+    CardTag: 0
+  - Name: EnhancedName2
+    Id: 1010
+    Cost: 1
+    Damage: 4
+    Defence: 0
+    Count: 1
+    Draw: 2
+    CardUseDelay: 0.1
+    Price: 40
+    Descript: Name2
+    Sprite: {fileID: 0}
+    CardTag: 0
+  - Name: EnhancedName3
+    Id: 1020
+    Cost: 2
+    Damage: 5
+    Defence: 0
+    Count: 3
+    Draw: 0
+    CardUseDelay: 0.3
+    Price: 60
+    Descript: Name3
+    Sprite: {fileID: 0}
+    CardTag: 0
+  - Name: EnhancedName4
+    Id: 1030
+    Cost: 2
+    Damage: 3
+    Defence: 0
+    Count: 3
+    Draw: 0
+    CardUseDelay: 0.5
+    Price: 50
+    Descript: Name4
+    Sprite: {fileID: 0}
+    CardTag: 1
+  - Name: EnhancedName5
+    Id: 1040
+    Cost: 1
+    Damage: 0
+    Defence: 0
+    Count: 0
+    Draw: 3
+    CardUseDelay: 0
+    Price: 30
+    Descript: Name5
+    Sprite: {fileID: 0}
+    CardTag: 2
+  - Name: EnhancedName6
+    Id: 1050
+    Cost: 1
+    Damage: 0
+    Defence: 11
+    Count: 0
+    Draw: 0
+    CardUseDelay: 0.1
+    Price: 10
+    Descript: Name6
+    Sprite: {fileID: 0}
+    CardTag: 2

@@ -17,10 +17,10 @@ public class UICard : MonoBehaviour
 
     public void Setup(CardData data)
     {
-        nameText.text = data.name;
-        costText.text = data.cost.ToString();
-        desText.text = data.descript;
-        character.sprite = data.sprite;
+        nameText.text = data.Name;
+        costText.text = data.Cost.ToString();
+        desText.text = data.Descript;
+        character.sprite = data.Sprite;
 
         if (cardBtn != null)
         {

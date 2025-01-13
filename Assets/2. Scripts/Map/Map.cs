@@ -25,8 +25,18 @@ public class Map : MonoBehaviour
     public Vector3Int array_Position;
     public List<Map> aroundStage = new();
 
-    public IStage
-        stage;
+    public IStage stage;
+    public enum StageState
+    {
+        START,
+        BOSS,
+        TREASURE,
+        SHOP,
+        ENEMY,
+        EVENT
+    }
+
+    public StageState State;
 
     public StageContext stageContext;
 

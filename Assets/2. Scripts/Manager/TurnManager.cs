@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +22,8 @@ public class TurnManager : MonoBehaviour
     public bool myTurn;
 
     enum TurnType { My, Enemy }
+
+    public CancellationTokenSource CancelSource = new CancellationTokenSource();
 
     //void GameSetup()
     //{
@@ -72,14 +75,14 @@ public class TurnManager : MonoBehaviour
             if (CardManager.Instance.DrawDeck.Count == 0)
             {
                 OnAddCard?.Invoke();
-                await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.LoadCardDummyDelay));    // OnAddCard에서 진행되는 await 따로 실행
+                await UniTask.WaitForSeconds(CardUtils.LoadCardDummyDelay, false, PlayerLoopTiming.Update, CancelSource.Token);    // OnAddCard에서 진행되는 await 따로 실행
             }
             else
             {
                 OnAddCard?.Invoke();
             }
 
-            await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.CardAlignmentDelay));        // OnAddCard에서 진행되는 await 따로 실행
+            await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, CancelSource.Token);        // OnAddCard에서 진행되는 await 따로 실행
         }
         SetBool(false);
     }
@@ -92,14 +95,14 @@ public class TurnManager : MonoBehaviour
         if (CardManager.Instance.DrawDeck.Count == 0)
         {
             OnAddCard?.Invoke();
-            await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.LoadCardDummyDelay));    // OnAddCard에서 진행되는 await 따로 실행
+            await UniTask.WaitForSeconds(CardUtils.LoadCardDummyDelay, false, PlayerLoopTiming.Update, CancelSource.Token);    // OnAddCard에서 진행되는 await 따로 실행
         }
         else
         {
             OnAddCard?.Invoke();
         }
 
-        await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.CardAlignmentDelay));        // OnAddCard에서 진행되는 await 따로 실행
+        await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, CancelSource.Token);        // OnAddCard에서 진행되는 await 따로 실행
         SetBool(false);
     }
     public async UniTask DrawTask(int drawCardCount)    // 여러 개 뽑기 (수정 필요: 단일 뽑기와 똑같은 문제)
@@ -112,14 +115,14 @@ public class TurnManager : MonoBehaviour
             if (CardManager.Instance.DrawDeck.Count == 0)
             {
                 OnAddCard?.Invoke();
-                await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.LoadCardDummyDelay));    // OnAddCard에서 진행되는 await 따로 실행
+                await UniTask.WaitForSeconds(CardUtils.LoadCardDummyDelay, false, PlayerLoopTiming.Update, CancelSource.Token);    // OnAddCard에서 진행되는 await 따로 실행
             }
             else
             {
                 OnAddCard?.Invoke();
             }
 
-            await UniTask.Delay(TimeSpan.FromSeconds(CardUtils.CardAlignmentDelay));        // OnAddCard에서 진행되는 await 따로 실행
+            await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, CancelSource.Token);        // OnAddCard에서 진행되는 await 따로 실행
         }
         SetBool(false);
     }
@@ -128,9 +131,8 @@ public class TurnManager : MonoBehaviour
     {
         myTurn = false;
         UiManager.instance.ChangeTurnButtonText(myTurn);
-        await CardManager.Instance.ThrowAwayCard();
         SetBool(true);
-
+        await CardManager.Instance.ThrowAwayCard().SuppressCancellationThrow();
         if (endBattle)
         {
             CardManager.Instance.ClearCard();
@@ -148,11 +150,11 @@ public class TurnManager : MonoBehaviour
     //}
     public async UniTask EnemyTurnTask()
     {
-        await UniTask.Delay(TimeSpan.FromSeconds(1f));  // 지금은 적 코드가 없으므로 대신 딜레이 코드 추가
+        await UniTask.WaitForSeconds(1f, false, PlayerLoopTiming.Update, CancelSource.Token);  // 지금은 적 코드가 없으므로 대신 딜레이 코드 추가
         for (int i = 0; i < EnemyManager.Instance.enemies.Count; ++i)
         {
             EnemyManager.Instance.enemies[i].Pattern();
-            await UniTask.Delay(TimeSpan.FromSeconds(1f));
+            await UniTask.WaitForSeconds(1f, false, PlayerLoopTiming.Update, CancelSource.Token);
         }
         // 적 턴 시작, 적 코드 작성
         // 적 턴이 끝나면 내 턴 시작.
@@ -163,19 +165,26 @@ public class TurnManager : MonoBehaviour
 
     public void StartBattle()       // 배틀 시작시, 덱 섞기 및 액션 추가
     {
+        CancelSource = new();
+
         UiManager.instance.SetupBattleUi(true);
         CardManager.Instance.SetupDrawDeck(true);
         //TurnManager.OnAddCard += async () =>
         //    await AddCard();
         OnAddCard += () =>
             CardManager.Instance.AddCard().Forget();
+
+
         StartTurnTask().Forget();
     }
 
     public void EndBattle()         // 리팩토링 필요해보임.
     {
+        CancelSource.Cancel();
+
         UiManager.instance.SetupBattleUi(false);
         OnAddCard = null;
+
         //TurnManager.OnAddCard -= () =>
         //    AddCard().Forget();
         //TurnManager.OnAddCard = null;
@@ -209,5 +218,11 @@ public class TurnManager : MonoBehaviour
         //    AddDeck(card.Data, EAddDeck.Main);
         //}
 
+    }
+
+    private void OnDestroy()
+    {
+        CancelSource.Cancel();
+        CancelSource.Dispose();
     }
 }

@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class StageContext
 {
-    public IStage CurrentStage
-    {
-        get; set;
-    }
+    //public
+    IStage CurrentStage;
+    //{
+    //    get; set;
+    //}
     readonly Map _map;
     public StageContext(Map map)
     {

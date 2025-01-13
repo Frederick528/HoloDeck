@@ -8,6 +8,8 @@ public abstract class Enemy : Entity
     int spawnPos;
     protected EnemyData enemyData;
 
+    public bool Death;
+
     void OnMouseEnter()
     {
         if (CardManager.Instance.isSingleTarget)
@@ -53,7 +55,7 @@ public abstract class Enemy : Entity
         }
         else if (ItemManager.Instance.arrowOn)
         {
-            EnemyManager.Instance.targetEnemy = this;
+            EnemyManager.Instance.targetEnemy = null;
             for (int i = 0; i < EnemyManager.Instance.arrow.arrowRenderer.Count; i++)
             {
                 EnemyManager.Instance.arrow.arrowRenderer[i].color = Color.white;
@@ -99,6 +101,7 @@ public abstract class Enemy : Entity
 
     public async UniTaskVoid KillEnemy()        // 클리어 체크도 같이 함.
     {
+        Death = true;
         await base.DieAnimation();  // destroy(gameObject)가 들어가있기 때문에, 만약 죽고 난 다음에 추가 행동이 있다면, 이 함수 내에서 작동해야 함.
         EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);      // 에너미 자리로 클리어 확인을 하기 때문에 적 죽는 모션 기다린 후, 자리 삭제
         GameManager.Instance.ChangeCoinValue(enemyData.dropCoin);
@@ -107,12 +110,14 @@ public abstract class Enemy : Entity
 
     public void ClearCheck()
     {
-        for (int i = 0; i < EnemyManager.Instance.enemySpawnPosition.Count; ++i)
-        {
-            if (!EnemyManager.Instance.enemySpawnPosition[i].gameObject.activeSelf)     // 몬스터가 다 죽어있으면 게임이 클리어되고, 한 마리라도 살아있으면 리턴되어 그냥 몬스터만 죽고 끝.
-                return;
-            //spawn++;
-        }
+        if (EnemyManager.Instance.enemies.Count != 0 || MapManager.Instance.currStage.cleared)
+            return;
+        //for (int i = 0; i < EnemyManager.Instance.enemySpawnPosition.Count; ++i)
+        //{
+        //    if (!EnemyManager.Instance.enemySpawnPosition[i].gameObject.activeSelf)     // 몬스터가 다 죽어있으면 게임이 클리어되고, 한 마리라도 살아있으면 리턴되어 그냥 몬스터만 죽고 끝.
+        //        return;
+        //    //spawn++;
+        //}
         //if (spawn == EnemyManager.Instance.enemySpawnPosition.Count)
         MapManager.Instance.ClearStage();
         MapManager.Instance.RewardStage();

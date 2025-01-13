@@ -53,10 +53,10 @@ public class ItemManager : MonoBehaviour
                 TurnManager.Instance.AddStartCardCount(1);
                 break;
             case 1:
-                GameManager.Instance.player.AddHealth(25);
+                GameManager.Instance.player.ChangeHealth(25);
                 break;
             case 2:
-                GameManager.Instance.player.AddHolo(1);
+                GameManager.Instance.player.ChangeHolo(1);
                 break;
             case 3:
                 CardManager.Instance.cardRewardContent.Find("Card4").gameObject.SetActive(true);
@@ -110,10 +110,10 @@ public class ItemManager : MonoBehaviour
                 TurnManager.Instance.AddStartCardCount(-1);
                 break;
             case 1:
-                GameManager.Instance.player.AddHealth(-25);
+                GameManager.Instance.player.ChangeHealth(-25);
                 break;
             case 2:
-                GameManager.Instance.player.AddHolo(-1);
+                GameManager.Instance.player.ChangeHolo(-1);
                 break;
             case 3:
                 CardManager.Instance.cardRewardContent.Find("Card4").gameObject.SetActive(false);

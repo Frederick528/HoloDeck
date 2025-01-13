@@ -5,7 +5,7 @@ using UnityEngine.Pool;
 
 public class PoolManager : MonoBehaviour
 {
-    public static PoolManager instance { get; private set; }
+    public static PoolManager Instance { get; private set; }
 
     public int defaultCapacity = 10;
     //public int maxPoolSize = 10;
@@ -18,13 +18,13 @@ public class PoolManager : MonoBehaviour
     //[SerializeField] Transform map;
     //[SerializeField] Transform HandCard;
 
-    public IObjectPool<GameObject> CardPool { get; private set; }
+    public IObjectPool<System.Tuple<GameObject, Card>> CardPool { get; private set; }
     //public IObjectPool<GameObject> MapPool { get; private set; }
 
     private void Awake()
     {
-        if (instance == null)
-            instance = this;
+        if (Instance == null)
+            Instance = this;
         else
             Destroy(this.gameObject);
 
@@ -36,7 +36,7 @@ public class PoolManager : MonoBehaviour
     {
         //MapPool = new ObjectPool<GameObject>(CreateMapPooledItem, OnTakeFromPool, OnReturnedToPool,
         //OnDestroyPoolObject, true, defaultCapacity/*, maxPoolSize*/);
-        CardPool = new ObjectPool<GameObject>(CreateCardPooledItem, OnTakeFromPool, OnReturnedToPool,
+        CardPool = new ObjectPool<System.Tuple<GameObject, Card>>(CreateCardPooledItem, OnTakeFromPool, OnReturnedToPool,
         OnDestroyPoolObject, true, defaultCapacity/*, maxPoolSize*/);
 
         // 미리 오브젝트 생성 해놓기
@@ -44,17 +44,18 @@ public class PoolManager : MonoBehaviour
         {
             //Map map = CreateMapPooledItem().GetComponent<Map>();
             //map.MapRelease();
-            Card card = CreateCardPooledItem().GetComponent<Card>();
-            card.CardRelease();
+            ReleaseCard(CreateCardPooledItem());
         }
     }
 
     // 생성
-    private GameObject CreateCardPooledItem()
+    private System.Tuple<GameObject, Card> CreateCardPooledItem()
     {
-        GameObject cardPoolGo = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, deck);
-        cardPoolGo.GetComponent<Card>().CardPool = this.CardPool;
-        return cardPoolGo;
+        GameObject cardObj = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, deck);
+        Card card = cardObj.GetComponent<Card>();
+        //card.CardPool = this.CardPool;
+
+        return new System.Tuple<GameObject, Card>(cardObj, card);
     }
     //private GameObject CreateMapPooledItem()
     //{
@@ -64,20 +65,35 @@ public class PoolManager : MonoBehaviour
     //}
 
     // 사용
-    private void OnTakeFromPool(GameObject poolGo)
+    private void OnTakeFromPool(System.Tuple<GameObject, Card> card)
     {
-        poolGo.SetActive(true);
+        card.Item1.SetActive(true);
     }
 
     // 반환
-    private void OnReturnedToPool(GameObject poolGo)
+    private void OnReturnedToPool(System.Tuple<GameObject, Card> card)
     {
-        poolGo.SetActive(false);
+        card.Item1.SetActive(false);
     }
 
     // 삭제
-    private void OnDestroyPoolObject(GameObject poolGo)
+    private void OnDestroyPoolObject(System.Tuple<GameObject, Card> card)
     {
-        Destroy(poolGo);
+        Destroy(card.Item1 );
+    }
+
+    public void GetCard(out GameObject obj, out Card card)
+    {
+        var poolObject = CardPool.Get();
+        obj = poolObject.Item1;
+        card = poolObject.Item2;
+    }
+    public void ReleaseCard(System.Tuple<GameObject, Card> card)
+    {
+        CardPool.Release(card);
+    }
+    public void ReleaseCard(GameObject obj, Card card)
+    {
+        CardPool.Release(new System.Tuple<GameObject, Card>(obj, card));
     }
 }

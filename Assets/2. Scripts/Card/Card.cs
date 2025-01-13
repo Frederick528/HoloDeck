@@ -3,6 +3,8 @@ using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
+using System.Threading;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -10,14 +12,14 @@ using UnityEngine.Pool;
 
 //public struct CardData
 //{
-//    public string name; // = "이름";
-//    public int cost; // = 0;
-//    public string descript; // = "카드 종류에 대한 설명";
+//    public string Name; // = "이름";
+//    public int Cost; // = 0;
+//    public string Descript; // = "카드 종류에 대한 설명";
 //    public Sprite Sprite; // = "카드 이미지";
 //}
 public class Card : MonoBehaviour
 {
-    public IObjectPool<GameObject> CardPool { get; set; }
+    public IObjectPool<Tuple<GameObject, Card>> CardPool { get; set; }
 
     [SerializeField] SpriteRenderer card;
     [SerializeField] SpriteRenderer character;
@@ -25,19 +27,26 @@ public class Card : MonoBehaviour
     [SerializeField] TMP_Text costText;
     [SerializeField] TMP_Text desText;
 
-    public PRS originPRS;
+    public PRS OriginPRS;
     //private Animator _anim;
 
+    CardData _defaultData = null;
+    string _defaultDesc = null;
     public CardData Data;
+    public string Desc;
     public int ID;
 
-    public bool block;
+    public bool Block;
 
-    CardAbility cardAbility = new();
+    public bool Used;
 
-    public Action<Card> cardAction { get; private set; }
+    public CardAbility CardAbility = new();
 
-    public bool enhanced = false;
+    public Action<Card> CardAction { get; private set; }
+
+    public bool Enhanced = false;
+
+    public Enemy TargetEnemy = null;
 
     // Start is called before the first frame update
 
@@ -51,40 +60,136 @@ public class Card : MonoBehaviour
 
     public void Setup(CardData data)
     {
-        Data = data;
-        //Data.name = data.name;
-        //Data.id = data.id;
-        //Data.cost = data.cost;
-        //Data.damage = data.damage;
-        //Data.enhancedDamage = data.enhancedDamage;
-        //Data.defence = data.defence;
-        //Data.enhancedDefence = data.enhancedDefence;
-        //Data.count = data.count;
-        //Data.enhancedCount = data.enhancedCount;
-        //Data.draw = data.draw;
-        //Data.enhancedDraw = data.enhancedDraw;
-        //Data.cardUseDelay = data.cardUseDelay;
-        //Data.descript = data.descript;
-        //Data.sprite = data.sprite;
-        //Data.cardTag = data.cardTag;
+        _defaultData = data;
+        StringBuilder sb = new StringBuilder(_defaultData.Descript);
+        sb.Replace("{Damage}", (_defaultData.Damage + GameManager.Instance.player.AttackPower.Value).ToString());
+        sb.Replace("{Defence}", (_defaultData.Defence + GameManager.Instance.player.DefencePower.Value).ToString());
+        sb.Replace("{Count}", (_defaultData.Count).ToString());
+        sb.Replace("{Draw}", (_defaultData.Draw).ToString());
+        _defaultDesc = sb.ToString();
+        Desc = sb.ToString();
 
-        nameText.text = Data.name;
-        costText.text = Data.cost.ToString();
-        desText.text = Data.descript;
-        character.sprite = Data.sprite;
+        Data = (CardData)_defaultData.Clone();
 
-        cardAction = cardAbility.SetCardAbility(Data.id);
+        nameText.text = Data.Name;
+        character.sprite = Data.Sprite;
+        CardAction = CardAbility.SetCardAbility(Data.Id);
+
+        CardDataReset();
+        //Data = _defaultData;
+        ////Data.Name = data.Name;
+        ////Data.Id = data.Id;
+        ////Data.Cost = data.Cost;
+        ////Data.Damage = data.Damage;
+        ////Data.EnhancedDamage = data.EnhancedDamage;
+        ////Data.Defence = data.Defence;
+        ////Data.EnhancedDefence = data.EnhancedDefence;
+        ////Data.Count = data.Count;
+        ////Data.EnhancedCount = data.EnhancedCount;
+        ////Data.Draw = data.Draw;
+        ////Data.EnhancedDraw = data.EnhancedDraw;
+        ////Data.cardUseDelay = data.cardUseDelay;
+        ////Data.Descript = data.Descript;
+        ////Data.Sprite = data.Sprite;
+        ////Data.CardTag = data.CardTag;
+
+        //nameText.text = Data.Name;
+        //costText.text = Data.Cost.ToString();
+        //desText.text = Data.Descript;
+        //character.sprite = Data.Sprite;
+
+        //CardAction = CardAbility.SetCardAbility(Data.Id);
+    }
+
+    public void CardDataReset(bool release = false)
+    {
+        if (release)
+        {
+            Data.Damage = _defaultData.Damage;
+            Data.Defence = _defaultData.Defence;
+            Data.Count = _defaultData.Count;
+            Data.Draw = _defaultData.Draw;
+            costText.text = _defaultData.Cost.ToString();
+            desText.text = _defaultDesc;
+        }
+        else
+        {
+            Data.Damage = _defaultData.Damage + GameManager.Instance.player.AttackPower.Value;
+            Data.Defence = _defaultData.Defence + GameManager.Instance.player.DefencePower.Value;
+            Data.Count = _defaultData.Count + 0;
+            Data.Draw = _defaultData.Draw + 0;
+            costText.text = (_defaultData.Cost + 0).ToString();
+            desText.text = Desc;
+        }
+
+        //nameText.text = Data.Name;
+        //costText.text = Data.Cost.ToString();
+        ////desText.text = release? _defaultDesc : Desc;
+        //character.sprite = Data.Sprite;
+    }
+
+    public void ChangeCardDesc(/*string data*/)
+    {
+        StringBuilder sb = new StringBuilder(_defaultData.Descript);
+        sb.Replace("{Damage}", (_defaultData.Damage + GameManager.Instance.player.AttackPower.Value).ToString());       //  나중에 여기 부분 고치자. 위에 else랑 겹침.
+        sb.Replace("{Defence}", (_defaultData.Defence + GameManager.Instance.player.DefencePower.Value).ToString());
+        sb.Replace("{Count}", (_defaultData.Count).ToString());
+        sb.Replace("{Draw}", (_defaultData.Draw).ToString());
+        Desc = sb.ToString();
+        CardDataReset();
+        //switch (data)
+        //{
+        //    case "Attack":
+        //        sb.Replace("{Damage}", (_defaultData.Damage+GameManager.Instance.player.AttackPower.Value).ToString());
+        //        Desc = sb.ToString();
+        //        break;
+        //    case "Defence":
+        //        sb.Replace("{Defence}", (_defaultData.Defence + GameManager.Instance.player.DefencePower.Value).ToString());
+        //        Desc = sb.ToString();
+        //        break;
+        //    case "Count":
+        //        break;
+        //    case "Draw":
+        //        break;
+        //}
+    }
+
+    public void Setup(int id)
+    {
+        Data = CardManager.Instance.FindCardData(id);
+
+        nameText.text = Data.Name;
+        costText.text = Data.Cost.ToString();
+        desText.text = Data.Descript;
+        character.sprite = Data.Sprite;
+
+        CardAction = CardAbility.SetCardAbility(Data.Id);
+
     }
 
     public void EnhancedCard()
     {
-        enhanced = true;
-        cardAction = cardAbility.SetCardAbility(Data.id);
+        if (Enhanced) return;
+        Enhanced = true;
+        Setup(Data.Id * 10);
     }
 
-    public async UniTask TaskMoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)
+    public void Target(Enemy enemy)
     {
-        if (useDotween)
+        TargetEnemy = enemy;
+    }
+
+    public async UniTask TaskMoveTransform(PRS prs, bool battleCancel, float dotweenTime = 0)
+    {
+        if (battleCancel)
+        {
+            await UniTask.WhenAll(
+            transform.DOMove(prs.pos, dotweenTime).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/,
+            transform.DORotateQuaternion(prs.rot, dotweenTime).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/,
+            transform.DOScale(prs.scale, dotweenTime).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/
+                );
+        }
+        else
         {
             await UniTask.WhenAll(
             transform.DOMove(prs.pos, dotweenTime).WithCancellation(this.GetCancellationTokenOnDestroy()),
@@ -92,15 +197,9 @@ public class Card : MonoBehaviour
             transform.DOScale(prs.scale, dotweenTime).WithCancellation(this.GetCancellationTokenOnDestroy())
                 );
         }
-        else
-        {
-            transform.position = prs.pos;
-            transform.rotation = prs.rot;
-            transform.localScale = prs.scale;
-        }
     }
 
-    public void MoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)
+    public void MoveTransform(PRS prs, bool useDotween = false, float dotweenTime = 0)
     {
         if (useDotween)
         {
@@ -118,20 +217,22 @@ public class Card : MonoBehaviour
 
     void OnMouseOver()
     {
-        if (block)
+        if (Block)
             return;
         CardManager.Instance.CardMouseOver(this);
     }
 
     void OnMouseExit()
     {
-        if (block)
+        if (Block)
             return;
         CardManager.Instance.CardMouseExit(this);
     }
 
     void OnMouseDown()
     {
+        if (Block)
+            return;
         CardManager.Instance.CardMouseDown(this);
         //if (GameManager.Instance.blockClick || TurnManager.Instance.isLoading)
         //    return;
@@ -153,7 +254,7 @@ public class Card : MonoBehaviour
 
         //CollisionChecker(RayCastToken);
 
-        //SoundManager.instance.Play("Sounds/Effect/CardHoldSound");
+        //SoundManager.Instance.Play("Sounds/Effect/CardHoldSound");
         //CardManager.Instance.sortBtn.interactable = false;
 
 
@@ -174,7 +275,22 @@ public class Card : MonoBehaviour
 
     public void CardRelease()
     {
-        CardPool.Release(this.gameObject);
+        PoolManager.Instance.ReleaseCard(this.gameObject, this);
     }
 
+    //private void OnEnable()
+    //{
+    //    CardAbility.CancelSource = new();
+    //}
+
+    //private void OnDisable()
+    //{
+    //    CardAbility.CancelSource.Cancel();
+    //}
+
+    //private void OnDestroy()
+    //{
+    //    CardAbility.CancelSource.Cancel();
+    //    CardAbility.CancelSource.Dispose();
+    //}
 }

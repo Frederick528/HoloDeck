@@ -27,8 +27,8 @@ public class CardUtils
 
 public enum EAddDeck
 {
-    Main, Draw, Dummy, Hand,
-    MainNDraw, MainNDummy, MainNHand, DrawNHand, DummyNHand,
-    MainNDrawNDummy, MainNDrawNHand, DrawNDummyNHand,
-    MainNDrawNDummyNHand
+    Main, Draw, Dummy, Hand/*, Total*/
+    //MainNDraw, MainNDummy, MainNHand, DrawNHand, DummyNHand,
+    //MainNDrawNDummy, MainNDrawNHand, DrawNDummyNHand,
+    //MainNDrawNDummyNHand
 }

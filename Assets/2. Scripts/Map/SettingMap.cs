@@ -107,6 +107,7 @@ public class SettingMap : MonoBehaviour
 
         // Start
         stageList[0].stage = stageList[0].AddComponent<StartStage>();
+        stageList[0].State = Map.StageState.START;
         SetClickStage(stageList[0]);
         stageList[0].GetComponentInChildren<TMP_Text>().text = "Start";
         stageList[0].GetComponentInChildren<TMP_Text>().color = Color.gray;
@@ -114,6 +115,7 @@ public class SettingMap : MonoBehaviour
 
         // Boss
         stageList[^1].stage = stageList[^1].AddComponent<BossStage>();
+        stageList[^1].State = Map.StageState.BOSS;
         SetClickStage(stageList[^1]);
         stageList[^1].GetComponentInChildren<TMP_Text>().text = "Boss";
         stageList[^1].GetComponentInChildren<TMP_Text>().color = Color.red;
@@ -123,6 +125,7 @@ public class SettingMap : MonoBehaviour
         // Treasure
         index = Random.Range(0, stageList.Count);
         stageList[index].stage = stageList[index].AddComponent<TreasureStage>();
+        stageList[index].State = Map.StageState.TREASURE;
         SetClickStage(stageList[index]);
         stageList[index].GetComponentInChildren<TMP_Text>().text = "Treasure";
         stageList[index].GetComponentInChildren<TMP_Text>().color = Color.yellow;
@@ -133,6 +136,7 @@ public class SettingMap : MonoBehaviour
         index = Random.Range(0, stageList.Count);
         stageList[index].stage = stageList[index].AddComponent<ShopStage>();
         CardManager.Instance.SettingCardShop();
+        stageList[index].State = Map.StageState.SHOP;
         SetClickStage(stageList[index]);
         stageList[index].GetComponentInChildren<TMP_Text>().text = "Shop";
         stageList[index].GetComponentInChildren<TMP_Text>().color = Color.blue;
@@ -148,12 +152,14 @@ public class SettingMap : MonoBehaviour
                 case 1:
                 case 2:
                     stage.stage = stage.AddComponent<EnemyStage>();
+                    stage.State = Map.StageState.ENEMY;
                     SetClickStage(stage);
                     stage.GetComponentInChildren<TMP_Text>().text = "Enemy";
                     break;
 
                 case 3:
                     stage.stage = stage.AddComponent<EventStage>();
+                    stage.State = Map.StageState.EVENT;
                     SetClickStage(stage);
                     stage.GetComponentInChildren<TMP_Text>().text = "Event";
                     stage.GetComponentInChildren<TMP_Text>().color = Color.cyan;
@@ -428,7 +434,7 @@ public class SettingMap : MonoBehaviour
 
         foreach (MapInfo validMap in validMapList)
         {
-            GameObject mapObject = Instantiate(mapPrefab, Vector3.one * 0.5f, Quaternion.identity, mapCanvas);/*PoolManager.instance.MapPool.Get();*/
+            GameObject mapObject = Instantiate(mapPrefab, Vector3.one * 0.5f, Quaternion.identity, mapCanvas);/*PoolManager.Instance.MapPool.Get();*/
             Map map = mapObject.GetComponent<Map>();
             //mapObject.transform.GetComponentInChildren<TextMeshProUGUI>().text = validMap.distance.ToString();
             mapObject.transform.position = validMap.transform_Position;
@@ -449,7 +455,7 @@ public class SettingMap : MonoBehaviour
         //        else if (map.cleared)
         //        {
         //            currStage = map;
-        //            UiManager.instance.LookMap();
+        //            UiManager.Instance.LookMap();
         //            return;
         //        }
         //        canMove = false;
@@ -460,7 +466,7 @@ public class SettingMap : MonoBehaviour
         //        // 이동 모션 코드 추가
         //        // 방 입장 코드 추가
 
-        //        UiManager.instance.LookMap();
+        //        UiManager.Instance.LookMap();
         //    });
         //}
 
@@ -567,14 +573,14 @@ public class SettingMap : MonoBehaviour
 
     //public int AroundMapCount(Vector3Int pos)
     //{
-    //    int count = 0;
+    //    int Count = 0;
 
     //    // LEFT
     //    if ((0 <= (pos.x - 1) && (pos.x - 1) < (maxDistance * 2 + 1)))
     //    {
     //        if (posArr[pos.z, pos.x - 1].isValidMap)
     //        {
-    //            count += 1;
+    //            Count += 1;
     //        }
     //    }
 
@@ -583,7 +589,7 @@ public class SettingMap : MonoBehaviour
     //    {
     //        if (posArr[pos.z, pos.x + 1].isValidMap)
     //        {
-    //            count += 1;
+    //            Count += 1;
     //        }
     //    }
 
@@ -592,7 +598,7 @@ public class SettingMap : MonoBehaviour
     //    {
     //        if (posArr[pos.z - 1, pos.x].isValidMap)
     //        {
-    //            count += 1;
+    //            Count += 1;
     //        }
     //    }
     //    // DOWN
@@ -600,11 +606,11 @@ public class SettingMap : MonoBehaviour
     //    {
     //        if (posArr[pos.z + 1, pos.x].isValidMap)
     //        {
-    //            count += 1;
+    //            Count += 1;
     //        }
     //    }
 
-    //    return count;
+    //    return Count;
     //}
 
 

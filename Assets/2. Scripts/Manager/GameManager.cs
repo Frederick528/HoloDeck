@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         UiManager.instance.SetupGameUi(true);
-        //SoundManager.instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
+        //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     }
 
     public void ArrowCursor(bool isOn)
@@ -78,6 +78,17 @@ public class GameManager : MonoBehaviour
         {
             TurnManager.Instance.StartTurnTask().Forget();
         }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            player.ChangeAttackPower(1);
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            player.ChangeDefencePower(1);
+        }
+
         if (Input.GetKeyDown(KeyCode.S))
         {
             int i = 0;
@@ -94,31 +105,37 @@ public class GameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
-            for (int i = EnemyManager.Instance.enemies.Count - 1; i >= 0; --i)
+            if (MapManager.Instance.currStage.State == Map.StageState.ENEMY)
             {
-                EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999);
-                //EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
+                for (int i = EnemyManager.Instance.enemies.Count - 1; i >= 0; --i)
+                {
+                    EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999);
+                    //EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
+                }
             }
-            MapManager.Instance.ClearStage();
+            else
+            {
+                MapManager.Instance.ClearStage();
+            }
         }
 
 
 
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
-            CardManager.Instance.AddDeck(cardSO.cards[0], EAddDeck.Main);
+            CardManager.Instance.AddDeck(100, EAddDeck.Main);
         }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            CardManager.Instance.AddDeck(cardSO.cards[0], EAddDeck.Draw);
+            CardManager.Instance.AddDeck(100, EAddDeck.Draw);
         }
         //if (Input.GetKeyDown(KeyCode.C))
         //{
-        //    AddDeck(cardSO.cards[1], EAddDeck.Draw);
+        //    AddDeck(cardSO.Cards[1], EAddDeck.Draw);
         //}
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            CardManager.Instance.AddDeck(cardSO.cards[0], EAddDeck.Dummy);
+            CardManager.Instance.AddDeck(100, EAddDeck.Dummy);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))       // 카드 찾아서 뽑기 (수정 필요해보임. 덱에서 인덱스로 GameObject를 지정해서 넣어줄거면 굳이 drawCard 함수에서 카드를 확인해 볼 필요가 없음.)
         {
@@ -128,7 +145,7 @@ public class GameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha4))       // 카드 생성
         {
-            CardManager.Instance.AddCard(cardSO.cards[0]);
+            CardManager.Instance.AddCard(cardSO.Cards[0]);
         }
         if (Input.GetKeyDown(KeyCode.Alpha8))
         {
