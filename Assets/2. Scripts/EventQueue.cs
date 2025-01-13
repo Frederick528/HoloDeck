@@ -80,7 +80,7 @@ public class EventQueue
 
     public void QueueClear()
     {
-        _isPending = false;
+        //_isPending = false;
         _queue.Clear();
     }
 

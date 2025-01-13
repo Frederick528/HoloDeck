@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,9 +18,15 @@ public class UICard : MonoBehaviour
 
     public void Setup(CardData data)
     {
+        StringBuilder sb = new StringBuilder(data.Descript);
+        sb.Replace("{Damage}", (data.Damage).ToString());
+        sb.Replace("{Defence}", (data.Defence).ToString());
+        sb.Replace("{Count}", (data.Count).ToString());
+        sb.Replace("{Draw}", (data.Draw).ToString());
+
         nameText.text = data.Name;
         costText.text = data.Cost.ToString();
-        desText.text = data.Descript;
+        desText.text = sb.ToString();
         character.sprite = data.Sprite;
 
         if (cardBtn != null)

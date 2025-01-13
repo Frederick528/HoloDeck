@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class CardAbility
 {
+    //public UniTask Task;
+    //public UniTask<Action<Card>> cardActionTask;
     public Action<Card> cardAction;
     const float attackSpeed = 0.3f;
 
@@ -26,7 +28,40 @@ public class CardAbility
     //    }
     //}
 
+    //public async UniTask<Action<Card>> SetCardAbility(int id)
+    //{
+    //    Action<Card> cardAction = null;
+    //    Card card = new();
+    //    switch (id)
+    //    {
+    //        case 100:
+    //            await UniTask.Run(() => SingleAttack(card));
+    //            //cardAction += SingleAttack;
+    //            break;
+    //        case 101:
+    //            cardAction += SingleAttack;
+    //            cardAction += async (card) => await DrawSkill(card);
+    //            break;
+    //        case 102:
+    //            cardAction += async (card) => {
+    //                await DelayTask(1f);
+    //                await ContinuousSinglettack(card, 0.3f);
+    //            };
+    //            break;
+    //        case 103:
+    //            cardAction += async (card) => await ContinuousMultiAttack(card, 0.3f);
+    //            break;
+    //        case 104: 
+    //            cardAction += async (card) => await ContinuousDrawSkill(card);
+    //            break;
+    //        case 105:
+    //            cardAction += DefenceSkill;
+    //            break;
+    //        default: cardAction = null; break;
+    //    }
 
+    //    return cardActionTask;
+    //}
     public Action<Card> SetCardAbility(int id)
     {
         switch (id)
@@ -36,10 +71,11 @@ public class CardAbility
                 break;
             case 101:
                 cardAction += SingleAttack;
-                cardAction += DrawSkill;
+                cardAction += async (card) => await DrawSkill(card);
                 break;
             case 102:
-                cardAction += async (card) => {
+                cardAction += async (card) =>
+                {
                     await DelayTask(1f);
                     ContinuousSinglettack(card, 0.3f).Forget();
                 };
@@ -47,8 +83,8 @@ public class CardAbility
             case 103:
                 cardAction += (card) => ContinuousMultiAttack(card, 0.3f).Forget();
                 break;
-            case 104: 
-                cardAction += ContinuousDrawSkill;
+            case 104:
+                cardAction += async (card) => await ContinuousDrawSkill(card);
                 break;
             case 105:
                 cardAction += DefenceSkill;
@@ -58,8 +94,9 @@ public class CardAbility
         return cardAction;
     }
 
-    void SingleAttack(Card card)
+    /*async UniTaskV*/void SingleAttack(Card card)
     {
+        //await UniTask.Yield();
         card.TargetEnemy.TakeDamageEnemy(card.Data.Damage);        // 이 전 단계에서 null 검사를 하기 때문에 ?. 할 필요 없음.
         card.Target(null);
         //Enemy enemy = EnemyManager.Instance.targetEnemy;
@@ -92,7 +129,7 @@ public class CardAbility
         //    }
         //}
     }
-    async UniTaskVoid ContinuousSinglettack(Card card, float delay)
+    async UniTask ContinuousSinglettack(Card card, float delay)
     {
         //Enemy enemy = EnemyManager.Instance.targetEnemy;
         if (card.TargetEnemy.TakeDamageEnemy(card.Data.Damage))
@@ -135,7 +172,7 @@ public class CardAbility
         //    }
         //}
     }
-    async UniTaskVoid ContinuousMultiAttack(Card card, float delay)
+    async UniTask ContinuousMultiAttack(Card card, float delay)
     {
         MultiAttack(card);
         for (int j = 1; j < /*(!card.Enhanced ? card.Data.Count : card.Data.EnhancedCount)*/card.Data.Count; ++j)
@@ -148,16 +185,16 @@ public class CardAbility
             //});
         }
     }
-    void DrawSkill(Card card)
+    async UniTask DrawSkill(Card card)
     {
         //TurnManager.Instance.DrawTask().Forget();
-        CardManager.Instance.AddCard().Forget();
+        await CardManager.Instance.AddCard();
     }
 
-    void ContinuousDrawSkill(Card card)     // 드로우 같은 경우, 덱에 남아있는 카드를 확인하기 위해 Data.Count 값이 아닌 Data.Draw 값으로 얼마나 뽑을지 정함.
+    async UniTask ContinuousDrawSkill(Card card)     // 드로우 같은 경우, 덱에 남아있는 카드를 확인하기 위해 Data.Count 값이 아닌 Data.Draw 값으로 얼마나 뽑을지 정함.
     {
         //TurnManager.Instance.DrawTask(card.Data.Draw).Forget();
-        CardManager.Instance.AddCards(card.Data.Draw).Forget();
+        await CardManager.Instance.AddCards(card.Data.Draw);
         //if (!card.Enhanced)
         //    CardManager.Instance.AddCards(card.Data.Draw).Forget();
         //else

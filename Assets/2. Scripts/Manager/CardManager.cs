@@ -299,6 +299,8 @@ public class CardManager : MonoBehaviour
     
     public async UniTask<Card> DrawCard()
     {
+        if (HandCard.Count == 10) return null;
+
         if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기. 이 경우에는 카드 뽑기가 0.5초 후 가능 (카드 버려지는 시간인 0.3초보단 높게 잡아야 함.)
         {
             SetupDrawDeck();
@@ -313,16 +315,17 @@ public class CardManager : MonoBehaviour
         return card;
     }
 
-    public async UniTask<Card> DrawCard(Card drawCard)
+    public Card DrawCard(Card drawCard)
     {
-        if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기. 이 경우에는 카드 뽑기가 LoadCardDummyDelay초 후 가능 (카드 버려지는 시간인 ThrowAwayCardDelay초보단 높게 잡아야 함.)
-        {
-            SetupDrawDeck();
-            await UniTask.WaitForSeconds(CardUtils.LoadCardDummyDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
-        }
+        //if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기. 이 경우에는 카드 뽑기가 LoadCardDummyDelay초 후 가능 (카드 버려지는 시간인 ThrowAwayCardDelay초보단 높게 잡아야 함.)
+        //{
+        //    SetupDrawDeck();
+        //    await UniTask.WaitForSeconds(CardUtils.LoadCardDummyDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+        //}
 
-        if (DrawDeck.Count == 0)    // 덱을 섞은 후에도 뽑을 카드가 없으면 리턴
-            return null;
+        //if (DrawDeck.Count == 0)    // 덱을 섞은 후에도 뽑을 카드가 없으면 리턴
+        //    return null;
+        if (HandCard.Count == 10) return null;
 
         Card card = DrawDeck.Find(x => x == drawCard);
         DrawDeck.Remove(card);
@@ -342,17 +345,28 @@ public class CardManager : MonoBehaviour
 
     public async UniTask<Card[]> DrawCards(int count)
     {
+        if (HandCard.Count + count > 10)
+            count = 10 - HandCard.Count;
         Card[] card = new Card[count];
         int tempDraw = DrawDeck.Count;
         if (DrawDeck.Count < count)    // 덱에 있는 카드가 뽑을 카드보다 적으면, 일단 덱에 있는 카드를 뽑고 덱 섞기. 이 경우에는 카드 뽑기가 LoadCardDummyDelay초 후 가능 (카드 버려지는 시간인 ThrowAwayCardDelay초보단 높게 잡아야 함.)
         {
-            for (int i = 0; i < DrawDeck.Count; ++i)
+            for (int i = 0; i < tempDraw; ++i)
             {
                 card[i] = DrawDeck[0];
                 DrawDeck.RemoveAt(0);
             }
             SetupDrawDeck();
             await UniTask.WaitForSeconds(CardUtils.LoadCardDummyDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+        }
+        else if  (DrawDeck.Count >= count)
+        {
+            for (int i = 0; i < count; ++i)
+            {
+                card[i] = DrawDeck[0];
+                DrawDeck.RemoveAt(0);
+            }
+            return card;
         }
 
 
@@ -401,6 +415,7 @@ public class CardManager : MonoBehaviour
             if (drawCard[i] == null)
                 return;
             HandCard.Add(drawCard[i]);
+            print("S");
 
             SetOriginOrder();
             CardAlignment();
@@ -408,9 +423,9 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    public async UniTask AddCard(Card addCard)    // 덱에서 손패로 카드를 가져옴.
+    public void AddCard(Card addCard)    // 덱에서 손패로 카드를 가져옴.
     {
-        Card drawCard = await DrawCard(addCard);
+        Card drawCard = DrawCard(addCard);
         if (drawCard == null)
             return;
 
@@ -478,19 +493,18 @@ public class CardManager : MonoBehaviour
             return;
         }
 
-        usedCard.CardAction?.Invoke(usedCard);
-        
         HandCard.Remove(usedCard);
 
+        
         //await UniTask.Delay(TimeSpan.FromSeconds(usedCard.Data.cardUseDelay));
 
         //if (MapManager.Instance.currStage.cleared)
         //    return;
 
-        CardDummy.Add(usedCard);
-
         SetOriginOrder();
         CardAlignment();
+
+        usedCard.CardAction?.Invoke(usedCard);
 
         bool endBattle = await UniTask.WaitForSeconds(usedCard.Data.CardUseDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token).SuppressCancellationThrow();
         if (endBattle)
@@ -500,6 +514,11 @@ public class CardManager : MonoBehaviour
 
         /*bool shutdown = */
         await usedCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), false, CardUtils.ThrowAwayCardDelay).SuppressCancellationThrow();
+
+        if (!endBattle)
+        {
+            CardDummy.Add(usedCard);
+        }
         
         //if (!shutdown)
         //{
