@@ -34,7 +34,7 @@ public class Card : MonoBehaviour
     string _defaultDesc = null;
     public CardData Data;
     public string Desc;
-    public int ID;
+    public int ID;      // 일단 혹시 몰라서 만들었으나, Data.Id로 받을 수 있음.
 
     public bool Block;
 
@@ -42,7 +42,8 @@ public class Card : MonoBehaviour
 
     public CardAbility CardAbility = new();
 
-    public Action<Card> CardAction { get; private set; }
+    //public Action<Card> CardAction { get; private set; }
+    public UniTask CardAction { get; private set; }
 
     public bool Enhanced = false;
 
@@ -73,7 +74,10 @@ public class Card : MonoBehaviour
 
         nameText.text = Data.Name;
         character.sprite = Data.Sprite;
-        CardAction = CardAbility.SetCardAbility(Data.Id);
+        //CardAction = CardAbility.SetCardAbility(Data.Id);     // Action<Card> 버전 (드로우 시간 체크 때문에 일단 사용하지 않음.)
+        CardAction = CardAbility.SetCardAbility(this);
+
+        Debug.Log(TurnManager.Instance.CancelSource.Token);
 
         CardDataReset();
         //Data = _defaultData;
@@ -163,7 +167,8 @@ public class Card : MonoBehaviour
         desText.text = Data.Descript;
         character.sprite = Data.Sprite;
 
-        CardAction = CardAbility.SetCardAbility(Data.Id);
+        //CardAction = CardAbility.SetCardAbility(Data.Id);
+        CardAction = CardAbility.SetCardAbility(this);
 
     }
 

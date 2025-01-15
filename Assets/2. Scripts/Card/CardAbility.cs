@@ -9,8 +9,20 @@ public class CardAbility
 {
     //public UniTask Task;
     //public UniTask<Action<Card>> cardActionTask;
-    public Action<Card> cardAction;
+
     const float attackSpeed = 0.3f;
+    public static Action<T> Action<T>(Func<T, UniTask> asyncAction)
+    {
+        return (t1) => asyncAction(t1).Forget();
+    }
+    //public static class UniTaskHelper
+    //{
+    //    public static Action<T> Action<T>(Func<T, UniTask> asyncAction)
+    //    {
+    //        return (t1) => asyncAction(t1).Forget();
+    //    }
+    //}
+    public Action<Card> cardAction;
 
     //public CancellationTokenSource CancelSource = new CancellationTokenSource();
     //public Dictionary<CardTag, Action<int>> CardAction = new()
@@ -28,22 +40,65 @@ public class CardAbility
     //    }
     //}
 
-    //public async UniTask<Action<Card>> SetCardAbility(int id)
+    public UniTask SetCardAbility(Card card)
+    {
+        //    UniTask cardActTask;
+        switch (card.Data.Id)
+        {
+            case 100:
+                //return SingleAttack(card);
+                return UniTask.RunOnThreadPool(async () => 
+                {
+                    await DelayTask(1f);
+                    SingleAttack(card);
+                }/*, true, TurnManager.Instance.CancelSource.Token*/);      // false면 await 이후 코드가 스레드 풀에서 진행된다고 하는데, 아직 정확히는 모르겠어서 이건 일단 좀 더 공부해봐야 할 듯.
+            case 101:
+                return UniTask.WhenAll(
+                    UniTask.RunOnThreadPool(async () =>
+                    {
+                        await DelayTask(1f);
+                        SingleAttack(card);
+                    }, true, TurnManager.Instance.CancelSource.Token),  // 토큰 굳이 받아야 하나? Run 안에서 이미 토큰 확인하는데?
+                    DrawSkill(/*card*/)
+                );
+            case 102:
+                return UniTask.RunOnThreadPool(async () =>
+                {
+                    await DelayTask(1f);
+                    await ContinuousSinglettack(card, 0.3f);
+                }, true, TurnManager.Instance.CancelSource.Token);
+            case 103:
+                return ContinuousMultiAttack(card, 0.3f);
+            case 104:
+                return ContinuousDrawSkill(card);
+            case 105:
+                return UniTask.RunOnThreadPool(async () =>
+                {
+                    await DelayTask(1f);
+                    DefenceSkill(card);
+                }, true, TurnManager.Instance.CancelSource.Token);
+            default: return UniTask.CompletedTask;
+        }
+        //    return cardActTask;
+    }
+
+    //public UniTask SetCardAbility(int id)
     //{
-    //    Action<Card> cardAction = null;
-    //    Card card = new();
+    //    UniTask cardActTask;
     //    switch (id)
     //    {
     //        case 100:
-    //            await UniTask.Run(() => SingleAttack(card));
-    //            //cardAction += SingleAttack;
+    //            cardActTask = (card) => UniTask.WhenAll(SingleAttack(card));
+    //            //await UniTask.RunOnThreadPool((cardAction));
+    //            cardAction += SingleAttack;
     //            break;
     //        case 101:
     //            cardAction += SingleAttack;
     //            cardAction += async (card) => await DrawSkill(card);
     //            break;
     //        case 102:
-    //            cardAction += async (card) => {
+    //            cardAction += async (card) =>
+    //            {
     //                await DelayTask(1f);
     //                await ContinuousSinglettack(card, 0.3f);
     //            };
@@ -51,54 +106,55 @@ public class CardAbility
     //        case 103:
     //            cardAction += async (card) => await ContinuousMultiAttack(card, 0.3f);
     //            break;
-    //        case 104: 
+    //        case 104:
     //            cardAction += async (card) => await ContinuousDrawSkill(card);
+    //            break;
+    //        case 105:
+    //            cardAction += DefenceSkill;
+    //            break;
+    //        default: cardActTask = new(); break;
+    //    }
+
+    //    return cardActTask;
+    //}
+
+    //public Action<Card> SetCardAbility(int id)
+    //{
+    //    switch (id)
+    //    {
+    //        case 100:
+    //            cardAction += SingleAttack;
+    //            break;
+    //        case 101:
+    //            cardAction += SingleAttack;
+    //            cardAction += async (card) => await DrawSkill(card);
+    //            break;
+    //        case 102:
+    //            cardAction += async (card) =>
+    //            {
+    //                await DelayTask(1f);
+    //                ContinuousSinglettack(card, 0.3f).Forget();
+    //            };
+    //            break;
+    //        case 103:
+    //            cardAction += (card) => ContinuousMultiAttack(card, 0.3f).Forget();
+    //            break;
+    //        case 104:
+    //            cardAction += async (card) => await ContinuousDrawSkill(card);
+    //            //cardAction += UniTaskHelper.Action<Card>(DrawSkill);
     //            break;
     //        case 105:
     //            cardAction += DefenceSkill;
     //            break;
     //        default: cardAction = null; break;
     //    }
-
-    //    return cardActionTask;
+    //    return cardAction;
     //}
-    public Action<Card> SetCardAbility(int id)
-    {
-        switch (id)
-        {
-            case 100:
-                cardAction += SingleAttack;
-                break;
-            case 101:
-                cardAction += SingleAttack;
-                cardAction += async (card) => await DrawSkill(card);
-                break;
-            case 102:
-                cardAction += async (card) =>
-                {
-                    await DelayTask(1f);
-                    ContinuousSinglettack(card, 0.3f).Forget();
-                };
-                break;
-            case 103:
-                cardAction += (card) => ContinuousMultiAttack(card, 0.3f).Forget();
-                break;
-            case 104:
-                cardAction += async (card) => await ContinuousDrawSkill(card);
-                break;
-            case 105:
-                cardAction += DefenceSkill;
-                break;
-            default: cardAction = null; break;
-        }
-        return cardAction;
-    }
 
-    /*async UniTaskV*/void SingleAttack(Card card)
+    void SingleAttack(Card card)
     {
-        //await UniTask.Yield();
         card.TargetEnemy.TakeDamageEnemy(card.Data.Damage);        // 이 전 단계에서 null 검사를 하기 때문에 ?. 할 필요 없음.
-        card.Target(null);
+        card.Target(null);                                         // missing 체크를 위한 거였으나.. 안 되나..??
         //Enemy enemy = EnemyManager.Instance.targetEnemy;
         //enemy.TakeDamageEnemy(card.Data.Damage);
         //if (!card.Enhanced)
@@ -106,6 +162,13 @@ public class CardAbility
         //else
         //    enemy.TakeDamageEnemy(card.Data.EnhancedDamage);
         //enemy.TakeDamageEnemy(card.Data.Damage).Forget();
+    }
+
+    void SingleAttack(object obj)       // 나중에 다시 체크해봐야 할 듯. 잘 하면 id로도 사용 가능할 듯?
+    {
+        Card card = obj as Card;
+        card.TargetEnemy.TakeDamageEnemy(card.Data.Damage);
+        card.Target(null);
     }
     void MultiAttack(Card card)
     {
@@ -172,6 +235,21 @@ public class CardAbility
         //    }
         //}
     }
+    async UniTask ContinuousSinglettack(object obj, float delay)
+    {
+        Card card = obj as Card;
+        //Enemy enemy = EnemyManager.Instance.targetEnemy;
+        if (card.TargetEnemy.TakeDamageEnemy(card.Data.Damage))
+            return;
+        for (int i = 1; i < card.Data.Count; ++i)
+        {
+            await DelayTask(delay);
+            if (card.TargetEnemy.TakeDamageEnemy(card.Data.Damage))
+                return;
+        }
+        card.Target(null);
+    }
+
     async UniTask ContinuousMultiAttack(Card card, float delay)
     {
         MultiAttack(card);
@@ -185,10 +263,10 @@ public class CardAbility
             //});
         }
     }
-    async UniTask DrawSkill(Card card)
+    async UniTask DrawSkill(/*Card card*/)
     {
         //TurnManager.Instance.DrawTask().Forget();
-        await CardManager.Instance.AddCard();
+        await CardManager.Instance.AddCard();       // 최하위 UniTask에서 Cancel를 확인하는데... 혹시 문제가 발생할 수도 있나..?
     }
 
     async UniTask ContinuousDrawSkill(Card card)     // 드로우 같은 경우, 덱에 남아있는 카드를 확인하기 위해 Data.Count 값이 아닌 Data.Draw 값으로 얼마나 뽑을지 정함.
