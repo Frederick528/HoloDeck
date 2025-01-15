@@ -482,7 +482,6 @@ public class CardManager : MonoBehaviour
         //}
     }
 
-
     public async UniTask UsedCard(Card usedCard)
     {
         if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)

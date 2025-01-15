@@ -70,7 +70,7 @@ MonoBehaviour:
     Damage: 0
     Defence: 0
     Count: 0
-    Draw: 2
+    Draw: 100
     CardUseDelay: 2
     Price: 15
     Descript: '{Draw} Draw'

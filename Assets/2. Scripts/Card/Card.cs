@@ -75,8 +75,7 @@ public class Card : MonoBehaviour
         nameText.text = Data.Name;
         character.sprite = Data.Sprite;
         //CardAction = CardAbility.SetCardAbility(Data.Id);     // Action<Card> 버전 (드로우 시간 체크 때문에 일단 사용하지 않음.)
-        CardAction = CardAbility.SetCardAbility(this);
-
+        CardAction = CardAbility.SetCardAbility(this);        // UniTask 중복 사용 불가로 인해 일단 사용 불가
         Debug.Log(TurnManager.Instance.CancelSource.Token);
 
         CardDataReset();

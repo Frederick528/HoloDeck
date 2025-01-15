@@ -42,44 +42,62 @@ public class CardAbility
 
     public UniTask SetCardAbility(Card card)
     {
-        //    UniTask cardActTask;
-        switch (card.Data.Id)
+        UniTask cardActTask;
+        switch (card.Data.Id)       // Defer => await 한 번일 때 유용, Lazy => await 여러 번일 때 유용
         {
             case 100:
                 //return SingleAttack(card);
-                return UniTask.RunOnThreadPool(async () => 
+                cardActTask = UniTask.Defer(async () => 
                 {
                     await DelayTask(1f);
                     SingleAttack(card);
                 }/*, true, TurnManager.Instance.CancelSource.Token*/);      // false면 await 이후 코드가 스레드 풀에서 진행된다고 하는데, 아직 정확히는 모르겠어서 이건 일단 좀 더 공부해봐야 할 듯.
+                break;
             case 101:
-                return UniTask.WhenAll(
-                    UniTask.RunOnThreadPool(async () =>
-                    {
-                        await DelayTask(1f);
-                        SingleAttack(card);
-                    }, true, TurnManager.Instance.CancelSource.Token),  // 토큰 굳이 받아야 하나? Run 안에서 이미 토큰 확인하는데?
-                    DrawSkill(/*card*/)
-                );
+                cardActTask = UniTask.Defer(async () =>
+                {
+                    await UniTask.WhenAll(
+                        UniTask.Create(async () =>
+                        {
+                            await DelayTask(1f);
+                            SingleAttack(card);
+                        }),
+                        UniTask.Create(async () =>
+                        {
+                            await DrawSkill();
+                        }));
+                    //DrawSkill(/*card*/)
+                });
+                break;
             case 102:
-                return UniTask.RunOnThreadPool(async () =>
+                cardActTask = UniTask.Defer(async () =>
                 {
                     await DelayTask(1f);
                     await ContinuousSinglettack(card, 0.3f);
-                }, true, TurnManager.Instance.CancelSource.Token);
+                });
+                break;
             case 103:
-                return ContinuousMultiAttack(card, 0.3f);
+                cardActTask = UniTask.Defer(async () =>
+                {
+                    await ContinuousMultiAttack(card, 0.3f);
+                });
+                break;
             case 104:
-                return ContinuousDrawSkill(card);
+                cardActTask = UniTask.Defer(async () =>
+                {
+                    await ContinuousDrawSkill(card);
+                });
+                break;
             case 105:
-                return UniTask.RunOnThreadPool(async () =>
+                cardActTask = UniTask.Defer(async () =>
                 {
                     await DelayTask(1f);
                     DefenceSkill(card);
-                }, true, TurnManager.Instance.CancelSource.Token);
-            default: return UniTask.CompletedTask;
+                });
+                break;
+            default: cardActTask = UniTask.CompletedTask; break;
         }
-        //    return cardActTask;
+        return cardActTask;
     }
 
     //public UniTask SetCardAbility(int id)
