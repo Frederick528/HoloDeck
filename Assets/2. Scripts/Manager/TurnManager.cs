@@ -18,8 +18,10 @@ public class TurnManager : MonoBehaviour
 
     public static Action OnAddCard;
 
-    public ReactiveProperty<bool> isLoading = new();
+    public bool isLoading;
     public bool myTurn;
+
+    bool _canEndTurn;
 
     enum TurnType { My, Enemy }
 
@@ -30,24 +32,45 @@ public class TurnManager : MonoBehaviour
     //    turnType = TurnType.My;
     //}
 
-    private void Start()
+    //private void Start()
+    //{
+    //    isLoading.Subscribe(isOn =>
+    //    {
+    //        ButtonManager.Instance.TurnEndButtonInvert(!isOn);
+    //        ChangeCardState().Forget();
+    //    });
+    //}
+    public void ChangeCanEnd(bool canEnd)
     {
-        isLoading.Subscribe(isOn =>
+        _canEndTurn = canEnd;
+    }
+    async UniTask ChangeCardState()
+    {
+        if (isLoading && !myTurn)       // 로딩 상태에서 내 턴이 아닌 경우
         {
-            ButtonManager.instance.TurnEndButtonInvert(!isOn);
-            if (isLoading.Value)
-                CardManager.Instance.cardState = CardManager.ECardState.Nothing;
-            else if (!myTurn)
-                CardManager.Instance.cardState = CardManager.ECardState.CanMouseOver;
-
-            else if (myTurn)
-                CardManager.Instance.cardState = CardManager.ECardState.CanMouseDrag;
-        });
+            CardManager.Instance.cardState = CardManager.ECardState.Nothing;
+            await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, false, PlayerLoopTiming.Update, CancelSource.Token); // 종료 다음에 버리는 시간동안은 확대 안 되게
+            CardManager.Instance.cardState = CardManager.ECardState.CanMouseOver;
+        }
+        else if (isLoading)             // 그냥 로딩 상태(내 턴인 상황에서)
+            CardManager.Instance.cardState = CardManager.ECardState.Nothing;
+        else if (myTurn)
+            CardManager.Instance.cardState = CardManager.ECardState.CanMouseDrag;
+        //if (isLoading)
+        //    CardManager.Instance.cardState = CardManager.ECardState.Nothing;
+        //else if (!myTurn)
+        //{
+        //    CardManager.Instance.cardState = CardManager.ECardState.CanMouseOver;
+        //}
+        //else if (myTurn)
+        //    CardManager.Instance.cardState = CardManager.ECardState.CanMouseDrag;
     }
 
     public void SetBool(bool isOn)
     {
-        isLoading.Value = isOn;
+        isLoading = isOn;
+        ButtonManager.Instance.TurnEndButtonInvert(!isOn);
+        ChangeCardState().Forget();
     }
 
     public void ChangeStartCardCount(int count)
@@ -66,7 +89,7 @@ public class TurnManager : MonoBehaviour
         GameManager.Instance.player.DefenceReset();
 
         UiManager.instance.ChangeTurnButtonText(myTurn);
-        
+
         SetBool(true);
         await CardManager.Instance.AddCards(startCardCount);
         //for (int i = 0; i < startCardCount; i++)
@@ -144,9 +167,11 @@ public class TurnManager : MonoBehaviour
 
     public async UniTask EndTurn(bool endBattle = false)
     {
+        if (!_canEndTurn && !endBattle) return;
         myTurn = false;
+        ButtonManager.Instance.TurnEndButtonInvert(myTurn);
         UiManager.instance.ChangeTurnButtonText(myTurn);
-        //SetBool(true);
+        SetBool(true);
         await CardManager.Instance.ThrowAwayCard();
         if (endBattle)
         {
@@ -165,11 +190,11 @@ public class TurnManager : MonoBehaviour
     //}
     public async UniTask EnemyTurnTask()
     {
-        await UniTask.WaitForSeconds(1f, false, PlayerLoopTiming.Update, CancelSource.Token);  // 지금은 적 코드가 없으므로 대신 딜레이 코드 추가
+        await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, false, PlayerLoopTiming.Update, CancelSource.Token);  // 카드 다 버린 이후 적 행동 시작
         for (int i = 0; i < EnemyManager.Instance.enemies.Count; ++i)
         {
             EnemyManager.Instance.enemies[i].Pattern();
-            await UniTask.WaitForSeconds(1f, false, PlayerLoopTiming.Update, CancelSource.Token);
+            await UniTask.WaitForSeconds(1f, false, PlayerLoopTiming.Update, CancelSource.Token); // 지금은 적 코드가 없으므로 대신 딜레이 코드 추가
         }
         // 적 턴 시작, 적 코드 작성
         // 적 턴이 끝나면 내 턴 시작.
@@ -193,7 +218,7 @@ public class TurnManager : MonoBehaviour
         StartTurnTask().Forget();
     }
 
-    public void EndBattle()         // 리팩토링 필요해보임.
+    public async UniTask EndBattle()         // 리팩토링 필요해보임.
     {
         CancelSource.Cancel();
 
@@ -205,7 +230,7 @@ public class TurnManager : MonoBehaviour
         //TurnManager.OnAddCard = null;
         // TurnManager.OnAddCard -= async () =>
         //     await AddCard();
-        EndTurn(true).Forget();
+        await EndTurn(true);
         //DrawDeck.Clear();
         //CardDummy.Clear();
         ////HandCard.Clear();

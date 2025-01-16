@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,21 +16,21 @@ public class MapManager : MonoBehaviour
 
     void Awake() { Instance = this; }
 
-    public void ClearStage()
+    public async UniTaskVoid ClearStage()
     {
         if (currStage.State == Map.StageState.ENEMY || currStage.State == Map.StageState.BOSS)
         {
-            TurnManager.Instance.EndBattle();
+            await TurnManager.Instance.EndBattle();
         }
         currStage.ClearMap();
         canMove = true;
     }
 
-    public void ClearStage(Map stage)
+    public async UniTaskVoid ClearStage(Map stage)
     {
         if (stage.State == Map.StageState.ENEMY || stage.State == Map.StageState.BOSS)
         {
-            TurnManager.Instance.EndBattle();
+            await TurnManager.Instance.EndBattle();
         }
         stage.ClearMap();
         canMove = true;

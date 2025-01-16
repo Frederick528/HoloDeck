@@ -65,6 +65,7 @@ public class CardAbility
                         }),
                         UniTask.Create(async () =>
                         {
+                            await DelayTask(1f);
                             await DrawSkill();
                         }));
                     //DrawSkill(/*card*/)

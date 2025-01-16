@@ -119,7 +119,7 @@ public abstract class Enemy : Entity
         //    //spawn++;
         //}
         //if (spawn == EnemyManager.Instance.enemySpawnPosition.Count)
-        MapManager.Instance.ClearStage();
+        MapManager.Instance.ClearStage().Forget();
         MapManager.Instance.RewardStage();
         ItemManager.Instance.Charge(1);
     }

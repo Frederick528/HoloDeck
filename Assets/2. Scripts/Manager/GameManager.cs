@@ -116,7 +116,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                MapManager.Instance.ClearStage();
+                MapManager.Instance.ClearStage().Forget();
             }
         }
 
@@ -150,7 +150,7 @@ public class GameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha8))
         {
-            TurnManager.Instance.EndBattle();
+            TurnManager.Instance.EndBattle().Forget();
         }
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {

@@ -446,11 +446,13 @@ public class CardManager : MonoBehaviour
             if (drawCard[i] == null)
                 return;
             HandCard.Add(drawCard[i]);
-            print("S");
 
             SetOriginOrder();
             CardAlignment();
-            await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+            //if (i != drawCard.Length - 1)
+            //{
+                await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+            //}
         }
     }
 
@@ -485,6 +487,19 @@ public class CardManager : MonoBehaviour
         CardAlignment();
     }
 
+    void ResetSetting()
+    {
+        isSingleTarget = false;
+        useSingleTargetCard = false;
+        draggable = false;
+        GameManager.Instance.ArrowCursor(false);
+        selectCard = null;
+        isUseCard = false;
+
+        canPush = true;         // PullCard랑 중복 호출이긴 함.
+
+    }
+
     public async UniTask ThrowAwayCard()
     {
         foreach (Card targetCard in HandCard)
@@ -494,13 +509,14 @@ public class CardManager : MonoBehaviour
 
             CardDummy.Add(targetCard);
         }
-        await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay + 0.1f);
+        await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay);
         foreach (Card targetCard in HandCard)
         {
             UnblockCard(targetCard);
             targetCard.MoveTransform(new PRS(cardSpawnPoint.position, Quaternion.identity, CardUtils.CardScale));
         }
         HandCard.Clear();
+        ResetSetting();
 
 
         //foreach (Card dummyCard in CardDummy)
@@ -578,7 +594,7 @@ public class CardManager : MonoBehaviour
         SetOriginOrder();
         CardAlignment();
 
-        await throwCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.ThrowAwayCardDelay).SuppressCancellationThrow();
+        await throwCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), false, CardUtils.ThrowAwayCardDelay);
 
         //throwCard.Block = false;
         throwCard.transform.position = cardSpawnPoint.position;
@@ -654,7 +670,7 @@ public class CardManager : MonoBehaviour
         if (cardState == ECardState.Nothing || draggable)
             return;
         selectCard = card;
-        LargeCard(true, card);
+        LargeCard(/*true, */card);
         PushCard(card);
     }
     public void CardMouseExit(Card card)
@@ -662,23 +678,25 @@ public class CardManager : MonoBehaviour
         if (cardState == ECardState.Nothing || draggable)
             return;
         selectCard = null;
-        LargeCard(false, card);
-        PullCard();
+        //LargeCard(false, card);
+        //PullCard();
+        PutDownCard(card).Forget();
     }
 
 
-    void LargeCard(bool isLarge, Card card)
+    void LargeCard(/*bool isLarge, */Card card)
     {
-        if (isLarge)
-        {
+        //if (isLarge)
+        //{
             card.transform.DOKill();
             Vector3 largePos = new Vector3(card.OriginPRS.pos.x, -3.32f, -100f);
             card.MoveTransform(new PRS(largePos, Quaternion.identity, CardUtils.CardScale * 1.2f));
-        }
-        else
-            card.MoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay);
+        //}
+        //else
+        //    card.MoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay);
 
-        card.GetComponent<Order>().SetMostFrontOrder(isLarge);
+        //card.GetComponent<Order>().SetMostFrontOrder(isLarge);
+        card.GetComponent<Order>().SetMostFrontOrder(true);
     }
     void PushCard(Card card)
     {
@@ -707,13 +725,13 @@ public class CardManager : MonoBehaviour
         canPush = false;
     }
 
-    void PullCard()     // PushCard()보다 움직임 속도가 빨라야 함. 즉, dotweenTime 값은 더 작아야 함.
+    void PullCard()     // PushCard()보다 움직임 속도가 빨라야 함. 즉, dotweenTime 값은 더 작아야 함. => (아닌 듯?)
     {
         canPush = true;
         foreach (Card card in HandCard)
         {
             card.transform.DOKill();
-            card.MoveTransform(card.OriginPRS, true, 0.2f);
+            card.MoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay);
         }
 
     }
@@ -735,13 +753,14 @@ public class CardManager : MonoBehaviour
             //card.Block = false;
             return;
         }
-        draggable = false;
-        GameManager.Instance.ArrowCursor(false);
-        selectCard = null;
+        //draggable = false;
+        //GameManager.Instance.ArrowCursor(false);
+        //selectCard = null;
 
         if (GameManager.Instance.player.CurHolo < card.Data.Cost)
         {
             PutDownCard(card).Forget();
+
             return;
         }
 
@@ -761,6 +780,7 @@ public class CardManager : MonoBehaviour
             PutDownCard(card).Forget();
         }
 
+        ResetSetting();
     }
 
 
@@ -809,12 +829,12 @@ public class CardManager : MonoBehaviour
 
 
 
-    public async UniTask PutDownCard(Card card)
+    public async UniTaskVoid PutDownCard(Card card)
     {
         //comeBackCard = true;
         card.GetComponent<Order>().SetMostFrontOrder(false);
         PullCard();
-        await card.TaskMoveTransform(card.OriginPRS, false, CardUtils.CardAlignmentDelay);
+        await card.TaskMoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay).SuppressCancellationThrow();
         UnblockCard(card);
         //draggable = false;
         //GameManager.Instance.blockClick = false;
@@ -830,7 +850,7 @@ public class CardManager : MonoBehaviour
         if (isUseCard && card.Data.CardTag == CardTag.SingleAttack && !isSingleTarget)
         {
             GameManager.Instance.ArrowCursor(true);
-            PullCard();
+            //PullCard();
             card.transform.DOKill();        // 마우스 커서가 카드를 나갈 때 카드 크기가 원래대로 돌아가는 코드를 멈춰주는 함수.
             card.transform.position = new Vector2(0, -3.32f);
             isSingleTarget = true;

@@ -47,12 +47,12 @@ public class EventQueue
         if (_queue.Count == 0)
         {
             _isPending = false;
-            ButtonManager.instance.TurnEndButtonInvert(!_isPending);
+            ButtonManager.Instance.TurnEndButtonInvert(!_isPending);
             return;
         }
 
         _isPending = true;      // 턴매니저에 있는 로딩과는 느낌이 다름.
-        ButtonManager.instance.TurnEndButtonInvert(!_isPending);
+        ButtonManager.Instance.TurnEndButtonInvert(!_isPending);
         if (_queue.Peek() is Card cardEvent)
         {
             _queue.Dequeue();
@@ -116,7 +116,7 @@ public class EventQueue
     //    await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
     //    if (!TurnManager.Instance.isLoading.Value)
     //    {
-    //        ButtonManager.instance.TurnEndButtonInvert(true);
+    //        ButtonManager.Instance.TurnEndButtonInvert(true);
     //    }
     //}
 }
