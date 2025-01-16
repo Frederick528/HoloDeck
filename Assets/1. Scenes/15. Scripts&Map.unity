@@ -10208,7 +10208,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1189286152}
         m_TargetAssemblyTypeName: ButtonManager, Assembly-CSharp
-        m_MethodName: TurnEndButtonTask
+        m_MethodName: TurnEndButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -6,22 +6,30 @@ using UnityEngine.Events;
 
 public class EventQueue
 {
-    readonly Queue<(Card, bool)> _queue = new Queue<(Card, bool)>();
+    readonly Queue<object> _queue = new Queue<object>();
     bool _isPending;
     public EventQueue()
     {
-        _queue = new Queue<(Card, bool)>();
+        _queue = new Queue<object>();
 
         _isPending = false;
     }
 
-
-    public void Enqueue(Card usedCard, bool isSingleAtk = false)
+    public void Enqueue(Card usedCard)      // 체크하려고 했는데, 굳이 is 써서 체크할 바에 그냥 함수 2개 만들기로 함.
     {
         if (usedCard.Used) return;
-        _queue.Enqueue((usedCard, isSingleAtk));
+        _queue.Enqueue(usedCard);
 
         usedCard.Used = true;
+
+        if (!_isPending)
+        {
+            DoNext().Forget();
+        }
+    }
+    public void Enqueue(object usedObject)
+    {
+        _queue.Enqueue(usedObject);
 
         if (!_isPending )
         {
@@ -39,19 +47,25 @@ public class EventQueue
         if (_queue.Count == 0)
         {
             _isPending = false;
-            OnBtnInteract().Forget();
+            ButtonManager.instance.TurnEndButtonInvert(!_isPending);
             return;
         }
 
-        _isPending = true;
+        _isPending = true;      // 턴매니저에 있는 로딩과는 느낌이 다름.
         ButtonManager.instance.TurnEndButtonInvert(!_isPending);
-        (Card cardEvent, bool isSingleAtk) = _queue.Dequeue();
-        if (isSingleAtk && (cardEvent.TargetEnemy.Death|| cardEvent.TargetEnemy is null))       // TargetEnemy missing 상태 점검 필요. null로 적용 안 됨.
+        if (_queue.Peek() is Card cardEvent)
         {
-            Debug.Log(cardEvent.TargetEnemy.ToString());
-            CardManager.Instance.PutDownCard(cardEvent).Forget();
-            DoNext().Forget();
-            return;
+            _queue.Dequeue();
+            //Card cardEvent = _queue.Dequeue();
+            if (cardEvent.Data.CardTag == CardTag.SingleAttack && (cardEvent.TargetEnemy.Death|| cardEvent.TargetEnemy is null))       // TargetEnemy missing 상태 점검 필요. null로 적용 안 됨.
+            {
+                Debug.Log(cardEvent.TargetEnemy.ToString());
+                CardManager.Instance.PutDownCard(cardEvent).Forget();
+                cardEvent.Used = false;
+                DoNext().Forget();
+                return;
+            }
+            await CardManager.Instance.CheckCanUseCard(cardEvent);
         }
         //else if (!CardManager.Instance.CanUseHolo(cardEvent))
         //{
@@ -64,8 +78,6 @@ public class EventQueue
 
         //CardManager.Instance.UsedCard(cardEvent).Forget();
 
-        await CardManager.Instance.UseCard(cardEvent);
-        Debug.Log(_queue.Count);
 
         DoNext().Forget();
 
@@ -80,16 +92,31 @@ public class EventQueue
 
     public void QueueClear()
     {
-        //_isPending = false;
-        _queue.Clear();
+        for (int i = 0; i < _queue.Count; ++i)
+        {
+            if (_queue.Peek() is Card card)
+            {
+                _queue.Dequeue();
+                QueueClearCard(card).Forget();
+            }
+            --i;
+        }
+        ////_isPending = false;
+        //_queue.Clear();
     }
 
-    async UniTaskVoid OnBtnInteract()
+    async UniTask QueueClearCard(Card card)
     {
-        await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
-        if (!TurnManager.Instance.isLoading.Value)
-        {
-            ButtonManager.instance.TurnEndButtonInvert(true);
-        }
+        await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay);
+        CardManager.Instance.FailedUseCard(card);
     }
+
+    //async UniTaskVoid OnBtnInteract()
+    //{
+    //    await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+    //    if (!TurnManager.Instance.isLoading.Value)
+    //    {
+    //        ButtonManager.instance.TurnEndButtonInvert(true);
+    //    }
+    //}
 }

@@ -49,13 +49,14 @@ public class CardAbility
                 //return SingleAttack(card);
                 cardActTask = UniTask.Defer(async () => 
                 {
-                    await DelayTask(1f);
+                    await DelayTask(3f);
                     SingleAttack(card);
                 }/*, true, TurnManager.Instance.CancelSource.Token*/);      // false면 await 이후 코드가 스레드 풀에서 진행된다고 하는데, 아직 정확히는 모르겠어서 이건 일단 좀 더 공부해봐야 할 듯.
                 break;
             case 101:
                 cardActTask = UniTask.Defer(async () =>
                 {
+                    await DelayTask(3f);
                     await UniTask.WhenAll(
                         UniTask.Create(async () =>
                         {
@@ -72,7 +73,7 @@ public class CardAbility
             case 102:
                 cardActTask = UniTask.Defer(async () =>
                 {
-                    await DelayTask(1f);
+                    await DelayTask(3f);
                     await ContinuousSinglettack(card, 0.3f);
                 });
                 break;
@@ -91,7 +92,7 @@ public class CardAbility
             case 105:
                 cardActTask = UniTask.Defer(async () =>
                 {
-                    await DelayTask(1f);
+                    await DelayTask(3f);
                     DefenceSkill(card);
                 });
                 break;

@@ -12,10 +12,10 @@ public class ButtonManager : MonoBehaviour
 
     [SerializeField] Button turnEndButton;
 
-    public void TurnEndButtonTask()
+    public void TurnEndButton()
     {
         TurnEndButtonInvert(false);
-        TurnManager.Instance.EndTurnTask().Forget();
+        TurnManager.Instance.EndTurn().Forget();
     }
 
     public void TurnEndButtonInvert(bool state)

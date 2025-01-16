@@ -17,14 +17,20 @@ public class MapManager : MonoBehaviour
 
     public void ClearStage()
     {
-        TurnManager.Instance.EndBattle();
+        if (currStage.State == Map.StageState.ENEMY || currStage.State == Map.StageState.BOSS)
+        {
+            TurnManager.Instance.EndBattle();
+        }
         currStage.ClearMap();
         canMove = true;
     }
 
     public void ClearStage(Map stage)
     {
-        TurnManager.Instance.EndBattle();
+        if (stage.State == Map.StageState.ENEMY || stage.State == Map.StageState.BOSS)
+        {
+            TurnManager.Instance.EndBattle();
+        }
         stage.ClearMap();
         canMove = true;
     }

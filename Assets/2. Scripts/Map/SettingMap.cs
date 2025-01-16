@@ -181,7 +181,7 @@ public class SettingMap : MonoBehaviour
             else if (!stage.cleared)
             {
                 stage.LookingStage(direction4, maps);
-                if (stage.GetComponent<TreasureStage>() != null || stage.GetComponent<ShopStage>() != null)
+                if (stage.State == Map.StageState.TREASURE || stage.State == Map.StageState.SHOP)
                 {
                     MapManager.Instance.ClearStage(stage);      // stage.ClearMap()이랑 똑같은 의미. 그러나 ClearStage가 변경될 수 있으므로, 일단 Manager의 ClearStage 사용.
                 }

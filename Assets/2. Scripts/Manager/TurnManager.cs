@@ -50,11 +50,11 @@ public class TurnManager : MonoBehaviour
         isLoading.Value = isOn;
     }
 
-    public void AddStartCardCount(int count)
+    public void ChangeStartCardCount(int count)
     {
         startCardCount += count;
-        if (startCardCount < 0)
-            startCardCount = 0;
+        //if (startCardCount < 0)
+        //    startCardCount = 0;
     }
 
     public async UniTask StartTurnTask()        // 시작 뽑기 (수정 필요: OnAddCard가 액션이라 Invoke 사용시, await가 작용하지 않아 카드덱이 0개일 경우, 0.5초 뒤에 뽑는 것이 적용되지 않음.)
@@ -68,71 +68,86 @@ public class TurnManager : MonoBehaviour
         UiManager.instance.ChangeTurnButtonText(myTurn);
         
         SetBool(true);
-        for (int i = 0; i < startCardCount; i++)
-        {
-            if (CardManager.Instance.HandCard.Count >= 10)
-                break;
-            if (CardManager.Instance.DrawDeck.Count == 0)
-            {
-                OnAddCard?.Invoke();
-                await UniTask.WaitForSeconds(CardUtils.LoadCardDummyDelay, false, PlayerLoopTiming.Update, CancelSource.Token);    // OnAddCard에서 진행되는 await 따로 실행
-            }
-            else
-            {
-                OnAddCard?.Invoke();
-            }
+        await CardManager.Instance.AddCards(startCardCount);
+        //for (int i = 0; i < startCardCount; i++)
+        //{
+        //    if (CardManager.Instance.HandCard.Count >= 10)
+        //        break;
+        //    if (CardManager.Instance.DrawDeck.Count == 0)
+        //    {
+        //        OnAddCard?.Invoke();
+        //        await UniTask.WaitForSeconds(CardUtils.LoadCardDummyDelay, false, PlayerLoopTiming.Update, CancelSource.Token);    // OnAddCard에서 진행되는 await 따로 실행
+        //    }
+        //    else
+        //    {
+        //        OnAddCard?.Invoke();
+        //    }
 
-            await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, CancelSource.Token);        // OnAddCard에서 진행되는 await 따로 실행
-        }
+        //    await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, CancelSource.Token);        // OnAddCard에서 진행되는 await 따로 실행
+        //}
         SetBool(false);
     }
-    public async UniTask DrawTask() // 단일 뽑기 (수정 필요: OnAddCard에 있는 await가 작용하지 않아서, 카드덱이 0개일 경우, 0.5초 뒤에 뽑는 것이 적용되지 않음.)
-    {
-        if (CardManager.Instance.HandCard.Count >= 10)
-            return;
-        SetBool(true);
+    //public async UniTask DrawTask() // 단일 뽑기 (수정 필요: OnAddCard에 있는 await가 작용하지 않아서, 카드덱이 0개일 경우, 0.5초 뒤에 뽑는 것이 적용되지 않음.)
+    //{
+    //    if (CardManager.Instance.HandCard.Count >= 10)
+    //        return;
+    //    SetBool(true);
 
-        if (CardManager.Instance.DrawDeck.Count == 0)
-        {
-            OnAddCard?.Invoke();
-            await UniTask.WaitForSeconds(CardUtils.LoadCardDummyDelay, false, PlayerLoopTiming.Update, CancelSource.Token);    // OnAddCard에서 진행되는 await 따로 실행
-        }
-        else
-        {
-            OnAddCard?.Invoke();
-        }
+    //    if (CardManager.Instance.DrawDeck.Count == 0)
+    //    {
+    //        OnAddCard?.Invoke();
+    //        await UniTask.WaitForSeconds(CardUtils.LoadCardDummyDelay, false, PlayerLoopTiming.Update, CancelSource.Token);    // OnAddCard에서 진행되는 await 따로 실행
+    //    }
+    //    else
+    //    {
+    //        OnAddCard?.Invoke();
+    //    }
 
-        await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, CancelSource.Token);        // OnAddCard에서 진행되는 await 따로 실행
-        SetBool(false);
-    }
-    public async UniTask DrawTask(int drawCardCount)    // 여러 개 뽑기 (수정 필요: 단일 뽑기와 똑같은 문제)
-    {
-        SetBool(true);
-        for (int i = 0; i < drawCardCount; i++)
-        {
-            if (CardManager.Instance.HandCard.Count >= 10)
-                break;
-            if (CardManager.Instance.DrawDeck.Count == 0)
-            {
-                OnAddCard?.Invoke();
-                await UniTask.WaitForSeconds(CardUtils.LoadCardDummyDelay, false, PlayerLoopTiming.Update, CancelSource.Token);    // OnAddCard에서 진행되는 await 따로 실행
-            }
-            else
-            {
-                OnAddCard?.Invoke();
-            }
+    //    await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, CancelSource.Token);        // OnAddCard에서 진행되는 await 따로 실행
+    //    SetBool(false);
+    //}
+    //public async UniTask DrawTask(int drawCardCount)    // 여러 개 뽑기 (수정 필요: 단일 뽑기와 똑같은 문제)
+    //{
+    //    SetBool(true);
+    //    for (int i = 0; i < drawCardCount; i++)
+    //    {
+    //        if (CardManager.Instance.HandCard.Count >= 10)
+    //            break;
+    //        if (CardManager.Instance.DrawDeck.Count == 0)
+    //        {
+    //            OnAddCard?.Invoke();
+    //            await UniTask.WaitForSeconds(CardUtils.LoadCardDummyDelay, false, PlayerLoopTiming.Update, CancelSource.Token);    // OnAddCard에서 진행되는 await 따로 실행
+    //        }
+    //        else
+    //        {
+    //            OnAddCard?.Invoke();
+    //        }
 
-            await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, CancelSource.Token);        // OnAddCard에서 진행되는 await 따로 실행
-        }
-        SetBool(false);
-    }
+    //        await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, CancelSource.Token);        // OnAddCard에서 진행되는 await 따로 실행
+    //    }
+    //    SetBool(false);
+    //}
 
-    public async UniTask EndTurnTask(bool endBattle = false)
+    //public async UniTask DrawCardTask(int drawCardCount = 1)
+    //{
+    //    SetBool(true);
+    //    if (drawCardCount == 1)
+    //    {
+    //        await CardManager.Instance.AddCard();
+    //    }
+    //    else
+    //    {
+    //        await CardManager.Instance.AddCards(drawCardCount);
+    //    }
+    //    SetBool(false);
+    //}
+
+    public async UniTask EndTurn(bool endBattle = false)
     {
         myTurn = false;
         UiManager.instance.ChangeTurnButtonText(myTurn);
-        SetBool(true);
-        await CardManager.Instance.ThrowAwayCard().SuppressCancellationThrow();
+        //SetBool(true);
+        await CardManager.Instance.ThrowAwayCard();
         if (endBattle)
         {
             CardManager.Instance.ClearCard();
@@ -171,8 +186,8 @@ public class TurnManager : MonoBehaviour
         CardManager.Instance.SetupDrawDeck(true);
         //TurnManager.OnAddCard += async () =>
         //    await AddCard();
-        OnAddCard += () =>
-            CardManager.Instance.AddCard().Forget();
+        //OnAddCard += () =>
+        //    CardManager.Instance.AddCard().Forget();
 
 
         StartTurnTask().Forget();
@@ -183,14 +198,14 @@ public class TurnManager : MonoBehaviour
         CancelSource.Cancel();
 
         UiManager.instance.SetupBattleUi(false);
-        OnAddCard = null;
+        //OnAddCard = null;
 
         //TurnManager.OnAddCard -= () =>
         //    AddCard().Forget();
         //TurnManager.OnAddCard = null;
         // TurnManager.OnAddCard -= async () =>
         //     await AddCard();
-        EndTurnTask(true).Forget();
+        EndTurn(true).Forget();
         //DrawDeck.Clear();
         //CardDummy.Clear();
         ////HandCard.Clear();

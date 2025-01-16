@@ -68,11 +68,12 @@ public class GameManager : MonoBehaviour
         //}
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            TurnManager.Instance.DrawTask().Forget();
+            CardManager.Instance.AddCard().Forget();
+            //TurnManager.Instance.DrawCardTask().Forget();
         }
         if (Input.GetKeyDown(KeyCode.W))
         {
-            TurnManager.Instance.EndTurnTask().Forget();
+            TurnManager.Instance.EndTurn().Forget();
         }
         if (Input.GetKeyDown(KeyCode.E))
         {

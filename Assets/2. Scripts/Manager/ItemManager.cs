@@ -50,7 +50,7 @@ public class ItemManager : MonoBehaviour
         switch (id)
         {
             case 0:
-                TurnManager.Instance.AddStartCardCount(1);
+                TurnManager.Instance.ChangeStartCardCount(1);
                 break;
             case 1:
                 GameManager.Instance.player.ChangeHealth(25);
@@ -107,7 +107,7 @@ public class ItemManager : MonoBehaviour
         switch (id)
         {
             case 0:
-                TurnManager.Instance.AddStartCardCount(-1);
+                TurnManager.Instance.ChangeStartCardCount(-1);
                 break;
             case 1:
                 GameManager.Instance.player.ChangeHealth(-25);
