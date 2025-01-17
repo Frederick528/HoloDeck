@@ -44,7 +44,7 @@ public class MapManager : MonoBehaviour
         //currStage.img.color = Color.white;
         currStage.btn.interactable = true;
         currStage.LookingStage(direction4, maps);
-        ClearStage();
+        ClearStage().Forget();
     }
 
     // Enemy와 Boss에서 사용되며, 사용시 방 보상 획득 가능

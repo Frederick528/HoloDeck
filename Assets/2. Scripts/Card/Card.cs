@@ -43,7 +43,9 @@ public class Card : MonoBehaviour
     public CardAbility CardAbility = new();
 
     //public Action<Card> CardAction { get; private set; }
-    public UniTask CardAction { get; private set; }
+    //public Action CardAction { get; private set; }
+    public UniTask CardTask { get; private set; }
+    //public AsyncLazy CardLazy { get; private set; }
 
     public bool Enhanced = false;
 
@@ -74,8 +76,9 @@ public class Card : MonoBehaviour
 
         nameText.text = Data.Name;
         character.sprite = Data.Sprite;
-        //CardAction = CardAbility.SetCardAbility(Data.Id);     // Action<Card> 버전 (드로우 시간 체크 때문에 일단 사용하지 않음.)
-        CardAction = CardAbility.SetCardAbility(this);        // UniTask 중복 사용 불가로 인해 일단 사용 불가
+        //CardAction = CardAbility.SetCardActionAbility(this);     // Action<Card> 버전 (드로우 시간 체크 때문에 일단 사용하지 않음.)
+        CardTask = CardAbility.SetCardTaskAbility(this);        // UniTask 중복 사용 불가로 인해 일단 사용 불가
+        //CardLazy = CardAbility.SetCardLazyAbility(this);        // 중복 해결을 위해 Lazy를 써봄.
         Debug.Log(TurnManager.Instance.CancelSource.Token);
 
         CardDataReset();
@@ -101,8 +104,22 @@ public class Card : MonoBehaviour
         //desText.text = Data.Descript;
         //character.sprite = Data.Sprite;
 
-        //CardAction = CardAbility.SetCardAbility(Data.Id);
+        //CardTask = CardAbility.SetCardTaskAbility(Data.Id);
     }
+
+    public async UniTask UseTask()
+    {
+        //UniTask uniTask = UniTask.Create(() => CardTask);
+        await CardAbility.SetCardTaskAbility(this);     // 다른 방식이 있는지 찾아봐야할 듯
+    }
+    //public async UniTask UseLazy()
+    //{
+    //    await CardLazy.Task;
+    //}
+    //public void UseAction()
+    //{
+    //    CardAction?.Invoke();
+    //}
 
     public void CardDataReset(bool release = false)
     {
@@ -166,8 +183,9 @@ public class Card : MonoBehaviour
         desText.text = Data.Descript;
         character.sprite = Data.Sprite;
 
-        //CardAction = CardAbility.SetCardAbility(Data.Id);
-        CardAction = CardAbility.SetCardAbility(this);
+        //CardAction = CardAbility.SetCardActionAbility(this);
+        CardTask = CardAbility.SetCardTaskAbility(this);
+        //CardLazy = CardAbility.SetCardLazyAbility(this);
 
     }
 

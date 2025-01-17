@@ -44,7 +44,7 @@ public abstract class Enemy : Entity
 
     void OnMouseExit()
     {
-        if (CardManager.Instance.isSingleTarget)
+        if (/*CardManager.Instance.isSingleTarget*/EnemyManager.Instance.arrow.arrowRenderer[0].color == Color.red)
         {
             CardManager.Instance.useSingleTargetCard = false;
             EnemyManager.Instance.targetEnemy = null;

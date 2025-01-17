@@ -487,7 +487,7 @@ public class CardManager : MonoBehaviour
         CardAlignment();
     }
 
-    void ResetSetting()
+    public void ResetSetting()
     {
         isSingleTarget = false;
         useSingleTargetCard = false;
@@ -546,8 +546,13 @@ public class CardManager : MonoBehaviour
         SetOriginOrder();
         CardAlignment();
 
-        //usedCard.CardAction?.Invoke(usedCard);
-        bool endBattle = await usedCard.CardAction.SuppressCancellationThrow();
+        //usedCard.CardTask?.Invoke(usedCard);
+        //bool endBattle = await usedCard.CardTask.SuppressCancellationThrow();
+
+        //usedCard.UseAction();
+        //bool endBattle = await usedCard.UseLazy().SuppressCancellationThrow();
+
+        bool endBattle = await usedCard.UseTask().SuppressCancellationThrow();
         if (endBattle)
         {
             _eventQueue.QueueClear();
@@ -760,6 +765,7 @@ public class CardManager : MonoBehaviour
         if (GameManager.Instance.player.CurHolo < card.Data.Cost)
         {
             PutDownCard(card).Forget();
+            ResetSetting();
 
             return;
         }
@@ -786,7 +792,7 @@ public class CardManager : MonoBehaviour
 
     public async UniTask CheckCanUseCard(Card card)
     {
-        //card.CardAction?.Invoke(card);
+        //card.CardTask?.Invoke(card);
         if (GameManager.Instance.player.CurHolo < card.Data.Cost)
         {
             PutDownCard(card).Forget();
@@ -803,7 +809,7 @@ public class CardManager : MonoBehaviour
 
     //public void CheckCanUseCard(Card card)
     //{
-    //    //card.CardAction?.Invoke(card);
+    //    //card.CardTask?.Invoke(card);
     //    if (GameManager.Instance.player.CurHolo < card.Data.Cost)       // 두 번 체크해야 함.
     //    {
     //        PutDownCard(card).Forget();

@@ -11,10 +11,14 @@ public class CardAbility
     //public UniTask<Action<Card>> cardActionTask;
 
     const float attackSpeed = 0.3f;
-    public static Action<T> Action<T>(Func<T, UniTask> asyncAction)
+    public Action<T> Action<T>(Func<T, UniTaskVoid> asyncAction)
     {
         return (t1) => asyncAction(t1).Forget();
     }
+    //public Action Action(Func<UniTask> asyncAction)
+    //{
+    //    return () => asyncAction().Forget();
+    //}
     //public static class UniTaskHelper
     //{
     //    public static Action<T> Action<T>(Func<T, UniTask> asyncAction)
@@ -22,10 +26,11 @@ public class CardAbility
     //        return (t1) => asyncAction(t1).Forget();
     //    }
     //}
-    public Action<Card> cardAction;
+    public Action cardAction;
+    //public Action<Card> cardAction;
 
     //public CancellationTokenSource CancelSource = new CancellationTokenSource();
-    //public Dictionary<CardTag, Action<int>> CardAction = new()
+    //public Dictionary<CardTag, Action<int>> CardTask = new()
     //{
     //    {CardTag.SingleAttack, CardManager.Instance.targetEnemy.TakeDamage},
     //    {CardTag.MultiAttack},
@@ -40,7 +45,7 @@ public class CardAbility
     //    }
     //}
 
-    public UniTask SetCardAbility(Card card)
+    public UniTask SetCardTaskAbility(Card card)
     {
         UniTask cardActTask;
         switch (card.Data.Id)       // Defer => await 한 번일 때 유용, Lazy => await 여러 번일 때 유용
@@ -49,32 +54,36 @@ public class CardAbility
                 //return SingleAttack(card);
                 cardActTask = UniTask.Defer(async () => 
                 {
-                    await DelayTask(3f);
+                    await DelayTask(1f);
                     SingleAttack(card);
                 }/*, true, TurnManager.Instance.CancelSource.Token*/);      // false면 await 이후 코드가 스레드 풀에서 진행된다고 하는데, 아직 정확히는 모르겠어서 이건 일단 좀 더 공부해봐야 할 듯.
                 break;
             case 101:
                 cardActTask = UniTask.Defer(async () =>
                 {
-                    await DelayTask(3f);
-                    await UniTask.WhenAll(
-                        UniTask.Create(async () =>
-                        {
-                            await DelayTask(1f);
-                            SingleAttack(card);
-                        }),
-                        UniTask.Create(async () =>
-                        {
-                            await DelayTask(1f);
-                            await DrawSkill();
-                        }));
+                    await DelayTask(1f);
+                    SingleAttack(card);
+                    await DrawSkill();
+
+                    //await UniTask.WhenAll(
+                    //    UniTask.Create(async () =>
+                    //    {
+                    //        await DelayTask(1f);
+                    //        SingleAttack(card);
+                    //    }),
+                    //    UniTask.Create(async () =>
+                    //    {
+                    //        await DelayTask(1f);
+                    //        await DrawSkill();
+                    //    }));
+
+
                     //DrawSkill(/*card*/)
                 });
                 break;
             case 102:
                 cardActTask = UniTask.Defer(async () =>
                 {
-                    await DelayTask(3f);
                     await ContinuousSinglettack(card, 0.3f);
                 });
                 break;
@@ -93,7 +102,7 @@ public class CardAbility
             case 105:
                 cardActTask = UniTask.Defer(async () =>
                 {
-                    await DelayTask(3f);
+                    await DelayTask(1f);
                     DefenceSkill(card);
                 });
                 break;
@@ -101,8 +110,133 @@ public class CardAbility
         }
         return cardActTask;
     }
+    //public AsyncLazy SetCardLazyAbility(Card card)
+    //{
+    //    AsyncLazy cardLazy;
+    //    switch (card.Data.Id)       // Defer => await 한 번일 때 유용, Lazy => await 여러 번일 때 유용
+    //    {
+    //        case 100:
+    //            //return SingleAttack(card);
+    //            cardLazy = UniTask.Lazy(async () =>
+    //            {
+    //                await DelayTask(1f);
+    //                SingleAttack(card);
+    //            }/*, true, TurnManager.Instance.CancelSource.Token*/);      // false면 await 이후 코드가 스레드 풀에서 진행된다고 하는데, 아직 정확히는 모르겠어서 이건 일단 좀 더 공부해봐야 할 듯.
+    //            break;
+    //        case 101:
+    //            cardLazy = UniTask.Lazy(async () =>
+    //            {
+    //                await DelayTask(1f);
+    //                SingleAttack(card);
+    //                await DrawSkill();
 
-    //public UniTask SetCardAbility(int id)
+    //                //await UniTask.WhenAll(
+    //                //    UniTask.Create(async () =>
+    //                //    {
+    //                //        await DelayTask(1f);
+    //                //        SingleAttack(card);
+    //                //    }),
+    //                //    UniTask.Create(async () =>
+    //                //    {
+    //                //        await DelayTask(1f);
+    //                //        await DrawSkill();
+    //                //    }));
+
+
+    //                //DrawSkill(/*card*/)
+    //            });
+    //            break;
+    //        case 102:
+    //            cardLazy = UniTask.Lazy(async () =>
+    //            {
+    //                await ContinuousSinglettack(card, 0.3f);
+    //            });
+    //            break;
+    //        case 103:
+    //            cardLazy = UniTask.Lazy(async () =>
+    //            {
+    //                await ContinuousMultiAttack(card, 0.3f);
+    //            });
+    //            break;
+    //        case 104:
+    //            cardLazy = UniTask.Lazy(async () =>
+    //            {
+    //                await ContinuousDrawSkill(card);
+    //            });
+    //            break;
+    //        case 105:
+    //            cardLazy = UniTask.Lazy(async () =>
+    //            {
+    //                await DelayTask(1f);
+    //                DefenceSkill(card);
+    //            });
+    //            break;
+    //        default: cardLazy = UniTask.Lazy(() => UniTask.CompletedTask); break;
+    //    }
+    //    return cardLazy;
+    //}
+    //public Action SetCardActionAbility(Card card)
+    //{
+    //    switch (card.Data.Id)
+    //    {
+    //        case 100:
+    //            cardAction += UniTask.Action(async () =>
+    //            {
+    //                await DelayTask(1f);
+    //                SingleAttack(card);
+    //                CardManager.Instance._eventQueue.DoNext().Forget();
+    //            });
+    //            break;
+    //        case 101:
+    //            cardAction += UniTask.Action(async () =>
+    //            {
+    //                await DelayTask(1f);
+    //                SingleAttack(card);
+    //                await DrawSkill(card);
+    //                CardManager.Instance._eventQueue.DoNext().Forget();
+    //            });
+    //            break;
+    //        case 102:
+    //            cardAction += UniTask.Action(async () =>
+    //            {
+    //                await DelayTask(1f);
+    //                await ContinuousSinglettack(card, 0.3f);
+    //                CardManager.Instance._eventQueue.DoNext().Forget();
+    //            });
+    //            break;
+    //        case 103:
+    //            cardAction += UniTask.Action(async () =>
+    //            {
+    //                await ContinuousMultiAttack(card, 0.3f);
+    //                CardManager.Instance._eventQueue.DoNext().Forget();
+    //            });
+    //            break;
+    //        case 104:
+    //            cardAction += UniTask.Action(async () =>
+    //            {
+    //                await ContinuousDrawSkill(card);
+    //                CardManager.Instance._eventQueue.DoNext().Forget();
+    //            });
+    //            cardAction += UniTask.Action(async () =>
+    //            {
+    //                await DrawSkill(card);
+    //                CardManager.Instance._eventQueue.DoNext().Forget();
+    //            });
+    //            break;
+    //        case 105:
+    //            cardAction += UniTask.Action(async () =>
+    //            {
+    //                await DelayTask(1f);
+    //                DefenceSkill(card);
+    //                CardManager.Instance._eventQueue.DoNext().Forget();
+    //            });
+    //            break;
+    //        default: cardAction = null; break;
+    //    }
+    //    return cardAction;
+    //}
+
+    //public UniTask SetCardTaskAbility(int id)
     //{
     //    UniTask cardActTask;
     //    switch (id)
@@ -138,7 +272,7 @@ public class CardAbility
     //    return cardActTask;
     //}
 
-    //public Action<Card> SetCardAbility(int id)
+    //public Action<Card> SetCardTaskAbility(int id)
     //{
     //    switch (id)
     //    {

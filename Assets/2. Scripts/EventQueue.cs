@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,7 +15,7 @@ public class EventQueue
         _isPending = false;
     }
 
-    public void Enqueue(Card usedCard)      // Ã¼Å©ÇÏ·Á°í Çß´Âµ¥, ±»ÀÌ is ½á¼­ Ã¼Å©ÇÒ ¹Ù¿¡ ±×³É ÇÔ¼ö 2°³ ¸¸µé±â·Î ÇÔ.
+    public void Enqueue(Card usedCard)      // ì²´í¬í•˜ë ¤ê³  í–ˆëŠ”ë°, êµ³ì´ is ì¨ì„œ ì²´í¬í•  ë°”ì— ê·¸ëƒ¥ í•¨ìˆ˜ 2ê°œ ë§Œë“¤ê¸°ë¡œ í•¨.
     {
         if (usedCard.Used) return;
         _queue.Enqueue(usedCard);
@@ -39,7 +39,7 @@ public class EventQueue
 
     //public void Enqueue(Card usedCard)
     //{
-    //    //_queue.Enqueue(usedCard.CardAction?.Invoke(usedCard));
+    //    //_queue.Enqueue(usedCard.CardTask?.Invoke(usedCard));
     //}
 
     public async UniTaskVoid DoNext()
@@ -51,13 +51,13 @@ public class EventQueue
             return;
         }
 
-        _isPending = true;      // ÅÏ¸Å´ÏÀú¿¡ ÀÖ´Â ·Îµù°ú´Â ´À³¦ÀÌ ´Ù¸§.
+        _isPending = true;      // í„´ë§¤ë‹ˆì €ì— ìˆëŠ” ë¡œë”©ê³¼ëŠ” ëŠë‚Œì´ ë‹¤ë¦„.
         ButtonManager.Instance.TurnEndButtonInvert(!_isPending);
         if (_queue.Peek() is Card cardEvent)
         {
             _queue.Dequeue();
             //Card cardEvent = _queue.Dequeue();
-            if (cardEvent.Data.CardTag == CardTag.SingleAttack && (cardEvent.TargetEnemy.Death|| cardEvent.TargetEnemy is null))       // TargetEnemy missing »óÅÂ Á¡°Ë ÇÊ¿ä. null·Î Àû¿ë ¾È µÊ.
+            if (cardEvent.Data.CardTag == CardTag.SingleAttack && (cardEvent.TargetEnemy.Death|| cardEvent.TargetEnemy is null))       // TargetEnemy missing ìƒíƒœ ì ê²€ í•„ìš”. nullë¡œ ì ìš© ì•ˆ ë¨.
             {
                 Debug.Log(cardEvent.TargetEnemy.ToString());
                 CardManager.Instance.PutDownCard(cardEvent).Forget();
@@ -92,6 +92,7 @@ public class EventQueue
 
     public void QueueClear()
     {
+        //_isPending = false;         // Abilityë¥¼ Actionìœ¼ë¡œ í•  ê²½ìš°ì—ëŠ” ì‚¬ìš©í•´ì•¼ í•¨.
         for (int i = 0; i < _queue.Count; ++i)
         {
             if (_queue.Peek() is Card card)
