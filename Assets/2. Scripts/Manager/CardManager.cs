@@ -73,6 +73,7 @@ public class CardManager : MonoBehaviour
     {
         isUseCard.Subscribe((canUse) =>
         {
+            selectCard?.TurnOnOutline(canUse);
             if (canUse && selectCard.Data.CardTag == CardTag.SingleAttack && !isSingleTarget)
             {
                 GameManager.Instance.ArrowCursor(true);
@@ -293,10 +294,10 @@ public class CardManager : MonoBehaviour
                 {
                     //card.DOKill();
                     //card.MoveTransform(new PRS(cardSpawnPoint.position, Quaternion.identity, CardUtils.CardScale), false);
-                    TotalDeck[i].CardDataReset();
+                    //TotalDeck[i].CardDataReset();
                     continue;
                 }
-                TotalDeck[i].CardDataReset(true);
+                //TotalDeck[i].CardDataReset(true);
                 TotalDeck[i].CardRelease();
                 TotalDeck.Remove(TotalDeck[i--]);
             }
@@ -521,14 +522,14 @@ public class CardManager : MonoBehaviour
         useSingleTargetCard = false;
         draggable = false;
         GameManager.Instance.ArrowCursor(false);
-        selectCard = null;
         isUseCard.Value = false;
 
-        canPush = true;         // PullCard랑 중복 호출이긴 함.
+        selectCard = null;      // isUseCard와 순서 중요! selectCard가 밑에 있어야 함.
 
+        canPush = true;         // PullCard랑 중복 호출이긴 함.
     }
 
-    public async UniTask ThrowAwayCard()
+    public async UniTask ThrowAwayCard()        // 모든 카드 버리기
     {
         foreach (Card targetCard in HandCard)
         {

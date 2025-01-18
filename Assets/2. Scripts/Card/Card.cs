@@ -26,6 +26,7 @@ public class Card : MonoBehaviour
     [SerializeField] TMP_Text nameText;
     [SerializeField] TMP_Text costText;
     [SerializeField] TMP_Text desText;
+    [SerializeField] SpriteRenderer outline;
 
     public PRS OriginPRS;
     //private Animator _anim;
@@ -49,7 +50,7 @@ public class Card : MonoBehaviour
 
     public bool Enhanced = false;
 
-    public Enemy TargetEnemy = null;
+    public Enemy TargetEnemy = null;        // 카드 사용 시, 타겟에너미를 받아옴. (나중에 큐에서 체크하기 위함.)
 
     // Start is called before the first frame update
 
@@ -121,26 +122,26 @@ public class Card : MonoBehaviour
     //    CardAction?.Invoke();
     //}
 
-    public void CardDataReset(bool release = false)
+    public void CardDataReset(/*bool release = false*/)
     {
-        if (release)
-        {
-            Data.Damage = _defaultData.Damage;
-            Data.Defence = _defaultData.Defence;
-            Data.Count = _defaultData.Count;
-            Data.Draw = _defaultData.Draw;
-            costText.text = _defaultData.Cost.ToString();
-            desText.text = _defaultDesc;
-        }
-        else
-        {
+        //if (release)
+        //{
+        //    Data.Damage = _defaultData.Damage;
+        //    Data.Defence = _defaultData.Defence;
+        //    Data.Count = _defaultData.Count;
+        //    Data.Draw = _defaultData.Draw;
+        //    costText.text = _defaultData.Cost.ToString();
+        //    desText.text = _defaultDesc;
+        //}
+        //else
+        //{
             Data.Damage = _defaultData.Damage + GameManager.Instance.player.AttackPower.Value;
             Data.Defence = _defaultData.Defence + GameManager.Instance.player.DefencePower.Value;
             Data.Count = _defaultData.Count + 0;
             Data.Draw = _defaultData.Draw + 0;
             costText.text = (_defaultData.Cost + 0).ToString();
             desText.text = Desc;
-        }
+        //}
 
         //nameText.text = Data.Name;
         //costText.text = Data.Cost.ToString();
@@ -196,9 +197,19 @@ public class Card : MonoBehaviour
         Setup(Data.Id * 10);
     }
 
+    public void ResetCard()
+    {
+        outline.gameObject.SetActive(false);
+    }
+
     public void Target(Enemy enemy)
     {
         TargetEnemy = enemy;
+    }
+
+    public void TurnOnOutline(bool isOn)
+    {
+        outline.gameObject.SetActive(isOn);
     }
 
     public async UniTask TaskMoveTransform(PRS prs, bool battleCancel, float dotweenTime = 0)
