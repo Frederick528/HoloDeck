@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        UiManager.instance.SetupGameUi(true);
+        UiManager.Instance.SetupGameUi(true);
         //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     }
 
@@ -102,7 +102,7 @@ public class GameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.M))
         {
-            UiManager.instance.LookMap();
+            UiManager.Instance.LookMap();
         }
         if (Input.GetKeyDown(KeyCode.C))
         {

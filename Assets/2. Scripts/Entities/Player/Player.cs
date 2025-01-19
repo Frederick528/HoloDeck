@@ -27,12 +27,12 @@ public class Player : Entity
     void PlayerSubScribe()
     {
         EntitySubScribe();
-        maxHp.Subscribe(hp => UiManager.instance.SetHealth(curHp.Value, maxHp.Value));
-        curHp.Subscribe(hp => UiManager.instance.SetHealth(curHp.Value, maxHp.Value));
+        maxHp.Subscribe(hp => UiManager.Instance.SetHealth(curHp.Value, maxHp.Value));
+        curHp.Subscribe(hp => UiManager.Instance.SetHealth(curHp.Value, maxHp.Value));
 
         Coin.Subscribe(coin =>
         {
-            UiManager.instance.SetCoin(coin);
+            UiManager.Instance.SetCoin(coin);
         });
 
         AttackPower.Subscribe(attackPower =>

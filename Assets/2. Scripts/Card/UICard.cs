@@ -20,7 +20,7 @@ public class UICard : MonoBehaviour
     {
         StringBuilder sb = new StringBuilder(data.Descript);
         sb.Replace("{Damage}", (data.Damage).ToString());
-        sb.Replace("{Defence}", (data.Defence).ToString());
+        sb.Replace("{Shield}", (data.Shield).ToString());
         sb.Replace("{Count}", (data.Count).ToString());
         sb.Replace("{Draw}", (data.Draw).ToString());
 

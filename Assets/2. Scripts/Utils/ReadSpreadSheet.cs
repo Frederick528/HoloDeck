@@ -47,7 +47,7 @@ public class ReadSpreadSheet : MonoBehaviour
     async UniTaskVoid LoadCardSO()
     {
         string address = "https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8";
-        string range = "A3:K8";
+        string range = "A3:J8";
         string cardSheetID = "1809511646";
         string enhancedCardSheetID = "1928890928";
         using (UnityWebRequest wwwC =
@@ -58,11 +58,9 @@ public class ReadSpreadSheet : MonoBehaviour
         {
             await wwwC.SendWebRequest();
             dataCardGS = wwwC.downloadHandler.text;
-            print(dataCardGS);
 
             await wwwEC.SendWebRequest();
             dataCardGS += "\n" + wwwEC.downloadHandler.text;
-            print(dataCardGS);
 
             if (wwwC.isDone && wwwEC.isDone)
             {
@@ -104,12 +102,12 @@ public class ReadSpreadSheet : MonoBehaviour
             data.Name = LineBreakStr(cells[1]);
             data.Cost = ConvertInt32(cells[2]);
             data.Damage = ConvertInt32(cells[3]);
-            data.Defence = ConvertInt32(cells[4]);
+            data.Shield = ConvertInt32(cells[4]);
             data.Count = ConvertInt32(cells[5]);
             data.Draw = ConvertInt32(cells[6]);
-            data.CardUseDelay = ConvertSingle(cells[7]);
-            data.Price = ConvertInt32(cells[8]);
-            data.Descript = LineBreakStr(cells[9]);
+            //data.CardUseDelay = ConvertSingle(cells[7]);
+            data.Price = ConvertInt32(cells[7]);
+            data.Descript = LineBreakStr(cells[8]);
             try
             {
                 data.Sprite = Array.Find(cardSO.CardSprites, x => x.name == data.Id.ToString());
@@ -119,14 +117,14 @@ public class ReadSpreadSheet : MonoBehaviour
                 data.Sprite = null;
                 Debug.Log("스프라이트가 없습니다.");
             }
-            data.CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[10]);
+            data.CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[9]);
             //data.Id = ConvertInt32(cells[0]);
             //data.Name = LineBreakStr(cells[1]);
             //data.Cost = ConvertInt32(cells[2]);
             //data.EnhancedCost = ConvertInt32(cells[3]);
             //data.Damage = ConvertInt32(cells[4]);
             //data.EnhancedDamage = ConvertInt32(cells[5]);
-            //data.Defence = ConvertInt32(cells[6]);
+            //data.Shield = ConvertInt32(cells[6]);
             //data.EnhancedDefence = ConvertInt32(cells[7]);
             //data.Count = ConvertInt32(cells[8]);                                                    
             //data.EnhancedCount = ConvertInt32(cells[9]);

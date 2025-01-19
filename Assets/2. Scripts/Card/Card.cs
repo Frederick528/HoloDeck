@@ -67,7 +67,7 @@ public class Card : MonoBehaviour
         _defaultData = data;
         StringBuilder sb = new StringBuilder(_defaultData.Descript);
         sb.Replace("{Damage}", (_defaultData.Damage + GameManager.Instance.player.AttackPower.Value).ToString());
-        sb.Replace("{Defence}", (_defaultData.Defence + GameManager.Instance.player.DefencePower.Value).ToString());
+        sb.Replace("{Shield}", (_defaultData.Shield + GameManager.Instance.player.DefencePower.Value).ToString());
         sb.Replace("{Count}", (_defaultData.Count).ToString());
         sb.Replace("{Draw}", (_defaultData.Draw).ToString());
         _defaultDesc = sb.ToString();
@@ -89,7 +89,7 @@ public class Card : MonoBehaviour
         ////Data.Cost = data.Cost;
         ////Data.Damage = data.Damage;
         ////Data.EnhancedDamage = data.EnhancedDamage;
-        ////Data.Defence = data.Defence;
+        ////Data.Shield = data.Shield;
         ////Data.EnhancedDefence = data.EnhancedDefence;
         ////Data.Count = data.Count;
         ////Data.EnhancedCount = data.EnhancedCount;
@@ -127,7 +127,7 @@ public class Card : MonoBehaviour
         //if (release)
         //{
         //    Data.Damage = _defaultData.Damage;
-        //    Data.Defence = _defaultData.Defence;
+        //    Data.Shield = _defaultData.Shield;
         //    Data.Count = _defaultData.Count;
         //    Data.Draw = _defaultData.Draw;
         //    costText.text = _defaultData.Cost.ToString();
@@ -136,7 +136,7 @@ public class Card : MonoBehaviour
         //else
         //{
             Data.Damage = _defaultData.Damage + GameManager.Instance.player.AttackPower.Value;
-            Data.Defence = _defaultData.Defence + GameManager.Instance.player.DefencePower.Value;
+            Data.Shield = _defaultData.Shield + GameManager.Instance.player.DefencePower.Value;
             Data.Count = _defaultData.Count + 0;
             Data.Draw = _defaultData.Draw + 0;
             costText.text = (_defaultData.Cost + 0).ToString();
@@ -152,8 +152,8 @@ public class Card : MonoBehaviour
     public void ChangeCardDesc(/*string data*/)
     {
         StringBuilder sb = new StringBuilder(_defaultData.Descript);
-        sb.Replace("{Damage}", (_defaultData.Damage + GameManager.Instance.player.AttackPower.Value).ToString());       //  나중에 여기 부분 고치자. 위에 else랑 겹침.
-        sb.Replace("{Defence}", (_defaultData.Defence + GameManager.Instance.player.DefencePower.Value).ToString());
+        sb.Replace("{Damage}", (_defaultData.Damage + GameManager.Instance.player.AttackPower.Value).ToString());
+        sb.Replace("{Shield}", (_defaultData.Shield + GameManager.Instance.player.DefencePower.Value).ToString());
         sb.Replace("{Count}", (_defaultData.Count).ToString());
         sb.Replace("{Draw}", (_defaultData.Draw).ToString());
         Desc = sb.ToString();
@@ -164,8 +164,8 @@ public class Card : MonoBehaviour
         //        sb.Replace("{Damage}", (_defaultData.Damage+GameManager.Instance.player.AttackPower.Value).ToString());
         //        Desc = sb.ToString();
         //        break;
-        //    case "Defence":
-        //        sb.Replace("{Defence}", (_defaultData.Defence + GameManager.Instance.player.DefencePower.Value).ToString());
+        //    case "Shield":
+        //        sb.Replace("{Shield}", (_defaultData.Shield + GameManager.Instance.player.DefencePower.Value).ToString());
         //        Desc = sb.ToString();
         //        break;
         //    case "Count":

@@ -52,18 +52,22 @@ public class CardManager : MonoBehaviour
     [SerializeField] Transform shopCard;
     [SerializeField] Transform shopCardPrice;
 
-    Card selectCard;
+     List<Card> _selectCards = new();           // 배틀 중 버리기, 강화, 교환 등에서 선택한 카드 리스트
+
+    Card selectCard;                            // 들고 있는 카드(drag 중인 카드)
     bool draggable;
     ReactiveProperty<bool> isUseCard = new();     // 카드 사용존에 카드가 올라왔을 경우(카드를 놓으면 카드가 사용되는 위치)
 
     bool canPush = true;
-    public enum ECardState { Nothing, CanMouseOver, CanMouseDrag }
+    public enum ECardState { Nothing, CanMouseOver, CanMouseDrag, CanMouseClick }
 
     int shopCardIdx;
 
     UICard[] uICards = new UICard[4];
 
     EventQueue _eventQueue = new();
+
+    bool _discard;
 
 
     private void Awake() => Instance = this;
@@ -82,7 +86,7 @@ public class CardManager : MonoBehaviour
                 selectCard.transform.position = new Vector2(0, -3.32f);
                 isSingleTarget = true;
             }
-            //else if (isUseCard.Value && selectCard.Data.CardTag != CardTag.SingleAttack)
+            //else if (isUseCard.Value && selectCard.Data.CardTag != CardTag.SingleAttackAb)
             //{
             //    Vector2 tempPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             //    selectCard.transform.position = tempPos;
@@ -113,7 +117,7 @@ public class CardManager : MonoBehaviour
 
     //}
 
-    public void ShowRewardCard(int[] reward)
+    public void ShowRewardCard(int[] reward)        // 해당 부분들 맵, 상점으로 다 이동시켜야 함.
     {
         for (int i = 0; i < reward.Length; ++i)
             uICards[i].Setup(FindCardData(reward[i]));
@@ -124,7 +128,7 @@ public class CardManager : MonoBehaviour
         AddDeck(rewardCardData, EAddDeck.Main);
         MapManager.Instance.currStage.rewarded = true;
         MapManager.Instance.currStage.RewardBox();
-        UiManager.instance.LookMap();
+        UiManager.Instance.LookMap();
     }
 
     public void SettingCardShop()
@@ -255,7 +259,20 @@ public class CardManager : MonoBehaviour
         useCard.Used = false;
     }
 
-    async UniTask AfterUsingCard(Card usedCard, bool endBattle = false)
+    bool BeforeUsingCard(Card card)
+    {
+        if (GameManager.Instance.player.CurHolo < card.Data.Cost)
+        {
+            PutDownCard(card).Forget();
+            return false;
+        }
+        
+        GameManager.Instance.player.ChangeHoloValue(-card.Data.Cost);
+
+        return true;
+    }
+
+    async UniTask AfterCardAbility(Card usedCard, bool endBattle = false)
     {
         await usedCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), false, CardUtils.ThrowAwayCardDelay);
 
@@ -529,6 +546,16 @@ public class CardManager : MonoBehaviour
         canPush = true;         // PullCard랑 중복 호출이긴 함.
     }
 
+    void DiscardCard()      // 카드 선택해서 버리기
+    {
+
+    }
+
+    void RemoveCard()       // 카드 삭제하기(배틀 안에서만 적용)
+    {
+
+    }
+
     public async UniTask ThrowAwayCard()        // 모든 카드 버리기
     {
         foreach (Card targetCard in HandCard)
@@ -553,6 +580,19 @@ public class CardManager : MonoBehaviour
         //    dummyCard.Block = false;
         //    dummyCard.CardPool.Release(dummyCard.gameObject);
         //}
+    }
+    public async UniTask ThrowAwayCard(Card throwCard)
+    {
+        HandCard.Remove(throwCard);
+
+        SetOriginOrder();
+        CardAlignment();
+
+        await throwCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), false, CardUtils.ThrowAwayCardDelay);
+
+        //throwCard.Block = false;
+        throwCard.transform.position = cardSpawnPoint.position;
+        CardDummy.Add(throwCard);
     }
 
     public async UniTask UsedCard(Card usedCard)
@@ -586,7 +626,7 @@ public class CardManager : MonoBehaviour
         {
             _eventQueue.QueueClear();
         }
-        await AfterUsingCard(usedCard, endBattle);
+        await AfterCardAbility(usedCard, endBattle);
 
         //bool endBattle = await UniTask.WaitForSeconds(usedCard.Data.CardUseDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token).SuppressCancellationThrow();   // Action<Card>였을 때 사용. 일단 지금은 사용 해제
         //if (endBattle)
@@ -619,20 +659,6 @@ public class CardManager : MonoBehaviour
         ////CardDummy.Add(usedCard);
     }
 
-    public async UniTask ThrowAwayCard(Card throwCard)
-    {
-        CardDummy.Add(throwCard);
-
-        HandCard.Remove(throwCard);
-
-        SetOriginOrder();
-        CardAlignment();
-
-        await throwCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), false, CardUtils.ThrowAwayCardDelay);
-
-        //throwCard.Block = false;
-        throwCard.transform.position = cardSpawnPoint.position;
-    }
 
     void SetOriginOrder()       // 카드가 보이는 순서 설정
     {
@@ -701,7 +727,7 @@ public class CardManager : MonoBehaviour
 
     #region MyCard
 
-    public void CardMouseOver(Card card)
+    public void CardMouseOver(Card card)                    // Enter로 안 하는 이유는... Enter로 하면 순간순간 카드가 over 안 되는 경우의 수가 존재함.
     {
         if (cardState == ECardState.Nothing || draggable)
             return;
@@ -773,6 +799,10 @@ public class CardManager : MonoBehaviour
     }
     public void CardMouseDown(Card card)
     {
+        if (cardState == ECardState.CanMouseClick)
+        {
+            // 선택된 카드들 리스트에 들어갈 예정
+        }
         if (cardState != ECardState.CanMouseDrag)
             return;
         selectCard = card;
@@ -807,7 +837,7 @@ public class CardManager : MonoBehaviour
             _eventQueue.Enqueue(card);
             //CheckCanUseCard(card);
         }
-        else if (isUseCard.Value /*&& card.Data.CardTag == CardTag.SingleAttack */&& useSingleTargetCard)     // 단일타격이 가능할 경우
+        else if (isUseCard.Value /*&& card.Data.CardTag == CardTag.SingleAttackAb */&& useSingleTargetCard)     // 단일타격이 가능할 경우
         {
             card.Target(EnemyManager.Instance.targetEnemy);
             _eventQueue.Enqueue(card);
@@ -885,7 +915,7 @@ public class CardManager : MonoBehaviour
 
         DetectCardArea();
 
-        //if (isUseCard.Value && card.Data.CardTag == CardTag.SingleAttack && !isSingleTarget)
+        //if (isUseCard.Value && card.Data.CardTag == CardTag.SingleAttackAb && !isSingleTarget)
         //{
         //    GameManager.Instance.ArrowCursor(true);
         //    //PullCard();

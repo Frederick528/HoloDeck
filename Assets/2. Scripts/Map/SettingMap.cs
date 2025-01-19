@@ -225,7 +225,7 @@ public class SettingMap : MonoBehaviour
 
             // 이동 모션 코드 추가
 
-            UiManager.instance.LookMap();
+            UiManager.Instance.LookMap();
         });
     }
 

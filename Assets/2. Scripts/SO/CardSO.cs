@@ -32,13 +32,13 @@ public class CardData : ICloneable
     //public int EnhancedCost;
     public int Damage;
     //public int EnhancedDamage;
-    public int Defence;
+    public int Shield;
     //public int EnhancedDefence;
     public int Count;
     //public int EnhancedCount;
     public int Draw;
     //public int EnhancedDraw;
-    public float CardUseDelay;
+    //public float CardUseDelay;
     public int Price;
     [TextArea(1, 5)]
     public string Descript;
@@ -55,10 +55,10 @@ public class CardData : ICloneable
             Id = Id,
             Cost = Cost,
             Damage = Damage,
-            Defence = Defence,
+            Shield = Shield,
             Count = Count,
             Draw = Draw,
-            CardUseDelay = CardUseDelay,
+            //CardUseDelay = CardUseDelay,
             Price = Price,
             Descript = Descript,
             Sprite = Sprite,

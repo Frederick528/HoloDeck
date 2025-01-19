@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class UiManager : MonoBehaviour
 {
-    public static UiManager instance { get; private set; }
+    public static UiManager Instance { get; private set; }
 
     [SerializeField] List<GameObject> gameUi;
     [SerializeField] List<GameObject> battleUi;
@@ -15,7 +15,7 @@ public class UiManager : MonoBehaviour
     [SerializeField] GameObject map;
 
 
-    private void Awake() => instance = this;
+    private void Awake() => Instance = this;
 
     public void SetupGameUi(bool state)
     {
@@ -31,6 +31,14 @@ public class UiManager : MonoBehaviour
             gameObject.SetActive(state);
         }
     }
+
+    //public void SetupSelectCardInBattleUi(bool state)
+    //{
+    //    foreach (GameObject gameObject in UI)
+    //    {
+    //        gameObject.SetActive(state);
+    //    }
+    //}
 
     public void ChangeTurnButtonText(bool turn)
     {

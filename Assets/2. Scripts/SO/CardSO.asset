@@ -18,10 +18,9 @@ MonoBehaviour:
     Id: 100
     Cost: 1
     Damage: 5
-    Defence: 0
+    Shield: 0
     Count: 1
     Draw: 0
-    CardUseDelay: 2
     Price: 5
     Descript: '{Damage} Damage'
     Sprite: {fileID: 0}
@@ -30,10 +29,9 @@ MonoBehaviour:
     Id: 101
     Cost: 1
     Damage: 3
-    Defence: 0
+    Shield: 0
     Count: 1
     Draw: 1
-    CardUseDelay: 2
     Price: 10
     Descript: '{Damage} Damage
 
@@ -43,11 +41,10 @@ MonoBehaviour:
   - Name: Name3
     Id: 102
     Cost: 2
-    Damage: 4
-    Defence: 0
+    Damage: 3
+    Shield: 0
     Count: 2
     Draw: 0
-    CardUseDelay: 2
     Price: 20
     Descript: '{Damage} Damage X {Count}'
     Sprite: {fileID: 0}
@@ -56,10 +53,9 @@ MonoBehaviour:
     Id: 103
     Cost: 2
     Damage: 2
-    Defence: 0
+    Shield: 0
     Count: 2
     Draw: 0
-    CardUseDelay: 2
     Price: 20
     Descript: All {Damage} Damage X {Count}
     Sprite: {fileID: 0}
@@ -68,10 +64,9 @@ MonoBehaviour:
     Id: 104
     Cost: 1
     Damage: 0
-    Defence: 0
+    Shield: 0
     Count: 0
-    Draw: 100
-    CardUseDelay: 2
+    Draw: 2
     Price: 15
     Descript: '{Draw} Draw'
     Sprite: {fileID: 0}
@@ -80,83 +75,78 @@ MonoBehaviour:
     Id: 105
     Cost: 1
     Damage: 0
-    Defence: 6
+    Shield: 6
     Count: 0
     Draw: 0
-    CardUseDelay: 2
     Price: 5
-    Descript: '{Defence} Armor'
+    Descript: '{Shield} Shield'
     Sprite: {fileID: 0}
     CardTag: 2
   - Name: EnhancedName1
     Id: 1000
     Cost: 1
     Damage: 7
-    Defence: 0
+    Shield: 0
     Count: 1
     Draw: 0
-    CardUseDelay: 0.2
     Price: 20
-    Descript: Name1
+    Descript: '{Damage} Damage'
     Sprite: {fileID: 0}
     CardTag: 0
   - Name: EnhancedName2
     Id: 1010
     Cost: 1
     Damage: 4
-    Defence: 0
+    Shield: 0
     Count: 1
     Draw: 2
-    CardUseDelay: 0.1
     Price: 40
-    Descript: Name2
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
     Sprite: {fileID: 0}
     CardTag: 0
   - Name: EnhancedName3
     Id: 1020
     Cost: 2
     Damage: 5
-    Defence: 0
+    Shield: 0
     Count: 3
     Draw: 0
-    CardUseDelay: 0.3
     Price: 60
-    Descript: Name3
+    Descript: '{Damage} Damage X {Count}'
     Sprite: {fileID: 0}
     CardTag: 0
   - Name: EnhancedName4
     Id: 1030
     Cost: 2
     Damage: 3
-    Defence: 0
+    Shield: 0
     Count: 3
     Draw: 0
-    CardUseDelay: 0.5
     Price: 50
-    Descript: Name4
+    Descript: All {Damage} Damage X {Count}
     Sprite: {fileID: 0}
     CardTag: 1
   - Name: EnhancedName5
     Id: 1040
     Cost: 1
     Damage: 0
-    Defence: 0
+    Shield: 0
     Count: 0
     Draw: 3
-    CardUseDelay: 0
     Price: 30
-    Descript: Name5
+    Descript: '{Draw} Draw'
     Sprite: {fileID: 0}
     CardTag: 2
   - Name: EnhancedName6
     Id: 1050
     Cost: 1
     Damage: 0
-    Defence: 11
+    Shield: 11
     Count: 0
     Draw: 0
-    CardUseDelay: 0.1
     Price: 10
-    Descript: Name6
+    Descript: '{Shield} Shield'
     Sprite: {fileID: 0}
     CardTag: 2

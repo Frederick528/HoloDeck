@@ -12,6 +12,8 @@ public class TurnManager : MonoBehaviour
     public static TurnManager Instance {get; private set;}
     void Awake() => Instance = this;
 
+    public bool InBattle { get; private set; }
+
     [SerializeField] TurnType turnType;
 
     int startCardCount = 5;
@@ -88,7 +90,7 @@ public class TurnManager : MonoBehaviour
         GameManager.Instance.player.ChangeHoloValue(GameManager.Instance.player.MaxHolo);
         GameManager.Instance.player.DefenceReset();
 
-        UiManager.instance.ChangeTurnButtonText(myTurn);
+        UiManager.Instance.ChangeTurnButtonText(myTurn);
 
         SetBool(true);
         await CardManager.Instance.AddCards(startCardCount);
@@ -170,7 +172,7 @@ public class TurnManager : MonoBehaviour
         if (!_canEndTurn && !endBattle) return;
         myTurn = false;
         ButtonManager.Instance.TurnEndButtonInvert(myTurn);
-        UiManager.instance.ChangeTurnButtonText(myTurn);
+        UiManager.Instance.ChangeTurnButtonText(myTurn);
         SetBool(true);
         await CardManager.Instance.ThrowAwayCard();
         if (endBattle)
@@ -205,9 +207,10 @@ public class TurnManager : MonoBehaviour
 
     public void StartBattle()       // 배틀 시작시, 덱 섞기 및 액션 추가
     {
+        InBattle = true;
         CancelSource = new();
 
-        UiManager.instance.SetupBattleUi(true);
+        UiManager.Instance.SetupBattleUi(true);
         CardManager.Instance.SetupDrawDeck(true);
         //TurnManager.OnAddCard += async () =>
         //    await AddCard();
@@ -220,9 +223,10 @@ public class TurnManager : MonoBehaviour
 
     public async UniTask EndBattle()         // 리팩토링 필요해보임.
     {
+        InBattle = false;
         CancelSource.Cancel();
 
-        UiManager.instance.SetupBattleUi(false);
+        UiManager.Instance.SetupBattleUi(false);
         //OnAddCard = null;
 
         //TurnManager.OnAddCard -= () =>

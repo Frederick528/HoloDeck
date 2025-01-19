@@ -54,7 +54,7 @@ public class PotionManager : MonoBehaviour
             case 2:
                 if (TurnManager.Instance.myTurn)
                 {
-                    GameManager.Instance.player.Defence(15);
+                    GameManager.Instance.player.Shield(15);
                     potionBtns[idx].onClick.RemoveAllListeners();
                     boolPotion[idx] = false;
                 }

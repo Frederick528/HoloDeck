@@ -18,7 +18,7 @@ public abstract class Entity : MonoBehaviour
     protected Animator animator;
     protected ReactiveProperty<int> maxHp = new();
     protected ReactiveProperty<int> curHp = new();
-    protected ReactiveProperty<int> armor = new();
+    protected ReactiveProperty<int> shield = new();
 
     //private void Awake()    // start로 할 경우, Subscribe가 실행되지 않음. Awake로 하면 위험할 것 같아서 일단 함수로 빼고 자식 오브젝트에서 Start로 호출
     //{
@@ -42,14 +42,14 @@ public abstract class Entity : MonoBehaviour
     }
     public bool TakeDamage(int dmg)
     {
-        if (armor.Value >= dmg)
+        if (shield.Value >= dmg)
         {
-            armor.Value -= dmg;
+            shield.Value -= dmg;
         }
         else
         {
-            dmg -= armor.Value;
-            armor.Value = 0;
+            dmg -= shield.Value;
+            shield.Value = 0;
             curHp.Value -= dmg;
         }
         //animator.Play("Hit", 0);  // 타격 당하는 애니메이션 실행
@@ -71,14 +71,14 @@ public abstract class Entity : MonoBehaviour
         curHp.Value = Mathf.Clamp(curHp.Value + amount, 0, maxHp.Value);
     }
 
-    public virtual void Defence(int amount)
+    public virtual void Shield(int amount)
     {
-        armor.Value += amount;
+        shield.Value += amount;
     }
 
     public virtual void DefenceReset()
     {
-        armor.Value = 0;
+        shield.Value = 0;
     }
 
     protected void EntitySubScribe()
@@ -93,7 +93,7 @@ public abstract class Entity : MonoBehaviour
             slider.value = hp;
             hpText.text = hp.ToString();
         });
-        armor.Subscribe(shield =>
+        shield.Subscribe(shield =>
         {
             if (shield <= 0)
             {
