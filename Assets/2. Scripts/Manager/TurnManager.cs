@@ -50,14 +50,14 @@ public class TurnManager : MonoBehaviour
     {
         if (isLoading && !myTurn)       // 로딩 상태에서 내 턴이 아닌 경우
         {
-            CardManager.Instance.cardState = CardManager.ECardState.Nothing;
+            CardManager.Instance.SetCardState(0);       // Nothing
             await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, false, PlayerLoopTiming.Update, CancelSource.Token); // 종료 다음에 버리는 시간동안은 확대 안 되게
-            CardManager.Instance.cardState = CardManager.ECardState.CanMouseOver;
+            CardManager.Instance.SetCardState(1);       // Over
         }
         else if (isLoading)             // 그냥 로딩 상태(내 턴인 상황에서)
-            CardManager.Instance.cardState = CardManager.ECardState.Nothing;
+            CardManager.Instance.SetCardState(0);       // Nothing
         else if (myTurn)
-            CardManager.Instance.cardState = CardManager.ECardState.CanMouseDrag;
+            CardManager.Instance.SetCardState(2);       // Drag
         //if (isLoading)
         //    CardManager.Instance.cardState = CardManager.ECardState.Nothing;
         //else if (!myTurn)

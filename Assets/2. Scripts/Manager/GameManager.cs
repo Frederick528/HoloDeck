@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
 
     public Player player;
 
+    bool pause;
+
     void Awake()
     {
         if (Instance == null)
@@ -59,9 +61,15 @@ public class GameManager : MonoBehaviour
         {
             Time.timeScale = 3f;
         }
-        else { Time.timeScale = 1; }
+        else { Time.timeScale = pause ? 0 : 1; }
 
 #if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            pause = !pause;
+            Time.timeScale = pause? 0 : 1;
+            //TurnManager.Instance.DrawCardTask().Forget();
+        }
         //if (Input.GetKeyDown(KeyCode.Space))
         //{
         //    TurnManager.OnAddCard?.Invoke();

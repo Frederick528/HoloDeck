@@ -29,6 +29,7 @@ public class Card : MonoBehaviour
     [SerializeField] SpriteRenderer outline;
 
     public PRS OriginPRS;
+    public Order CardOrder;
     //private Animator _anim;
 
     CardData _defaultData = null;
@@ -41,11 +42,15 @@ public class Card : MonoBehaviour
 
     public bool Used;
 
+    public bool Selected;       // selectCard = 내가 지금 들고있는 카드 (카드 사용 용), selectedCard = 내가 선택한 카드 (선택해서 버리기 용)
+
     public CardAbility CardAbility = new();
+
+    public UniTask UseConditions;
 
     //public Action<Card> CardAction { get; private set; }
     //public Action CardAction { get; private set; }
-    public UniTask CardTask { get; private set; }
+    public UniTask CardTask;
     //public AsyncLazy CardLazy { get; private set; }
 
     public bool Enhanced = false;
@@ -64,6 +69,8 @@ public class Card : MonoBehaviour
 
     public void Setup(CardData data)
     {
+        CardOrder = GetComponent<Order>();
+
         _defaultData = data;
         StringBuilder sb = new StringBuilder(_defaultData.Descript);
         sb.Replace("{Damage}", (_defaultData.Damage + GameManager.Instance.player.AttackPower.Value).ToString());
@@ -78,7 +85,8 @@ public class Card : MonoBehaviour
         nameText.text = Data.Name;
         character.sprite = Data.Sprite;
         //CardAction = CardAbility.SetCardActionAbility(this);     // Action<Card> 버전 (드로우 시간 체크 때문에 일단 사용하지 않음.)
-        CardTask = CardAbility.SetCardTaskAbility(this);        // UniTask 중복 사용 불가로 인해 일단 사용 불가
+        //CardTask = CardAbility.SetCardAbility(this);              // 그냥 카드어빌리티 실행하면 Task 바꾸도록 함.
+        //CardAbility.SetCardAbility(this);
         //CardLazy = CardAbility.SetCardLazyAbility(this);        // 중복 해결을 위해 Lazy를 써봄.
         Debug.Log(TurnManager.Instance.CancelSource.Token);
 
@@ -108,10 +116,18 @@ public class Card : MonoBehaviour
         //CardTask = CardAbility.SetCardTaskAbility(Data.Id);
     }
 
+    public async UniTask CheckUseConditions()
+    {
+        CardAbility.SetCardAbility(this);
+        await UseConditions;
+    }
+
     public async UniTask UseTask()
     {
+        CardAbility.SetCardAbility(this);   // checkUseConditions에서 받게 되면 이건 사용 안 할 예정
         //UniTask uniTask = UniTask.Create(() => CardTask);
-        await CardAbility.SetCardTaskAbility(this);     // 다른 방식이 있는지 찾아봐야할 듯
+        //await CardAbility.SetCardAbility(this);     // 다른 방식이 있는지 찾아봐야할 듯
+        await CardTask;
     }
     //public async UniTask UseLazy()
     //{
@@ -185,7 +201,7 @@ public class Card : MonoBehaviour
         character.sprite = Data.Sprite;
 
         //CardAction = CardAbility.SetCardActionAbility(this);
-        CardTask = CardAbility.SetCardTaskAbility(this);
+        //CardAbility.SetCardAbility(this);
         //CardLazy = CardAbility.SetCardLazyAbility(this);
 
     }
@@ -217,28 +233,28 @@ public class Card : MonoBehaviour
         if (battleCancel)
         {
             await UniTask.WhenAll(
-            transform.DOMove(prs.pos, dotweenTime).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/,
-            transform.DORotateQuaternion(prs.rot, dotweenTime).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/,
-            transform.DOScale(prs.scale, dotweenTime).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/
+            transform.DOMove(prs.pos, dotweenTime).SetUpdate(true).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/,
+            transform.DORotateQuaternion(prs.rot, dotweenTime).SetUpdate(true).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/,
+            transform.DOScale(prs.scale, dotweenTime).SetUpdate(true).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/
                 );
         }
         else
         {
             await UniTask.WhenAll(
-            transform.DOMove(prs.pos, dotweenTime).WithCancellation(this.GetCancellationTokenOnDestroy()),
-            transform.DORotateQuaternion(prs.rot, dotweenTime).WithCancellation(this.GetCancellationTokenOnDestroy()),
-            transform.DOScale(prs.scale, dotweenTime).WithCancellation(this.GetCancellationTokenOnDestroy())
+            transform.DOMove(prs.pos, dotweenTime).SetUpdate(true).WithCancellation(this.GetCancellationTokenOnDestroy()),
+            transform.DORotateQuaternion(prs.rot, dotweenTime).SetUpdate(true).WithCancellation(this.GetCancellationTokenOnDestroy()),
+            transform.DOScale(prs.scale, dotweenTime).SetUpdate(true).WithCancellation(this.GetCancellationTokenOnDestroy())
                 );
         }
     }
 
-    public void MoveTransform(PRS prs, bool useDotween = false, float dotweenTime = 0)
+    public void MoveTransform(PRS prs, bool useDotween = false, float dotweenTime = 0/*, bool ignoreTimeScale = false*/)
     {
         if (useDotween)
         {
-            transform.DOMove(prs.pos, dotweenTime);
-            transform.DORotateQuaternion(prs.rot, dotweenTime);
-            transform.DOScale(prs.scale, dotweenTime);
+            transform.DOMove(prs.pos, dotweenTime).SetUpdate(true);
+            transform.DORotateQuaternion(prs.rot, dotweenTime).SetUpdate(true);
+            transform.DOScale(prs.scale, dotweenTime).SetUpdate(true);
         }
         else
         {

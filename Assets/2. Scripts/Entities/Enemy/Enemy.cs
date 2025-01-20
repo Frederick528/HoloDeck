@@ -110,7 +110,7 @@ public abstract class Enemy : Entity
 
     public void ClearCheck()
     {
-        if (EnemyManager.Instance.enemies.Count != 0 || MapManager.Instance.currStage.cleared)
+        if (EnemyManager.Instance.enemies.Count != 0 || MapManager.Instance.currStage.rewardBox != -1)
             return;
         //for (int i = 0; i < EnemyManager.Instance.enemySpawnPosition.Count; ++i)
         //{

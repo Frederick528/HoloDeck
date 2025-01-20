@@ -52,14 +52,14 @@ public class CardManager : MonoBehaviour
     [SerializeField] Transform shopCard;
     [SerializeField] Transform shopCardPrice;
 
-     List<Card> _selectCards = new();           // 배틀 중 버리기, 강화, 교환 등에서 선택한 카드 리스트
+     List<Card> _selectedCards = new();           // 배틀 중 버리기, 강화, 교환 등에서 선택한 카드 리스트
 
     Card selectCard;                            // 들고 있는 카드(drag 중인 카드)
     bool draggable;
     ReactiveProperty<bool> isUseCard = new();     // 카드 사용존에 카드가 올라왔을 경우(카드를 놓으면 카드가 사용되는 위치)
 
     bool canPush = true;
-    public enum ECardState { Nothing, CanMouseOver, CanMouseDrag, CanMouseClick }
+    public enum ECardState { Nothing, CanMouseOver, CanMouseDrag, OnlyMouseClick }
 
     int shopCardIdx;
 
@@ -68,6 +68,7 @@ public class CardManager : MonoBehaviour
     EventQueue _eventQueue = new();
 
     bool _discard;
+    bool _remove;
 
 
     private void Awake() => Instance = this;
@@ -266,6 +267,11 @@ public class CardManager : MonoBehaviour
             PutDownCard(card).Forget();
             return false;
         }
+
+        //if (card.CheckUseConditions)
+        //{
+
+        //}
         
         GameManager.Instance.player.ChangeHoloValue(-card.Data.Cost);
 
@@ -545,15 +551,46 @@ public class CardManager : MonoBehaviour
 
         canPush = true;         // PullCard랑 중복 호출이긴 함.
     }
-
-    void DiscardCard()      // 카드 선택해서 버리기
+    void SelectedCards(Card card)
     {
+        if (_selectedCards.Contains(card))
+        {
+            card.Selected = false;
+            _selectedCards.Remove(card);
+            SetSelectedCardsOrder(_selectedCards);
+            SelectedCardsAlignment(_selectedCards);
+            HandCard.Add(card);
+            SetOriginOrder();
+            CardAlignment();
 
+        }
+        else
+        {
+            card.Selected = true;
+            _selectedCards.Add(card);
+            SetSelectedCardsOrder(_selectedCards);
+            SelectedCardsAlignment(_selectedCards);
+            HandCard.Remove(card);
+            SetOriginOrder();
+            CardAlignment();
+        }
+    }
+    public void ChangeDiscard(bool discard)
+    {
+        _discard = discard;
+    }
+    public void ChangeRemove(bool remove)
+    {
+        _discard = remove;
+    }
+    void DiscardCard(Card card)      // 카드 선택해서 버리기
+    {
+        SelectedCards(card);
     }
 
-    void RemoveCard()       // 카드 삭제하기(배틀 안에서만 적용)
+    void RemoveCard(Card card)       // 카드 삭제하기(배틀 안에서만 적용)
     {
-
+        SelectedCards(card);
     }
 
     public async UniTask ThrowAwayCard()        // 모든 카드 버리기
@@ -660,6 +697,70 @@ public class CardManager : MonoBehaviour
     }
 
 
+    void SetSelectedCardsOrder(List<Card> cardList)
+    {
+        for (int i = 0; i < cardList.Count; i++)
+        {
+            Card targetCard = cardList[i];
+            //if (targetCard == selectCard)
+            //    continue;
+            targetCard.CardOrder.SetOriginOrder(i);
+        }
+    }
+
+    void SelectedCardsAlignment(List<Card> cardList)     // 버리기, 삭제 등에서 사용할 예정
+    {
+        List<PRS> CardPRSs/* = new List<PRS>()*/;
+        CardPRSs = SerialAlignment(new Vector2(-6, 1), new Vector2(6, 1), cardList.Count/*, 0.5f*/, CardUtils.CardScale * 0.7f);
+        for (int i = 0; i < cardList.Count; i++)
+        {
+            Card targetCard = cardList[i];
+            WaitUnblock(targetCard, CardUtils.CardAlignmentDelay).Forget();
+
+            //targetCard.OriginPRS = CardPRSs[i];
+            //if (targetCard == selectCard)
+            //    continue;
+            targetCard.MoveTransform(CardPRSs[i], true, CardUtils.CardAlignmentDelay);
+        }
+    }
+
+    List<PRS> SerialAlignment(Vector3 leftVector, Vector3 rightVectpr, int cardCount/*, float height*/, Vector3 scale)
+    {
+        float[] cardLerps = new float[cardCount];
+        List<PRS> results = new List<PRS>(cardCount);
+
+        if (cardCount == 1)
+        {
+            cardLerps = new float[] { 0.5f };
+        }
+        else
+        {
+            float interval = cardCount < 7f ? 1f / 7 : 1f / cardCount;
+            float cardPos = 0f;
+            for (int i = 0; i < cardCount; i++)
+            {
+                if (i == 0)
+                    cardPos += cardCount < 7f ? (interval * (4f - cardCount * 0.5f)) : interval * 0.5f;
+                else
+                    cardPos += interval;
+                cardLerps[i] = cardPos;
+            }
+        }
+
+        for (int i = 0; i < cardCount; i++)
+        {
+            Vector3 targetPos = Vector3.Lerp(leftVector, rightVectpr, cardLerps[i]);
+            //targetPos.z = -i * 5;
+
+            //float curve = Mathf.Sqrt(Mathf.Pow(/*height*/0.5f, 2) * (1 - (Mathf.Pow(cardLerps[i] - 0.5f, 2) / Mathf.Pow(leftTr.position.x, 2))));   // 타원의 방정식
+
+            targetPos.y += 2f;
+
+            results.Add(new PRS(targetPos, Quaternion.identity, scale));
+        }
+        return results;
+    }
+
     void SetOriginOrder()       // 카드가 보이는 순서 설정
     {
         for (int i = 0; i < HandCard.Count; i++)
@@ -667,7 +768,7 @@ public class CardManager : MonoBehaviour
             Card targetCard = HandCard[i];
             if (targetCard == selectCard)
                 continue;
-            targetCard?.GetComponent<Order>().SetOriginOrder(i);
+            targetCard.CardOrder.SetOriginOrder(i);
         }
     }
 
@@ -712,7 +813,7 @@ public class CardManager : MonoBehaviour
         for (int i = 0; i < cardCount; i++)
         {
             Vector3 targetPos = Vector3.Lerp(leftTr.position, rightTr.position, cardLerps[i]);
-            targetPos.z = -i * 5;
+            //targetPos.z = -i * 5;
 
             float curve = Mathf.Sqrt(Mathf.Pow(/*height*/0.5f, 2) - Mathf.Pow(cardLerps[i] - 0.5f, 2));   // 원의 방정식
             //float curve = Mathf.Sqrt(Mathf.Pow(/*height*/0.5f, 2) * (1 - (Mathf.Pow(cardLerps[i] - 0.5f, 2) / Mathf.Pow(leftTr.position.x, 2))));   // 타원의 방정식
@@ -733,32 +834,50 @@ public class CardManager : MonoBehaviour
             return;
         //selectCard = card;
         LargeCard(/*true, */card);
+        if (card.Selected) return;
         PushCard(card);
     }
     public void CardMouseExit(Card card)
     {
         if (cardState == ECardState.Nothing || draggable)
             return;
-        selectCard = null;
+        //selectCard = null;
         //LargeCard(false, card);
         //PullCard();
+        if (card.Selected)
+        {
+            card.MoveTransform(new PRS(new Vector3(card.transform.position.x, card.transform.position.y, 0), Quaternion.identity, CardUtils.CardScale * 0.7f), true);
+            card.CardOrder.SetMostFrontOrder(false);
+            return;
+        }
         PutDownCard(card).Forget();
     }
 
 
-    void LargeCard(/*bool isLarge, */Card card)
+    void LargeCard(/*bool isLarge, */Card card/*, bool selectedCards = false*/)
     {
+        if (card.Selected)
+        {
+            card.transform.DOKill();
+            card.MoveTransform(new PRS(new Vector3(card.transform.position.x, card.transform.position.y, 0), Quaternion.identity, CardUtils.CardScale * 0.8f), true);
+            card.CardOrder.SetMostFrontOrder(true);
+            return;
+        }
+        //if (selectedCards)
+        //{
+        //    return;
+        //}
         //if (isLarge)
         //{
             card.transform.DOKill();
-            Vector3 largePos = new Vector3(card.OriginPRS.pos.x, -3.32f, -100f);
-            card.MoveTransform(new PRS(largePos, Quaternion.identity, CardUtils.CardScale * 1.2f));
+            Vector3 largePos = new Vector3(card.OriginPRS.pos.x, -3.32f, /*-100f*/0);
+            card.MoveTransform(new PRS(largePos, Quaternion.identity, CardUtils.CardScale * 1.2f), true);
         //}
         //else
         //    card.MoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay);
 
         //card.GetComponent<Order>().SetMostFrontOrder(isLarge);
-        card.GetComponent<Order>().SetMostFrontOrder(true);
+        card.CardOrder.SetMostFrontOrder(true);
     }
     void PushCard(Card card)
     {
@@ -777,31 +896,55 @@ public class CardManager : MonoBehaviour
         if (cardIndex == -1)
             return;
 
-        for (int i = 1; i < HandCard.Count; i++)    // 나중에 수정 필요해보임.
+        for (int i = 1; i < cardIndex + 1; ++i)
         {
-            if (cardIndex - i >= 0)
-                HandCard[cardIndex - i].transform.DOMoveX(HandCard[cardIndex - i].OriginPRS.pos.x - 0.5f / i, CardUtils.CardAlignmentDelay);
-            if (cardIndex + i < HandCard.Count)
-                HandCard[cardIndex + i].transform.DOMoveX(HandCard[cardIndex + i].OriginPRS.pos.x + 0.5f / i, CardUtils.CardAlignmentDelay);
+            HandCard[cardIndex - i].transform.DOMoveX(HandCard[cardIndex - i].OriginPRS.pos.x - 0.5f / i, CardUtils.CardAlignmentDelay).SetUpdate(true);        // .SetUpdate(true) 추가함.
         }
+
+        for (int i = 1; i < HandCard.Count - cardIndex; ++i)
+        {
+            HandCard[cardIndex + i].transform.DOMoveX(HandCard[cardIndex + i].OriginPRS.pos.x + 0.5f / i, CardUtils.CardAlignmentDelay).SetUpdate(true);        // .SetUpdate(true) 추가함.
+        }
+
+        //for (int i = 1; i < HandCard.Count; ++i)    // 나중에 수정 필요해보임.
+        //{
+        //    if (cardIndex - i >= 0)
+        //    {
+        //        //HandCard[cardIndex - i].transform.DOKill();
+        //        HandCard[cardIndex - i].transform.DOMoveX(HandCard[cardIndex - i].OriginPRS.pos.x - 0.5f / i, CardUtils.CardAlignmentDelay).SetUpdate(true);        // .SetUpdate(true) 추가함.
+        //    }
+        //    if (cardIndex + i < HandCard.Count)
+        //    {
+        //        //HandCard[cardIndex - i].transform.DOKill();
+        //        HandCard[cardIndex + i].transform.DOMoveX(HandCard[cardIndex + i].OriginPRS.pos.x + 0.5f / i, CardUtils.CardAlignmentDelay).SetUpdate(true);
+        //    }
+        //}
         canPush = false;
     }
 
-    void PullCard()     // PushCard()보다 움직임 속도가 빨라야 함. 즉, dotweenTime 값은 더 작아야 함. => (아닌 듯?)
+    void PullCard()     // PushCard()보다 움직임 속도가 빨라야 함. 즉, dotweenTime 값은 더 작아야 함.
     {
         canPush = true;
         foreach (Card card in HandCard)
         {
             card.transform.DOKill();
-            card.MoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay);
+            card.MoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay * 0.5f);
         }
 
     }
     public void CardMouseDown(Card card)
     {
-        if (cardState == ECardState.CanMouseClick)
+        if (cardState == ECardState.OnlyMouseClick)
         {
-            // 선택된 카드들 리스트에 들어갈 예정
+            if (_discard)
+            {
+                DiscardCard(card);
+            }
+            else if (_remove)
+            {
+                RemoveCard(card);
+            }
+            return;
         }
         if (cardState != ECardState.CanMouseDrag)
             return;
@@ -884,23 +1027,23 @@ public class CardManager : MonoBehaviour
     //    //GameManager.Instance.blockClick = false;
     //}
 
-    public bool CanUseHolo(Card card)
-    {
-        if (GameManager.Instance.player.CurHolo < card.Data.Cost)
-        {
-            PutDownCard(card).Forget();
-            return false;
-        }
-        GameManager.Instance.player.ChangeHoloValue(-card.Data.Cost);
-        return true;
-    }
+    //public bool CanUseHolo(Card card)                     // 나중에 쓸 수도 있으나, 일단 BeforeUsingCard로 사용.
+    //{
+    //    if (GameManager.Instance.player.CurHolo < card.Data.Cost)
+    //    {
+    //        PutDownCard(card).Forget();
+    //        return false;
+    //    }
+    //    GameManager.Instance.player.ChangeHoloValue(-card.Data.Cost);
+    //    return true;
+    //}
 
 
 
     public async UniTaskVoid PutDownCard(Card card)
     {
         //comeBackCard = true;
-        card.GetComponent<Order>().SetMostFrontOrder(false);
+        card.CardOrder.SetMostFrontOrder(false);
         PullCard();
         await card.TaskMoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay).SuppressCancellationThrow();
         UnblockCard(card);
@@ -948,17 +1091,24 @@ public class CardManager : MonoBehaviour
 
     }
 
-    //void SetCardState()
-    //{
-    //    if (TurnManager.Instance.isLoading.Value)
-    //        cardState = ECardState.Nothing;
-
-    //    else if (!TurnManager.Instance.myTurn)
-    //        cardState = ECardState.CanMouseOver;
-
-    //    else if (TurnManager.Instance.myTurn)
-    //        cardState = ECardState.CanMouseDrag;
-    //}
+    public void SetCardState(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                cardState = ECardState.Nothing;
+                break;
+            case 1:
+                cardState = ECardState.CanMouseOver;
+                break; 
+            case 2:
+                cardState = ECardState.CanMouseDrag;
+                break; 
+            case 3:
+                cardState = ECardState.OnlyMouseClick;
+                break;
+        }
+    }
 
     //void ArrowCursor(bool isOn)
     //{

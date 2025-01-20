@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -45,75 +45,93 @@ public class CardAbility
     //    }
     //}
 
-    public UniTask SetCardTaskAbility(Card card)
+    public void SetCardAbility(Card card)
     {
-        UniTask cardActTask;
-        switch (card.Data.Id)       // Defer => await ÇÑ ¹øÀÏ ¶§ À¯¿ë, Lazy => await ¿©·¯ ¹øÀÏ ¶§ À¯¿ë
+        //UniTask cardActTask;
+        switch (card.Data.Id)       // Defer => await í•œ ë²ˆì¼ ë•Œ ìœ ìš©, Lazy => await ì—¬ëŸ¬ ë²ˆì¼ ë•Œ ìœ ìš©
         {
             case 100:
-                //return SingleAttackAb(card);
-                cardActTask = UniTask.Defer(async () => 
+                card.UseConditions = DiscardAb(card);
+                card.CardTask = UniTask.Defer(async () =>
                 {
-                    await DelayTask(1f);
+                    await DelayTask(0.5f);
                     SingleAttackAb(card);
-                }/*, true, TurnManager.Instance.CancelSource.Token*/);      // false¸é await ÀÌÈÄ ÄÚµå°¡ ½º·¹µå Ç®¿¡¼­ ÁøÇàµÈ´Ù°í ÇÏ´Âµ¥, ¾ÆÁ÷ Á¤È®È÷´Â ¸ğ¸£°Ú¾î¼­ ÀÌ°Ç ÀÏ´Ü Á» ´õ °øºÎÇØºÁ¾ß ÇÒ µí.
+                });
+                //return SingleAttackAb(card);
+                //cardActTask = UniTask.Defer(async () => 
+                //{
+                //    await DelayTask(0.5f);
+                //    SingleAttackAb(card);
+                //}/*, true, TurnManager.Instance.CancelSource.Token*/);      // falseë©´ await ì´í›„ ì½”ë“œê°€ ìŠ¤ë ˆë“œ í’€ì—ì„œ ì§„í–‰ëœë‹¤ê³  í•˜ëŠ”ë°, ì•„ì§ ì •í™•íˆëŠ” ëª¨ë¥´ê² ì–´ì„œ ì´ê±´ ì¼ë‹¨ ì¢€ ë” ê³µë¶€í•´ë´ì•¼ í•  ë“¯.
                 break;
             case 101:
-                cardActTask = UniTask.Defer(async () =>
+                card.CardTask = UniTask.Defer(async () =>
                 {
-                    await DelayTask(1f);
+                    await DelayTask(0.5f);
                     SingleAttackAb(card);
                     await DrawAb();
-
-                    //await UniTask.WhenAll(
-                    //    UniTask.Create(async () =>
-                    //    {
-                    //        await DelayTask(1f);
-                    //        SingleAttackAb(card);
-                    //    }),
-                    //    UniTask.Create(async () =>
-                    //    {
-                    //        await DelayTask(1f);
-                    //        await DrawAb();
-                    //    }));
-
-
-                    //DrawAb(/*card*/)
                 });
+
+                //cardActTask = UniTask.Defer(async () =>
+                //{
+                //    await DelayTask(0.5f);
+                //    SingleAttackAb(card);
+                //    await DrawAb();
+
+                //    //await UniTask.WhenAll(                    // WhenAllì€ íŠ¹ì • ìƒí™©ì—ì„œë§Œ ì‚¬ìš©
+                //    //    UniTask.Create(async () =>
+                //    //    {
+                //    //        await DelayTask(1f);
+                //    //        SingleAttackAb(card);
+                //    //    }),
+                //    //    UniTask.Create(async () =>
+                //    //    {
+                //    //        await DelayTask(1f);
+                //    //        await DrawAb();
+                //    //    }));
+
+
+                //    //DrawAb(/*card*/)
+                //});
                 break;
             case 102:
-                cardActTask = UniTask.Defer(async () =>
+                card.CardTask = UniTask.Defer(async () =>
                 {
+                    await DelayTask(0.5f);
                     await ContinuousSinglettackAb(card, 0.3f);
                 });
                 break;
             case 103:
-                cardActTask = UniTask.Defer(async () =>
+                card.CardTask = UniTask.Defer(async () =>
                 {
+                    await DelayTask(0.5f);
                     await ContinuousMultiAttackAb(card, 0.3f);
                 });
                 break;
             case 104:
-                cardActTask = UniTask.Defer(async () =>
+                card.CardTask = UniTask.Defer(async () =>
                 {
+                    await DelayTask(0.5f);
                     await ContinuousDrawAb(card);
                 });
                 break;
             case 105:
-                cardActTask = UniTask.Defer(async () =>
+                card.CardTask = UniTask.Defer(async () =>
                 {
-                    await DelayTask(1f);
+                    await DelayTask(0.5f);
                     ShieldAb(card);
                 });
                 break;
-            default: cardActTask = UniTask.CompletedTask; break;
+            default:
+                card.CardTask = UniTask.CompletedTask;
+                break;
         }
-        return cardActTask;
+        //return cardActTask;
     }
     //public AsyncLazy SetCardLazyAbility(Card card)
     //{
     //    AsyncLazy cardLazy;
-    //    switch (card.Data.Id)       // Defer => await ÇÑ ¹øÀÏ ¶§ À¯¿ë, Lazy => await ¿©·¯ ¹øÀÏ ¶§ À¯¿ë
+    //    switch (card.Data.Id)       // Defer => await í•œ ë²ˆì¼ ë•Œ ìœ ìš©, Lazy => await ì—¬ëŸ¬ ë²ˆì¼ ë•Œ ìœ ìš©
     //    {
     //        case 100:
     //            //return SingleAttackAb(card);
@@ -121,7 +139,7 @@ public class CardAbility
     //            {
     //                await DelayTask(1f);
     //                SingleAttackAb(card);
-    //            }/*, true, TurnManager.Instance.CancelSource.Token*/);      // false¸é await ÀÌÈÄ ÄÚµå°¡ ½º·¹µå Ç®¿¡¼­ ÁøÇàµÈ´Ù°í ÇÏ´Âµ¥, ¾ÆÁ÷ Á¤È®È÷´Â ¸ğ¸£°Ú¾î¼­ ÀÌ°Ç ÀÏ´Ü Á» ´õ °øºÎÇØºÁ¾ß ÇÒ µí.
+    //            }/*, true, TurnManager.Instance.CancelSource.Token*/);      // falseë©´ await ì´í›„ ì½”ë“œê°€ ìŠ¤ë ˆë“œ í’€ì—ì„œ ì§„í–‰ëœë‹¤ê³  í•˜ëŠ”ë°, ì•„ì§ ì •í™•íˆëŠ” ëª¨ë¥´ê² ì–´ì„œ ì´ê±´ ì¼ë‹¨ ì¢€ ë” ê³µë¶€í•´ë´ì•¼ í•  ë“¯.
     //            break;
     //        case 101:
     //            cardLazy = UniTask.Lazy(async () =>
@@ -307,8 +325,8 @@ public class CardAbility
 
     void SingleAttackAb(Card card)
     {
-        card.TargetEnemy.TakeDamageEnemy(card.Data.Damage);        // ÀÌ Àü ´Ü°è¿¡¼­ null °Ë»ç¸¦ ÇÏ±â ¶§¹®¿¡ ?. ÇÒ ÇÊ¿ä ¾øÀ½.
-        card.Target(null);                                         // missing Ã¼Å©¸¦ À§ÇÑ °Å¿´À¸³ª.. ¾È µÇ³ª..??
+        card.TargetEnemy.TakeDamageEnemy(card.Data.Damage);        // ì´ ì „ ë‹¨ê³„ì—ì„œ null ê²€ì‚¬ë¥¼ í•˜ê¸° ë•Œë¬¸ì— ?. í•  í•„ìš” ì—†ìŒ.
+        card.Target(null);                                         // missing ì²´í¬ë¥¼ ìœ„í•œ ê±°ì˜€ìœ¼ë‚˜.. ì•ˆ ë˜ë‚˜..??
         //Enemy enemy = EnemyManager.Instance.targetEnemy;
         //enemy.TakeDamageEnemy(card.Data.Damage);
         //if (!card.Enhanced)
@@ -318,7 +336,7 @@ public class CardAbility
         //enemy.TakeDamageEnemy(card.Data.Damage).Forget();
     }
 
-    void SingleAttackAb(object obj)       // ³ªÁß¿¡ ´Ù½Ã Ã¼Å©ÇØºÁ¾ß ÇÒ µí. Àß ÇÏ¸é id·Îµµ »ç¿ë °¡´ÉÇÒ µí?
+    void SingleAttackAb(object obj)       // ë‚˜ì¤‘ì— ë‹¤ì‹œ ì²´í¬í•´ë´ì•¼ í•  ë“¯. ì˜ í•˜ë©´ idë¡œë„ ì‚¬ìš© ê°€ëŠ¥í•  ë“¯?
     {
         Card card = obj as Card;
         card.TargetEnemy.TakeDamageEnemy(card.Data.Damage);
@@ -411,7 +429,7 @@ public class CardAbility
         {
             await DelayTask(delay);
             MultiAttackAb(card);
-            //DelayTask().ContinueWith(() =>    //ContinueWith() »ç¿ë½Ã UniTask°¡ Á¾Á¾ ÃÖ´ë 15ÃÊ±îÁö ¾È ³¡³ª´Â ¿À·ù ¹ß»ı
+            //DelayTask().ContinueWith(() =>    //ContinueWith() ì‚¬ìš©ì‹œ UniTaskê°€ ì¢…ì¢… ìµœëŒ€ 15ì´ˆê¹Œì§€ ì•ˆ ëë‚˜ëŠ” ì˜¤ë¥˜ ë°œìƒ
             //{
             //    MultiAttackAb(card);
             //});
@@ -420,10 +438,10 @@ public class CardAbility
     async UniTask DrawAb(/*Card card*/)
     {
         //TurnManager.Instance.DrawTask().Forget();
-        await CardManager.Instance.AddCard();       // ÃÖÇÏÀ§ UniTask¿¡¼­ Cancel¸¦ È®ÀÎÇÏ´Âµ¥... È¤½Ã ¹®Á¦°¡ ¹ß»ıÇÒ ¼öµµ ÀÖ³ª..?
+        await CardManager.Instance.AddCard();       // ìµœí•˜ìœ„ UniTaskì—ì„œ Cancelë¥¼ í™•ì¸í•˜ëŠ”ë°... í˜¹ì‹œ ë¬¸ì œê°€ ë°œìƒí•  ìˆ˜ë„ ìˆë‚˜..?
     }
 
-    async UniTask ContinuousDrawAb(Card card)     // µå·Î¿ì °°Àº °æ¿ì, µ¦¿¡ ³²¾ÆÀÖ´Â Ä«µå¸¦ È®ÀÎÇÏ±â À§ÇØ Data.Count °ªÀÌ ¾Æ´Ñ Data.Draw °ªÀ¸·Î ¾ó¸¶³ª »ÌÀ»Áö Á¤ÇÔ.
+    async UniTask ContinuousDrawAb(Card card)     // ë“œë¡œìš° ê°™ì€ ê²½ìš°, ë±ì— ë‚¨ì•„ìˆëŠ” ì¹´ë“œë¥¼ í™•ì¸í•˜ê¸° ìœ„í•´ Data.Count ê°’ì´ ì•„ë‹Œ Data.Draw ê°’ìœ¼ë¡œ ì–¼ë§ˆë‚˜ ë½‘ì„ì§€ ì •í•¨.
     {
         //TurnManager.Instance.DrawTask(card.Data.Draw).Forget();
         await CardManager.Instance.AddCards(card.Data.Draw);
@@ -441,27 +459,31 @@ public class CardAbility
         //    GameManager.Instance.player.Shield(card.Data.EnhancedDefence);
     }
 
-    void DiscardAb()
+    UniTask DiscardAb(Card card)
+    {
+        CardManager.Instance.ChangeDiscard(true);
+        CardManager.Instance.SetCardState(3);   // Click
+        return UniTask.CompletedTask;
+
+    }
+
+    void RemoveAb(Card card)
+    {
+        CardManager.Instance.ChangeRemove(true);
+        CardManager.Instance.SetCardState(3);   // Click
+    }
+
+    void ReduceHpAb(Card card)
     {
 
     }
 
-    void RemoveAb()
+    void HealAb(Card card)
     {
 
     }
 
-    void ReduceHpAb()
-    {
-
-    }
-
-    void HealAb()
-    {
-
-    }
-
-    void CureAb()
+    void CureAb(Card card)
     {
 
     }
