@@ -41,8 +41,7 @@ public class ItemManager : MonoBehaviour
     {
         itemDict[id] = true;
         ItemAbility(id);
-        MapManager.Instance.currStage.rewarded = true;
-        MapManager.Instance.currStage.TreasureBox();
+        MapManager.Instance.GetReward();
     }
 
     public void ItemAbility(int id)

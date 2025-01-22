@@ -13,7 +13,7 @@ using UniRx;
 public class CardManager : MonoBehaviour
 {
     public static CardManager Instance { get; private set; }
-    public Dictionary<int, CardData> CardDatas { get; private set; } = new Dictionary<int, CardData>();
+    //public Dictionary<int, CardData> CardDatas { get; private set; } = new Dictionary<int, CardData>();
     //public List<Card> Deck { get; private set; }
 
     public List<Card> MainDeck;   // 덱 정보를 데이터 값으로 저장(배틀 중 추가된 카드는 적용X)
@@ -63,7 +63,7 @@ public class CardManager : MonoBehaviour
 
     int shopCardIdx;
 
-    UICard[] uICards = new UICard[4];
+    //UICard[] uICards = new UICard[4];
 
     EventQueue _eventQueue = new();
 
@@ -106,10 +106,10 @@ public class CardManager : MonoBehaviour
 
         SetupStartCardDeck();
 
-        for (int i = 0; i < uICards.Length; ++i)
-        {
-            uICards[i] = cardRewardContent.GetChild(i).GetComponent<UICard>();
-        }
+        //for (int i = 0; i < uICards.Length; ++i)
+        //{
+        //    uICards[i] = cardRewardContent.GetChild(i).GetComponent<UICard>();
+        //}
         //StartBattle();    // 현재 Battle.cs에서 진행중
     }
     //private void Update()
@@ -118,63 +118,62 @@ public class CardManager : MonoBehaviour
 
     //}
 
-    public void ShowRewardCard(int[] reward)        // 해당 부분들 맵, 상점으로 다 이동시켜야 함.
-    {
-        for (int i = 0; i < reward.Length; ++i)
-            uICards[i].Setup(FindCardData(reward[i]));
-    }
+    //public void ShowRewardCard(int[] reward)        // 해당 부분들 맵, 상점으로 다 이동시켜야 함.
+    //{
+    //    for (int i = 0; i < reward.Length; ++i)
+    //        uICards[i].Setup(FindCardData(reward[i]));
+    //}
 
-    public void RewardedCardBtn()
+    public void RewardedCard()
     {
         AddDeck(rewardCardData, EAddDeck.Main);
-        MapManager.Instance.currStage.rewarded = true;
-        MapManager.Instance.currStage.RewardBox();
+        MapManager.Instance.GetReward();
         UiManager.Instance.LookMap();
     }
 
-    public void SettingCardShop()
-    {
-        for (int i = 0; i < shopCard.childCount; ++i)
-        {
-            CardData _cardData = FindCardData(Random.Range(100, 106));
-            shopCard.GetChild(i).GetComponent<UICard>().Setup(_cardData);       // 나중에 다 캐싱할 것
-            shopCardPrice.GetChild(i).GetComponent<TMP_Text>().text = _cardData.Price.ToString();
-        }
-    }
-    public void BuyCardBtn()
-    {
-        if (GameManager.Instance.player.Coin.Value >= rewardCardData.Price)
-        {
-            GameManager.Instance.player.Coin.Value -= rewardCardData.Price;
-            AddDeck(rewardCardData, EAddDeck.Main);
-            shopCard.GetChild(shopCardIdx).GetComponent<UICard>().gameObject.SetActive(false);
-            shopCardPrice.GetChild(shopCardIdx).GetComponent<TMP_Text>().text = "";
-        }
-        else
-            print("돈부족");
-    }
+    //public void SettingCardShop()
+    //{
+    //    for (int i = 0; i < shopCard.childCount; ++i)
+    //    {
+    //        CardData _cardData = FindCardData(Random.Range(100, 106));
+    //        shopCard.GetChild(i).GetComponent<UICard>().Setup(_cardData);       // 나중에 다 캐싱할 것
+    //        shopCardPrice.GetChild(i).GetComponent<TMP_Text>().text = _cardData.Price.ToString();
+    //    }
+    //}
+    //public void BuyCard()
+    //{
+    //    if (GameManager.Instance.player.Coin.Value >= rewardCardData.Price)
+    //    {
+    //        GameManager.Instance.player.Coin.Value -= rewardCardData.Price;
+    //        AddDeck(rewardCardData, EAddDeck.Main);
+    //        shopCard.GetChild(shopCardIdx).GetComponent<UICard>().gameObject.SetActive(false);
+    //        shopCardPrice.GetChild(shopCardIdx).GetComponent<TMP_Text>().text = "";
+    //    }
+    //    else
+    //        print("돈부족");
+    //}
 
-    public void BuyCardIdx(int idx)
-    {
-        shopCardIdx = idx;
-    }
+    //public void BuyCardIdx(int idx)
+    //{
+    //    shopCardIdx = idx;
+    //}
 
-    public CardData FindCardData(int id)   // Id 값으로 카드데이터 가져오기
-    {
-        CardData _cardData;
-        if (CardDatas.TryGetValue(id, out _cardData))
-        {
-            return _cardData;
-        }
-        else
-        {
-            _cardData = (CardData)Array.Find(cardSO.Cards, x => x.Id == id).Clone();
-            CardDatas.Add(id, _cardData);
-            return _cardData;
-        }
-        //return cardSO.Cards.Find(x => x.Id == Id);
-        //return Array.Find(cardSO.Cards, x => x.Id == Id);
-    }
+    //public CardData FindCardData(int id)   // Id 값으로 카드데이터 가져오기
+    //{
+    //    CardData _cardData;
+    //    if (CardDatas.TryGetValue(id, out _cardData))
+    //    {
+    //        return _cardData;
+    //    }
+    //    else
+    //    {
+    //        _cardData = (CardData)Array.Find(cardSO.Cards, x => x.Id == id).Clone();
+    //        CardDatas.Add(id, _cardData);
+    //        return _cardData;
+    //    }
+    //    //return cardSO.Cards.Find(x => x.Id == Id);
+    //    //return Array.Find(cardSO.Cards, x => x.Id == Id);
+    //}
 
     void SetupStartCardDeck()   // 시작할 때, 메인덱을 설정하는 함수 (게임 시작 이후에는 사용하지 않음.)
     {
@@ -233,7 +232,7 @@ public class CardManager : MonoBehaviour
     }
     public void AddDeck(int id, EAddDeck eAddDeck)     // 덱에 카드를 아이디로 추가할 때 사용, 핸드로 카드를 가져올 때는 DrawCard 함수 사용.
     {
-        CardData cardData = FindCardData(id);
+        CardData cardData = GameManager.Instance.FindCardData(id);
 
         AddDeck(cardData, eAddDeck);
     }
@@ -573,6 +572,9 @@ public class CardManager : MonoBehaviour
         selectCard = null;      // isUseCard와 순서 중요! selectCard가 밑에 있어야 함.
 
         canPush = true;         // PullCard랑 중복 호출이긴 함.
+
+        //_discard = false;
+        //_remove = false;
     }
     void SelectedCards(Card card)
     {
@@ -601,6 +603,7 @@ public class CardManager : MonoBehaviour
     public void ChangeDiscard(bool discard)
     {
         _discard = discard;
+        UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.SelectedCard, discard);
     }
     public void ChangeRemove(bool remove)
     {

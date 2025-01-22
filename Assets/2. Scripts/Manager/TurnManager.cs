@@ -18,7 +18,7 @@ public class TurnManager : MonoBehaviour
 
     int startCardCount = 5;
 
-    public static Action OnAddCard;
+    //public static Action OnAddCard;
 
     public bool isLoading;
     public bool myTurn;
@@ -211,7 +211,7 @@ public class TurnManager : MonoBehaviour
         InBattle = true;
         CancelSource = new();
 
-        UiManager.Instance.SetupBattleUi(true);
+        UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.Battle, true);
         CardManager.Instance.SetupDrawDeck(true);
         //TurnManager.OnAddCard += async () =>
         //    await DrawCard();
@@ -227,7 +227,7 @@ public class TurnManager : MonoBehaviour
         InBattle = false;
         CancelSource.Cancel();
 
-        UiManager.Instance.SetupBattleUi(false);
+        UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.Battle, false);
         //OnAddCard = null;
 
         //TurnManager.OnAddCard -= () =>

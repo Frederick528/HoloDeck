@@ -88,7 +88,6 @@ public class Card : MonoBehaviour
         //CardTask = CardAbility.SetCardAbility(this);              // 그냥 카드어빌리티 실행하면 Task 바꾸도록 함.
         //CardAbility.SetCardAbility(this);
         //CardLazy = CardAbility.SetCardLazyAbility(this);        // 중복 해결을 위해 Lazy를 써봄.
-        Debug.Log(TurnManager.Instance.CancelSource.Token);
 
         CardDataReset();
         //Data = _defaultData;
@@ -193,7 +192,7 @@ public class Card : MonoBehaviour
 
     public void Setup(int id)
     {
-        Data = CardManager.Instance.FindCardData(id);
+        Data = GameManager.Instance.FindCardData(id);
 
         nameText.text = Data.Name;
         costText.text = Data.Cost.ToString();

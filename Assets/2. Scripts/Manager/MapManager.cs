@@ -7,8 +7,7 @@ public class MapManager : MonoBehaviour
 {
     public static MapManager Instance { get; private set; }
 
-    public Transform rewardCanvas;
-    public Transform shopCanvas;
+    //public Transform rewardCanvas;
 
     public Map currStage;
 
@@ -18,7 +17,7 @@ public class MapManager : MonoBehaviour
 
     public async UniTaskVoid ClearStage()
     {
-        if (currStage.State == Map.StageState.ENEMY || currStage.State == Map.StageState.BOSS)
+        if (currStage.State == Map.StageState.Enemy || currStage.State == Map.StageState.Boss)
         {
             await TurnManager.Instance.EndBattle();
         }
@@ -28,7 +27,7 @@ public class MapManager : MonoBehaviour
 
     public async UniTaskVoid ClearStage(Map stage)
     {
-        if (stage.State == Map.StageState.ENEMY || stage.State == Map.StageState.BOSS)
+        if (stage.State == Map.StageState.Enemy || stage.State == Map.StageState.Boss)
         {
             await TurnManager.Instance.EndBattle();
         }
@@ -51,6 +50,20 @@ public class MapManager : MonoBehaviour
     public void RewardStage()
     {
         currStage.RewardBox();
+    }
+    public void GetReward()
+    {
+        currStage.rewarded = true;
+        switch (currStage.State)
+        {
+            case Map.StageState.Enemy:
+            case Map.StageState.Boss:
+                currStage.RewardBox();
+                break;
+            case Map.StageState.Treasure:
+                currStage.TreasureBox();
+                break;
+        }
     }
 
     public void Treasure()

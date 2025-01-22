@@ -22,4 +22,18 @@ public class ButtonManager : MonoBehaviour
         TurnManager.Instance.ChangeCanEnd(state);
         turnEndButton.interactable = state;
     }
+
+    public void RewardedCardBtn()
+    {
+        CardManager.Instance.RewardedCard();
+    }
+
+    public void BuyCardBtn()
+    {
+        ShopManager.Instance.BuyCard();
+    }
+    public void SetBuyCardIdx(int idx)
+    {
+        ShopManager.Instance.BuyCardIdx(idx);
+    }
 }

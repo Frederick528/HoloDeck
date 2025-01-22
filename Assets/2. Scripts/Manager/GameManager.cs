@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,9 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+
+    public Dictionary<int, CardData> CardDatas { get; private set; } = new Dictionary<int, CardData>();
+
     [SerializeField] bool fastMode;
 
     [SerializeField] CardSO cardSO;
@@ -40,10 +44,25 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        UiManager.Instance.SetupGameUi(true);
+        //UiManager.Instance.SetupGameUi(true);
         //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     }
-
+    public CardData FindCardData(int id)   // Id 값으로 카드데이터 가져오기
+    {
+        CardData _cardData;
+        if (CardDatas.TryGetValue(id, out _cardData))
+        {
+            return _cardData;
+        }
+        else
+        {
+            _cardData = (CardData)Array.Find(cardSO.Cards, x => x.Id == id).Clone();
+            CardDatas.Add(id, _cardData);
+            return _cardData;
+        }
+        //return cardSO.Cards.Find(x => x.Id == Id);
+        //return Array.Find(cardSO.Cards, x => x.Id == Id);
+    }
     public void ArrowCursor(bool isOn)
     {
         arrow.SetActive(isOn);
@@ -114,7 +133,7 @@ public class GameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
-            if (MapManager.Instance.currStage.State == Map.StageState.ENEMY)
+            if (MapManager.Instance.currStage.State == Map.StageState.Enemy)
             {
                 for (int i = EnemyManager.Instance.enemies.Count - 1; i >= 0; --i)
                 {

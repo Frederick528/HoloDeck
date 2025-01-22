@@ -45,15 +45,15 @@ public class SettingMap : MonoBehaviour
     int mapDistance = 100;
 
     [SerializeField] GameObject mapPrefab;
-    [SerializeField] Transform mapCanvas;
-    [SerializeField] GameObject cardRewardCanvas;
-    [SerializeField] GameObject enlargePanel;
+    //[SerializeField] Transform mapCanvas;
+    //[SerializeField] GameObject cardRewardCanvas;
+    //[SerializeField] GameObject enlargePanel;
 
-    [SerializeField] GameObject itemRewardCanvas;
+    //[SerializeField] GameObject itemRewardCanvas;
 
-    [SerializeField] GameObject shopCanvas;
-    [SerializeField] GameObject shopenlargePanel;
-    [SerializeField] GameObject shopPanel;
+    //[SerializeField] GameObject shopCanvas;
+    //[SerializeField] GameObject shopenlargePanel;
+    //[SerializeField] GameObject shopPanel;
     private void Start()
     {
         creatMapCnt = (int)Mathf.Clamp(creatMapCnt, 1, Mathf.Pow(maxDistance * 2 + 1, 2));
@@ -107,15 +107,15 @@ public class SettingMap : MonoBehaviour
 
         // Start
         stageList[0].stage = stageList[0].AddComponent<StartStage>();
-        stageList[0].State = Map.StageState.START;
+        stageList[0].State = Map.StageState.Start;
         SetClickStage(stageList[0]);
-        stageList[0].GetComponentInChildren<TMP_Text>().text = "Start";
+        stageList[0].GetComponentInChildren<TMP_Text>().text = "Start";             // 이미지로 대체할 예정이라 따로 캐싱하지는 않음.
         stageList[0].GetComponentInChildren<TMP_Text>().color = Color.gray;
         stageList.RemoveAt(0);
 
         // Boss
         stageList[^1].stage = stageList[^1].AddComponent<BossStage>();
-        stageList[^1].State = Map.StageState.BOSS;
+        stageList[^1].State = Map.StageState.Boss;
         SetClickStage(stageList[^1]);
         stageList[^1].GetComponentInChildren<TMP_Text>().text = "Boss";
         stageList[^1].GetComponentInChildren<TMP_Text>().color = Color.red;
@@ -125,7 +125,7 @@ public class SettingMap : MonoBehaviour
         // Treasure
         index = Random.Range(0, stageList.Count);
         stageList[index].stage = stageList[index].AddComponent<TreasureStage>();
-        stageList[index].State = Map.StageState.TREASURE;
+        stageList[index].State = Map.StageState.Treasure;
         SetClickStage(stageList[index]);
         stageList[index].GetComponentInChildren<TMP_Text>().text = "Treasure";
         stageList[index].GetComponentInChildren<TMP_Text>().color = Color.yellow;
@@ -135,8 +135,8 @@ public class SettingMap : MonoBehaviour
         // Shop
         index = Random.Range(0, stageList.Count);
         stageList[index].stage = stageList[index].AddComponent<ShopStage>();
-        CardManager.Instance.SettingCardShop();
-        stageList[index].State = Map.StageState.SHOP;
+        ShopManager.Instance.SettingCardShop();
+        stageList[index].State = Map.StageState.Shop;
         SetClickStage(stageList[index]);
         stageList[index].GetComponentInChildren<TMP_Text>().text = "Shop";
         stageList[index].GetComponentInChildren<TMP_Text>().color = Color.blue;
@@ -152,14 +152,14 @@ public class SettingMap : MonoBehaviour
                 case 1:
                 case 2:
                     stage.stage = stage.AddComponent<EnemyStage>();
-                    stage.State = Map.StageState.ENEMY;
+                    stage.State = Map.StageState.Enemy;
                     SetClickStage(stage);
                     stage.GetComponentInChildren<TMP_Text>().text = "Enemy";
                     break;
 
                 case 3:
                     stage.stage = stage.AddComponent<EventStage>();
-                    stage.State = Map.StageState.EVENT;
+                    stage.State = Map.StageState.Event;
                     SetClickStage(stage);
                     stage.GetComponentInChildren<TMP_Text>().text = "Event";
                     stage.GetComponentInChildren<TMP_Text>().color = Color.cyan;
@@ -181,7 +181,7 @@ public class SettingMap : MonoBehaviour
             else if (!stage.cleared)
             {
                 stage.LookingStage(direction4, maps);
-                if (stage.State == Map.StageState.TREASURE || stage.State == Map.StageState.SHOP)
+                if (stage.State == Map.StageState.Treasure || stage.State == Map.StageState.Shop)
                 {
                     MapManager.Instance.ClearStage(stage).Forget();
                 }
@@ -194,18 +194,12 @@ public class SettingMap : MonoBehaviour
             // 떠나려는 방에 보상이 떴는데, 그 보상을 받지 않고 떠난다면, 잠시 해당 스테이지 보상을 숨김. 
             if (MapManager.Instance.currStage.rewardBox != -1 && !MapManager.Instance.currStage.rewarded)
             {
-                MapManager.Instance.rewardCanvas.GetChild(MapManager.Instance.currStage.rewardBox).gameObject.SetActive(false);
+                //MapManager.Instance.rewardCanvas.GetChild(MapManager.Instance.currStage.rewardBox).gameObject.SetActive(false);
+                UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.RewardBox, false, MapManager.Instance.currStage.rewardBox);
             }
 
-            // 보상과 상관없이 enlargePanel와 cardRewardCanvas는 새로운 방에 들어갈 때마다 숨김 처리.
-            enlargePanel.SetActive(false);
-            cardRewardCanvas.SetActive(false);
-
-            itemRewardCanvas.SetActive(false);
-
-            shopPanel.SetActive(false);
-            shopenlargePanel.SetActive(false);
-            shopCanvas.SetActive(false);
+            // 보상과 상관없이 EnlargePanel와 RewardCanvas는 새로운 방에 들어갈 때마다 숨김 처리.
+            UiManager.Instance.MoveMap();
 
             MapManager.Instance.currStage = stage;
             
@@ -215,10 +209,11 @@ public class SettingMap : MonoBehaviour
             // 들어간 방에 보상이 떴었는데, 예전에 보상을 받지 않았다면, 그 보상을 다시 시각화함.
             if (stage.rewardBox != -1 && !stage.rewarded)
             {
-                MapManager.Instance.rewardCanvas.GetChild(stage.rewardBox).gameObject.SetActive(true);
+                //MapManager.Instance.rewardCanvas.GetChild(stage.rewardBox).gameObject.SetActive(true);
+                UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.RewardBox, true, stage.rewardBox);
                 if (stage.rewardBox != 0)
                 {
-                    CardManager.Instance.ShowRewardCard(stage.reward);
+                    UiManager.Instance.ShowRewardCard(stage.reward);
                 }
             }
 
@@ -235,7 +230,7 @@ public class SettingMap : MonoBehaviour
         map.mapID = name + "(" + pos.x + ", " + pos.y + ", " + pos.z + ")";
         map.mapName = name;
         map.array_Position = pos;
-        map.transform_Position = pos * mapDistance - startMapPosition * mapDistance + new Vector3Int(Screen.width/2, Screen.height/2);
+        map.transform_Position = pos * mapDistance - startMapPosition * mapDistance/* + new Vector3Int(Screen.width/2, Screen.height/2)*/;
         //single.parent_Position = pos;
         map.mapType = "Single";
         //map.isValidMap = true;
@@ -432,12 +427,14 @@ public class SettingMap : MonoBehaviour
         //}
         //validMapCount = validMapList.Count;
 
+        Transform mapCanvas = UiManager.Instance.Canvas(UiManager.CanvasName.Map);
+
         foreach (MapInfo validMap in validMapList)
         {
-            GameObject mapObject = Instantiate(mapPrefab, Vector3.one * 0.5f, Quaternion.identity, mapCanvas);/*PoolManager.Instance.MapPool.Get();*/
+            GameObject mapObject = Instantiate(mapPrefab, mapCanvas);/*PoolManager.Instance.MapPool.Get();*/
             Map map = mapObject.GetComponent<Map>();
             //mapObject.transform.GetComponentInChildren<TextMeshProUGUI>().text = validMap.distance.ToString();
-            mapObject.transform.position = validMap.transform_Position;
+            mapObject.transform.localPosition = validMap.transform_Position;
 
             //map.img.color = Color.black;
             map.btn.interactable = false;
@@ -528,7 +525,7 @@ public class SettingMap : MonoBehaviour
         single.mapID = name + "(" + pos.array_Position.x + ", " + pos.array_Position.y + ", " + pos.array_Position.z + ")";
         single.mapName = name;
         single.array_Position = pos.array_Position;
-        single.transform_Position = pos.array_Position - startMapPosition + new Vector3Int(Screen.width/2, Screen.height/2);
+        single.transform_Position = pos.array_Position - startMapPosition/* + new Vector3Int(Screen.width/2, Screen.height/2)*/;
         //single.mergeCenter_Position = pos.mergeCenter_Position;
         single.mapType = pos.mapType;
         single.distance = pos.distance;
