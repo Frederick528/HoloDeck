@@ -75,7 +75,7 @@ public abstract class Enemy : Entity
         if (!TakeDamage(dmg))
             return false;
         //int spawn = 0;
-        EnemyManager.Instance.enemies.Remove(this);
+        //EnemyManager.Instance.enemies.Remove(this);
         //EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);
 
         KillEnemy().Forget();
@@ -102,6 +102,7 @@ public abstract class Enemy : Entity
     public async UniTaskVoid KillEnemy()        // 클리어 체크도 같이 함.
     {
         Death = true;
+        EnemyManager.Instance.enemies.Remove(this);
         await base.DieAnimation();  // destroy(gameObject)가 들어가있기 때문에, 만약 죽고 난 다음에 추가 행동이 있다면, 이 함수 내에서 작동해야 함.
         EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);      // 에너미 자리로 클리어 확인을 하기 때문에 적 죽는 모션 기다린 후, 자리 삭제
         GameManager.Instance.ChangeCoinValue(enemyData.dropCoin);

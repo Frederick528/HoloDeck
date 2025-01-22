@@ -438,17 +438,18 @@ public class CardAbility
     async UniTask DrawAb(/*Card card*/)
     {
         //TurnManager.Instance.DrawTask().Forget();
-        await CardManager.Instance.AddCard();       // 최하위 UniTask에서 Cancel를 확인하는데... 혹시 문제가 발생할 수도 있나..?
+        await CardManager.Instance.DrawCard();       // 최하위 UniTask에서 Cancel를 확인하는데... 혹시 문제가 발생할 수도 있나..?
     }
 
     async UniTask ContinuousDrawAb(Card card)     // 드로우 같은 경우, 덱에 남아있는 카드를 확인하기 위해 Data.Count 값이 아닌 Data.Draw 값으로 얼마나 뽑을지 정함.
     {
         //TurnManager.Instance.DrawTask(card.Data.Draw).Forget();
-        await CardManager.Instance.AddCards(card.Data.Draw);
+        await CardManager.Instance.DrawCard(card.Data.Draw);
+        //await CardManager.Instance.DrawCards(card.Data.Draw);
         //if (!card.Enhanced)
-        //    CardManager.Instance.AddCards(card.Data.Draw).Forget();
+        //    CardManager.Instance.DrawCards(card.Data.Draw).Forget();
         //else
-        //    CardManager.Instance.AddCards(card.Data.EnhancedDraw).Forget();
+        //    CardManager.Instance.DrawCards(card.Data.EnhancedDraw).Forget();
     }
     void ShieldAb(Card card)
     {

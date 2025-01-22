@@ -93,7 +93,8 @@ public class TurnManager : MonoBehaviour
         UiManager.Instance.ChangeTurnButtonText(myTurn);
 
         SetBool(true);
-        await CardManager.Instance.AddCards(startCardCount);
+        //await CardManager.Instance.DrawCards(startCardCount);      // DrawCard(int count)로 대체 가능
+        await CardManager.Instance.DrawCard(startCardCount);
         //for (int i = 0; i < startCardCount; i++)
         //{
         //    if (CardManager.Instance.HandCard.Count >= 10)
@@ -158,11 +159,11 @@ public class TurnManager : MonoBehaviour
     //    SetBool(true);
     //    if (drawCardCount == 1)
     //    {
-    //        await CardManager.Instance.AddCard();
+    //        await CardManager.Instance.DrawCard();
     //    }
     //    else
     //    {
-    //        await CardManager.Instance.AddCards(drawCardCount);
+    //        await CardManager.Instance.DrawCards(drawCardCount);
     //    }
     //    SetBool(false);
     //}
@@ -213,9 +214,9 @@ public class TurnManager : MonoBehaviour
         UiManager.Instance.SetupBattleUi(true);
         CardManager.Instance.SetupDrawDeck(true);
         //TurnManager.OnAddCard += async () =>
-        //    await AddCard();
+        //    await DrawCard();
         //OnAddCard += () =>
-        //    CardManager.Instance.AddCard().Forget();
+        //    CardManager.Instance.DrawCard().Forget();
 
 
         StartTurnTask().Forget();
@@ -230,10 +231,10 @@ public class TurnManager : MonoBehaviour
         //OnAddCard = null;
 
         //TurnManager.OnAddCard -= () =>
-        //    AddCard().Forget();
+        //    DrawCard().Forget();
         //TurnManager.OnAddCard = null;
         // TurnManager.OnAddCard -= async () =>
-        //     await AddCard();
+        //     await DrawCard();
         await EndTurn(true);
         //DrawDeck.Clear();
         //CardDummy.Clear();
