@@ -45,6 +45,9 @@ TagManager:
   - name: Entitiy
     uniqueID: 4272110607
     locked: 0
+  - name: Panel
+    uniqueID: 3186975081
+    locked: 0
   - name: Card
     uniqueID: 598417717
     locked: 0

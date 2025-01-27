@@ -54,7 +54,8 @@ public class CardManager : MonoBehaviour
 
      List<Card> _selectedCards = new();           // 배틀 중 버리기, 강화, 교환 등에서 선택한 카드 리스트
 
-    Card selectCard;                            // 들고 있는 카드(drag 중인 카드)
+    Card _usedCard;
+    Card _selectCard;                            // 들고 있는 카드(drag 중인 카드)
     bool draggable;
     ReactiveProperty<bool> isUseCard = new();     // 카드 사용존에 카드가 올라왔을 경우(카드를 놓으면 카드가 사용되는 위치)
 
@@ -78,19 +79,19 @@ public class CardManager : MonoBehaviour
     {
         isUseCard.Subscribe((canUse) =>
         {
-            selectCard?.TurnOnOutline(canUse);
-            if (canUse && selectCard.Data.CardTag == CardTag.SingleAttack && !isSingleTarget)
+            _selectCard?.TurnOnOutline(canUse);
+            if (canUse && _selectCard.Data.CardTag == CardTag.SingleAttack && !isSingleTarget)
             {
                 GameManager.Instance.ArrowCursor(true);
                 //PullCard();
-                selectCard.transform.DOKill();        // 마우스 커서가 카드를 나갈 때 카드 크기가 원래대로 돌아가는 코드를 멈춰주는 함수.
-                selectCard.transform.position = new Vector2(0, -3.32f);
+                _selectCard.transform.DOKill();        // 마우스 커서가 카드를 나갈 때 카드 크기가 원래대로 돌아가는 코드를 멈춰주는 함수.
+                _selectCard.transform.position = new Vector2(0, -3.32f);
                 isSingleTarget = true;
             }
-            //else if (isUseCard.Value && selectCard.Data.CardTag != CardTag.SingleAttackAb)
+            //else if (isUseCard.Value && _selectCard.Data.CardTag != CardTag.SingleAttackAb)
             //{
             //    Vector2 tempPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //    selectCard.transform.position = tempPos;
+            //    _selectCard.transform.position = tempPos;
             //}
             else if (!canUse && isSingleTarget)
             {
@@ -100,7 +101,7 @@ public class CardManager : MonoBehaviour
             //else if (!isUseCard.Value)
             //{
             //    Vector2 tempPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //    selectCard.transform.position = tempPos;
+            //    _selectCard.transform.position = tempPos;
             //}
         });
 
@@ -240,7 +241,7 @@ public class CardManager : MonoBehaviour
     async UniTaskVoid WaitUnblock(Card blockCard, float waitTime)
     {
         blockCard.Block = true;
-        await UniTask.WaitForSeconds(waitTime);
+        await UniTask.WaitForSeconds(waitTime, true);       // 카드를 가져오기 위해 블락하는 거라, TimeScale은 무시함.
         blockCard.Block = false;
     }
 
@@ -259,19 +260,33 @@ public class CardManager : MonoBehaviour
         useCard.Used = false;
     }
 
-    bool BeforeUsingCard(Card card)
+    async UniTask<bool> BeforeUsingCard(Card card)
     {
         if (GameManager.Instance.player.CurHolo < card.Data.Cost)
         {
-            PutDownCard(card).Forget();
+            //PutDownCard(card).Forget();
             return false;
         }
+        //if (card.UseConditions.HasValue)
+        //ResetSetting();
+        //await card.TaskMoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale), true, CardUtils.CardAlignmentDelay);
+        card.MoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale), true, CardUtils.CardAlignmentDelay);
+        //HandCard.Remove(card);
+        if (!await card.CheckUseConditions())
+        {
+            //foreach (Card selectedCard in _selectedCards)
+            //{
+            //    selectedCard.Selected = false;
+            //    HandCard.Add(selectedCard);
+            //    SetOriginOrder();
+            //    CardAlignment();
+            //}
+            //_selectedCards.Clear();
+            //PutDownCard(card).Forget();
+            return false;
+        }
+        //HandCard.Add(card);
 
-        //if (card.CheckUseConditions)
-        //{
-
-        //}
-        
         GameManager.Instance.player.ChangeHoloValue(-card.Data.Cost);
 
         return true;
@@ -569,12 +584,24 @@ public class CardManager : MonoBehaviour
         GameManager.Instance.ArrowCursor(false);
         isUseCard.Value = false;
 
-        selectCard = null;      // isUseCard와 순서 중요! selectCard가 밑에 있어야 함.
+        _selectCard = null;      // isUseCard와 순서 중요! selectCard가 밑에 있어야 함.
+        //_usedCard = null;
 
         canPush = true;         // PullCard랑 중복 호출이긴 함.
 
         //_discard = false;
         //_remove = false;
+    }
+    public void ReturnSelectedCard()
+    {
+        foreach (Card selectedCard in _selectedCards)
+        {
+            selectedCard.Selected = false;
+            HandCard.Add(selectedCard);
+        }
+        //SetOriginOrder();             // 리턴 카드를 할 경우, 사용하고 있던 카드를 다시 내 손패로 돌려보냄. 이때, 전체 카드 정렬을 하기 때문에 여기서 따로 할 필요 없음.
+        //CardAlignment();
+        _selectedCards.Clear();
     }
     void SelectedCards(Card card)
     {
@@ -599,11 +626,46 @@ public class CardManager : MonoBehaviour
             SetOriginOrder();
             CardAlignment();
         }
+        if (_usedCard.Data.Reduce > 0)
+        {
+            if (_selectedCards.Count == _usedCard.Data.Reduce)
+            {
+                ButtonManager.Instance.DiscardButtonInvert(true);
+            }
+            else
+            {
+                ButtonManager.Instance.DiscardButtonInvert(false);
+            }
+        }
+        else if (_usedCard.Data.Reduce == 0)
+        {
+            ButtonManager.Instance.DiscardButtonInvert(true);
+        }
+        else
+        {
+            if (_selectedCards.Count >= -_usedCard.Data.Reduce)
+            {
+                ButtonManager.Instance.DiscardButtonInvert(true);
+            }
+            else
+            {
+                ButtonManager.Instance.DiscardButtonInvert(false);
+            }
+        }
     }
     public void ChangeDiscard(bool discard)
     {
         _discard = discard;
+        GameManager.Instance.Pause(discard);
         UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.SelectedCard, discard);
+        if (discard)
+        {
+            SetCardState(3);   // Click
+        }
+        else
+        {
+            SetCardState(2);    // Drag
+        }
     }
     public void ChangeRemove(bool remove)
     {
@@ -617,6 +679,23 @@ public class CardManager : MonoBehaviour
     void RemoveCard(Card card)       // 카드 삭제하기(배틀 안에서만 적용)
     {
         SelectedCards(card);
+    }
+
+    public async UniTask ThrowAwaySelectedCard()
+    {
+        foreach (Card targetCard in _selectedCards)
+        {
+            BlockCard(targetCard);
+            targetCard.Selected = false;
+            targetCard.MoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.ThrowAwayCardDelay);
+        }
+        await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay);
+        foreach (Card targetCard in _selectedCards)
+        {
+            CardDummy.Add(targetCard);
+            UnblockCard(targetCard);
+        }
+        _selectedCards.Clear();
     }
 
     public async UniTask ThrowAwayCard()        // 모든 카드를 카드 더미로
@@ -727,7 +806,7 @@ public class CardManager : MonoBehaviour
         for (int i = 0; i < cardList.Count; i++)
         {
             Card targetCard = cardList[i];
-            //if (targetCard == selectCard)
+            //if (targetCard == _selectCard)
             //    continue;
             targetCard.CardOrder.SetOriginOrder(i);
         }
@@ -743,7 +822,7 @@ public class CardManager : MonoBehaviour
             WaitUnblock(targetCard, CardUtils.CardAlignmentDelay).Forget();
 
             //targetCard.OriginPRS = CardPRSs[i];
-            //if (targetCard == selectCard)
+            //if (targetCard == _selectCard)
             //    continue;
             targetCard.MoveTransform(CardPRSs[i], true, CardUtils.CardAlignmentDelay);
         }
@@ -791,7 +870,7 @@ public class CardManager : MonoBehaviour
         for (int i = 0; i < HandCard.Count; i++)
         {
             Card targetCard = HandCard[i];
-            if (targetCard == selectCard)
+            if (targetCard == _selectCard)
                 continue;
             targetCard.CardOrder.SetOriginOrder(i);
         }
@@ -806,7 +885,7 @@ public class CardManager : MonoBehaviour
             Card targetCard = HandCard[i];
 
             targetCard.OriginPRS = originCardPRSs[i];
-            if (targetCard == selectCard)
+            if (targetCard == _selectCard)
                 continue;
             targetCard.MoveTransform(targetCard.OriginPRS, true, CardUtils.CardAlignmentDelay);
         }
@@ -857,7 +936,7 @@ public class CardManager : MonoBehaviour
     {
         if (cardState == ECardState.Nothing || draggable)
             return;
-        //selectCard = card;
+        //_selectCard = card;
         LargeCard(/*true, */card);
         if (card.Selected) return;
         PushCard(card);
@@ -866,7 +945,7 @@ public class CardManager : MonoBehaviour
     {
         if (cardState == ECardState.Nothing || draggable)
             return;
-        //selectCard = null;
+        //_selectCard = null;
         //LargeCard(false, card);
         //PullCard();
         if (card.Selected)
@@ -895,7 +974,7 @@ public class CardManager : MonoBehaviour
         //if (isLarge)
         //{
             card.transform.DOKill();              // 정렬 드로우 문제 등 제거
-            Vector3 largePos = new Vector3(card.OriginPRS.pos.x, -3.32f, /*-100f*/0);
+            Vector3 largePos = new Vector3(card.OriginPRS.pos.x, -3.32f, -1f);      // z축 변경 안 하면, MouseOver 문제 생김.
             card.MoveTransform(new PRS(largePos, Quaternion.identity, CardUtils.CardScale * 1.2f));
         //}
         //else
@@ -973,13 +1052,13 @@ public class CardManager : MonoBehaviour
         }
         if (cardState != ECardState.CanMouseDrag)
             return;
-        selectCard = card;
+        _selectCard = card;
         draggable = true;
         BlockCard(card);
         //card.Used = false;
     }
 
-    public void CardMouseUp(Card card)
+    public async UniTask CardMouseUp(Card card)
     {
         //draggable = false;
         //arrow.SetActive(false); => ArrowCursor(false);
@@ -990,52 +1069,111 @@ public class CardManager : MonoBehaviour
         }
         //draggable = false;
         //GameManager.Instance.ArrowCursor(false);
-        //selectCard = null;
+        //_selectCard = null;
 
-        if (GameManager.Instance.player.CurHolo < card.Data.Cost)
+        //if (GameManager.Instance.player.CurHolo < card.Data.Cost)
+        //{
+        //    PutDownCard(card).Forget();
+        //    ResetSetting();
+
+        //    return;
+        //}
+
+        if (isUseCard.Value)
         {
-            PutDownCard(card).Forget();
+            if (card.Data.CardTag != CardTag.SingleAttack)     // 단일타격을 제외한 나머지
+            {
+                ResetSetting();
+                HandCard.Remove(card);
+                SetOriginOrder();
+                CardAlignment();
+                _usedCard = card;       // 다른 카드가 사용 중이면 사용 못 하게 막을지 고민 중
+                if (!await BeforeUsingCard(card))
+                {
+                    HandCard.Add(card);
+                    SetOriginOrder();
+                    CardAlignment();
+                    _usedCard = null;
+                    PutDownCard(card).Forget();
+                    //ResetSetting();
+
+                    return;
+                }
+                _eventQueue.Enqueue(card);
+                _usedCard = null;
+            }
+            else if (useSingleTargetCard)                      // 단일타격이 가능할 경우
+            {
+                ResetSetting();
+                HandCard.Remove(card);
+                SetOriginOrder();
+                CardAlignment();
+                _usedCard = card;       // 다른 카드가 사용 중이면 사용 못 하게 막을지 고민 중
+                card.Target(EnemyManager.Instance.targetEnemy);
+                if (!await BeforeUsingCard(card))
+                {
+                    card.Target(null);
+                    HandCard.Add(card);
+                    SetOriginOrder();
+                    CardAlignment();
+                    _usedCard = null;
+                    PutDownCard(card).Forget();         // 오더 중복 설정이긴 함.
+                    //ResetSetting();
+
+                    return;
+                }
+                _eventQueue.Enqueue(card);
+                _usedCard = null;
+            }
+            else
+            {
+                ResetSetting();
+                PutDownCard(card).Forget();
+            }
+        }
+        else
+        {
             ResetSetting();
-
-            return;
-        }
-
-        if (isUseCard.Value && card.Data.CardTag != CardTag.SingleAttack)     // 단일타격을 제외한 나머지
-        {
-            _eventQueue.Enqueue(card);
-            //CheckCanUseCard(card);
-        }
-        else if (isUseCard.Value /*&& card.Data.CardTag == CardTag.SingleAttackAb */&& useSingleTargetCard)     // 단일타격이 가능할 경우
-        {
-            card.Target(EnemyManager.Instance.targetEnemy);
-            _eventQueue.Enqueue(card);
-            //CheckCanUseCard(card);
-        }
-        else        // 사용되지 않은 경우
-        {
             PutDownCard(card).Forget();
         }
 
-        ResetSetting();
+
+        //if (isUseCard.Value && card.Data.CardTag != CardTag.SingleAttack)     // 단일타격을 제외한 나머지
+        //{
+        //    _eventQueue.Enqueue(card);
+        //    //CheckCanUseCard(card);
+        //}
+        //else if (isUseCard.Value /*&& card.Data.CardTag == CardTag.SingleAttackAb */&& useSingleTargetCard)     // 단일타격이 가능할 경우
+        //{
+        //    card.Target(EnemyManager.Instance.targetEnemy);
+        //    _eventQueue.Enqueue(card);
+        //    //CheckCanUseCard(card);
+        //}
+        //else        // 사용되지 않은 경우
+        //{
+        //    PutDownCard(card).Forget();
+        //}
+
+        //ResetSetting();
     }
 
 
-    public async UniTask CheckCanUseCard(Card card)
-    {
-        //card.CardTask?.Invoke(card);
-        if (GameManager.Instance.player.CurHolo < card.Data.Cost)
-        {
-            PutDownCard(card).Forget();
-            return;
-        }
-        GameManager.Instance.player.ChangeHoloValue(-card.Data.Cost);
-        await UsedCard(card);
-        //await UniTask.WaitForSeconds(card.Data.CardUseDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
-        //await UsedCard(card);
-        //await UsedCard(card);
-        //card.Block = false;
-        //GameManager.Instance.blockClick = false;
-    }
+    //public async UniTask CheckCanUseCard(Card card)
+    //{
+    //    //card.CardTask?.Invoke(card);
+    //    if (GameManager.Instance.player.CurHolo < card.Data.Cost)
+    //    {
+    //        PutDownCard(card).Forget();
+    //        return;
+    //    }
+    //    GameManager.Instance.player.ChangeHoloValue(-card.Data.Cost);
+    //    await UsedCard(card);
+    //    //await UniTask.WaitForSeconds(card.Data.CardUseDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+    //    //await UsedCard(card);
+    //    //await UsedCard(card);
+    //    //card.Block = false;
+    //    //GameManager.Instance.blockClick = false;
+    //}
 
     //public void CheckCanUseCard(Card card)
     //{

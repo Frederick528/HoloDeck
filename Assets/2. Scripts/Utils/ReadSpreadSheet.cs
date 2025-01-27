@@ -47,14 +47,14 @@ public class ReadSpreadSheet : MonoBehaviour
     async UniTaskVoid LoadCardSO()
     {
         string address = "https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8";
-        string range = "A3:J8";
+        string range = "A3:K";
         string cardSheetID = "1809511646";
         string enhancedCardSheetID = "1928890928";
         using (UnityWebRequest wwwC =
             //UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:Q&gid=0"))  // 0 = 원본, 1809511646 = 테스트용
-            UnityWebRequest.Get($"{address}/export?format=csv&range={range}&gid={cardSheetID}"))
+            UnityWebRequest.Get($"{address}/export?format=tsv&range={range}&gid={cardSheetID}"))
         using (UnityWebRequest wwwEC =
-            UnityWebRequest.Get($"{address}/export?format=csv&range={range}&gid={enhancedCardSheetID}"))
+            UnityWebRequest.Get($"{address}/export?format=tsv&range={range}&gid={enhancedCardSheetID}"))
         {
             await wwwC.SendWebRequest();
             dataCardGS = wwwC.downloadHandler.text;
@@ -72,8 +72,8 @@ public class ReadSpreadSheet : MonoBehaviour
     async UniTaskVoid LoadEnemySO()
     {
         using (UnityWebRequest wwwE = 
-            UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1ReoyeaeB220v3EhNHWEefLY9KB2ScyttVtCqg6Rj6IA/export?format=csv&range=A3:G&gid=0"))  // 0 = 원본, 1809511646 = 테스트용
-            //UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1ReoyeaeB220v3EhNHWEefLY9KB2ScyttVtCqg6Rj6IA/export?format=csv&range=A3:G&gid=1809511646"))  // 0 = 원본, 1809511646 = 테스트용
+            UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1ReoyeaeB220v3EhNHWEefLY9KB2ScyttVtCqg6Rj6IA/export?format=tsv&range=A3:G&gid=0"))  // 0 = 원본, 1809511646 = 테스트용
+            //UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1ReoyeaeB220v3EhNHWEefLY9KB2ScyttVtCqg6Rj6IA/export?format=tsv&range=A3:G&gid=1809511646"))  // 0 = 원본, 1809511646 = 테스트용
         //UnityWebRequest.Get($"{address}/export?format=csv&range={range}&gid={sheetID}"))
         {
             await wwwE.SendWebRequest();
@@ -96,7 +96,7 @@ public class ReadSpreadSheet : MonoBehaviour
         int i = 0;
         foreach (string row in rows)
         {
-            string[] cells = row.Split(",");
+            string[] cells = row.Split("\t");
             CardData data = new CardData();
             data.Id = ConvertInt32(cells[0]);
             data.Name = LineBreakStr(cells[1]);
@@ -105,9 +105,10 @@ public class ReadSpreadSheet : MonoBehaviour
             data.Shield = ConvertInt32(cells[4]);
             data.Count = ConvertInt32(cells[5]);
             data.Draw = ConvertInt32(cells[6]);
+            data.Reduce = ConvertInt32(cells[7]);
             //data.CardUseDelay = ConvertSingle(cells[7]);
-            data.Price = ConvertInt32(cells[7]);
-            data.Descript = LineBreakStr(cells[8]);
+            data.Price = ConvertInt32(cells[8]);
+            data.Descript = LineBreakStr(cells[9]);
             try
             {
                 data.Sprite = Array.Find(cardSO.CardSprites, x => x.name == data.Id.ToString());
@@ -117,7 +118,7 @@ public class ReadSpreadSheet : MonoBehaviour
                 data.Sprite = null;
                 Debug.Log("스프라이트가 없습니다.");
             }
-            data.CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[9]);
+            data.CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[10]);
             //data.Id = ConvertInt32(cells[0]);
             //data.Name = LineBreakStr(cells[1]);
             //data.Cost = ConvertInt32(cells[2]);
@@ -158,7 +159,7 @@ public class ReadSpreadSheet : MonoBehaviour
         int i = 0;
         foreach (string row in rows)
         {
-            string[] cells = row.Split(",");
+            string[] cells = row.Split("\t");
             var data = new EnemyData();
             data.id = ConvertInt32(cells[0]);
             data.name = LineBreakStr(cells[1]);

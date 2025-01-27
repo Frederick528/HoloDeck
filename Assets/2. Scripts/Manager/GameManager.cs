@@ -18,7 +18,9 @@ public class GameManager : MonoBehaviour
 
     public Player player;
 
-    bool pause;
+    public int PauseInt;
+
+    bool _isESCPause = false;
 
     void Awake()
     {
@@ -74,19 +76,35 @@ public class GameManager : MonoBehaviour
         player.Coin.Value += coin;
     }
 
+    public void Pause(bool pause)
+    {
+        if (pause && PauseInt == 0)
+            ++PauseInt;
+        else if (!pause && PauseInt == 1)
+            --PauseInt;
+        else
+        {
+            PauseInt = pause ? ++PauseInt : --PauseInt;
+            return;
+        }
+        //if (_selectAbility && _option) return;
+        Time.timeScale = pause ? 0 : 1;
+        Physics2D.autoSyncTransforms = pause ? true : false;
+    }
+
     void Update()
     {
-        if (fastMode)
+        if (fastMode && PauseInt == 0)
         {
             Time.timeScale = 3f;
         }
-        else { Time.timeScale = pause ? 0 : 1; }
+        else { Time.timeScale = PauseInt != 0 ? 0 : 1; }
 
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            pause = !pause;
-            Time.timeScale = pause? 0 : 1;
+            _isESCPause = !_isESCPause;
+            Pause(_isESCPause);
             //TurnManager.Instance.DrawCardTask().Forget();
         }
         //if (Input.GetKeyDown(KeyCode.Space))

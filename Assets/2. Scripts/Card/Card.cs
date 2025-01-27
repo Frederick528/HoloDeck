@@ -42,11 +42,11 @@ public class Card : MonoBehaviour
 
     public bool Used;
 
-    public bool Selected;       // selectCard = 내가 지금 들고있는 카드 (카드 사용 용), selectedCard = 내가 선택한 카드 (선택해서 버리기 용)
+    public bool Selected;       // _selectCard = 내가 지금 들고있는 카드 (카드 사용 용), selectedCard = 내가 선택한 카드 (선택해서 버리기 용)
 
     public CardAbility CardAbility = new();
 
-    public UniTask UseConditions;
+    public UniTask<bool>? UseConditions;
 
     //public Action<Card> CardAction { get; private set; }
     //public Action CardAction { get; private set; }
@@ -56,6 +56,8 @@ public class Card : MonoBehaviour
     public bool Enhanced = false;
 
     public Enemy TargetEnemy = null;        // 카드 사용 시, 타겟에너미를 받아옴. (나중에 큐에서 체크하기 위함.)
+
+    //BoxCollider2D _boxCollider2;
 
     // Start is called before the first frame update
 
@@ -70,6 +72,7 @@ public class Card : MonoBehaviour
     public void Setup(CardData data)
     {
         CardOrder = GetComponent<Order>();
+        //_boxCollider2 = GetComponent<BoxCollider2D>();
 
         _defaultData = data;
         StringBuilder sb = new StringBuilder(_defaultData.Descript);
@@ -77,6 +80,7 @@ public class Card : MonoBehaviour
         sb.Replace("{Shield}", (_defaultData.Shield + GameManager.Instance.player.DefencePower.Value).ToString());
         sb.Replace("{Count}", (_defaultData.Count).ToString());
         sb.Replace("{Draw}", (_defaultData.Draw).ToString());
+        sb.Replace("{Reduce}", (_defaultData.Reduce).ToString());
         _defaultDesc = sb.ToString();
         Desc = sb.ToString();
 
@@ -86,7 +90,7 @@ public class Card : MonoBehaviour
         character.sprite = Data.Sprite;
         //CardAction = CardAbility.SetCardActionAbility(this);     // Action<Card> 버전 (드로우 시간 체크 때문에 일단 사용하지 않음.)
         //CardTask = CardAbility.SetCardAbility(this);              // 그냥 카드어빌리티 실행하면 Task 바꾸도록 함.
-        //CardAbility.SetCardAbility(this);
+        //CardAbility.SetCardAbility(this);     // 사용 전에 받기 때문에 굳이 사용 안 해도 됨. 나중에 따로 필요하면 킬 것.
         //CardLazy = CardAbility.SetCardLazyAbility(this);        // 중복 해결을 위해 Lazy를 써봄.
 
         CardDataReset();
@@ -115,15 +119,19 @@ public class Card : MonoBehaviour
         //CardTask = CardAbility.SetCardTaskAbility(Data.Id);
     }
 
-    public async UniTask CheckUseConditions()
+    public async UniTask<bool> CheckUseConditions()
     {
         CardAbility.SetCardAbility(this);
-        await UseConditions;
+        if (!UseConditions.HasValue)
+        {
+            return true;
+        }
+        return await UseConditions.Value;
     }
 
     public async UniTask UseTask()
     {
-        CardAbility.SetCardAbility(this);   // checkUseConditions에서 받게 되면 이건 사용 안 할 예정
+        //CardAbility.SetCardAbility(this);   // checkUseConditions에서 받게 되면 이건 사용 안 할 예정
         //UniTask uniTask = UniTask.Create(() => CardTask);
         //await CardAbility.SetCardAbility(this);     // 다른 방식이 있는지 찾아봐야할 듯
         await CardTask;
@@ -154,6 +162,7 @@ public class Card : MonoBehaviour
             Data.Shield = _defaultData.Shield + GameManager.Instance.player.DefencePower.Value;
             Data.Count = _defaultData.Count + 0;
             Data.Draw = _defaultData.Draw + 0;
+            Data.Reduce = _defaultData.Reduce + 0;
             costText.text = (_defaultData.Cost + 0).ToString();
             desText.text = Desc;
         //}
@@ -171,6 +180,7 @@ public class Card : MonoBehaviour
         sb.Replace("{Shield}", (_defaultData.Shield + GameManager.Instance.player.DefencePower.Value).ToString());
         sb.Replace("{Count}", (_defaultData.Count).ToString());
         sb.Replace("{Draw}", (_defaultData.Draw).ToString());
+        sb.Replace("{Reduce}", (_defaultData.Reduce).ToString());
         Desc = sb.ToString();
         CardDataReset();
         //switch (data)
@@ -231,26 +241,31 @@ public class Card : MonoBehaviour
     {
         if (battleCancel)
         {
+            //AutoSyncTr(dotweenTime).Forget();           // 그냥 여기서 켰다가 밑에서 꺼도 되지만, 그냥 함수 하나로 퉁치기
             await UniTask.WhenAll(
+            //AutoSyncTr(dotweenTime),
             transform.DOMove(prs.pos, dotweenTime).SetUpdate(true).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/,
             transform.DORotateQuaternion(prs.rot, dotweenTime).SetUpdate(true).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/,
             transform.DOScale(prs.scale, dotweenTime).SetUpdate(true).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/
-                );
+            );
         }
         else
         {
             await UniTask.WhenAll(
+            //AutoSyncTr(dotweenTime),
             transform.DOMove(prs.pos, dotweenTime).SetUpdate(true).WithCancellation(this.GetCancellationTokenOnDestroy()),
             transform.DORotateQuaternion(prs.rot, dotweenTime).SetUpdate(true).WithCancellation(this.GetCancellationTokenOnDestroy()),
             transform.DOScale(prs.scale, dotweenTime).SetUpdate(true).WithCancellation(this.GetCancellationTokenOnDestroy())
-                );
+            );
         }
     }
-
     public void MoveTransform(PRS prs, bool useDotween = false, float dotweenTime = 0/*, bool ignoreTimeScale = false*/)
     {
+        //Physics2D.SyncTransforms();
+        //Physics2D.autoSyncTransforms = true;
         if (useDotween)
         {
+            //AutoSyncTr(dotweenTime).Forget();
             transform.DOMove(prs.pos, dotweenTime).SetUpdate(true);
             transform.DORotateQuaternion(prs.rot, dotweenTime).SetUpdate(true);
             transform.DOScale(prs.scale, dotweenTime).SetUpdate(true);
@@ -260,8 +275,20 @@ public class Card : MonoBehaviour
             transform.position = prs.pos;
             transform.rotation = prs.rot;
             transform.localScale = prs.scale;
+            //if (GameManager.Instance.PauseInt != 0)
+            //{
+            //    Physics2D.SyncTransforms();
+            //    //SetPRSCollider();
+            //}
         }
     }
+
+    //async UniTask AutoSyncTr(float time)              // TimeScale = 0 되는 곳에서 그냥 true함.
+    //{
+    //    Physics2D.autoSyncTransforms = true;
+    //    await UniTask.WaitForSeconds(time, true).SuppressCancellationThrow();
+    //    Physics2D.autoSyncTransforms = false;
+    //}
 
     void OnMouseOver()
     {
@@ -291,7 +318,7 @@ public class Card : MonoBehaviour
 
     void OnMouseUp()
     {
-        CardManager.Instance.CardMouseUp(this);
+        CardManager.Instance.CardMouseUp(this).Forget();
 
 
         //if (comeBackCard || TurnManager.Instance.isLoading)

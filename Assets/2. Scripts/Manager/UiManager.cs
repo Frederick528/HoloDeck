@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using static UiManager;
 
 public class UiManager : MonoBehaviour
 {
@@ -33,7 +32,7 @@ public class UiManager : MonoBehaviour
     [Header("Box")]
     Transform[] _rewardBoxes;
 
-    public Transform _cardRewardContent;
+    Transform _cardRewardContent;
     Transform _itemRewardContent;
 
     UICard[] _uICards = new UICard[4];
@@ -56,9 +55,9 @@ public class UiManager : MonoBehaviour
     private void Start()
     {
         _cardEnlargePanel = Canvas(CanvasName.CardReward).Find("CardEnlargePanel");
-        //_cardRewardContent = Canvas(CanvasName.CardReward).Find("Content");
+        _cardRewardContent = FindChildByName(Canvas(CanvasName.CardReward), "Content");
         _itemEnlargePanel = Canvas(CanvasName.ItemReward).Find("ItemEnlargePanel");
-        _itemRewardContent = Canvas(CanvasName.ItemReward).Find("Content");
+        _itemRewardContent = FindChildByName(Canvas(CanvasName.ItemReward), "Content");
         _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel");
         _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel");
 
@@ -76,6 +75,21 @@ public class UiManager : MonoBehaviour
 
         SetActiveCanvas(CanvasName.Map, true);
     }
+
+    public Transform FindChildByName(Transform parent, string name)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.name == name)
+                return child;
+
+            Transform found = FindChildByName(child, name);
+            if (found != null)
+                return found;
+        }
+        return null;
+    }
+
 
     public void SetActiveCanvas(CanvasName canvasName, bool state, int idx = -1)
     {

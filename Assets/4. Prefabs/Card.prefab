@@ -542,15 +542,16 @@ MonoBehaviour:
     pos: {x: 0, y: 0, z: 0}
     rot: {x: 0, y: 0, z: 0, w: 0}
     scale: {x: 0, y: 0, z: 0}
+  CardOrder: {fileID: 0}
   Data:
     Name: 
     Id: 0
     Cost: 0
     Damage: 0
-    Defence: 0
+    Shield: 0
     Count: 0
     Draw: 0
-    CardUseDelay: 0
+    Reduce: 0
     Price: 0
     Descript: 
     Sprite: {fileID: 0}
@@ -559,6 +560,7 @@ MonoBehaviour:
   ID: 0
   Block: 0
   Used: 0
+  Selected: 0
   Enhanced: 0
   TargetEnemy: {fileID: 0}
 --- !u!61 &6399435079816834888

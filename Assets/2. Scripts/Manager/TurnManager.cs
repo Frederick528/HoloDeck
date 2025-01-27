@@ -170,7 +170,8 @@ public class TurnManager : MonoBehaviour
 
     public async UniTask EndTurn(bool endBattle = false)
     {
-        if (!_canEndTurn && !endBattle) return;
+        if (GameManager.Instance.PauseInt != 0) return;     // Pause 상태면 턴종 불가능
+        if (!_canEndTurn && !endBattle) return;             // 턴종 가능한지 확인, 단, 배틀 종료 상태에서는 턴종 가능한가와 상관없이 진행
         myTurn = false;
         ButtonManager.Instance.TurnEndButtonInvert(myTurn);
         UiManager.Instance.ChangeTurnButtonText(myTurn);

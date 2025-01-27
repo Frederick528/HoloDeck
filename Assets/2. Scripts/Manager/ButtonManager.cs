@@ -8,10 +8,22 @@ public class ButtonManager : MonoBehaviour
 {
     public static ButtonManager Instance { get; private set; }
 
+    [SerializeField] Button turnEndButton;
+    public Button DiscardButton;
+    public Button DiscardCancelButton;
+
     private void Awake() => Instance = this;
 
-    [SerializeField] Button turnEndButton;
+    private void Start()
+    {
+        DiscardButton = UiManager.Instance.FindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.SelectedCard), "DiscardButton").GetComponent<Button>();
+        DiscardCancelButton = UiManager.Instance.FindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.SelectedCard), "CancelButton").GetComponent<Button>();
+    }
 
+    public void DiscardButtonInvert(bool state)
+    {
+        DiscardButton.interactable = state;
+    }
     public void TurnEndButton()
     {
         TurnManager.Instance.EndTurn().Forget();

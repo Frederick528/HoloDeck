@@ -51,7 +51,10 @@ public class CardAbility
         switch (card.Data.Id)       // Defer => await 한 번일 때 유용, Lazy => await 여러 번일 때 유용
         {
             case 100:
-                card.UseConditions = DiscardAb(card);
+                card.UseConditions = UniTask.Defer(async () =>
+                {
+                    return await DiscardAb(2);
+                });
                 card.CardTask = UniTask.Defer(async () =>
                 {
                     await DelayTask(0.5f);
@@ -460,11 +463,30 @@ public class CardAbility
         //    GameManager.Instance.player.Shield(card.Data.EnhancedDefence);
     }
 
-    UniTask DiscardAb(Card card)
+    async UniTask<bool> DiscardAb(int discardCnt)
     {
+        bool discarded = false;
+        ButtonManager.Instance.DiscardButtonInvert(false);
         CardManager.Instance.ChangeDiscard(true);
-        CardManager.Instance.SetCardState(3);   // Click
-        return UniTask.CompletedTask;
+        await UniTask.WhenAny(
+            UniTask.Create(async () =>
+            {
+                await ButtonManager.Instance.DiscardButton.OnClickAsync();
+                CardManager.Instance.ThrowAwaySelectedCard().Forget();
+                discarded = true;
+
+
+            }),
+            UniTask.Create(async () =>
+            {
+                await ButtonManager.Instance.DiscardCancelButton.OnClickAsync();
+                CardManager.Instance.ReturnSelectedCard();
+                discarded = false;
+
+            })
+            );
+        CardManager.Instance.ChangeDiscard(false);
+        return discarded;
 
     }
 

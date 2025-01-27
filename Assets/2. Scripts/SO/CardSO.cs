@@ -38,6 +38,7 @@ public class CardData : ICloneable
     //public int EnhancedCount;
     public int Draw;
     //public int EnhancedDraw;
+    public int Reduce;
     //public float CardUseDelay;
     public int Price;
     [TextArea(1, 5)]
@@ -58,6 +59,7 @@ public class CardData : ICloneable
             Shield = Shield,
             Count = Count,
             Draw = Draw,
+            Reduce = Reduce,
             //CardUseDelay = CardUseDelay,
             Price = Price,
             Descript = Descript,

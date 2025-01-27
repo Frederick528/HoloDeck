@@ -65,7 +65,8 @@ public class EventQueue
                 DoNext().Forget();
                 return;
             }
-            await CardManager.Instance.CheckCanUseCard(cardEvent);
+            //await CardManager.Instance.CheckCanUseCard(cardEvent);
+            await CardManager.Instance.UsedCard(cardEvent);
         }
         //else if (!CardManager.Instance.CanUseHolo(cardEvent))
         //{

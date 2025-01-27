@@ -357,7 +357,7 @@ GameObject:
   - component: {fileID: 2984972273912181467}
   - component: {fileID: 3746789225560425821}
   m_Layer: 5
-  m_Name: ArmorText
+  m_Name: ShieldText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -494,7 +494,7 @@ GameObject:
   - component: {fileID: 646372702800013994}
   - component: {fileID: 1655976492176066999}
   m_Layer: 5
-  m_Name: Armor
+  m_Name: Shield
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -723,9 +723,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entitySprite: {fileID: 7465859050039744380}
   slider: {fileID: 9096524307653356880}
+  shieldObj: {fileID: 0}
   hpText: {fileID: 1388667632850263109}
   armorText: {fileID: 0}
   col2d: {fileID: 8808888329994446084}
+  Death: 0
 --- !u!1 &8307365719094005407
 GameObject:
   m_ObjectHideFlags: 0

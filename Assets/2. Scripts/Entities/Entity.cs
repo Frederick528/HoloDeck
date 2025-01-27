@@ -10,7 +10,7 @@ public abstract class Entity : MonoBehaviour
 {
     [SerializeField] protected SpriteRenderer entitySprite;
     [SerializeField] protected Slider slider;   // 나중에 이미지로 변경
-    [SerializeField] protected GameObject armorObj;
+    [SerializeField] protected GameObject shieldObj;
     [SerializeField] protected TMP_Text hpText;
     [SerializeField] protected TMP_Text armorText;
     [SerializeField] protected BoxCollider2D col2d;
@@ -97,11 +97,11 @@ public abstract class Entity : MonoBehaviour
         {
             if (shield <= 0)
             {
-                armorObj.SetActive(false);
+                shieldObj.SetActive(false);
             }
             else
             {
-                armorObj.SetActive(true);
+                shieldObj.SetActive(true);
                 armorText.text = shield.ToString();
             }
         });
@@ -111,7 +111,7 @@ public abstract class Entity : MonoBehaviour
     {
         entitySprite = GetComponent<SpriteRenderer>();
         slider = GetComponentInChildren<Slider>();
-        armorObj = GameObject.Find("Armor");
+        shieldObj = GameObject.Find("Shield");
         hpText = GetComponentsInChildren<TMP_Text>()[0];
         armorText = GetComponentsInChildren<TMP_Text>()[1];
         col2d = GetComponent<BoxCollider2D>();

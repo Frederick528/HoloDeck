@@ -21,8 +21,9 @@ MonoBehaviour:
     Shield: 0
     Count: 1
     Draw: 0
+    Reduce: 2
     Price: 5
-    Descript: '{Damage} Damage'
+    Descript: After discarding {Reduce} cards, {Damage} Damage
     Sprite: {fileID: 0}
     CardTag: 0
   - Name: Name2
@@ -32,6 +33,7 @@ MonoBehaviour:
     Shield: 0
     Count: 1
     Draw: 1
+    Reduce: 0
     Price: 10
     Descript: '{Damage} Damage
 
@@ -45,6 +47,7 @@ MonoBehaviour:
     Shield: 0
     Count: 2
     Draw: 0
+    Reduce: 0
     Price: 20
     Descript: '{Damage} Damage X {Count}'
     Sprite: {fileID: 0}
@@ -56,6 +59,7 @@ MonoBehaviour:
     Shield: 0
     Count: 2
     Draw: 0
+    Reduce: 0
     Price: 20
     Descript: All {Damage} Damage X {Count}
     Sprite: {fileID: 0}
@@ -67,6 +71,7 @@ MonoBehaviour:
     Shield: 0
     Count: 0
     Draw: 2
+    Reduce: 0
     Price: 15
     Descript: '{Draw} Draw'
     Sprite: {fileID: 0}
@@ -78,6 +83,7 @@ MonoBehaviour:
     Shield: 6
     Count: 0
     Draw: 0
+    Reduce: 0
     Price: 5
     Descript: '{Shield} Shield'
     Sprite: {fileID: 0}
@@ -89,8 +95,9 @@ MonoBehaviour:
     Shield: 0
     Count: 1
     Draw: 0
+    Reduce: 2
     Price: 20
-    Descript: '{Damage} Damage'
+    Descript: After discarding {Reduce} cards, {Damage} Damage
     Sprite: {fileID: 0}
     CardTag: 0
   - Name: EnhancedName2
@@ -100,6 +107,7 @@ MonoBehaviour:
     Shield: 0
     Count: 1
     Draw: 2
+    Reduce: 0
     Price: 40
     Descript: '{Damage} Damage
 
@@ -113,6 +121,7 @@ MonoBehaviour:
     Shield: 0
     Count: 3
     Draw: 0
+    Reduce: 0
     Price: 60
     Descript: '{Damage} Damage X {Count}'
     Sprite: {fileID: 0}
@@ -124,6 +133,7 @@ MonoBehaviour:
     Shield: 0
     Count: 3
     Draw: 0
+    Reduce: 0
     Price: 50
     Descript: All {Damage} Damage X {Count}
     Sprite: {fileID: 0}
@@ -135,6 +145,7 @@ MonoBehaviour:
     Shield: 0
     Count: 0
     Draw: 3
+    Reduce: 0
     Price: 30
     Descript: '{Draw} Draw'
     Sprite: {fileID: 0}
@@ -146,6 +157,7 @@ MonoBehaviour:
     Shield: 11
     Count: 0
     Draw: 0
+    Reduce: 0
     Price: 10
     Descript: '{Shield} Shield'
     Sprite: {fileID: 0}
