@@ -88,43 +88,15 @@ public class CardManager : MonoBehaviour
                 _selectCard.transform.position = new Vector2(0, -3.32f);
                 isSingleTarget = true;
             }
-            //else if (isUseCard.Value && _selectCard.Data.CardTag != CardTag.SingleAttackAb)
-            //{
-            //    Vector2 tempPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //    _selectCard.transform.position = tempPos;
-            //}
             else if (!canUse && isSingleTarget)
             {
                 GameManager.Instance.ArrowCursor(false);
                 isSingleTarget = false;
             }
-            //else if (!isUseCard.Value)
-            //{
-            //    Vector2 tempPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //    _selectCard.transform.position = tempPos;
-            //}
         });
 
         SetupStartCardDeck();
-
-        //for (int i = 0; i < uICards.Length; ++i)
-        //{
-        //    uICards[i] = cardRewardContent.GetChild(i).GetComponent<UICard>();
-        //}
-        //StartBattle();    // 현재 Battle.cs에서 진행중
     }
-    //private void Update()
-    //{
-    //    SetCardState();     // UniRx 이용해서 따로 처리할 것
-
-    //}
-
-    //public void ShowRewardCard(int[] reward)        // 해당 부분들 맵, 상점으로 다 이동시켜야 함.
-    //{
-    //    for (int i = 0; i < reward.Length; ++i)
-    //        uICards[i].Setup(FindCardData(reward[i]));
-    //}
-
     public void RewardedCard()
     {
         AddDeck(rewardCardData, EAddDeck.Main);
@@ -132,64 +104,14 @@ public class CardManager : MonoBehaviour
         UiManager.Instance.LookMap();
     }
 
-    //public void SettingCardShop()
-    //{
-    //    for (int i = 0; i < shopCard.childCount; ++i)
-    //    {
-    //        CardData _cardData = FindCardData(Random.Range(100, 106));
-    //        shopCard.GetChild(i).GetComponent<UICard>().Setup(_cardData);       // 나중에 다 캐싱할 것
-    //        shopCardPrice.GetChild(i).GetComponent<TMP_Text>().text = _cardData.Price.ToString();
-    //    }
-    //}
-    //public void BuyCard()
-    //{
-    //    if (GameManager.Instance.player.Coin.Value >= rewardCardData.Price)
-    //    {
-    //        GameManager.Instance.player.Coin.Value -= rewardCardData.Price;
-    //        AddDeck(rewardCardData, EAddDeck.Main);
-    //        shopCard.GetChild(shopCardIdx).GetComponent<UICard>().gameObject.SetActive(false);
-    //        shopCardPrice.GetChild(shopCardIdx).GetComponent<TMP_Text>().text = "";
-    //    }
-    //    else
-    //        print("돈부족");
-    //}
-
-    //public void BuyCardIdx(int idx)
-    //{
-    //    shopCardIdx = idx;
-    //}
-
-    //public CardData FindCardData(int id)   // Id 값으로 카드데이터 가져오기
-    //{
-    //    CardData _cardData;
-    //    if (CardDatas.TryGetValue(id, out _cardData))
-    //    {
-    //        return _cardData;
-    //    }
-    //    else
-    //    {
-    //        _cardData = (CardData)Array.Find(cardSO.Cards, x => x.Id == id).Clone();
-    //        CardDatas.Add(id, _cardData);
-    //        return _cardData;
-    //    }
-    //    //return cardSO.Cards.Find(x => x.Id == Id);
-    //    //return Array.Find(cardSO.Cards, x => x.Id == Id);
-    //}
-
     void SetupStartCardDeck()   // 시작할 때, 메인덱을 설정하는 함수 (게임 시작 이후에는 사용하지 않음.)
     {
         int _startDeck = 6;     // 여기 밑 코드 변경해야 함. 캐릭터별로 얻는 카드와 카드 ID가 달라지기 때문에 switch로 구별.
         for (int i = 0; i < _startDeck; i++)
             AddDeck(100 + i, EAddDeck.Main);
-
-        //AddDeck(FindCardInCardSO(1000), EAddDeck.Main);     // 이 부분은 제거할 것
-        //AddDeck(FindCardInCardSO(1001), EAddDeck.Main);     // 이 부분은 제거할 것
     }
     public void AddDeck(CardData cardData, EAddDeck eAddDeck)       // 덱에 카드를 추가할 때 사용, 핸드로 카드를 가져올 때는 DrawCard 함수 사용. (주로 데이터 자체가 이동할 때 사용)
     {
-        //GameObject cardObject = PoolManager.Instance.CardPool.Get();
-        //    /*Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, Deck);*/
-        //Card blockCard = cardObject.GetComponent<Card>();
         PoolManager.Instance.GetCard(out GameObject cardObject, out Card setCard);
 
         setCard.name = cardData.Name;
@@ -260,32 +182,18 @@ public class CardManager : MonoBehaviour
         useCard.Used = false;
     }
 
+
     async UniTask<bool> BeforeUsingCard(Card card)
     {
         if (GameManager.Instance.player.CurHolo < card.Data.Cost)
         {
-            //PutDownCard(card).Forget();
             return false;
         }
-        //if (card.UseConditions.HasValue)
-        //ResetSetting();
-        //await card.TaskMoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale), true, CardUtils.CardAlignmentDelay);
         card.MoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale), true, CardUtils.CardAlignmentDelay);
-        //HandCard.Remove(card);
         if (!await card.CheckUseConditions())
         {
-            //foreach (Card selectedCard in _selectedCards)
-            //{
-            //    selectedCard.Selected = false;
-            //    HandCard.Add(selectedCard);
-            //    SetOriginOrder();
-            //    CardAlignment();
-            //}
-            //_selectedCards.Clear();
-            //PutDownCard(card).Forget();
             return false;
         }
-        //HandCard.Add(card);
 
         GameManager.Instance.player.ChangeHoloValue(-card.Data.Cost);
 
@@ -300,16 +208,37 @@ public class CardManager : MonoBehaviour
         {
             CardDummy.Add(usedCard);
         }
-        //usedCard.transform.position = cardSpawnPoint.position;
         usedCard.Block = false;
         usedCard.Used = false;
     }
 
-    //IEnumerator WaitUnblock(Card blockCard, float waitTime)       //  .Forget() 추가하기 귀찮아서 그냥 코루틴으로 작성함.
-    //{
-    //    yield return new WaitForSeconds(waitTime);
-    //    blockCard.Block = false;
-    //}
+    async UniTask CheckCanUseingCard(Card card, bool singleAtk = false)
+    {
+        ResetSetting();
+
+        card.CardOrder.SetOriginOrder(0);
+
+        HandCard.Remove(card);
+        SetOriginOrder();
+        CardAlignment();
+        _usedCard = card;       // 다른 카드가 사용 중이면 사용 못 하게 막을지 고민 중
+        if (singleAtk)
+            card.Target(EnemyManager.Instance.targetEnemy);
+        if (!await BeforeUsingCard(card))
+        {
+            if (singleAtk)
+                card.Target(null);
+            HandCard.Add(card);
+            SetOriginOrder();
+            CardAlignment();
+            _usedCard = null;
+            PutDownCard(card).Forget();
+
+            return;
+        }
+        _eventQueue.Enqueue(card);
+        _usedCard = null;
+    }
 
     public void ChangeTotalCardDesc()
     {
@@ -329,61 +258,34 @@ public class CardManager : MonoBehaviour
             {
                 if (MainDeck.Contains(TotalDeck[i]))
                 {
-                    //card.DOKill();
-                    //card.MoveTransform(new PRS(cardSpawnPoint.position, Quaternion.identity, CardUtils.CardScale), false);
-                    //TotalDeck[i].CardDataReset();
                     continue;
                 }
                 //TotalDeck[i].CardDataReset(true);
                 TotalDeck[i].CardRelease();
                 TotalDeck.Remove(TotalDeck[i--]);
             }
-
-            //for (int i = 0; i < Deck.childCount; i++)
-            //{
-            //    if (!Deck.GetChild(i).gameObject.activeSelf)
-            //        continue;
-            //    Card card = Deck.GetComponentsInChildren<Card>(true)[i];
-            //    //GameObject cardObject = Deck.GetChild(i).gameObject;
-            //    if (MainDeck.Contains(card))
-            //    {
-            //        //card.DOKill();
-            //        //card.MoveTransform(new PRS(cardSpawnPoint.position, Quaternion.identity, CardUtils.CardScale), false);
-            //        continue;
-            //    }
-            //    card.CardRelease();
-            //    //MainCardDeck.Add(card);
-            //    //cardObject.GetComponent<Card>().CardRelease();
-
-            //}
         }
     }
     public void SetupDrawDeck(bool start = false)  // 드로우덱 섞기(start가 true일 경우, 메인덱에서 가져옴. false일 경우, 카드더미에서 가져옴.)
     {
         if (!start)
         {
-            DrawDeck = CardDummy.ToList();
-            foreach (Card card in DrawDeck)
+            //DrawDeck = CardDummy.ToList();
+            foreach (Card card in CardDummy)
             {
+                DrawDeck.Add(card);         // 여기선 AddDeck 안 씀.
                 card.transform.position = cardSpawnPoint.position;
             }
-            //foreach (Card card in CardDummy)
-            //{
-            //    DrawDeck.Add(card);
-            //}
             CardDummy.Clear();
         }
         else
         {
-            DrawDeck = MainDeck.ToList();
-            foreach (Card card in DrawDeck)
+            //DrawDeck = MainDeck.ToList();
+            foreach (Card card in MainDeck)
             {
+                DrawDeck.Add(card);
                 card.transform.position = cardSpawnPoint.position;
             }
-            //foreach (Card card in MainDeck)
-            //{
-            //    DrawDeck.Add(card);
-            //}
         }
         ShuffleDeck();
     }
@@ -419,30 +321,11 @@ public class CardManager : MonoBehaviour
 
     public Card CardToDraw(Card drawCard)
     {
-        //if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기. 이 경우에는 카드 뽑기가 LoadCardDummyDelay초 후 가능 (카드 버려지는 시간인 ThrowAwayCardDelay초보단 높게 잡아야 함.)
-        //{
-        //    SetupDrawDeck();
-        //    await UniTask.WaitForSeconds(CardUtils.LoadCardDummyDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
-        //}
-
-        //if (DrawDeck.Count == 0)    // 덱을 섞은 후에도 뽑을 카드가 없으면 리턴
-        //    return null;
         if (HandCard.Count == 10) return null;
 
         Card card = DrawDeck.Find(x => x == drawCard);
         DrawDeck.Remove(card);
         return card;
-
-        //for (int i = 0; i < DrawDeck.Count; i++)
-        //{
-        //    if (DrawDeck[i] == drawCard)
-        //    {
-        //        Card card = DrawDeck[i];
-        //        DrawDeck.RemoveAt(i);
-        //        return card;
-        //    }
-        //}
-        //return null;
     }
 
     //public async UniTask<Card[]> CardsToDraw(int count)
@@ -496,9 +379,6 @@ public class CardManager : MonoBehaviour
         Card drawCard = await CardToDraw();
         if (drawCard == null)
             return;
-        //GameObject cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity);
-        //Card card = drawCard.GetComponent<Card>();
-        //drawCard.Setup(drawCard.Data);
         HandCard.Add(drawCard);
 
         SetOriginOrder();
@@ -551,8 +431,6 @@ public class CardManager : MonoBehaviour
         if (drawCard == null)
             return;
 
-        //Card card = drawCard.GetComponent<Card>();
-        //drawCard.Setup(drawCard.Data);
         HandCard.Add(drawCard);
 
         SetOriginOrder();
@@ -585,12 +463,8 @@ public class CardManager : MonoBehaviour
         isUseCard.Value = false;
 
         _selectCard = null;      // isUseCard와 순서 중요! selectCard가 밑에 있어야 함.
-        //_usedCard = null;
 
         canPush = true;         // PullCard랑 중복 호출이긴 함.
-
-        //_discard = false;
-        //_remove = false;
     }
     public void ReturnSelectedCard()
     {
@@ -626,6 +500,10 @@ public class CardManager : MonoBehaviour
             SetOriginOrder();
             CardAlignment();
         }
+        //if (HandCard.Count <= _usedCard.Data.Reduce)
+        //{
+        //    // 카드 효과가 버리기일 경우, 위 상황에서는 바로 버리기 가능해야 함. 반대로 카드조건이 버리기일 경우, 불가능.
+        //}
         if (_usedCard.Data.Reduce > 0)
         {
             if (_selectedCards.Count == _usedCard.Data.Reduce)
@@ -711,16 +589,8 @@ public class CardManager : MonoBehaviour
         {
             CardDummy.Add(targetCard);
             UnblockCard(targetCard);
-            //targetCard.transform.position = cardSpawnPoint.position;
         }
         HandCard.Clear();
-
-
-        //foreach (Card dummyCard in CardDummy)
-        //{
-        //    dummyCard.Block = false;
-        //    dummyCard.CardPool.Release(dummyCard.gameObject);
-        //}
     }
     public async UniTask ThrowAwayCard(Card throwCard)
     {
@@ -731,8 +601,6 @@ public class CardManager : MonoBehaviour
 
         await throwCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), false, CardUtils.ThrowAwayCardDelay);
 
-        //throwCard.Block = false;
-        //throwCard.transform.position = cardSpawnPoint.position;
         CardDummy.Add(throwCard);
     }
 
@@ -747,20 +615,8 @@ public class CardManager : MonoBehaviour
 
         HandCard.Remove(usedCard);
 
-
-        //await UniTask.Delay(TimeSpan.FromSeconds(usedCard.Data.cardUseDelay));
-
-        //if (MapManager.Instance.currStage.cleared)
-        //    return;
-
         SetOriginOrder();
         CardAlignment();
-
-        //usedCard.CardTask?.Invoke(usedCard);
-        //bool endBattle = await usedCard.CardTask.SuppressCancellationThrow();
-
-        //usedCard.UseAction();
-        //bool endBattle = await usedCard.UseLazy().SuppressCancellationThrow();
 
         bool endBattle = await usedCard.UseTask().SuppressCancellationThrow();
         if (endBattle)
@@ -768,36 +624,6 @@ public class CardManager : MonoBehaviour
             _eventQueue.QueueClear();
         }
         await AfterCardAbility(usedCard, endBattle);
-
-        //bool endBattle = await UniTask.WaitForSeconds(usedCard.Data.CardUseDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token).SuppressCancellationThrow();   // Action<Card>였을 때 사용. 일단 지금은 사용 해제
-        //if (endBattle)
-        //{
-        //    _eventQueue.QueueClear();
-        //}
-
-        /*bool shutdown = */
-        //await usedCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), false, CardUtils.ThrowAwayCardDelay).SuppressCancellationThrow();
-
-        //if (!endBattle)
-        //{
-        //    CardDummy.Add(usedCard);
-        //}
-
-        ////if (!shutdown)
-        ////{
-        //usedCard.transform.position = cardSpawnPoint.position;
-        ////}
-        ////else
-        ////{
-        ////    usedCard.MoveTransform(new PRS(cardSpawnPoint.position, Quaternion.identity, CardUtils.CardScale));
-        ////}
-        ////throwCard.Block = false;
-        ////usedCard.transform.position = cardSpawnPoint.position;
-        //usedCard.Block = false;
-        //usedCard.Used = false;
-
-        ////await UniTask.Delay(TimeSpan.FromSeconds(usedCard.Data.cardUseDelay));
-        ////CardDummy.Add(usedCard);
     }
 
 
@@ -806,29 +632,23 @@ public class CardManager : MonoBehaviour
         for (int i = 0; i < cardList.Count; i++)
         {
             Card targetCard = cardList[i];
-            //if (targetCard == _selectCard)
-            //    continue;
             targetCard.CardOrder.SetOriginOrder(i);
         }
     }
 
     void SelectedCardsAlignment(List<Card> cardList)     // 버리기, 삭제 등에서 사용할 예정
     {
-        List<PRS> CardPRSs/* = new List<PRS>()*/;
-        CardPRSs = SerialAlignment(new Vector2(-6, 1), new Vector2(6, 1), cardList.Count/*, 0.5f*/, CardUtils.CardScale * 0.7f);
+        List<PRS> CardPRSs;
+        CardPRSs = SerialAlignment(new Vector2(-6, 1), new Vector2(6, 1), cardList.Count, CardUtils.CardScale * 0.7f);
         for (int i = 0; i < cardList.Count; i++)
         {
             Card targetCard = cardList[i];
             WaitUnblock(targetCard, CardUtils.CardAlignmentDelay).Forget();
-
-            //targetCard.OriginPRS = CardPRSs[i];
-            //if (targetCard == _selectCard)
-            //    continue;
             targetCard.MoveTransform(CardPRSs[i], true, CardUtils.CardAlignmentDelay);
         }
     }
 
-    List<PRS> SerialAlignment(Vector3 leftVector, Vector3 rightVectpr, int cardCount/*, float height*/, Vector3 scale)
+    List<PRS> SerialAlignment(Vector3 leftVector, Vector3 rightVectpr, int cardCount, Vector3 scale)
     {
         float[] cardLerps = new float[cardCount];
         List<PRS> results = new List<PRS>(cardCount);
@@ -856,8 +676,6 @@ public class CardManager : MonoBehaviour
             Vector3 targetPos = Vector3.Lerp(leftVector, rightVectpr, cardLerps[i]);
             //targetPos.z = -i * 5;
 
-            //float curve = Mathf.Sqrt(Mathf.Pow(/*height*/0.5f, 2) * (1 - (Mathf.Pow(cardLerps[i] - 0.5f, 2) / Mathf.Pow(leftTr.position.x, 2))));   // 타원의 방정식
-
             targetPos.y += 2f;
 
             results.Add(new PRS(targetPos, Quaternion.identity, scale));
@@ -878,8 +696,8 @@ public class CardManager : MonoBehaviour
 
     void CardAlignment()
     {
-        List<PRS> originCardPRSs/* = new List<PRS>()*/;
-        originCardPRSs = RoundAlignment(myCardLeft, myCardRight, HandCard.Count/*, 0.5f*/, CardUtils.CardScale);
+        List<PRS> originCardPRSs;
+        originCardPRSs = RoundAlignment(myCardLeft, myCardRight, HandCard.Count, CardUtils.CardScale);
         for (int i = 0; i < HandCard.Count; i++)
         {
             Card targetCard = HandCard[i];
@@ -891,7 +709,7 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    List<PRS> RoundAlignment(Transform leftTr, Transform rightTr, int cardCount/*, float height*/, Vector3 scale)
+    List<PRS> RoundAlignment(Transform leftTr, Transform rightTr, int cardCount, Vector3 scale)
     {
         float[] cardLerps = new float[cardCount];
         List<PRS> results = new List<PRS>(cardCount);
@@ -936,8 +754,7 @@ public class CardManager : MonoBehaviour
     {
         if (cardState == ECardState.Nothing || draggable)
             return;
-        //_selectCard = card;
-        LargeCard(/*true, */card);
+        LargeCard(card);
         if (card.Selected) return;
         PushCard(card);
     }
@@ -945,9 +762,6 @@ public class CardManager : MonoBehaviour
     {
         if (cardState == ECardState.Nothing || draggable)
             return;
-        //_selectCard = null;
-        //LargeCard(false, card);
-        //PullCard();
         if (card.Selected)
         {
             card.MoveTransform(new PRS(card.transform.position, Quaternion.identity, CardUtils.CardScale * 0.7f));
@@ -958,7 +772,7 @@ public class CardManager : MonoBehaviour
     }
 
 
-    void LargeCard(/*bool isLarge, */Card card/*, bool selectedCards = false*/)
+    void LargeCard(Card card)
     {
         if (card.Selected)
         {
@@ -967,35 +781,18 @@ public class CardManager : MonoBehaviour
             card.CardOrder.SetMostFrontOrder(true);
             return;
         }
-        //if (selectedCards)
-        //{
-        //    return;
-        //}
-        //if (isLarge)
-        //{
-            card.transform.DOKill();              // 정렬 드로우 문제 등 제거
-            Vector3 largePos = new Vector3(card.OriginPRS.pos.x, -3.32f, -1f);      // z축 변경 안 하면, MouseOver 문제 생김.
-            card.MoveTransform(new PRS(largePos, Quaternion.identity, CardUtils.CardScale * 1.2f));
-        //}
-        //else
-        //    card.MoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay);
 
-        //card.GetComponent<Order>().SetMostFrontOrder(isLarge);
+        card.transform.DOKill();              // 정렬 드로우 문제 등 제거
+        Vector3 largePos = new Vector3(card.OriginPRS.pos.x, -3.32f, -1f);      // z축 변경 안 하면, MouseOver 문제 생김.
+        card.MoveTransform(new PRS(largePos, Quaternion.identity, CardUtils.CardScale * 1.2f));
+
         card.CardOrder.SetMostFrontOrder(true);
     }
     void PushCard(Card card)
     {
         if (!canPush)
             return;
-        //int cardIndex = -1;
-        //for (int i = 0; i < HandCard.Count; i++)
-        //{
-        //    if (HandCard[i] == card)
-        //    {
-        //        cardIndex = i;
-        //        break;
-        //    }
-        //}
+
         int cardIndex = HandCard.IndexOf(card);
         if (cardIndex == -1)
             return;
@@ -1010,19 +807,6 @@ public class CardManager : MonoBehaviour
             HandCard[cardIndex + i].transform.DOMoveX(HandCard[cardIndex + i].OriginPRS.pos.x + 0.5f / i, CardUtils.CardAlignmentDelay).SetUpdate(true);        // .SetUpdate(true) 추가함.
         }
 
-        //for (int i = 1; i < HandCard.Count; ++i)    // 나중에 수정 필요해보임.
-        //{
-        //    if (cardIndex - i >= 0)
-        //    {
-        //        //HandCard[cardIndex - i].transform.DOKill();
-        //        HandCard[cardIndex - i].transform.DOMoveX(HandCard[cardIndex - i].OriginPRS.pos.x - 0.5f / i, CardUtils.CardAlignmentDelay).SetUpdate(true);        // .SetUpdate(true) 추가함.
-        //    }
-        //    if (cardIndex + i < HandCard.Count)
-        //    {
-        //        //HandCard[cardIndex - i].transform.DOKill();
-        //        HandCard[cardIndex + i].transform.DOMoveX(HandCard[cardIndex + i].OriginPRS.pos.x + 0.5f / i, CardUtils.CardAlignmentDelay).SetUpdate(true);
-        //    }
-        //}
         canPush = false;
     }
 
@@ -1055,75 +839,26 @@ public class CardManager : MonoBehaviour
         _selectCard = card;
         draggable = true;
         BlockCard(card);
-        //card.Used = false;
     }
 
     public async UniTask CardMouseUp(Card card)
     {
-        //draggable = false;
-        //arrow.SetActive(false); => ArrowCursor(false);
         if (cardState != ECardState.CanMouseDrag)
         {
             //card.Block = false;
             return;
         }
-        //draggable = false;
-        //GameManager.Instance.ArrowCursor(false);
-        //_selectCard = null;
 
-        //if (GameManager.Instance.player.CurHolo < card.Data.Cost)
-        //{
-        //    PutDownCard(card).Forget();
-        //    ResetSetting();
-
-        //    return;
-        //}
-
-        if (isUseCard.Value)
+        if (isUseCard.Value)        // 카드 사용 가능 범위에 들어왔는지 확인
         {
             if (card.Data.CardTag != CardTag.SingleAttack)     // 단일타격을 제외한 나머지
             {
-                ResetSetting();
-                HandCard.Remove(card);
-                SetOriginOrder();
-                CardAlignment();
-                _usedCard = card;       // 다른 카드가 사용 중이면 사용 못 하게 막을지 고민 중
-                if (!await BeforeUsingCard(card))
-                {
-                    HandCard.Add(card);
-                    SetOriginOrder();
-                    CardAlignment();
-                    _usedCard = null;
-                    PutDownCard(card).Forget();
-                    //ResetSetting();
-
-                    return;
-                }
-                _eventQueue.Enqueue(card);
-                _usedCard = null;
+                await CheckCanUseingCard(card);
             }
             else if (useSingleTargetCard)                      // 단일타격이 가능할 경우
             {
-                ResetSetting();
-                HandCard.Remove(card);
-                SetOriginOrder();
-                CardAlignment();
-                _usedCard = card;       // 다른 카드가 사용 중이면 사용 못 하게 막을지 고민 중
-                card.Target(EnemyManager.Instance.targetEnemy);
-                if (!await BeforeUsingCard(card))
-                {
-                    card.Target(null);
-                    HandCard.Add(card);
-                    SetOriginOrder();
-                    CardAlignment();
-                    _usedCard = null;
-                    PutDownCard(card).Forget();         // 오더 중복 설정이긴 함.
-                    //ResetSetting();
 
-                    return;
-                }
-                _eventQueue.Enqueue(card);
-                _usedCard = null;
+                await CheckCanUseingCard(card, true);
             }
             else
             {
@@ -1137,81 +872,15 @@ public class CardManager : MonoBehaviour
             PutDownCard(card).Forget();
         }
 
-
-        //if (isUseCard.Value && card.Data.CardTag != CardTag.SingleAttack)     // 단일타격을 제외한 나머지
-        //{
-        //    _eventQueue.Enqueue(card);
-        //    //CheckCanUseCard(card);
-        //}
-        //else if (isUseCard.Value /*&& card.Data.CardTag == CardTag.SingleAttackAb */&& useSingleTargetCard)     // 단일타격이 가능할 경우
-        //{
-        //    card.Target(EnemyManager.Instance.targetEnemy);
-        //    _eventQueue.Enqueue(card);
-        //    //CheckCanUseCard(card);
-        //}
-        //else        // 사용되지 않은 경우
-        //{
-        //    PutDownCard(card).Forget();
-        //}
-
         //ResetSetting();
     }
 
-
-    //public async UniTask CheckCanUseCard(Card card)
-    //{
-    //    //card.CardTask?.Invoke(card);
-    //    if (GameManager.Instance.player.CurHolo < card.Data.Cost)
-    //    {
-    //        PutDownCard(card).Forget();
-    //        return;
-    //    }
-    //    GameManager.Instance.player.ChangeHoloValue(-card.Data.Cost);
-    //    await UsedCard(card);
-    //    //await UniTask.WaitForSeconds(card.Data.CardUseDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
-    //    //await UsedCard(card);
-    //    //await UsedCard(card);
-    //    //card.Block = false;
-    //    //GameManager.Instance.blockClick = false;
-    //}
-
-    //public void CheckCanUseCard(Card card)
-    //{
-    //    //card.CardTask?.Invoke(card);
-    //    if (GameManager.Instance.player.CurHolo < card.Data.Cost)       // 두 번 체크해야 함.
-    //    {
-    //        PutDownCard(card).Forget();
-    //        return;
-    //    }
-    //    GameManager.Instance.player.ChangeHoloValue(-card.Data.Cost);
-    //    UsedCard(card).Forget();
-    //    //await UsedCard(card);
-    //    //card.Block = false;
-    //    //GameManager.Instance.blockClick = false;
-    //}
-
-    //public bool CanUseHolo(Card card)                     // 나중에 쓸 수도 있으나, 일단 BeforeUsingCard로 사용.
-    //{
-    //    if (GameManager.Instance.player.CurHolo < card.Data.Cost)
-    //    {
-    //        PutDownCard(card).Forget();
-    //        return false;
-    //    }
-    //    GameManager.Instance.player.ChangeHoloValue(-card.Data.Cost);
-    //    return true;
-    //}
-
-
-
     public async UniTaskVoid PutDownCard(Card card)
     {
-        //comeBackCard = true;
         card.CardOrder.SetMostFrontOrder(false);
         PullCard();
         await card.TaskMoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay).SuppressCancellationThrow();
         UnblockCard(card);
-        //draggable = false;
-        //GameManager.Instance.blockClick = false;
     }
 
     public void CardDrag(Card card)
@@ -1221,24 +890,11 @@ public class CardManager : MonoBehaviour
 
         DetectCardArea();
 
-        //if (isUseCard.Value && card.Data.CardTag == CardTag.SingleAttackAb && !isSingleTarget)
-        //{
-        //    GameManager.Instance.ArrowCursor(true);
-        //    //PullCard();
-        //    card.transform.DOKill();        // 마우스 커서가 카드를 나갈 때 카드 크기가 원래대로 돌아가는 코드를 멈춰주는 함수.
-        //    card.transform.position = new Vector2(0, -3.32f);
-        //    isSingleTarget = true;
-        //}
-        /*else */if (isUseCard.Value && card.Data.CardTag != CardTag.SingleAttack)
+        if (isUseCard.Value && card.Data.CardTag != CardTag.SingleAttack)
         {
             Vector2 tempPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             card.transform.position = tempPos;
         }
-        //else if (!isUseCard.Value && isSingleTarget)
-        //{
-        //    GameManager.Instance.ArrowCursor(false);
-        //    isSingleTarget = false;
-        //}
         else if (!isUseCard.Value)
         {
             Vector2 tempPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);

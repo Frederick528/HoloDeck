@@ -48,6 +48,8 @@ public class EventQueue
         {
             _isPending = false;
             ButtonManager.Instance.TurnEndButtonInvert(!_isPending);
+            if (GameManager.Instance.player.CurHolo == 0)
+                TurnManager.Instance.EndTurn().Forget();
             return;
         }
 
