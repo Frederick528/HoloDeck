@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public abstract class Enemy : Entity
@@ -110,12 +111,12 @@ public abstract class Enemy : Entity
             {
                 if (!enemy.CanClear)
                 {
-                    EnemyManager.Instance.MapClear = false;
+                    //EnemyManager.Instance.MapClear = false;
                     return;
                 }
             }
             EnemyManager.Instance.MapClear = true;
-            CardManager.Instance.SetCardState(0);       // Nothing
+            CardManager.Instance.SetCardState(1);       // Over
         }
     }
 
@@ -123,16 +124,21 @@ public abstract class Enemy : Entity
     {
         //Death = true;
         EnemyManager.Instance.enemies.Remove(this);
+        bool clear = EnemyManager.Instance.enemies.Count == 0;
         await base.DieAnimation();  // destroy(gameObject)가 들어가있기 때문에, 만약 죽고 난 다음에 추가 행동이 있다면, 이 함수 내에서 작동해야 함.
         EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);      // 에너미 자리로 클리어 확인을 하기 때문에 적 죽는 모션 기다린 후, 자리 삭제
         GameManager.Instance.ChangeCoinValue(enemyData.dropCoin);
-        ClearCheck();
+        if (clear)
+        {
+            ClearCheck();
+        }
     }
 
     public void ClearCheck()
     {
-        if (!EnemyManager.Instance.MapClear || MapManager.Instance.currStage.rewardBox != -1/*EnemyManager.Instance.enemies.Count != 0 || MapManager.Instance.currStage.rewardBox != -1*/)
+        if (!EnemyManager.Instance.MapClear/* || (EnemyManager.Instance.enemies.Count != 0 || MapManager.Instance.currStage.rewardBox != -1)*/)
             return;
+        EnemyManager.Instance.MapClear = false;
         //for (int i = 0; i < EnemyManager.Instance.enemySpawnPosition.Count; ++i)
         //{
         //    if (!EnemyManager.Instance.enemySpawnPosition[i].gameObject.activeSelf)     // 몬스터가 다 죽어있으면 게임이 클리어되고, 한 마리라도 살아있으면 리턴되어 그냥 몬스터만 죽고 끝.
@@ -140,7 +146,6 @@ public abstract class Enemy : Entity
         //    //spawn++;
         //}
         //if (spawn == EnemyManager.Instance.enemySpawnPosition.Count)
-        print("SS");
         MapManager.Instance.ClearStage().Forget();
         MapManager.Instance.RewardStage();
         ItemManager.Instance.Charge(1);

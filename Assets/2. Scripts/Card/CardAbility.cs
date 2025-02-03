@@ -100,7 +100,7 @@ public class CardAbility
             case 102:
                 card.CardTask = UniTask.Defer(async () =>
                 {
-                    await DelayTask(3f);
+                    await DelayTask(0.5f);
                     await ContinuousSinglettackAb(card, 0.3f);
                 });
                 break;
@@ -351,6 +351,10 @@ public class CardAbility
         {
             EnemyManager.Instance.enemies[i].TakeDamageEnemy(card.Data.Damage);
         }
+        //foreach (Enemy enemy in EnemyManager.Instance.enemies)
+        //{
+        //    enemy.TakeDamageEnemy(card.Data.Damage);
+        //}
         //if (!card.Enhanced)
         //{
         //    for (int i = EnemyManager.Instance.enemies.Count - 1; i >= 0; i--)

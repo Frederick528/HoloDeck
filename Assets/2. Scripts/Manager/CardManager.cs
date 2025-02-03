@@ -555,7 +555,7 @@ public class CardManager : MonoBehaviour
     public void ChangeDiscard(bool discard)
     {
         _discard = discard;
-        GameManager.Instance.Pause(discard);
+        //GameManager.Instance.Pause(discard);
         UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.SelectedCard, discard);
         if (discard)
         {

@@ -49,6 +49,7 @@ public class Player : Entity
     void SetupPlayer(int hp, int startHoloValue)
     {
         SetupEntity(hp);
+        holoValue = UiManager.Instance.FindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.Battle), "HoloValueText").GetComponent<TMP_Text>();
         MaxHolo = startHoloValue;
         CurHolo = MaxHolo;
         holoValue.text = $"{CurHolo} / {MaxHolo}";

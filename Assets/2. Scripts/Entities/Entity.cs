@@ -8,17 +8,21 @@ using UnityEngine.UI;
 
 public abstract class Entity : MonoBehaviour
 {
-    [SerializeField] protected SpriteRenderer entitySprite;
-    [SerializeField] protected Slider slider;   // 나중에 이미지로 변경
+    //[SerializeField] protected SpriteRenderer entitySprite;
+    //[SerializeField] protected Slider slider;   // 나중에 이미지로 변경
+    [SerializeField] protected Image hpBar;
     [SerializeField] protected GameObject shieldObj;
     [SerializeField] protected TMP_Text hpText;
-    [SerializeField] protected TMP_Text armorText;
+    [SerializeField] protected TMP_Text shieldText;
     [SerializeField] protected BoxCollider2D col2d;
+    [SerializeField] protected Transform canvas;
 
     protected Animator animator;
     protected ReactiveProperty<int> maxHp = new();
     protected ReactiveProperty<int> curHp = new();
     protected ReactiveProperty<int> shield = new();
+
+    float _hpRatio;
 
     //private void Awake()    // start로 할 경우, Subscribe가 실행되지 않음. Awake로 하면 위험할 것 같아서 일단 함수로 빼고 자식 오브젝트에서 Start로 호출
     //{
@@ -56,7 +60,8 @@ public abstract class Entity : MonoBehaviour
         if (curHp.Value > 0)
             return false;
         //col2d.enabled = false;
-        slider.gameObject.SetActive(false);
+        //slider.gameObject.SetActive(false);
+        canvas.gameObject.SetActive(false);
         return true;
     }
     public virtual async UniTask DieAnimation()
@@ -86,12 +91,20 @@ public abstract class Entity : MonoBehaviour
         StartEntity();
         maxHp.Subscribe(hp =>
         {
-            slider.maxValue = hp;
+            //slider.maxValue = hp;
+            if (hp > 0)
+            {
+                hpBar.fillAmount = curHp.Value / (float)hp;
+            }
         });
         curHp.Subscribe(hp =>
         {
-            slider.value = hp;
-            hpText.text = hp.ToString();
+            //slider.value = hp;
+            if (maxHp.Value > 0)
+            {
+                hpBar.fillAmount = (float)hp / maxHp.Value;
+                hpText.text = hp.ToString();
+            }
         });
         shield.Subscribe(shield =>
         {
@@ -102,18 +115,20 @@ public abstract class Entity : MonoBehaviour
             else
             {
                 shieldObj.SetActive(true);
-                armorText.text = shield.ToString();
+                shieldText.text = shield.ToString();
             }
         });
     }
 
     protected void StartEntity()
     {
-        entitySprite = GetComponent<SpriteRenderer>();
-        slider = GetComponentInChildren<Slider>();
-        shieldObj = GameObject.Find("Shield");
-        hpText = GetComponentsInChildren<TMP_Text>()[0];
-        armorText = GetComponentsInChildren<TMP_Text>()[1];
+        //entitySprite = GetComponent<SpriteRenderer>();
+        canvas = transform.Find("EntityCanvas");
+        hpBar = canvas.Find("HPBar").GetComponent<Image>();
+        shieldObj = canvas.Find("Shield").gameObject;
+        //slider = GetComponentInChildren<Slider>();
+        hpText = hpBar.transform.Find("HPText").GetComponent<TMP_Text>();
+        shieldText = shieldObj.transform.Find("ShieldText").GetComponent<TMP_Text>();
         col2d = GetComponent<BoxCollider2D>();
     }
 
