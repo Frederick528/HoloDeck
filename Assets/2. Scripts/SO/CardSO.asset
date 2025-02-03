@@ -42,8 +42,8 @@ MonoBehaviour:
     CardTag: 0
   - Name: Name3
     Id: 102
-    Cost: 2
-    Damage: 3
+    Cost: 1
+    Damage: 5
     Shield: 0
     Count: 2
     Draw: 0

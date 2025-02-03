@@ -55,7 +55,7 @@ public abstract class Entity : MonoBehaviour
         //animator.Play("Hit", 0);  // 타격 당하는 애니메이션 실행
         if (curHp.Value > 0)
             return false;
-        col2d.enabled = false;
+        //col2d.enabled = false;
         slider.gameObject.SetActive(false);
         return true;
     }

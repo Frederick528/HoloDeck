@@ -182,6 +182,22 @@ public class CardManager : MonoBehaviour
         useCard.Used = false;
     }
 
+    void CheckEnemyDead(Card card)
+    {
+        int count = (card.Data.Count == 0) ? 1 : card.Data.Count;
+        switch (card.Data.CardTag)
+        {
+            case CardTag.SingleAttack:
+                card.TargetEnemy.CheckIfDead(card.Data.Damage * count);
+                break;
+            case CardTag.MultiAttack:
+                foreach (Enemy enemy in EnemyManager.Instance.enemies)
+                {
+                    enemy.CheckIfDead(card.Data.Damage * count);
+                }
+                break;
+        }
+    }
 
     async UniTask<bool> BeforeUsingCard(Card card)
     {
@@ -196,6 +212,8 @@ public class CardManager : MonoBehaviour
         }
 
         GameManager.Instance.player.ChangeHoloValue(-card.Data.Cost);
+
+        CheckEnemyDead(card);
 
         return true;
     }
@@ -236,6 +254,9 @@ public class CardManager : MonoBehaviour
 
             return;
         }
+
+
+
         _eventQueue.Enqueue(card);
         _usedCard = null;
     }

@@ -13,6 +13,8 @@ public class EnemyManager : MonoBehaviour
     public Enemy targetEnemy;
     public Arrow arrow;
 
+    public bool MapClear = false;
+
     [SerializeField] EnemySO enemySO;
     //[SerializeField] Enemy enemy;
 

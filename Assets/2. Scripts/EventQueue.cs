@@ -47,7 +47,8 @@ public class EventQueue
         if (_queue.Count == 0)
         {
             _isPending = false;
-            ButtonManager.Instance.TurnEndButtonInvert(!_isPending);
+            if (!EnemyManager.Instance.MapClear)
+                ButtonManager.Instance.TurnEndButtonInvert(!_isPending);
             if (GameManager.Instance.player.CurHolo == 0)
                 TurnManager.Instance.EndTurn().Forget();
             return;
@@ -58,15 +59,17 @@ public class EventQueue
         if (_queue.Peek() is Card cardEvent)
         {
             _queue.Dequeue();
-            //Card cardEvent = _queue.Dequeue();
-            if (cardEvent.Data.CardTag == CardTag.SingleAttack && (cardEvent.TargetEnemy.Death|| cardEvent.TargetEnemy is null))       // TargetEnemy missing 상태 점검 필요. null로 적용 안 됨.
-            {
-                Debug.Log(cardEvent.TargetEnemy.ToString());
-                CardManager.Instance.PutDownCard(cardEvent).Forget();
-                cardEvent.Used = false;
-                DoNext().Forget();
-                return;
-            }
+            //Card cardEvent = _queue.Dequeue();        // 밑에 코드 삭제하고, 카드 쓰는 순간 적들한테 데미지 줘서 0이 된 카드들은 미리 삭제. 딜은 카드 쓰는 순간 들어가고, 보이는 체력은 천천히 깎이는 느낌!
+            
+            //if (cardEvent.Data.CardTag == CardTag.SingleAttack && (cardEvent.TargetEnemy.Death|| cardEvent.TargetEnemy is null))       // TargetEnemy missing 상태 점검 필요. null로 적용 안 됨. => 그냥 죽은 적한테 사용불가
+            //{
+            //    Debug.Log(cardEvent.TargetEnemy.ToString());
+            //    CardManager.Instance.PutDownCard(cardEvent).Forget();
+            //    cardEvent.Used = false;
+            //    DoNext().Forget();
+            //    return;
+            //}
+
             //await CardManager.Instance.CheckCanUseCard(cardEvent);
             await CardManager.Instance.UsedCard(cardEvent);
         }

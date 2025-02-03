@@ -100,7 +100,7 @@ public class CardAbility
             case 102:
                 card.CardTask = UniTask.Defer(async () =>
                 {
-                    await DelayTask(0.5f);
+                    await DelayTask(3f);
                     await ContinuousSinglettackAb(card, 0.3f);
                 });
                 break;
