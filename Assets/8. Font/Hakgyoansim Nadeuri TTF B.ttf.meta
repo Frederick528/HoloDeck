@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: ab1d674c651a9e644b187c8b2db14404
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Hakgyoansim Nadeuri TTF
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 197da96b33464e64b8ed8ebf2a121192, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

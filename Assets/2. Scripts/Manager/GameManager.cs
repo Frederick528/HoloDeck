@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] CardSO cardSO;
 
-    [SerializeField] GameObject arrow;
+    public Arrow ArrowCursor;
 
     public Player player;
 
@@ -46,6 +46,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        ArrowCursor = FindObjectOfType<Arrow>(true);
         //UiManager.Instance.SetupGameUi(true);
         //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     }
@@ -65,9 +66,9 @@ public class GameManager : MonoBehaviour
         //return cardSO.Cards.Find(x => x.Id == Id);
         //return Array.Find(cardSO.Cards, x => x.Id == Id);
     }
-    public void ArrowCursor(bool isOn)
+    public void SetActiveArrowCursor(bool isOn)
     {
-        arrow.SetActive(isOn);
+        ArrowCursor.gameObject.SetActive(isOn);
         Cursor.visible = !isOn;
     }
 

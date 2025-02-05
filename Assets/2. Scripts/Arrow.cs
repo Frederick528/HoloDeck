@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -40,12 +40,13 @@ public class Arrow : MonoBehaviour
         {
             this.arrowNodes.Add(Instantiate(this.ArrowNodePrefab, this.transform).GetComponent<Transform>());
             arrowRenderer.Add(arrowNodes[i].GetComponent<SpriteRenderer>());
+            arrowRenderer[i].sortingOrder = ArrowNodeNum - i;
         }
 
         this.arrowNodes.Add(Instantiate(this.ArrowHeadPrefab, this.transform).GetComponent<Transform>());
         arrowRenderer.Add(arrowNodes[^1].GetComponent<SpriteRenderer>());
 
-        this.arrowNodes.ForEach(a => a.GetComponent<Transform>().position = new Vector2(-0.5f, -0.5f));
+        //this.arrowNodes.ForEach(a => a.GetComponent<Transform>().position = new Vector2(-0.5f, -0.5f));
 
         for (int i = 0; i < 4; ++i)
         {
@@ -56,12 +57,20 @@ public class Arrow : MonoBehaviour
 
     private void Update()
     {
-        
+        if (Input.GetMouseButtonDown(0))
+        {
+            print("S");
+        }
         this.controlPoints[0] = new Vector2(this.origin.position.x, this.origin.position.y - 3.32f);
 
         this.controlPoints[3] = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
         this.controlPoints[1] = this.controlPoints[0] + (this.controlPoints[3] - this.controlPoints[0]) * this.controlPointFactors[0];
         this.controlPoints[2] = this.controlPoints[0] + (this.controlPoints[3] - this.controlPoints[0]) * this.controlPointFactors[1];
+
+        this.controlPoints[1] = new Vector2(this.controlPoints[3].x - 3 * this.controlPoints[1].x, this.controlPoints[1].y);
+        this.controlPoints[2] = new Vector2(this.controlPoints[3].x + 3 * this.controlPoints[2].x, this.controlPoints[2].y);
+
 
         for (int i = 0; i < this.arrowNodes.Count; ++i)
         {
@@ -72,17 +81,77 @@ public class Arrow : MonoBehaviour
                 3 * Mathf.Pow(1 - t, 2) * t * this.controlPoints[1] +
                 3 * (1 - t) * Mathf.Pow(t, 2) * this.controlPoints[2] +
                 Mathf.Pow(t, 3) * this.controlPoints[3];
+
             if (i > 0)
             {
                 var euler = new Vector3(0, 0, Vector2.SignedAngle(Vector2.up, this.arrowNodes[i].position - this.arrowNodes[i - 1].position));
                 this.arrowNodes[i].rotation = Quaternion.Euler(euler);
             }
             
-            var scale = this.scaleFactor * (1f - 0.04f * (this.arrowNodes.Count - 1 - i));
+            var scale = this.scaleFactor * (1f - 0.025f * (this.arrowNodes.Count - 1 - i));
+
+            if (i == this.arrowNodes.Count - 1)
+                scale = 1.2f * scale;
+
             this.arrowNodes[i].localScale = new Vector3(scale, scale, 1f);
         }
 
         this.arrowNodes[0].transform.rotation = this.arrowNodes[1].transform.rotation;
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!collision.CompareTag("Enemy")) return;
+
+        //if (CardManager.Instance.isSingleTarget)
+        //{
+        //    CardManager.Instance.useSingleTargetCard = true;
+        //    //EnemyManager.Instance.targetEnemy = other.gameObject;
+        //    for (int i = 0; i < EnemyManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
+        //    {
+        //        EnemyManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.red;
+        //    }
+        //}
+        //else if (ItemManager.Instance.arrowOn)
+        //{
+        //    //EnemyManager.Instance.targetEnemy = other.gameObject;
+        //    for (int i = 0; i < EnemyManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
+        //    {
+        //        EnemyManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.red;
+        //    }
+        //}
+        CardManager.Instance.useSingleTargetCard = true;        // 따로 체크해서 받아주는 거랑 그냥 true 하는 거랑 비슷할 것 같아서 걍 if문 없이 진행
+        EnemyManager.Instance.targetEnemy = collision.gameObject;       // Enemy 스크립트를 여기서 받는 건 너무 오바라서 그냥 카드 사용할 때 받기로 함.
+        for (int i = 0; i < GameManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
+        {
+            GameManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.red;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (!collision.CompareTag("Enemy")) return;
+        //if (/*CardManager.Instance.isSingleTarget*/EnemyManager.Instance.ArrowCursor.arrowRenderer[0].color == Color.red)
+        //{
+        //    CardManager.Instance.useSingleTargetCard = false;
+        //    EnemyManager.Instance.targetEnemy = null;
+        //    for (int i = 0; i < EnemyManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
+        //    {
+        //        EnemyManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.white;
+        //    }
+        //}
+        //else if (ItemManager.Instance.arrowOn)
+        //{
+        //    EnemyManager.Instance.targetEnemy = null;
+        //    for (int i = 0; i < EnemyManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
+        //    {
+        //        EnemyManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.white;
+        //    }
+        //}
+        CardManager.Instance.useSingleTargetCard = false;
+        EnemyManager.Instance.targetEnemy = null;
+        for (int i = 0; i < GameManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
+        {
+            GameManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.white;
+        }
     }
     #endregion
 }

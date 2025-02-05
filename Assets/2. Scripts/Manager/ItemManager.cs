@@ -135,7 +135,7 @@ public class ItemManager : MonoBehaviour
     {
         arrowOn = arrow;
         activeValue = value;
-        GameManager.Instance.ArrowCursor(arrow);
+        GameManager.Instance.SetActiveArrowCursor(arrow);
     }
 
     public bool AttackSingleTarget(Enemy enemy)     // 아이템 비사용시, 끄는 방법이 필요함. + 다른 것들 터치 안 되도록 설정

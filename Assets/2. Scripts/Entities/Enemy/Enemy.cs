@@ -12,58 +12,58 @@ public abstract class Enemy : Entity
 
     //public bool Death;
 
-    void OnMouseEnter()
-    {
-        if (CardManager.Instance.isSingleTarget)
-        {
-            CardManager.Instance.useSingleTargetCard = true;
-            EnemyManager.Instance.targetEnemy = this;
-            for (int i = 0; i < EnemyManager.Instance.arrow.arrowRenderer.Count; i++)
-            {
-                EnemyManager.Instance.arrow.arrowRenderer[i].color = Color.red;
-            }
-        }
-        else if (ItemManager.Instance.arrowOn)
-        {
-            EnemyManager.Instance.targetEnemy = this;
-            for (int i = 0; i < EnemyManager.Instance.arrow.arrowRenderer.Count; i++)
-            {
-                EnemyManager.Instance.arrow.arrowRenderer[i].color = Color.red;
-            }
-        }
-    }
+    //void OnMouseEnter()
+    //{
+    //    if (CardManager.Instance.isSingleTarget)
+    //    {
+    //        CardManager.Instance.useSingleTargetCard = true;
+    //        EnemyManager.Instance.targetEnemy = this;
+    //        for (int i = 0; i < EnemyManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
+    //        {
+    //            EnemyManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.red;
+    //        }
+    //    }
+    //    else if (ItemManager.Instance.arrowOn)
+    //    {
+    //        EnemyManager.Instance.targetEnemy = this;
+    //        for (int i = 0; i < EnemyManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
+    //        {
+    //            EnemyManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.red;
+    //        }
+    //    }
+    //}
 
-    void OnMouseDown()
-    {
-        if (ItemManager.Instance.AttackSingleTarget(this))
-        {
-            for (int i = 0; i < EnemyManager.Instance.arrow.arrowRenderer.Count; i++)
-            {
-                EnemyManager.Instance.arrow.arrowRenderer[i].color = Color.white;
-            }
-        }
-    }
+    //void OnMouseDown()
+    //{
+    //    if (ItemManager.Instance.AttackSingleTarget(this))
+    //    {
+    //        for (int i = 0; i < EnemyManager.Instance.arrow.arrowRenderer.Count; i++)
+    //        {
+    //            EnemyManager.Instance.arrow.arrowRenderer[i].color = Color.white;
+    //        }
+    //    }
+    //}
 
-    void OnMouseExit()
-    {
-        if (/*CardManager.Instance.isSingleTarget*/EnemyManager.Instance.arrow.arrowRenderer[0].color == Color.red)
-        {
-            CardManager.Instance.useSingleTargetCard = false;
-            EnemyManager.Instance.targetEnemy = null;
-            for (int i = 0; i < EnemyManager.Instance.arrow.arrowRenderer.Count; i++)
-            {
-                EnemyManager.Instance.arrow.arrowRenderer[i].color = Color.white;
-            }
-        }
-        else if (ItemManager.Instance.arrowOn)
-        {
-            EnemyManager.Instance.targetEnemy = null;
-            for (int i = 0; i < EnemyManager.Instance.arrow.arrowRenderer.Count; i++)
-            {
-                EnemyManager.Instance.arrow.arrowRenderer[i].color = Color.white;
-            }
-        }
-    }
+    //void OnMouseExit()
+    //{
+    //    if (/*CardManager.Instance.isSingleTarget*/EnemyManager.Instance.ArrowCursor.arrowRenderer[0].color == Color.red)
+    //    {
+    //        CardManager.Instance.useSingleTargetCard = false;
+    //        EnemyManager.Instance.targetEnemy = null;
+    //        for (int i = 0; i < EnemyManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
+    //        {
+    //            EnemyManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.white;
+    //        }
+    //    }
+    //    else if (ItemManager.Instance.arrowOn)
+    //    {
+    //        EnemyManager.Instance.targetEnemy = null;
+    //        for (int i = 0; i < EnemyManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
+    //        {
+    //            EnemyManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.white;
+    //        }
+    //    }
+    //}
 
     public void SetupEnemy(EnemyData eD, int pos)     // 데이터를 받는 형식으로 변경함.
     {
@@ -177,6 +177,6 @@ public abstract class Enemy : Entity
     //void Start()      // 모든 상위 코드에 적용시켜야 함.
     //{
     //    EntitySubScribe();
-    //    //arrow = FindObjectOfType<Arrow>(true);
+    //    //ArrowCursor = FindObjectOfType<Arrow>(true);
     //}
 }

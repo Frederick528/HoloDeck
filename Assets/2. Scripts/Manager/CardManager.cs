@@ -43,7 +43,7 @@ public class CardManager : MonoBehaviour
     [SerializeField] Transform myCardLeft;
     [SerializeField] Transform myCardRight;
 
-    //[SerializeField] GameObject arrow;
+    //[SerializeField] GameObject ArrowCursor;
 
     [SerializeField] GameObject cardPrefab;
 
@@ -82,7 +82,7 @@ public class CardManager : MonoBehaviour
             _selectCard?.TurnOnOutline(canUse);
             if (canUse && _selectCard.Data.CardTag == CardTag.SingleAttack && !isSingleTarget)
             {
-                GameManager.Instance.ArrowCursor(true);
+                GameManager.Instance.SetActiveArrowCursor(true);
                 //PullCard();
                 _selectCard.transform.DOKill();        // 마우스 커서가 카드를 나갈 때 카드 크기가 원래대로 돌아가는 코드를 멈춰주는 함수.
                 _selectCard.transform.position = new Vector2(0, -3.32f);
@@ -90,7 +90,7 @@ public class CardManager : MonoBehaviour
             }
             else if (!canUse && isSingleTarget)
             {
-                GameManager.Instance.ArrowCursor(false);
+                GameManager.Instance.SetActiveArrowCursor(false);
                 isSingleTarget = false;
             }
         });
@@ -230,22 +230,22 @@ public class CardManager : MonoBehaviour
         usedCard.Used = false;
     }
 
-    async UniTask CheckCanUseingCard(Card card, bool singleAtk = false)
+    async UniTask CheckCanUseingCard(Card card/*, bool singleAtk = false*/)
     {
-        ResetSetting();
-
         card.CardOrder.SetOriginOrder(0);
 
         HandCard.Remove(card);
         SetOriginOrder();
         CardAlignment();
         _usedCard = card;       // 다른 카드가 사용 중이면 사용 못 하게 막을지 고민 중
-        if (singleAtk)
-            card.Target(EnemyManager.Instance.targetEnemy);
+        //if (singleAtk)
+        //    card.Target(EnemyManager.Instance.targetEnemy);
         if (!await BeforeUsingCard(card))
         {
-            if (singleAtk)
+            if (card.TargetEnemy)
+            {
                 card.Target(null);
+            }
             HandCard.Add(card);
             SetOriginOrder();
             CardAlignment();
@@ -480,7 +480,7 @@ public class CardManager : MonoBehaviour
         isSingleTarget = false;
         useSingleTargetCard = false;
         draggable = false;
-        GameManager.Instance.ArrowCursor(false);
+        GameManager.Instance.SetActiveArrowCursor(false);
         isUseCard.Value = false;
 
         _selectCard = null;      // isUseCard와 순서 중요! selectCard가 밑에 있어야 함.
@@ -874,12 +874,14 @@ public class CardManager : MonoBehaviour
         {
             if (card.Data.CardTag != CardTag.SingleAttack)     // 단일타격을 제외한 나머지
             {
+                ResetSetting();
                 await CheckCanUseingCard(card);
             }
             else if (useSingleTargetCard)                      // 단일타격이 가능할 경우
             {
-
-                await CheckCanUseingCard(card, true);
+                card.Target(EnemyManager.Instance.targetEnemy.GetComponent<Enemy>());
+                ResetSetting();
+                await CheckCanUseingCard(card/*, true*/);
             }
             else
             {
@@ -950,9 +952,9 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    //void ArrowCursor(bool isOn)
+    //void SetActiveArrowCursor(bool isOn)
     //{
-    //    arrow.SetActive(isOn);
+    //    ArrowCursor.SetActive(isOn);
     //    Cursor.visible = !isOn;
     //}
     #endregion

@@ -55,7 +55,7 @@ public class Card : MonoBehaviour
 
     public bool Enhanced = false;
 
-    public Enemy TargetEnemy = null;        // 카드 사용 시, 타겟에너미를 받아옴. (나중에 큐에서 체크하기 위함.)
+    public Enemy TargetEnemy { get; private set; } = null;        // 카드 사용 시, 타겟에너미를 받아옴. (나중에 큐에서 체크하기 위함.)
 
     //BoxCollider2D _boxCollider2;
 

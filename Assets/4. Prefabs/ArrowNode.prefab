@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8076687957830576206}
   - component: {fileID: 44518920934314103}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ArrowNode
-  m_TagString: Untagged
+  m_TagString: Arrow
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -71,8 +71,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1849598001
-  m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingLayer: 4
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 90b9957bec9ae474cab538bc69826ad4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
