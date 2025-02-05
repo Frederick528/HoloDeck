@@ -9,6 +9,13 @@ public enum CardTag
     MultiAttack,
     Skill
 }
+public enum CardRarity
+{
+    Common,
+    Rare,
+    Epic,
+    Legendary
+}
 //public struct CardData
 //{
 //    public string KR; //= "한국어 텍스트";
@@ -47,6 +54,7 @@ public class CardData : ICloneable
     //public string EnhancedDescript;
     public Sprite Sprite;
     public CardTag CardTag;
+    public CardRarity CardRarity;
 
     public object Clone()
     {
@@ -64,7 +72,8 @@ public class CardData : ICloneable
             Price = Price,
             Descript = Descript,
             Sprite = Sprite,
-            CardTag = CardTag
+            CardTag = CardTag,
+            CardRarity = CardRarity
         };
     }
 }

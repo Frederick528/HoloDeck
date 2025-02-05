@@ -45,14 +45,21 @@ public class CardManager : MonoBehaviour
 
     //[SerializeField] GameObject ArrowCursor;
 
-    [SerializeField] GameObject cardPrefab;
+    //[SerializeField] GameObject cardPrefab;
 
     public Transform cardRewardContent;
 
     [SerializeField] Transform shopCard;
     [SerializeField] Transform shopCardPrice;
 
-     List<Card> _selectedCards = new();           // 배틀 중 버리기, 강화, 교환 등에서 선택한 카드 리스트
+
+    public Sprite[] CommonSprites;
+    public Sprite[] RareSprites;
+    public Sprite[] EpicSprites;
+    public Sprite[] LegendarySprites;
+
+
+    List<Card> _selectedCards = new();           // 배틀 중 버리기, 강화, 교환 등에서 선택한 카드 리스트
 
     Card _usedCard;
     Card _selectCard;                            // 들고 있는 카드(drag 중인 카드)
@@ -85,7 +92,7 @@ public class CardManager : MonoBehaviour
                 GameManager.Instance.SetActiveArrowCursor(true);
                 //PullCard();
                 _selectCard.transform.DOKill();        // 마우스 커서가 카드를 나갈 때 카드 크기가 원래대로 돌아가는 코드를 멈춰주는 함수.
-                _selectCard.transform.position = new Vector2(0, -3.32f);
+                _selectCard.transform.position = new Vector2(0, CardUtils.LargeCardPosY);
                 isSingleTarget = true;
             }
             else if (!canUse && isSingleTarget)
@@ -205,7 +212,7 @@ public class CardManager : MonoBehaviour
         {
             return false;
         }
-        card.MoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale), true, CardUtils.CardAlignmentDelay);
+        card.MoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale * 0.8f), true, CardUtils.CardAlignmentDelay);
         if (!await card.CheckUseConditions())
         {
             return false;
@@ -232,7 +239,7 @@ public class CardManager : MonoBehaviour
 
     async UniTask CheckCanUseingCard(Card card/*, bool singleAtk = false*/)
     {
-        card.CardOrder.SetOriginOrder(0);
+        card.CardOrder.SetOriginOrder(-10);
 
         HandCard.Remove(card);
         SetOriginOrder();
@@ -804,7 +811,7 @@ public class CardManager : MonoBehaviour
         }
 
         card.transform.DOKill();              // 정렬 드로우 문제 등 제거
-        Vector3 largePos = new Vector3(card.OriginPRS.pos.x, -3.32f, -1f);      // z축 변경 안 하면, MouseOver 문제 생김.
+        Vector3 largePos = new Vector3(card.OriginPRS.pos.x, CardUtils.LargeCardPosY, -1f);      // z축 변경 안 하면, MouseOver 문제 생김.
         card.MoveTransform(new PRS(largePos, Quaternion.identity, CardUtils.CardScale * 1.2f));
 
         card.CardOrder.SetMostFrontOrder(true);

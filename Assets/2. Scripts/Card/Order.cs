@@ -5,13 +5,17 @@ using UnityEngine;
 public class Order : MonoBehaviour
 {
     [SerializeField]
-    Renderer[] backRenderers;
+    Renderer[] _backRenderers;
     [SerializeField]
-    Renderer[] middleRenderers;
+    Renderer[] _middleRenderers;
     [SerializeField]
-    Renderer[] frontRenderers;
+    Renderer _frameRenderers;
     [SerializeField]
-    string sortingLayerName;
+    Renderer[] _frontRenderers;
+    [SerializeField]
+    Renderer[] _mostFrontRenderers;
+    [SerializeField]
+    //string sortingLayerName;
 
     int originOrder;
 
@@ -29,20 +33,26 @@ public class Order : MonoBehaviour
     public void SetOrder(int order)
     {
         int mulOrder = order * 5;
-        foreach (var renderer in backRenderers)
+        foreach (var renderer in _backRenderers)
         {
-            renderer.sortingLayerName = sortingLayerName;
+            //renderer.sortingLayerName = sortingLayerName;
             renderer.sortingOrder = mulOrder - 1;
         }
-        foreach (var renderer in middleRenderers)
+        foreach (var renderer in _middleRenderers)
         {
-            renderer.sortingLayerName = sortingLayerName;
+            //renderer.sortingLayerName = sortingLayerName;
             renderer.sortingOrder = mulOrder;
         }
-        foreach (var renderer in frontRenderers)
+        _frameRenderers.sortingOrder = mulOrder + 1;
+        foreach (var renderer in _frontRenderers)
         {
-            renderer.sortingLayerName = sortingLayerName;
-            renderer.sortingOrder = mulOrder + 1;
+            //renderer.sortingLayerName = sortingLayerName;
+            renderer.sortingOrder = mulOrder + 2;
+        }
+        foreach (var renderer in _mostFrontRenderers)
+        {
+            //renderer.sortingLayerName = sortingLayerName;
+            renderer.sortingOrder = mulOrder + 3;
         }
     }
 }

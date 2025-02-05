@@ -26,6 +26,7 @@ MonoBehaviour:
     Descript: After discarding {Reduce} cards, {Damage} Damage
     Sprite: {fileID: 0}
     CardTag: 0
+    CardRarity: 0
   - Name: Name2
     Id: 101
     Cost: 1
@@ -40,10 +41,11 @@ MonoBehaviour:
       {Draw} Draw'
     Sprite: {fileID: 0}
     CardTag: 0
+    CardRarity: 0
   - Name: Name3
     Id: 102
     Cost: 1
-    Damage: 5
+    Damage: 3
     Shield: 0
     Count: 2
     Draw: 0
@@ -52,6 +54,7 @@ MonoBehaviour:
     Descript: '{Damage} Damage X {Count}'
     Sprite: {fileID: 0}
     CardTag: 0
+    CardRarity: 1
   - Name: Name4
     Id: 103
     Cost: 2
@@ -64,6 +67,7 @@ MonoBehaviour:
     Descript: All {Damage} Damage X {Count}
     Sprite: {fileID: 0}
     CardTag: 1
+    CardRarity: 0
   - Name: Name5
     Id: 104
     Cost: 1
@@ -76,6 +80,7 @@ MonoBehaviour:
     Descript: '{Draw} Draw'
     Sprite: {fileID: 0}
     CardTag: 2
+    CardRarity: 0
   - Name: Name6
     Id: 105
     Cost: 1
@@ -88,6 +93,7 @@ MonoBehaviour:
     Descript: '{Shield} Shield'
     Sprite: {fileID: 0}
     CardTag: 2
+    CardRarity: 0
   - Name: EnhancedName1
     Id: 1000
     Cost: 1
@@ -100,6 +106,7 @@ MonoBehaviour:
     Descript: After discarding {Reduce} cards, {Damage} Damage
     Sprite: {fileID: 0}
     CardTag: 0
+    CardRarity: 0
   - Name: EnhancedName2
     Id: 1010
     Cost: 1
@@ -114,6 +121,7 @@ MonoBehaviour:
       {Draw} Draw'
     Sprite: {fileID: 0}
     CardTag: 0
+    CardRarity: 0
   - Name: EnhancedName3
     Id: 1020
     Cost: 2
@@ -126,6 +134,7 @@ MonoBehaviour:
     Descript: '{Damage} Damage X {Count}'
     Sprite: {fileID: 0}
     CardTag: 0
+    CardRarity: 1
   - Name: EnhancedName4
     Id: 1030
     Cost: 2
@@ -138,6 +147,7 @@ MonoBehaviour:
     Descript: All {Damage} Damage X {Count}
     Sprite: {fileID: 0}
     CardTag: 1
+    CardRarity: 0
   - Name: EnhancedName5
     Id: 1040
     Cost: 1
@@ -150,6 +160,7 @@ MonoBehaviour:
     Descript: '{Draw} Draw'
     Sprite: {fileID: 0}
     CardTag: 2
+    CardRarity: 0
   - Name: EnhancedName6
     Id: 1050
     Cost: 1
@@ -162,3 +173,4 @@ MonoBehaviour:
     Descript: '{Shield} Shield'
     Sprite: {fileID: 0}
     CardTag: 2
+    CardRarity: 0

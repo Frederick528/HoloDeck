@@ -61,7 +61,7 @@ public class Arrow : MonoBehaviour
         {
             print("S");
         }
-        this.controlPoints[0] = new Vector2(this.origin.position.x, this.origin.position.y - 3.32f);
+        this.controlPoints[0] = new Vector2(this.origin.position.x, this.origin.position.y + CardUtils.LargeCardPosY);
 
         this.controlPoints[3] = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 

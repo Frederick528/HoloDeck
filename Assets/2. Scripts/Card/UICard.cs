@@ -7,12 +7,17 @@ using UnityEngine.UI;
 
 public class UICard : MonoBehaviour
 {
-    [SerializeField] Image card;
-    [SerializeField] Image character;
-    [SerializeField] TMP_Text nameText;
-    [SerializeField] TMP_Text costText;
-    [SerializeField] TMP_Text desText;
-    [SerializeField] Button cardBtn;
+    [SerializeField] Image _card;
+    [SerializeField] Image _character;
+    [SerializeField] Image _descBG;
+
+    [SerializeField] Image[] _rararityBG;
+
+    [SerializeField] TMP_Text _nameText;
+    [SerializeField] TMP_Text _costText;
+    [SerializeField] TMP_Text _tagText;
+    [SerializeField] TMP_Text _descText;
+    [SerializeField] Button _cardBtn;
 
     [SerializeField] UICard enlargeCard;
 
@@ -24,14 +29,44 @@ public class UICard : MonoBehaviour
         sb.Replace("{Count}", (data.Count).ToString());
         sb.Replace("{Draw}", (data.Draw).ToString());
 
-        nameText.text = data.Name;
-        costText.text = data.Cost.ToString();
-        desText.text = sb.ToString();
-        character.sprite = data.Sprite;
+        _nameText.text = data.Name;
+        _costText.text = data.Cost.ToString();
+        _descText.text = sb.ToString();
+        _character.sprite = data.Sprite;
 
-        if (cardBtn != null)
+        switch (data.CardTag)
         {
-            cardBtn.onClick.AddListener(() =>
+            case CardTag.SingleAttack:
+            case CardTag.MultiAttack:
+                _tagText.text = "Attack";
+                break;
+            case CardTag.Skill:
+                _tagText.text = "Skill";
+                break;
+        }
+        switch (data.CardRarity)
+        {
+            case CardRarity.Common:
+                for (int i = 0; i < CardManager.Instance.CommonSprites.Length; ++i)
+                    _rararityBG[i].sprite = CardManager.Instance.CommonSprites[i];
+                break;
+            case CardRarity.Rare:
+                for (int i = 0; i < CardManager.Instance.RareSprites.Length; ++i)
+                    _rararityBG[i].sprite = CardManager.Instance.RareSprites[i];
+                break;
+            case CardRarity.Epic:
+                for (int i = 0; i < CardManager.Instance.EpicSprites.Length; ++i)
+                    _rararityBG[i].sprite = CardManager.Instance.EpicSprites[i];
+                break;
+            case CardRarity.Legendary:
+                for (int i = 0; i < CardManager.Instance.LegendarySprites.Length; ++i)
+                    _rararityBG[i].sprite = CardManager.Instance.LegendarySprites[i];
+                break;
+        }
+
+        if (_cardBtn != null)
+        {
+            _cardBtn.onClick.AddListener(() =>
             {
                 CardManager.Instance.rewardCardData = data;
                 enlargeCard.Setup(data);

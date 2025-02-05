@@ -47,7 +47,7 @@ public class ReadSpreadSheet : MonoBehaviour
     async UniTaskVoid LoadCardSO()
     {
         string address = "https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8";
-        string range = "A3:K";
+        string range = "A3:L";
         string cardSheetID = "1809511646";
         string enhancedCardSheetID = "1928890928";
         using (UnityWebRequest wwwC =
@@ -119,6 +119,7 @@ public class ReadSpreadSheet : MonoBehaviour
                 Debug.Log("스프라이트가 없습니다.");
             }
             data.CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[10]);
+            data.CardRarity = (CardRarity)Enum.Parse(typeof(CardRarity), cells[11]);
             //data.Id = ConvertInt32(cells[0]);
             //data.Name = LineBreakStr(cells[1]);
             //data.Cost = ConvertInt32(cells[2]);

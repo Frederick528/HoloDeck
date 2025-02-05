@@ -89,11 +89,13 @@ public class SettingMap : MonoBehaviour
 
         SortMapList(validMapList);
 
-        SetupPosition();
+        SettingStage();
 
         MapManager.Instance.SetupStart(direction4, maps);
 
-        SettingStage();
+        //SettingStage();
+
+
         //FindMapDistance(startMapPosition, startMapPosition);
 
         //// 특수방 BOSS 방 생성
@@ -101,75 +103,75 @@ public class SettingMap : MonoBehaviour
 
     }
 
-    public void SettingStage()
-    {
-        List<Map> stageList = maps.ToList();
-        int index;
+    //public void SettingStage()        // 다른 함수랑 통합됨.
+    //{
+    //    List<Map> stageList = maps.ToList();
+    //    int index;
 
-        // Start
-        stageList[0].stage = stageList[0].AddComponent<StartStage>();
-        stageList[0].State = Map.StageState.Start;
-        SetClickStage(stageList[0]);
-        stageList[0].GetComponentInChildren<TMP_Text>().text = "Start";             // 이미지로 대체할 예정이라 따로 캐싱하지는 않음.
-        stageList[0].GetComponentInChildren<TMP_Text>().color = Color.gray;
-        stageList.RemoveAt(0);
+    //    // Start
+    //    stageList[0].stage = stageList[0].AddComponent<StartStage>();
+    //    stageList[0].State = Map.StageState.Start;
+    //    SetClickStage(stageList[0]);
+    //    stageList[0].GetComponentInChildren<TMP_Text>().text = "Start";             // 이미지로 대체할 예정이라 따로 캐싱하지는 않음.
+    //    stageList[0].GetComponentInChildren<TMP_Text>().color = Color.gray;
+    //    stageList.RemoveAt(0);
 
-        // Boss
-        stageList[^1].stage = stageList[^1].AddComponent<BossStage>();
-        stageList[^1].State = Map.StageState.Boss;
-        SetClickStage(stageList[^1]);
-        stageList[^1].GetComponentInChildren<TMP_Text>().text = "Boss";
-        stageList[^1].GetComponentInChildren<TMP_Text>().color = Color.red;
-        stageList.RemoveAt(stageList.Count-1);
-        //map.Find(x => x.transform.position == (validMapList[^1].transform_Position * mapDistance)).GetComponent<Image>().color = Color.red;
+    //    // Boss
+    //    stageList[^1].stage = stageList[^1].AddComponent<BossStage>();
+    //    stageList[^1].State = Map.StageState.Boss;
+    //    SetClickStage(stageList[^1]);
+    //    stageList[^1].GetComponentInChildren<TMP_Text>().text = "Boss";
+    //    stageList[^1].GetComponentInChildren<TMP_Text>().color = Color.red;
+    //    stageList.RemoveAt(stageList.Count - 1);
+    //    //map.Find(x => x.transform.position == (validMapList[^1].transform_Position * mapDistance)).GetComponent<Image>().color = Color.red;
 
-        // Treasure
-        index = Random.Range(0, stageList.Count);
-        stageList[index].stage = stageList[index].AddComponent<TreasureStage>();
-        stageList[index].State = Map.StageState.Treasure;
-        SetClickStage(stageList[index]);
-        stageList[index].GetComponentInChildren<TMP_Text>().text = "Treasure";
-        stageList[index].GetComponentInChildren<TMP_Text>().color = Color.yellow;
-        //stageList[index].ClearMap();
-        stageList.RemoveAt(index);
+    //    // Treasure
+    //    index = Random.Range(0, stageList.Count);
+    //    stageList[index].stage = stageList[index].AddComponent<TreasureStage>();
+    //    stageList[index].State = Map.StageState.Treasure;
+    //    SetClickStage(stageList[index]);
+    //    stageList[index].GetComponentInChildren<TMP_Text>().text = "Treasure";
+    //    stageList[index].GetComponentInChildren<TMP_Text>().color = Color.yellow;
+    //    //stageList[index].ClearMap();
+    //    stageList.RemoveAt(index);
 
-        // Shop
-        index = Random.Range(0, stageList.Count);
-        stageList[index].stage = stageList[index].AddComponent<ShopStage>();
-        ShopManager.Instance.SettingCardShop();
-        stageList[index].State = Map.StageState.Shop;
-        SetClickStage(stageList[index]);
-        stageList[index].GetComponentInChildren<TMP_Text>().text = "Shop";
-        stageList[index].GetComponentInChildren<TMP_Text>().color = Color.blue;
-        //stageList[index].ClearMap();
-        stageList.RemoveAt(index);
+    //    // Shop
+    //    index = Random.Range(0, stageList.Count);
+    //    stageList[index].stage = stageList[index].AddComponent<ShopStage>();
+    //    ShopManager.Instance.SettingCardShop();
+    //    stageList[index].State = Map.StageState.Shop;
+    //    SetClickStage(stageList[index]);
+    //    stageList[index].GetComponentInChildren<TMP_Text>().text = "Shop";
+    //    stageList[index].GetComponentInChildren<TMP_Text>().color = Color.blue;
+    //    //stageList[index].ClearMap();
+    //    stageList.RemoveAt(index);
 
-        foreach (Map stage in stageList)
-        {
-            int percent = Random.Range(0, 4);
-            switch (percent)
-            {
-                case 0:
-                case 1:
-                case 2:
-                    stage.stage = stage.AddComponent<EnemyStage>();
-                    stage.State = Map.StageState.Enemy;
-                    SetClickStage(stage);
-                    stage.GetComponentInChildren<TMP_Text>().text = "Enemy";
-                    break;
+    //    foreach (Map stage in stageList)
+    //    {
+    //        int percent = Random.Range(0, 4);
+    //        switch (percent)
+    //        {
+    //            case 0:
+    //            case 1:
+    //            case 2:
+    //                stage.stage = stage.AddComponent<EnemyStage>();
+    //                stage.State = Map.StageState.Enemy;
+    //                SetClickStage(stage);
+    //                stage.GetComponentInChildren<TMP_Text>().text = "Enemy";
+    //                break;
 
-                case 3:
-                    stage.stage = stage.AddComponent<EventStage>();
-                    stage.State = Map.StageState.Event;
-                    SetClickStage(stage);
-                    stage.GetComponentInChildren<TMP_Text>().text = "Event";
-                    stage.GetComponentInChildren<TMP_Text>().color = Color.cyan;
-                    break;
-            }
-        }
+    //            case 3:
+    //                stage.stage = stage.AddComponent<EventStage>();
+    //                stage.State = Map.StageState.Event;
+    //                SetClickStage(stage);
+    //                stage.GetComponentInChildren<TMP_Text>().text = "Event";
+    //                stage.GetComponentInChildren<TMP_Text>().color = Color.cyan;
+    //                break;
+    //        }
+    //    }
 
 
-    }
+    //}
 
     void SetClickStage(Map stage)
     {
@@ -405,7 +407,7 @@ public class SettingMap : MonoBehaviour
     //}
 
     // 배열의 방들을 MapController의 List로 변환
-    public void SetupPosition()
+    public void SettingStage()
     {
         //List<MapInfo> MapsList = new List<MapInfo>();
 
@@ -430,16 +432,34 @@ public class SettingMap : MonoBehaviour
 
         Transform mapCanvas = UiManager.Instance.Canvas(UiManager.CanvasName.Map);
 
+        int treasureIdx = Random.Range(1, validMapList.Count-1);
+        int shopIdx = Random.Range(1, validMapList.Count-1);
+        while (treasureIdx == shopIdx)
+        {
+            shopIdx = Random.Range(1, validMapList.Count - 1);
+        }
+
         for (int i = 0; i < validMapList.Count; ++i)
         {
-            //int mapIdx;
-            //if (i == 0)
-            //{
-            //    mapIdx = 0; // Start
-            //}
-            //else if ()
+            int mapIdx;
+            if (i == 0)
+                mapIdx = 0; // Start
+            else if (i == validMapList.Count - 1)
+                mapIdx = 5; // Boss
+            else if (i == treasureIdx)
+                mapIdx = 1; // Treasure
+            else if (i == shopIdx)
+                mapIdx = 2; // Shop
+            else
+            {
+                int percent = Random.Range(0, 4);
+                if (percent == 0)
+                    mapIdx = 3; // Event
+                else
+                    mapIdx = 4; // Enemy
+            }
             MapInfo validMap = validMapList[i];
-            GameObject mapObject = Instantiate(mapPrefab[0], mapCanvas);/*PoolManager.Instance.MapPool.Get();*/
+            GameObject mapObject = Instantiate(mapPrefab[mapIdx], mapCanvas);/*PoolManager.Instance.MapPool.Get();*/
             Map map = mapObject.GetComponent<Map>();
             //mapObject.transform.GetComponentInChildren<TextMeshProUGUI>().text = validMap.distance.ToString();
             mapObject.transform.localPosition = validMap.transform_Position;
@@ -448,70 +468,43 @@ public class SettingMap : MonoBehaviour
             map.btn.interactable = false;
             map.array_Position = validMap.array_Position;
 
+            SetClickStage(map);
+
+            switch (mapIdx)
+            {
+                case 0:
+                    map.stage = map.GetComponent<StartStage>();
+                    //map.GetComponentInChildren<TMP_Text>().text = "Start";
+                    //map.GetComponentInChildren<TMP_Text>().color = Color.gray;
+                    break;
+                case 1:
+                    map.stage = map.GetComponent<TreasureStage>();
+                    //map.GetComponentInChildren<TMP_Text>().text = "Treasure";
+                    //map.GetComponentInChildren<TMP_Text>().color = Color.yellow;
+                    break;
+                case 2:
+                    map.stage = map.GetComponent<ShopStage>();
+                    //map.GetComponentInChildren<TMP_Text>().text = "Shop";
+                    //map.GetComponentInChildren<TMP_Text>().color = Color.blue;
+                    break;
+                case 3:
+                    map.stage = map.GetComponent<EventStage>();
+                    //map.GetComponentInChildren<TMP_Text>().text = "Event";
+                    //map.GetComponentInChildren<TMP_Text>().color = Color.cyan;
+                    break;
+                case 4:
+                    map.stage = map.GetComponent<EnemyStage>();
+                    //map.GetComponentInChildren<TMP_Text>().text = "Enemy";
+                    break;
+                case 5:
+                    map.stage = map.GetComponent<BossStage>();
+                    //map.GetComponentInChildren<TMP_Text>().text = "Boss";
+                    //map.GetComponentInChildren<TMP_Text>().color = Color.red;
+                    break;
+            }
+
             maps.Add(map);
             mapObject.gameObject.SetActive(false);
-
-            //// Start
-            //stageList[0].stage = stageList[0].AddComponent<StartStage>();
-            //stageList[0].State = Map.StageState.Start;
-            //SetClickStage(stageList[0]);
-            //stageList[0].GetComponentInChildren<TMP_Text>().text = "Start";             // 이미지로 대체할 예정이라 따로 캐싱하지는 않음.
-            //stageList[0].GetComponentInChildren<TMP_Text>().color = Color.gray;
-            //stageList.RemoveAt(0);
-
-            //// Boss
-            //stageList[^1].stage = stageList[^1].AddComponent<BossStage>();
-            //stageList[^1].State = Map.StageState.Boss;
-            //SetClickStage(stageList[^1]);
-            //stageList[^1].GetComponentInChildren<TMP_Text>().text = "Boss";
-            //stageList[^1].GetComponentInChildren<TMP_Text>().color = Color.red;
-            //stageList.RemoveAt(stageList.Count - 1);
-            ////map.Find(x => x.transform.position == (validMapList[^1].transform_Position * mapDistance)).GetComponent<Image>().color = Color.red;
-
-            //// Treasure
-            //index = Random.Range(0, stageList.Count);
-            //stageList[index].stage = stageList[index].AddComponent<TreasureStage>();
-            //stageList[index].State = Map.StageState.Treasure;
-            //SetClickStage(stageList[index]);
-            //stageList[index].GetComponentInChildren<TMP_Text>().text = "Treasure";
-            //stageList[index].GetComponentInChildren<TMP_Text>().color = Color.yellow;
-            ////stageList[index].ClearMap();
-            //stageList.RemoveAt(index);
-
-            //// Shop
-            //index = Random.Range(0, stageList.Count);
-            //stageList[index].stage = stageList[index].AddComponent<ShopStage>();
-            //ShopManager.Instance.SettingCardShop();
-            //stageList[index].State = Map.StageState.Shop;
-            //SetClickStage(stageList[index]);
-            //stageList[index].GetComponentInChildren<TMP_Text>().text = "Shop";
-            //stageList[index].GetComponentInChildren<TMP_Text>().color = Color.blue;
-            ////stageList[index].ClearMap();
-            //stageList.RemoveAt(index);
-
-            //foreach (Map stage in stageList)
-            //{
-            //    int percent = Random.Range(0, 4);
-            //    switch (percent)
-            //    {
-            //        case 0:
-            //        case 1:
-            //        case 2:
-            //            stage.stage = stage.AddComponent<EnemyStage>();
-            //            stage.State = Map.StageState.Enemy;
-            //            SetClickStage(stage);
-            //            stage.GetComponentInChildren<TMP_Text>().text = "Enemy";
-            //            break;
-
-            //        case 3:
-            //            stage.stage = stage.AddComponent<EventStage>();
-            //            stage.State = Map.StageState.Event;
-            //            SetClickStage(stage);
-            //            stage.GetComponentInChildren<TMP_Text>().text = "Event";
-            //            stage.GetComponentInChildren<TMP_Text>().color = Color.cyan;
-            //            break;
-            //    }
-            //}
         }
         //foreach (Map map in maps)
         //{

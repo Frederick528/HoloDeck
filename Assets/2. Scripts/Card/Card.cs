@@ -21,12 +21,16 @@ public class Card : MonoBehaviour
 {
     public IObjectPool<Tuple<GameObject, Card>> CardPool { get; set; }
 
-    [SerializeField] SpriteRenderer card;
-    [SerializeField] SpriteRenderer character;
-    [SerializeField] TMP_Text nameText;
-    [SerializeField] TMP_Text costText;
-    [SerializeField] TMP_Text desText;
-    [SerializeField] SpriteRenderer outline;
+    [SerializeField] SpriteRenderer _card;
+    [SerializeField] SpriteRenderer _character;
+    [SerializeField] SpriteRenderer _descBG;
+
+    [SerializeField] SpriteRenderer[] _rararityBG;
+    [SerializeField] TMP_Text _nameText;
+    [SerializeField] TMP_Text _costText;
+    [SerializeField] TMP_Text _descText;
+    [SerializeField] TMP_Text _tagText;
+    [SerializeField] SpriteRenderer _outline;
 
     public PRS OriginPRS;
     public Order CardOrder;
@@ -86,8 +90,37 @@ public class Card : MonoBehaviour
 
         Data = (CardData)_defaultData.Clone();
 
-        nameText.text = Data.Name;
-        character.sprite = Data.Sprite;
+        _nameText.text = Data.Name;
+        _character.sprite = Data.Sprite;
+        switch (Data.CardTag)
+        {
+            case CardTag.SingleAttack:
+            case CardTag.MultiAttack:
+                _tagText.text = "Attack";
+                break;
+            case CardTag.Skill:
+                _tagText.text = "Skill";
+                break;
+        }
+        switch (Data.CardRarity)
+        {
+            case CardRarity.Common:
+                for (int i = 0; i < CardManager.Instance.CommonSprites.Length; ++i)
+                    _rararityBG[i].sprite = CardManager.Instance.CommonSprites[i];
+                break;
+            case CardRarity.Rare:
+                for (int i = 0; i < CardManager.Instance.RareSprites.Length; ++i)
+                    _rararityBG[i].sprite = CardManager.Instance.RareSprites[i];
+                break;
+            case CardRarity.Epic:
+                for (int i = 0; i < CardManager.Instance.EpicSprites.Length; ++i)
+                    _rararityBG[i].sprite = CardManager.Instance.EpicSprites[i];
+                break;
+            case CardRarity.Legendary:
+                for (int i = 0; i < CardManager.Instance.LegendarySprites.Length; ++i)
+                    _rararityBG[i].sprite = CardManager.Instance.LegendarySprites[i];
+                break;
+        }
         //CardAction = CardAbility.SetCardActionAbility(this);     // Action<Card> 버전 (드로우 시간 체크 때문에 일단 사용하지 않음.)
         //CardTask = CardAbility.SetCardAbility(this);              // 그냥 카드어빌리티 실행하면 Task 바꾸도록 함.
         //CardAbility.SetCardAbility(this);     // 사용 전에 받기 때문에 굳이 사용 안 해도 됨. 나중에 따로 필요하면 킬 것.
@@ -163,8 +196,8 @@ public class Card : MonoBehaviour
             Data.Count = _defaultData.Count + 0;
             Data.Draw = _defaultData.Draw + 0;
             Data.Reduce = _defaultData.Reduce + 0;
-            costText.text = (_defaultData.Cost + 0).ToString();
-            desText.text = Desc;
+            _costText.text = (_defaultData.Cost + 0).ToString();
+            _descText.text = Desc;
         //}
 
         //nameText.text = Data.Name;
@@ -204,10 +237,10 @@ public class Card : MonoBehaviour
     {
         Data = GameManager.Instance.FindCardData(id);
 
-        nameText.text = Data.Name;
-        costText.text = Data.Cost.ToString();
-        desText.text = Data.Descript;
-        character.sprite = Data.Sprite;
+        _nameText.text = Data.Name;
+        _costText.text = Data.Cost.ToString();
+        _descText.text = Data.Descript;
+        _character.sprite = Data.Sprite;
 
         //CardAction = CardAbility.SetCardActionAbility(this);
         //CardAbility.SetCardAbility(this);
@@ -224,7 +257,7 @@ public class Card : MonoBehaviour
 
     public void ResetCard()
     {
-        outline.gameObject.SetActive(false);
+        _outline.gameObject.SetActive(false);
     }
 
     public void Target(Enemy enemy)
@@ -234,7 +267,7 @@ public class Card : MonoBehaviour
 
     public void TurnOnOutline(bool isOn)
     {
-        outline.gameObject.SetActive(isOn);
+        _outline.gameObject.SetActive(isOn);
     }
 
     public async UniTask TaskMoveTransform(PRS prs, bool battleCancel, float dotweenTime = 0)

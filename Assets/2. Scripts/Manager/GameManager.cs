@@ -90,7 +90,7 @@ public class GameManager : MonoBehaviour
         }
         //if (_selectAbility && _option) return;
         Time.timeScale = pause ? 0 : 1;
-        Physics2D.autoSyncTransforms = pause ? true : false;
+        //Physics2D.autoSyncTransforms = pause ? true : false;      // 정지상태에서 카드를 사용하는 경우에는 필요함. 근데, 지금은 따로 필요없음.
     }
 
     void Update()
