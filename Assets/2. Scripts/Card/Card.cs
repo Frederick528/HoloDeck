@@ -105,19 +105,19 @@ public class Card : MonoBehaviour
         switch (Data.CardRarity)
         {
             case CardRarity.Common:
-                for (int i = 0; i < CardManager.Instance.CommonSprites.Length; ++i)
+                for (int i = 0; i < _rararityBG.Length; ++i)
                     _rararityBG[i].sprite = CardManager.Instance.CommonSprites[i];
                 break;
             case CardRarity.Rare:
-                for (int i = 0; i < CardManager.Instance.RareSprites.Length; ++i)
+                for (int i = 0; i < _rararityBG.Length; ++i)
                     _rararityBG[i].sprite = CardManager.Instance.RareSprites[i];
                 break;
             case CardRarity.Epic:
-                for (int i = 0; i < CardManager.Instance.EpicSprites.Length; ++i)
+                for (int i = 0; i < _rararityBG.Length; ++i)
                     _rararityBG[i].sprite = CardManager.Instance.EpicSprites[i];
                 break;
             case CardRarity.Legendary:
-                for (int i = 0; i < CardManager.Instance.LegendarySprites.Length; ++i)
+                for (int i = 0; i < _rararityBG.Length; ++i)
                     _rararityBG[i].sprite = CardManager.Instance.LegendarySprites[i];
                 break;
         }

@@ -30,10 +30,10 @@ public class ShopManager : MonoBehaviour
     }
     public void BuyCard()
     {
-        if (GameManager.Instance.player.Coin.Value >= CardManager.Instance.rewardCardData.Price)
+        if (GameManager.Instance.player.Coin.Value >= CardManager.Instance.GetCardData.Price)
         {
-            GameManager.Instance.player.Coin.Value -= CardManager.Instance.rewardCardData.Price;
-            CardManager.Instance.AddDeck(CardManager.Instance.rewardCardData, EAddDeck.Main);
+            GameManager.Instance.player.Coin.Value -= CardManager.Instance.GetCardData.Price;
+            CardManager.Instance.AddDeck(CardManager.Instance.GetCardData, EAddDeck.Main);
             _shopCard.GetChild(_shopCardIdx).GetComponent<UICard>().gameObject.SetActive(false);
             _shopCardPrice.GetChild(_shopCardIdx).GetComponent<TMP_Text>().text = "";
         }

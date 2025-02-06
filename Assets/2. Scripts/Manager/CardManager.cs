@@ -31,7 +31,7 @@ public class CardManager : MonoBehaviour
 
     public ECardState cardState;
 
-    public CardData rewardCardData;
+    public CardData GetCardData;
 
     [SerializeField] CardSO cardSO;
 
@@ -61,7 +61,7 @@ public class CardManager : MonoBehaviour
 
     List<Card> _selectedCards = new();           // 배틀 중 버리기, 강화, 교환 등에서 선택한 카드 리스트
 
-    Card _usedCard;
+    Card _usedCard;                              // 사용되고 있는 카드(버리기 효과나 다른 효과가 진행되고 있는 카드)
     Card _selectCard;                            // 들고 있는 카드(drag 중인 카드)
     bool draggable;
     ReactiveProperty<bool> isUseCard = new();     // 카드 사용존에 카드가 올라왔을 경우(카드를 놓으면 카드가 사용되는 위치)
@@ -106,7 +106,7 @@ public class CardManager : MonoBehaviour
     }
     public void RewardedCard()
     {
-        AddDeck(rewardCardData, EAddDeck.Main);
+        AddDeck(GetCardData, EAddDeck.Main);
         MapManager.Instance.GetReward();
         UiManager.Instance.LookMap();
     }

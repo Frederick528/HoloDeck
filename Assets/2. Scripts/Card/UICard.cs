@@ -17,12 +17,28 @@ public class UICard : MonoBehaviour
     [SerializeField] TMP_Text _costText;
     [SerializeField] TMP_Text _tagText;
     [SerializeField] TMP_Text _descText;
-    [SerializeField] Button _cardBtn;
+    //[SerializeField] Button _cardBtn;
 
     [SerializeField] UICard enlargeCard;
+    CardData _getCardData;
+
+    private void Start()
+    {
+        TryGetComponent(out Button _cardBtn);
+        if (_cardBtn != null)
+        {
+            _cardBtn.onClick.AddListener(() =>
+            {
+                CardManager.Instance.GetCardData = _getCardData;
+                enlargeCard.Setup(_getCardData);
+            });
+
+        }
+    }
 
     public void Setup(CardData data)
     {
+        _getCardData = data;
         StringBuilder sb = new StringBuilder(data.Descript);
         sb.Replace("{Damage}", (data.Damage).ToString());
         sb.Replace("{Shield}", (data.Shield).ToString());
@@ -47,31 +63,21 @@ public class UICard : MonoBehaviour
         switch (data.CardRarity)
         {
             case CardRarity.Common:
-                for (int i = 0; i < CardManager.Instance.CommonSprites.Length; ++i)
+                for (int i = 0; i < _rararityBG.Length; ++i)
                     _rararityBG[i].sprite = CardManager.Instance.CommonSprites[i];
                 break;
             case CardRarity.Rare:
-                for (int i = 0; i < CardManager.Instance.RareSprites.Length; ++i)
+                for (int i = 0; i < _rararityBG.Length; ++i)
                     _rararityBG[i].sprite = CardManager.Instance.RareSprites[i];
                 break;
             case CardRarity.Epic:
-                for (int i = 0; i < CardManager.Instance.EpicSprites.Length; ++i)
+                for (int i = 0; i < _rararityBG.Length; ++i)
                     _rararityBG[i].sprite = CardManager.Instance.EpicSprites[i];
                 break;
             case CardRarity.Legendary:
-                for (int i = 0; i < CardManager.Instance.LegendarySprites.Length; ++i)
+                for (int i = 0; i < _rararityBG.Length; ++i)
                     _rararityBG[i].sprite = CardManager.Instance.LegendarySprites[i];
                 break;
-        }
-
-        if (_cardBtn != null)
-        {
-            _cardBtn.onClick.AddListener(() =>
-            {
-                CardManager.Instance.rewardCardData = data;
-                enlargeCard.Setup(data);
-            });
-
         }
     }
 }
