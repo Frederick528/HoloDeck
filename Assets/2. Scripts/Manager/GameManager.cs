@@ -156,8 +156,8 @@ public class GameManager : MonoBehaviour
             {
                 for (int i = EnemyManager.Instance.enemies.Count - 1; i >= 0; --i)
                 {
-                    EnemyManager.Instance.enemies[i].CheckIfDead(9999);
-                    EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999);
+                    EnemyManager.Instance.enemies[i].CheckIfDead(9999, 1);
+                    EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
                     //EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
                 }
             }

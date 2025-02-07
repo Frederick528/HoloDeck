@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -54,7 +55,7 @@ public class PotionManager : MonoBehaviour
             case 2:
                 if (TurnManager.Instance.myTurn)
                 {
-                    GameManager.Instance.player.Shield(15);
+                    GameManager.Instance.player.Shield(15).Forget();
                     potionBtns[idx].onClick.RemoveAllListeners();
                     boolPotion[idx] = false;
                 }

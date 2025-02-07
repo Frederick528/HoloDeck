@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using UnityEngine;
 
@@ -58,7 +59,7 @@ public class CardAbility
                 card.CardTask = UniTask.Defer(async () =>
                 {
                     await DelayTask(0.5f);
-                    SingleAttackAb(card);
+                    await SingleAttackAb(card);
                 });
                 //return SingleAttackAb(card);
                 //cardActTask = UniTask.Defer(async () => 
@@ -71,7 +72,7 @@ public class CardAbility
                 card.CardTask = UniTask.Defer(async () =>
                 {
                     await DelayTask(0.5f);
-                    SingleAttackAb(card);
+                    await SingleAttackAb(card);
                     await DrawAb();
                 });
 
@@ -122,7 +123,7 @@ public class CardAbility
                 card.CardTask = UniTask.Defer(async () =>
                 {
                     await DelayTask(0.5f);
-                    ShieldAb(card);
+                    await ShieldAb(card);
                 });
                 break;
             default:
@@ -326,9 +327,9 @@ public class CardAbility
     //    return cardAction;
     //}
 
-    void SingleAttackAb(Card card)
+    async UniTask SingleAttackAb(Card card)
     {
-        card.TargetEnemy.TakeDamageEnemy(card.Data.Damage);        // 이 전 단계에서 null 검사를 하기 때문에 ?. 할 필요 없음.
+        await card.TargetEnemy.TakeDamageEnemy(card.Data.Damage);        // 이 전 단계에서 null 검사를 하기 때문에 ?. 할 필요 없음.
         card.Target(null);                                         // missing 체크를 위한 거였으나.. 안 되나..??
         //Enemy enemy = EnemyManager.Instance.targetEnemy;
         //enemy.TakeDamageEnemy(card.Data.Damage);
@@ -339,18 +340,21 @@ public class CardAbility
         //enemy.TakeDamageEnemy(card.Data.Damage).Forget();
     }
 
-    void SingleAttackAb(object obj)       // 나중에 다시 체크해봐야 할 듯. 잘 하면 id로도 사용 가능할 듯?
+    async UniTask SingleAttackAb(object obj)       // 나중에 다시 체크해봐야 할 듯. 잘 하면 id로도 사용 가능할 듯?
     {
         Card card = obj as Card;
-        card.TargetEnemy.TakeDamageEnemy(card.Data.Damage);
+        await card.TargetEnemy.TakeDamageEnemy(card.Data.Damage);
         card.Target(null);
     }
-    void MultiAttackAb(Card card)
+    async UniTask MultiAttackAb(Card card)
     {
-        for (int i = EnemyManager.Instance.enemies.Count - 1; i >= 0; i--)
-        {
-            EnemyManager.Instance.enemies[i].TakeDamageEnemy(card.Data.Damage);
-        }
+        int enemyCount = EnemyManager.Instance.enemies.Count;
+        await UniTask.WhenAll(Enumerable.Range(0, enemyCount).
+            Select(i => EnemyManager.Instance.enemies[(enemyCount - 1) - i].TakeDamageEnemy(card.Data.Damage)));
+        //for (int i = EnemyManager.Instance.enemies.Count - 1; i >= 0; i--)
+        //{
+        //    await EnemyManager.Instance.enemies[i].TakeDamageEnemy(card.Data.Damage);
+        //}
         //foreach (Enemy enemy in EnemyManager.Instance.enemies)
         //{
         //    enemy.TakeDamageEnemy(card.Data.Damage);
@@ -374,12 +378,12 @@ public class CardAbility
     async UniTask ContinuousSinglettackAb(Card card, float delay)
     {
         //Enemy enemy = EnemyManager.Instance.targetEnemy;
-        if (card.TargetEnemy.TakeDamageEnemy(card.Data.Damage))
+        if (await card.TargetEnemy.TakeDamageEnemy(card.Data.Damage))
             return;
         for (int i = 1; i < card.Data.Count; ++i)
         {
             await DelayTask(delay);
-            if (card.TargetEnemy.TakeDamageEnemy(card.Data.Damage))
+            if (await card.TargetEnemy.TakeDamageEnemy(card.Data.Damage))
                 return;
         }
         card.Target(null);
@@ -418,12 +422,12 @@ public class CardAbility
     {
         Card card = obj as Card;
         //Enemy enemy = EnemyManager.Instance.targetEnemy;
-        if (card.TargetEnemy.TakeDamageEnemy(card.Data.Damage))
+        if (await card.TargetEnemy.TakeDamageEnemy(card.Data.Damage))
             return;
         for (int i = 1; i < card.Data.Count; ++i)
         {
             await DelayTask(delay);
-            if (card.TargetEnemy.TakeDamageEnemy(card.Data.Damage))
+            if (await card.TargetEnemy.TakeDamageEnemy(card.Data.Damage))
                 return;
         }
         card.Target(null);
@@ -431,11 +435,11 @@ public class CardAbility
 
     async UniTask ContinuousMultiAttackAb(Card card, float delay)
     {
-        MultiAttackAb(card);
+        await MultiAttackAb(card);
         for (int j = 1; j < /*(!card.Enhanced ? card.Data.Count : card.Data.EnhancedCount)*/card.Data.Count; ++j)
         {
             await DelayTask(delay);
-            MultiAttackAb(card);
+            await MultiAttackAb(card);
             //DelayTask().ContinueWith(() =>    //ContinueWith() 사용시 UniTask가 종종 최대 15초까지 안 끝나는 오류 발생
             //{
             //    MultiAttackAb(card);
@@ -458,9 +462,9 @@ public class CardAbility
         //else
         //    CardManager.Instance.DrawCards(card.Data.EnhancedDraw).Forget();
     }
-    void ShieldAb(Card card)
+    async UniTask ShieldAb(Card card)
     {
-        GameManager.Instance.player.Shield(card.Data.Shield);
+        await GameManager.Instance.player.Shield(card.Data.Shield);
         //if (!card.Enhanced)
         //    GameManager.Instance.player.Shield(card.Data.Shield);
         //else

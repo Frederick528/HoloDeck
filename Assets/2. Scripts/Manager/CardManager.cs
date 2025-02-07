@@ -136,12 +136,14 @@ public class CardManager : MonoBehaviour
             case EAddDeck.Draw:
                 cardObject.transform.localScale = CardUtils.CardScale * 0.5f;
                 DrawDeck.Add(setCard);
+                UiManager.Instance.SetDrawCount();
                 ShuffleDeck();
                 break;
 
             case EAddDeck.Dummy:
                 cardObject.transform.localScale = CardUtils.CardScale * 0.5f;
                 CardDummy.Add(setCard);
+                UiManager.Instance.SetDummyCount();
                 break;
 
             case EAddDeck.Hand:                 // 핸드로 가져오는 건 카드 정렬 때문에 DrawCard 함수를 이용해서만 접근할 것.
@@ -155,6 +157,7 @@ public class CardManager : MonoBehaviour
                 {
                     cardObject.transform.localScale = CardUtils.CardScale * 0.5f;
                     CardDummy.Add(setCard);
+                    UiManager.Instance.SetDummyCount();
                 }
                 break;
         }
@@ -195,12 +198,12 @@ public class CardManager : MonoBehaviour
         switch (card.Data.CardTag)
         {
             case CardTag.SingleAttack:
-                card.TargetEnemy.CheckIfDead(card.Data.Damage * count);
+                card.TargetEnemy.CheckIfDead(card.Data.Damage, count);
                 break;
             case CardTag.MultiAttack:
                 foreach (Enemy enemy in EnemyManager.Instance.enemies)
                 {
-                    enemy.CheckIfDead(card.Data.Damage * count);
+                    enemy.CheckIfDead(card.Data.Damage, count);
                 }
                 break;
         }
@@ -232,6 +235,7 @@ public class CardManager : MonoBehaviour
         if (!endBattle)
         {
             CardDummy.Add(usedCard);
+            UiManager.Instance.SetDummyCount();
         }
         usedCard.Block = false;
         usedCard.Used = false;
@@ -280,6 +284,8 @@ public class CardManager : MonoBehaviour
     {
         DrawDeck.Clear();
         CardDummy.Clear();
+        UiManager.Instance.SetDrawCount();
+        UiManager.Instance.SetDummyCount();
         //HandCard.Clear();     클리어카드 전에 카드를 전부 버리기 때문에 HandCard.Clear()는 안 해도 됨.
         for (int i = 0; i < TotalDeck.Count; ++i)
         {
@@ -302,9 +308,11 @@ public class CardManager : MonoBehaviour
             foreach (Card card in CardDummy)
             {
                 DrawDeck.Add(card);         // 여기선 AddDeck 안 씀.
+                UiManager.Instance.SetDrawCount();
                 card.transform.position = cardSpawnPoint.position;
             }
             CardDummy.Clear();
+            UiManager.Instance.SetDummyCount();
         }
         else
         {
@@ -312,6 +320,7 @@ public class CardManager : MonoBehaviour
             foreach (Card card in MainDeck)
             {
                 DrawDeck.Add(card);
+                UiManager.Instance.SetDrawCount();
                 card.transform.position = cardSpawnPoint.position;
             }
         }
@@ -344,6 +353,7 @@ public class CardManager : MonoBehaviour
 
         Card card = DrawDeck[0];
         DrawDeck.RemoveAt(0);
+        UiManager.Instance.SetDrawCount();
         return card;
     }
 
@@ -353,6 +363,7 @@ public class CardManager : MonoBehaviour
 
         Card card = DrawDeck.Find(x => x == drawCard);
         DrawDeck.Remove(card);
+        UiManager.Instance.SetDrawCount();
         return card;
     }
 
@@ -601,6 +612,7 @@ public class CardManager : MonoBehaviour
             CardDummy.Add(targetCard);
             UnblockCard(targetCard);
         }
+        UiManager.Instance.SetDummyCount();
         _selectedCards.Clear();
     }
 
@@ -618,6 +630,7 @@ public class CardManager : MonoBehaviour
             CardDummy.Add(targetCard);
             UnblockCard(targetCard);
         }
+        UiManager.Instance.SetDummyCount();
         HandCard.Clear();
     }
     public async UniTask ThrowAwayCard(Card throwCard)
@@ -630,6 +643,7 @@ public class CardManager : MonoBehaviour
         await throwCard.TaskMoveTransform(new PRS(cardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), false, CardUtils.ThrowAwayCardDelay);
 
         CardDummy.Add(throwCard);
+        UiManager.Instance.SetDummyCount();
     }
 
     public async UniTask UsedCard(Card usedCard)

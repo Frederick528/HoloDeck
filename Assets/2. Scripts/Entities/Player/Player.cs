@@ -16,7 +16,7 @@ public class Player : Entity
 
     int _attackPower;
     int _defencePower;
-    [SerializeField] TMP_Text holoValue;
+    //[SerializeField] TMP_Text holoValue;
     // Start is called before the first frame update
     void Start()
     {
@@ -49,10 +49,9 @@ public class Player : Entity
     void SetupPlayer(int hp, int startHoloValue)
     {
         SetupEntity(hp);
-        holoValue = UiManager.Instance.FindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.Battle), "HoloValueText").GetComponent<TMP_Text>();
         MaxHolo = startHoloValue;
         CurHolo = MaxHolo;
-        holoValue.text = $"{CurHolo} / {MaxHolo}";
+        UiManager.Instance.SetHolo(CurHolo, MaxHolo);
     }
     public async UniTask<bool> TakeDamagePlayer(int dmg)
     {
@@ -66,7 +65,7 @@ public class Player : Entity
     public void ChangeHoloValue(int chargeOrUse)
     {
         CurHolo = Mathf.Clamp(CurHolo + chargeOrUse, 0, MaxHolo);
-        holoValue.text = $"{CurHolo} / {MaxHolo}";
+        UiManager.Instance.SetHolo(CurHolo, MaxHolo);
     }
 
     public void ChangeHealth(int value)

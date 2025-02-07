@@ -35,9 +35,9 @@ public class EnemyManager : MonoBehaviour
     //    ArrowCursor = FindObjectOfType<Arrow>(true);
     //}
 
-    public bool SpawnEnemy(int enemyId, int spawnPosIndex = 0)       // 체력 설정이 아니라 ID를 통해 몬스터 종류와 체력, 공격력을 가져오는 형식으로 변경함.
+    public bool SpawnEnemy(int enemyId, int spawnPosIndex)       // 체력 설정이 아니라 ID를 통해 몬스터 종류와 체력, 공격력을 가져오는 형식으로 변경함.
     {
-        if (!enemySpawnPosition[spawnPosIndex].gameObject.activeSelf)
+        if (!enemySpawnPosition[spawnPosIndex].gameObject.activeSelf)       // 나중에 배열 만들어서 gameObject가 아니라 bool값으로 바로 받아올 것.
             return false;
         EnemyData enemyData = FindEnemyData(enemyId);
         GameObject enemyObject = Instantiate(enemyData.enemyPrefab, enemySpawnPosition[spawnPosIndex].position, Quaternion.identity);
@@ -46,6 +46,26 @@ public class EnemyManager : MonoBehaviour
         enemy.SetupEnemy(enemyData, spawnPosIndex);
         enemySpawnPosition[spawnPosIndex].gameObject.SetActive(false);
         return true;
+    }
+
+    public bool SpawnEnemy(int enemyId)
+    {
+        EnemyData enemyData;
+        GameObject enemyObject;
+        Enemy enemy;
+        for (int i = 0; i < enemySpawnPosition.Count; ++i)
+        {
+            if (!enemySpawnPosition[i].gameObject.activeSelf)
+                continue;
+            enemyData = FindEnemyData(enemyId);
+            enemyObject = Instantiate(enemyData.enemyPrefab, enemySpawnPosition[i].position, Quaternion.identity);
+            enemy = enemyObject.GetComponent<Enemy>();
+            enemies.Add(enemy);
+            enemy.SetupEnemy(enemyData, i);
+            enemySpawnPosition[i].gameObject.SetActive(false);
+            return true;
+        }
+        return false;
     }
 
     public EnemyData FindEnemyData(int id)   // Id 값으로 적 데이터 가져오기

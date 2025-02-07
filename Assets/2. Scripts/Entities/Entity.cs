@@ -76,9 +76,10 @@ public abstract class Entity : MonoBehaviour
         curHp.Value = Mathf.Clamp(curHp.Value + amount, 0, maxHp.Value);
     }
 
-    public virtual void Shield(int amount)
+    public virtual async UniTask Shield(int amount)
     {
         shield.Value += amount;
+        await UniTask.WaitForSeconds(0.5f);
     }
 
     public virtual void DefenceReset()

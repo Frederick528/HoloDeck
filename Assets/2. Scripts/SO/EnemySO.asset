@@ -33,7 +33,7 @@ MonoBehaviour:
     descript: Dog
     sprite: {fileID: 0}
     enemyTag: 0
-    enemyPrefab: {fileID: 8087328464934093098, guid: 206f2918ef4caa04381142133e3ad0f1, type: 3}
+    enemyPrefab: {fileID: 8476364101092123999, guid: b7362bd93fac5cf4a9d671b7ce1493c4, type: 3}
   - name: Healer
     id: 102
     level: 0
@@ -43,7 +43,7 @@ MonoBehaviour:
     descript: Healer
     sprite: {fileID: 0}
     enemyTag: 0
-    enemyPrefab: {fileID: 8124939332267100909, guid: 549548eeb5186a440a204eec55ec3e55, type: 3}
+    enemyPrefab: {fileID: 4086410140833498804, guid: 671ee7bd8898ae942820b3810882fc4e, type: 3}
   - name: E
     id: 103
     level: 0

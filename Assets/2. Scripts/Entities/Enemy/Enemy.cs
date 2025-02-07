@@ -72,10 +72,14 @@ public abstract class Enemy : Entity
         spawnPos = pos;
     }
 
-    public bool TakeDamageEnemy(int dmg)
+    public async UniTask<bool> TakeDamageEnemy(int dmg)
     {
+        await BeforeTakeDamage();
         if (!TakeDamage(dmg))
+        {
+            await AfterTakeDamage();
             return false;
+        }
         //int spawn = 0;
         //EnemyManager.Instance.enemies.Remove(this);
         //EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);
@@ -101,9 +105,15 @@ public abstract class Enemy : Entity
 
     }
 
-    public void CheckIfDead(int damage)
+    //protected virtual int ResistDamage(int damage)
+    //{
+    //    return damage;
+    //}
+
+    public virtual void CheckIfDead(int damage, int count)
     {
-        if ((curHp.Value - damage) <= 0)
+        //int resistDamage = ResistDamage(damage);
+        if (((curHp.Value + shield.Value) - (/*resistDamage*/damage * count)) <= 0)
         {
             col2d.enabled = false;
             CanClear = true;
@@ -149,6 +159,16 @@ public abstract class Enemy : Entity
         MapManager.Instance.ClearStage().Forget();
         MapManager.Instance.RewardStage();
         ItemManager.Instance.Charge(1);
+    }
+
+    protected virtual async UniTask BeforeTakeDamage()
+    {
+        await UniTask.CompletedTask;
+    }
+
+    protected virtual async UniTask AfterTakeDamage()
+    {
+        await UniTask.CompletedTask;
     }
 
     public abstract void Pattern();

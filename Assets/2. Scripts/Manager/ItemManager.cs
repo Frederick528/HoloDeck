@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -142,7 +143,7 @@ public class ItemManager : MonoBehaviour
     {
         if (!arrowOn) return false;
 
-        enemy.TakeDamageEnemy(activeValue);
+        enemy.TakeDamageEnemy(activeValue).Forget();            // 일단 forget했는데, 상황에 따라 달라짐
 
         Charge(-activeItem.maxCharge);
 

@@ -37,10 +37,13 @@ public class UiManager : MonoBehaviour
 
     UICard[] _uICards = new UICard[4];
 
-    [Header("Um..")]
-    [SerializeField] TextMeshProUGUI topHealthText;     // TMP텍스트로 변경가능성있음
-    [SerializeField] TextMeshProUGUI topCoinText;
-    [SerializeField] TextMeshProUGUI turnEndButtonText;
+    TMP_Text _topHealthText;     // TMP텍스트로 변경가능성있음
+    TMP_Text _topCoinText;
+
+    TMP_Text _holoValue;
+    TMP_Text _turnEndButtonText;
+    TMP_Text _drawCount;
+    TMP_Text _dummyCount;
 
 
     private void Awake()
@@ -50,10 +53,7 @@ public class UiManager : MonoBehaviour
         {
             CanvasDict.Add(i, CanvasList[i]);
         }
-    }
 
-    private void Start()
-    {
         _cardEnlargePanel = Canvas(CanvasName.CardReward).Find("CardEnlargePanel");
         _cardRewardContent = FindChildByName(Canvas(CanvasName.CardReward), "Content");
         _itemEnlargePanel = Canvas(CanvasName.ItemReward).Find("ItemEnlargePanel");
@@ -61,9 +61,17 @@ public class UiManager : MonoBehaviour
         _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel");
         _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel");
 
+        _topHealthText = FindChildByName(Canvas(CanvasName.InGame), "HealthText").GetComponent<TMP_Text>();
+        _topCoinText = FindChildByName(Canvas(CanvasName.InGame), "CoinText").GetComponent<TMP_Text>();
+
+        _holoValue = FindChildByName(Canvas(CanvasName.Battle), "HoloValueText").GetComponent<TMP_Text>();
+        _turnEndButtonText = FindChildByName(Canvas(CanvasName.Battle), "TurnText").GetComponent<TMP_Text>();
+        _drawCount = FindChildByName(Canvas(CanvasName.Battle), "DrawCountText").GetComponent<TMP_Text>();
+        _dummyCount = FindChildByName(Canvas(CanvasName.Battle), "DummyCountText").GetComponent<TMP_Text>();
+
         Transform rewardBoxCanvas = Canvas(CanvasName.RewardBox);
         _rewardBoxes = new Transform[rewardBoxCanvas.childCount];
-        for (int i = 0;i < _rewardBoxes.Length; ++i)
+        for (int i = 0; i < _rewardBoxes.Length; ++i)
         {
             _rewardBoxes[i] = rewardBoxCanvas.GetChild(i);
         }
@@ -72,6 +80,34 @@ public class UiManager : MonoBehaviour
         {
             _uICards[i] = _cardRewardContent.GetChild(i).GetComponent<UICard>();
         }
+    }
+
+    private void Start()
+    {
+        //_cardEnlargePanel = Canvas(CanvasName.CardReward).Find("CardEnlargePanel");
+        //_cardRewardContent = FindChildByName(Canvas(CanvasName.CardReward), "Content");
+        //_itemEnlargePanel = Canvas(CanvasName.ItemReward).Find("ItemEnlargePanel");
+        //_itemRewardContent = FindChildByName(Canvas(CanvasName.ItemReward), "Content");
+        //_shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel");
+        //_shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel");
+
+        //_topHealthText = FindChildByName(Canvas(CanvasName.InGame), "HealthText").GetComponent<TMP_Text>();
+        //_topCoinText = FindChildByName(Canvas(CanvasName.InGame), "CoinText").GetComponent<TMP_Text>();
+
+        //_holoValue = FindChildByName(Canvas(CanvasName.Battle), "HoloValueText").GetComponent<TMP_Text>();
+        //_turnEndButtonText = FindChildByName(Canvas(CanvasName.Battle), "TurnEndButton").GetComponent<TMP_Text>();
+
+        //Transform rewardBoxCanvas = Canvas(CanvasName.RewardBox);
+        //_rewardBoxes = new Transform[rewardBoxCanvas.childCount];
+        //for (int i = 0; i < _rewardBoxes.Length; ++i)
+        //{
+        //    _rewardBoxes[i] = rewardBoxCanvas.GetChild(i);
+        //}
+
+        //for (int i = 0; i < _uICards.Length; ++i)
+        //{
+        //    _uICards[i] = _cardRewardContent.GetChild(i).GetComponent<UICard>();
+        //}
 
         SetActiveCanvas(CanvasName.Map, true);
     }
@@ -166,9 +202,9 @@ public class UiManager : MonoBehaviour
     public void ChangeTurnButtonText(bool turn)
     {
         if (turn)
-            turnEndButtonText.text = "Turn End";
+            _turnEndButtonText.text = "Turn End";
         else
-            turnEndButtonText.text = "Enemy's Turn";
+            _turnEndButtonText.text = "Enemy's Turn";
     }
     public void LookMap()
     {
@@ -176,13 +212,28 @@ public class UiManager : MonoBehaviour
         map.SetActive(!map.activeSelf);
     }
 
+    public void SetHolo(int curHolo, int maxHolo)
+    {
+        _holoValue.text = $"{curHolo} / {maxHolo}";
+    }
+
     public void SetHealth(int curHp, int maxHp)
     {
-        topHealthText.text = $"{curHp} / {maxHp}";
+        _topHealthText.text = $"{curHp} / {maxHp}";
     }
 
     public void SetCoin(int coin)
     {
-        topCoinText.text = coin.ToString();
+        _topCoinText.text = coin.ToString();
+    }
+
+    public void SetDrawCount()
+    {
+        _drawCount.text = CardManager.Instance.DrawDeck.Count.ToString();
+    }
+
+    public void SetDummyCount()
+    {
+        _dummyCount.text = CardManager.Instance.CardDummy.Count.ToString();
     }
 }
