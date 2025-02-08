@@ -9,6 +9,7 @@ using DG.Tweening;
 using System.Linq;
 using TMPro;
 using UniRx;
+using UnityEngine.EventSystems;
 
 public class CardManager : MonoBehaviour
 {
@@ -29,7 +30,7 @@ public class CardManager : MonoBehaviour
     public bool isSingleTarget;
     public bool useSingleTargetCard;
 
-    public ECardState cardState;
+    public ECardState CardState;
 
     public CardData GetCardData;
 
@@ -47,7 +48,7 @@ public class CardManager : MonoBehaviour
 
     //[SerializeField] GameObject cardPrefab;
 
-    public Transform cardRewardContent;
+    //public Transform cardRewardContent;
 
     [SerializeField] Transform shopCard;
     [SerializeField] Transform shopCardPrice;
@@ -504,6 +505,8 @@ public class CardManager : MonoBehaviour
         _selectCard = null;      // isUseCard와 순서 중요! selectCard가 밑에 있어야 함.
 
         canPush = true;         // PullCard랑 중복 호출이긴 함.
+
+        UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.Battle, true);
     }
     public void ReturnSelectedCard()
     {
@@ -794,7 +797,9 @@ public class CardManager : MonoBehaviour
 
     public void CardMouseOver(Card card)                    // Enter로 안 하는 이유는... Enter로 하면 순간순간 카드가 over 안 되는 경우의 수가 존재함.
     {
-        if (cardState == ECardState.Nothing || draggable)
+        if (CardState == ECardState.Nothing || draggable)
+            return;
+        if (EventSystem.current.IsPointerOverGameObject())
             return;
         LargeCard(card);
         if (card.Selected) return;
@@ -802,8 +807,10 @@ public class CardManager : MonoBehaviour
     }
     public void CardMouseExit(Card card)
     {
-        if (cardState == ECardState.Nothing || draggable)
+        if (CardState == ECardState.Nothing || draggable)
             return;
+        //if (EventSystem.current.IsPointerOverGameObject())
+        //    return;
         if (card.Selected)
         {
             card.MoveTransform(new PRS(card.transform.position, Quaternion.identity, CardUtils.CardScale * 0.7f));
@@ -864,7 +871,10 @@ public class CardManager : MonoBehaviour
     }
     public void CardMouseDown(Card card)
     {
-        if (cardState == ECardState.OnlyMouseClick)
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
+        if (CardState == ECardState.OnlyMouseClick)
         {
             if (_discard)
             {
@@ -876,8 +886,11 @@ public class CardManager : MonoBehaviour
             }
             return;
         }
-        if (cardState != ECardState.CanMouseDrag)
+        if (CardState != ECardState.CanMouseDrag)
             return;
+
+        UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.Battle, false);
+
         _selectCard = card;
         draggable = true;
         BlockCard(card);
@@ -885,11 +898,14 @@ public class CardManager : MonoBehaviour
 
     public async UniTask CardMouseUp(Card card)
     {
-        if (cardState != ECardState.CanMouseDrag)
+        if (CardState != ECardState.CanMouseDrag)
         {
             //card.Block = false;
             return;
         }
+
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
 
         if (isUseCard.Value)        // 카드 사용 가능 범위에 들어왔는지 확인
         {
@@ -929,8 +945,15 @@ public class CardManager : MonoBehaviour
 
     public void CardDrag(Card card)
     {
-        if (cardState != ECardState.CanMouseDrag || !draggable)
+        if (CardState != ECardState.CanMouseDrag || !draggable)
             return;
+
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            ResetSetting();
+            PutDownCard(card).Forget();
+            return;
+        }
 
         DetectCardArea();
 
@@ -954,21 +977,25 @@ public class CardManager : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// 0 = Nothing, 1 = CanMouseOver, 2 = CanMouseDrag, 3 = OnlyMouseClick
+    /// </summary>
+    /// <param name="index"></param>
     public void SetCardState(int index)
     {
         switch (index)
         {
             case 0:
-                cardState = ECardState.Nothing;
+                CardState = ECardState.Nothing;
                 break;
             case 1:
-                cardState = ECardState.CanMouseOver;
+                CardState = ECardState.CanMouseOver;
                 break; 
             case 2:
-                cardState = ECardState.CanMouseDrag;
+                CardState = ECardState.CanMouseDrag;
                 break; 
             case 3:
-                cardState = ECardState.OnlyMouseClick;
+                CardState = ECardState.OnlyMouseClick;
                 break;
         }
     }

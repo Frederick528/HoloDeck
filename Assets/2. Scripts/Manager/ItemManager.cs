@@ -59,7 +59,7 @@ public class ItemManager : MonoBehaviour
                 GameManager.Instance.player.ChangeHolo(1);
                 break;
             case 3:
-                CardManager.Instance.cardRewardContent.Find("Card4").gameObject.SetActive(true);
+                UiManager.Instance.ChangeRewardCardCount(true);
                 break;
             case 4:
                 //activeItem = 나중에 itemSO에서 가져올 것. 그럼 밑에 코드도 필요없음.
@@ -92,7 +92,7 @@ public class ItemManager : MonoBehaviour
                 activeItemBtn.onClick.RemoveAllListeners();
                 activeItemBtn.onClick.AddListener(() =>
                 {
-                    if (TurnManager.Instance.myTurn && activeItem.curCharge >= activeItem.maxCharge)
+                    if (TurnManager.Instance.MyTurn && activeItem.curCharge >= activeItem.maxCharge)
                     {
                         SettingSingleTarget(true, 10);
                     }
@@ -116,7 +116,7 @@ public class ItemManager : MonoBehaviour
                 GameManager.Instance.player.ChangeHolo(-1);
                 break;
             case 3:
-                CardManager.Instance.cardRewardContent.Find("Card4").gameObject.SetActive(false);
+                UiManager.Instance.ChangeRewardCardCount(false);
                 break;
             default:
                 break;

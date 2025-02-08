@@ -121,7 +121,7 @@ public class EventQueue
     //async UniTaskVoid OnBtnInteract()
     //{
     //    await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
-    //    if (!TurnManager.Instance.isLoading.Value)
+    //    if (!TurnManager.Instance.IsLoading.Value)
     //    {
     //        ButtonManager.Instance.TurnEndButtonInvert(true);
     //    }

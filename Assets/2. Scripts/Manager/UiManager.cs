@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UiManager : MonoBehaviour
 {
@@ -10,16 +12,22 @@ public class UiManager : MonoBehaviour
     public enum CanvasName
     {
         InGame,
+        GameOver,
         Battle,
         Map,
         RewardBox,
         CardReward,
         ItemReward,
         Shop,
-        SelectedCard
+        SelectedCard,
+        ViewDeck
     }
     public List<GameObject> CanvasList;
+    List<GraphicRaycaster> _canvasRaycaster = new();
     public Dictionary<int, GameObject> CanvasDict = new();
+
+    [Header("UICardPrefab")]
+    [SerializeField] GameObject _uiCard;
 
     [Header("Panel")]
     Transform _cardEnlargePanel;
@@ -35,7 +43,10 @@ public class UiManager : MonoBehaviour
     Transform _cardRewardContent;
     Transform _itemRewardContent;
 
-    UICard[] _uICards = new UICard[4];
+    Transform _viewDeckContent;
+    List<UICard> _deckUICards = new();
+
+    UICard[] _uiCards = new UICard[4];
 
     TMP_Text _topHealthText;     // TMP텍스트로 변경가능성있음
     TMP_Text _topCoinText;
@@ -51,6 +62,7 @@ public class UiManager : MonoBehaviour
         Instance = this;
         for (int i = 0; i < CanvasList.Count; ++i)
         {
+            _canvasRaycaster.Add(CanvasList[i].GetComponent<GraphicRaycaster>());
             CanvasDict.Add(i, CanvasList[i]);
         }
 
@@ -58,6 +70,13 @@ public class UiManager : MonoBehaviour
         _cardRewardContent = FindChildByName(Canvas(CanvasName.CardReward), "Content");
         _itemEnlargePanel = Canvas(CanvasName.ItemReward).Find("ItemEnlargePanel");
         _itemRewardContent = FindChildByName(Canvas(CanvasName.ItemReward), "Content");
+
+        _viewDeckContent = FindChildByName(Canvas(CanvasName.ViewDeck), "Content");
+        for (int i = 0; i < _viewDeckContent.childCount; ++i)
+        {
+            _deckUICards.Add(_viewDeckContent.GetChild(i).GetComponent<UICard>());
+        }
+
         _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel");
         _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel");
 
@@ -76,9 +95,9 @@ public class UiManager : MonoBehaviour
             _rewardBoxes[i] = rewardBoxCanvas.GetChild(i);
         }
 
-        for (int i = 0; i < _uICards.Length; ++i)
+        for (int i = 0; i < _uiCards.Length; ++i)
         {
-            _uICards[i] = _cardRewardContent.GetChild(i).GetComponent<UICard>();
+            _uiCards[i] = _cardRewardContent.GetChild(i).GetComponent<UICard>();
         }
     }
 
@@ -104,9 +123,9 @@ public class UiManager : MonoBehaviour
         //    _rewardBoxes[i] = rewardBoxCanvas.GetChild(i);
         //}
 
-        //for (int i = 0; i < _uICards.Length; ++i)
+        //for (int i = 0; i < _uiCards.Length; ++i)
         //{
-        //    _uICards[i] = _cardRewardContent.GetChild(i).GetComponent<UICard>();
+        //    _uiCards[i] = _cardRewardContent.GetChild(i).GetComponent<UICard>();
         //}
 
         SetActiveCanvas(CanvasName.Map, true);
@@ -170,6 +189,11 @@ public class UiManager : MonoBehaviour
         return CanvasDict[(int)canvasName].transform;
     }
 
+    public void SetCanvasRaycast(CanvasName canvasName, bool isOn)
+    {
+        _canvasRaycaster[(int)canvasName].enabled = isOn;
+    }
+
     public void MoveMap()
     {
         SetActiveCanvas(CanvasName.CardReward, false);
@@ -179,7 +203,32 @@ public class UiManager : MonoBehaviour
     public void ShowRewardCard(int[] reward)        // 해당 부분들 맵, 상점으로 다 이동시켜야 함.
     {
         for (int i = 0; i < reward.Length; ++i)
-            _uICards[i].Setup(GameManager.Instance.FindCardData(reward[i]));
+            _uiCards[i].Setup(GameManager.Instance.FindCardData(reward[i]));
+    }
+    public void ChangeRewardCardCount(bool isOn)
+    {
+        _cardRewardContent.GetChild(3).gameObject.SetActive(isOn);
+    }
+
+    public void SetViewDeck(List<Card> deck)
+    {
+        if (deck.Count > _deckUICards.Count)
+        {
+            for (int i = 0; i < deck.Count - _deckUICards.Count; ++i)
+            {
+                Instantiate(_uiCard, _viewDeckContent);
+            }
+        }
+        for (int j = 0; j < _deckUICards.Count; ++j)
+        {
+            if (j > deck.Count - 1)
+            {
+                _deckUICards[j].gameObject.SetActive(false);
+                continue;
+            }
+            _deckUICards[j].gameObject.SetActive(true);
+            _deckUICards[j].Setup(deck[j].Data);
+        }
     }
 
     //public void SetupGameUi(bool state)

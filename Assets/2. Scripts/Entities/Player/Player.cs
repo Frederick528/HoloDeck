@@ -21,7 +21,7 @@ public class Player : Entity
     void Start()
     {
         PlayerSubScribe();
-        SetupPlayer(80, 3);
+        SetupPlayer(10, 3);
     }
 
     void PlayerSubScribe()
@@ -57,8 +57,10 @@ public class Player : Entity
     {
         if (!TakeDamage(dmg))
             return false;
-        print("플레이어가 죽었습니다.");
+        TurnManager.Instance.EndBattle().Forget();
         await base.DieAnimation();
+        print("플레이어가 죽었습니다.");
+        UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.GameOver, true);
         return true;
     }
 

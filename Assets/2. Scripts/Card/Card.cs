@@ -342,7 +342,7 @@ public class Card : MonoBehaviour
         if (Block)
             return;
         CardManager.Instance.CardMouseDown(this);
-        //if (GameManager.Instance.blockClick || TurnManager.Instance.isLoading)
+        //if (GameManager.Instance.blockClick || TurnManager.Instance.IsLoading)
         //    return;
         //comeBackCard = false;
         //draggable = true;
@@ -354,7 +354,7 @@ public class Card : MonoBehaviour
         CardManager.Instance.CardMouseUp(this).Forget();
 
 
-        //if (comeBackCard || TurnManager.Instance.isLoading)
+        //if (comeBackCard || TurnManager.Instance.IsLoading)
         //    return;
         
         //_rigid.isKinematic = false;

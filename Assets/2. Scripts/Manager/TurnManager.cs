@@ -20,8 +20,8 @@ public class TurnManager : MonoBehaviour
 
     //public static Action OnAddCard;
 
-    public bool isLoading;
-    public bool myTurn;
+    public bool IsLoading;
+    public bool MyTurn;
 
     bool _canEndTurn;
 
@@ -36,7 +36,7 @@ public class TurnManager : MonoBehaviour
 
     //private void Start()
     //{
-    //    isLoading.Subscribe(isOn =>
+    //    IsLoading.Subscribe(isOn =>
     //    {
     //        ButtonManager.Instance.TurnEndButtonInvert(!isOn);
     //        ChangeCardState().Forget();
@@ -48,29 +48,29 @@ public class TurnManager : MonoBehaviour
     }
     async UniTask ChangeCardState()
     {
-        if (isLoading && !myTurn)       // 로딩 상태에서 내 턴이 아닌 경우
+        if (IsLoading && !MyTurn)       // 로딩 상태에서 내 턴이 아닌 경우
         {
             CardManager.Instance.SetCardState(0);       // Nothing
             await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, false, PlayerLoopTiming.Update, CancelSource.Token); // 종료 다음에 버리는 시간동안은 확대 안 되게
             CardManager.Instance.SetCardState(1);       // Over
         }
-        else if (isLoading)             // 그냥 로딩 상태(내 턴인 상황에서)
+        else if (IsLoading)             // 그냥 로딩 상태(내 턴인 상황에서)
             CardManager.Instance.SetCardState(0);       // Nothing
-        else if (myTurn)
+        else if (MyTurn)
             CardManager.Instance.SetCardState(2);       // Drag
-        //if (isLoading)
-        //    CardManager.Instance.cardState = CardManager.ECardState.Nothing;
-        //else if (!myTurn)
+        //if (IsLoading)
+        //    CardManager.Instance.CardState = CardManager.ECardState.Nothing;
+        //else if (!MyTurn)
         //{
-        //    CardManager.Instance.cardState = CardManager.ECardState.CanMouseOver;
+        //    CardManager.Instance.CardState = CardManager.ECardState.CanMouseOver;
         //}
-        //else if (myTurn)
-        //    CardManager.Instance.cardState = CardManager.ECardState.CanMouseDrag;
+        //else if (MyTurn)
+        //    CardManager.Instance.CardState = CardManager.ECardState.CanMouseDrag;
     }
 
-    public void SetBool(bool isOn)
+    public void SetLoading(bool isOn)
     {
-        isLoading = isOn;
+        IsLoading = isOn;
         ButtonManager.Instance.TurnEndButtonInvert(!isOn);
         ChangeCardState().Forget();
     }
@@ -85,14 +85,14 @@ public class TurnManager : MonoBehaviour
     public async UniTask StartTurnTask()        // 시작 뽑기 (수정 필요: OnAddCard가 액션이라 Invoke 사용시, await가 작용하지 않아 카드덱이 0개일 경우, 0.5초 뒤에 뽑는 것이 적용되지 않음.)
     {
         //GameSetup();
-        myTurn = true;
+        MyTurn = true;
 
         GameManager.Instance.player.ChangeHoloValue(GameManager.Instance.player.MaxHolo);
         GameManager.Instance.player.DefenceReset();
 
-        UiManager.Instance.ChangeTurnButtonText(myTurn);
+        UiManager.Instance.ChangeTurnButtonText(MyTurn);
 
-        SetBool(true);
+        SetLoading(true);
         //await CardManager.Instance.DrawCards(startCardCount);      // DrawCard(int count)로 대체 가능
         await CardManager.Instance.DrawCard(startCardCount);
         //for (int i = 0; i < startCardCount; i++)
@@ -111,13 +111,13 @@ public class TurnManager : MonoBehaviour
 
         //    await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, CancelSource.Token);        // OnAddCard에서 진행되는 await 따로 실행
         //}
-        SetBool(false);
+        SetLoading(false);
     }
     //public async UniTask DrawTask() // 단일 뽑기 (수정 필요: OnAddCard에 있는 await가 작용하지 않아서, 카드덱이 0개일 경우, 0.5초 뒤에 뽑는 것이 적용되지 않음.)
     //{
     //    if (CardManager.Instance.HandCard.Count >= 10)
     //        return;
-    //    SetBool(true);
+    //    SetLoading(true);
 
     //    if (CardManager.Instance.DrawDeck.Count == 0)
     //    {
@@ -130,11 +130,11 @@ public class TurnManager : MonoBehaviour
     //    }
 
     //    await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, CancelSource.Token);        // OnAddCard에서 진행되는 await 따로 실행
-    //    SetBool(false);
+    //    SetLoading(false);
     //}
     //public async UniTask DrawTask(int drawCardCount)    // 여러 개 뽑기 (수정 필요: 단일 뽑기와 똑같은 문제)
     //{
-    //    SetBool(true);
+    //    SetLoading(true);
     //    for (int i = 0; i < drawCardCount; i++)
     //    {
     //        if (CardManager.Instance.HandCard.Count >= 10)
@@ -151,12 +151,12 @@ public class TurnManager : MonoBehaviour
 
     //        await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, CancelSource.Token);        // OnAddCard에서 진행되는 await 따로 실행
     //    }
-    //    SetBool(false);
+    //    SetLoading(false);
     //}
 
     //public async UniTask DrawCardTask(int drawCardCount = 1)
     //{
-    //    SetBool(true);
+    //    SetLoading(true);
     //    if (drawCardCount == 1)
     //    {
     //        await CardManager.Instance.DrawCard();
@@ -165,17 +165,17 @@ public class TurnManager : MonoBehaviour
     //    {
     //        await CardManager.Instance.DrawCards(drawCardCount);
     //    }
-    //    SetBool(false);
+    //    SetLoading(false);
     //}
 
     public async UniTask EndTurn(bool endBattle = false)
     {
         if (GameManager.Instance.PauseInt != 0) return;     // Pause 상태면 턴종 불가능
         if (!_canEndTurn && !endBattle) return;             // 턴종 가능한지 확인, 단, 배틀 종료 상태에서는 턴종 가능한가와 상관없이 진행
-        myTurn = false;
-        ButtonManager.Instance.TurnEndButtonInvert(myTurn);
-        UiManager.Instance.ChangeTurnButtonText(myTurn);
-        SetBool(true);
+        MyTurn = false;
+        ButtonManager.Instance.TurnEndButtonInvert(MyTurn);
+        UiManager.Instance.ChangeTurnButtonText(MyTurn);
+        SetLoading(true);
         await CardManager.Instance.ThrowAwayCard();
         if (endBattle)
         {
@@ -189,8 +189,8 @@ public class TurnManager : MonoBehaviour
     //{
     //    GameManager.Instance.player.ChangeHoloValue(GameManager.Instance.player.MaxHolo);
     //    await StartTurnTask();
-    //    //isLoading = false;    // 위 코드에서 isLoading = false로 변경
-    //    //myTurn = true;
+    //    //IsLoading = false;    // 위 코드에서 IsLoading = false로 변경
+    //    //MyTurn = true;
     //}
     public async UniTask EnemyTurnTask()
     {

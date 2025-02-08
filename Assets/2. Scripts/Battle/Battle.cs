@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Battle : MonoBehaviour
 {
-    //private MyTurn myTurn;
+    //private MyTurn MyTurn;
 
     // Start is called before the first frame update
     //private void Awake()
     //{
-    //    myTurn ??= new MyTurn();
+    //    MyTurn ??= new MyTurn();
     //}
     void Start()
     {
