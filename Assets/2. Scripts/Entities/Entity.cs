@@ -56,7 +56,7 @@ public abstract class Entity : MonoBehaviour
             shield.Value = 0;
             curHp.Value -= dmg;
         }
-        //animator.Play("Hit", 0);  // 타격 당하는 애니메이션 실행
+        animator.Play("Hit", 0);  // 타격 당하는 애니메이션 실행
         if (curHp.Value > 0)
             return false;
         //col2d.enabled = false;
@@ -66,7 +66,7 @@ public abstract class Entity : MonoBehaviour
     }
     public virtual async UniTask DieAnimation()
     {
-        //animator.Play("Die", 0);  // 사망 애니메이션 실행
+        animator.Play("Die", 0);  // 사망 애니메이션 실행
         await UniTask.Delay(1000);
         //await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1);
         Destroy(gameObject);
@@ -123,6 +123,7 @@ public abstract class Entity : MonoBehaviour
 
     protected void StartEntity()
     {
+        animator = transform.GetChild(0).GetComponent<Animator>();      // 위치로 찾는 거 약간 불편함.
         //entitySprite = GetComponent<SpriteRenderer>();
         canvas = transform.Find("EntityCanvas");
         hpBar = canvas.Find("HPBar").GetComponent<Image>();
