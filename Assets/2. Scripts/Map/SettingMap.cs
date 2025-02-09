@@ -11,18 +11,18 @@ using UnityEngine.UI;
 
 public class SettingMap : MonoBehaviour
 {
-    public List<Vector3Int> direction4 = new List<Vector3Int>
+    private List<Vector3Int> direction4 = new List<Vector3Int>
     {
         new Vector3Int( 0, 1,  0),       // down
         new Vector3Int( 1, 0,  0),       // right
         new Vector3Int(-1, 0,  0),       // left
         new Vector3Int( 0, -1, 0)        // up
     };
-    //public Vector3Int downPatten = new Vector3Int(0, 0, 1);
-    //public Vector3Int upPatten = new Vector3Int(0, 0, -1);
+    //public Vector3Int downPattern = new Vector3Int(0, 0, 1);
+    //public Vector3Int upPattern = new Vector3Int(0, 0, -1);
 
-    //public Vector3Int leftPatten = new Vector3Int(-1, 0, 0);
-    //public Vector3Int rightPatten = new Vector3Int(1, 0, 0);
+    //public Vector3Int leftPattern = new Vector3Int(-1, 0, 0);
+    //public Vector3Int rightPattern = new Vector3Int(1, 0, 0);
 
     public List<MapInfo> validMapList = new List<MapInfo>();
     public List<MapInfo> availableMapList = new List<MapInfo>();
@@ -45,7 +45,10 @@ public class SettingMap : MonoBehaviour
 
     int mapDistance = 100;
 
-    [SerializeField] GameObject[] mapPrefab;
+    [SerializeField] GameObject[] _mapPrefab;
+    [SerializeField] GameObject _markPrefab;
+    GameObject _mark;
+    Vector3 _markDefaultPos;
     //[SerializeField] Transform mapCanvas;
     //[SerializeField] GameObject cardRewardCanvas;
     //[SerializeField] GameObject enlargePanel;
@@ -205,6 +208,11 @@ public class SettingMap : MonoBehaviour
             UiManager.Instance.MoveMap();
 
             MapManager.Instance.currStage = stage;
+
+            if (_mark != null)
+            {
+                _mark.transform.position = stage.transform.localPosition + _markDefaultPos;
+            }
             
             // 방 입장 코드 추가
             stage.stageContext.Transition(stage.stage);
@@ -459,7 +467,7 @@ public class SettingMap : MonoBehaviour
                     mapIdx = 4; // Enemy
             }
             MapInfo validMap = validMapList[i];
-            GameObject mapObject = Instantiate(mapPrefab[mapIdx], mapCanvas);/*PoolManager.Instance.MapPool.Get();*/
+            GameObject mapObject = Instantiate(_mapPrefab[mapIdx], mapCanvas);/*PoolManager.Instance.MapPool.Get();*/
             Map map = mapObject.GetComponent<Map>();
             //mapObject.transform.GetComponentInChildren<TextMeshProUGUI>().text = validMap.distance.ToString();
             mapObject.transform.localPosition = validMap.transform_Position;
@@ -505,6 +513,11 @@ public class SettingMap : MonoBehaviour
 
             maps.Add(map);
             mapObject.gameObject.SetActive(false);
+        }
+        if (_markPrefab != null)
+        {
+            _mark = Instantiate(_markPrefab, mapCanvas);
+            _markDefaultPos = _mark.transform.position;
         }
         //foreach (Map map in maps)
         //{
@@ -559,12 +572,12 @@ public class SettingMap : MonoBehaviour
     //void SetupVisited()
     //{
     //    // 시작 장소 활성화 코드 5줄
-    //    GameManager.Instance.currStage = maps[0];
-    //    GameManager.Instance.currStage.gameObject.SetActive(true);
+    //    InGameManager.Instance.currStage = maps[0];
+    //    InGameManager.Instance.currStage.gameObject.SetActive(true);
     //    //currStage.img.color = Color.white;
-    //    GameManager.Instance.currStage.btn.interactable = true;
-    //    GameManager.Instance.currStage.LookingStage(direction4, maps);
-    //    GameManager.Instance.ClearStage();
+    //    InGameManager.Instance.currStage.btn.interactable = true;
+    //    InGameManager.Instance.currStage.LookingStage(direction4, maps);
+    //    InGameManager.Instance.ClearStage();
     //}
     //public void AddMapLIst()
     //{
@@ -596,7 +609,7 @@ public class SettingMap : MonoBehaviour
         return single;
     }
 
-    public bool PossiblePatten(Vector3Int pos, Vector3Int move)
+    public bool PossiblePattern(Vector3Int pos, Vector3Int move)
     {
 
         Vector3Int next = pos + move;
@@ -683,7 +696,7 @@ public class SettingMap : MonoBehaviour
         //Vector3Int direction = direction4[Random.Range(0, direction4.Count)];
         Vector3Int direction = posArr[start.x, start.y].haveDirect[Random.Range(0, posArr[start.x, start.y].haveDirect.Count)];
 
-        if (!PossiblePatten(start, direction))
+        if (!PossiblePattern(start, direction))
             return;
 
         //Vector3Int lastMove;
@@ -724,7 +737,7 @@ public class SettingMap : MonoBehaviour
     //    for (int i = moveConnect.Count - 1; i >= 0; i--)
     //    {
     //        Vector3Int connectMap = move + moveConnect[i];
-    //        if (!PossiblePatten(move, moveConnect[i]))
+    //        if (!PossiblePattern(move, moveConnect[i]))
     //            continue;
     //        if (posArr[connectMap.z, connectMap.x] != null)
     //        {

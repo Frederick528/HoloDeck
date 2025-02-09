@@ -88,7 +88,7 @@ public abstract class Enemy : Entity
         return true;
 
         //await base.DieAnimation();  // 죽는 애니매이션 이후 클리어 확인(만약 죽는 애니메이션이 0초라면, 오류가 날 수 있음.)
-        //GameManager.Instance.ChangeCoinValue(enemyData.dropCoin);
+        //InGameManager.Instance.ChangeCoinValue(enemyData.dropCoin);
         //for (int i = 0; i < EnemyManager.Instance.enemySpawnPosition.Count; ++i)
         //{
         //    if (!EnemyManager.Instance.enemySpawnPosition[i].gameObject.activeSelf)     // 몬스터가 다 죽어있으면 게임이 클리어되고, 한 마리라도 살아있으면 리턴되어 그냥 몬스터만 죽고 끝.
@@ -136,8 +136,8 @@ public abstract class Enemy : Entity
         EnemyManager.Instance.enemies.Remove(this);
         bool clear = EnemyManager.Instance.enemies.Count == 0;
         await base.DieAnimation();  // destroy(gameObject)가 들어가있기 때문에, 만약 죽고 난 다음에 추가 행동이 있다면, 이 함수 내에서 작동해야 함.
-        EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);      // 에너미 자리로 클리어 확인을 하기 때문에 적 죽는 모션 기다린 후, 자리 삭제
-        GameManager.Instance.ChangeCoinValue(enemyData.dropCoin);
+        EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);      // 에너미 자리로 클리어 확인을 하기 때문에 적 죽는 모션 기다린 후, 자리 삭제  // 자리는 나중에 배열로 만들고 코드상으로만 확인하도록 변경
+        InGameManager.Instance.ChangeCoinValue(enemyData.dropCoin);
         if (clear)
         {
             ClearCheck();

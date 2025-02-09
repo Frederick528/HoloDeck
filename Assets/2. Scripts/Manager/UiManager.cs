@@ -203,7 +203,7 @@ public class UiManager : MonoBehaviour
     public void ShowRewardCard(int[] reward)        // 해당 부분들 맵, 상점으로 다 이동시켜야 함.
     {
         for (int i = 0; i < reward.Length; ++i)
-            _uiCards[i].Setup(GameManager.Instance.FindCardData(reward[i]));
+            _uiCards[i].Setup(InGameManager.Instance.FindCardData(reward[i]));
     }
     public void ChangeRewardCardCount(bool isOn)
     {
@@ -212,11 +212,12 @@ public class UiManager : MonoBehaviour
 
     public void SetViewDeck(List<Card> deck)
     {
+        _viewDeckContent.transform.localPosition = new Vector3(_viewDeckContent.transform.localPosition.x, 0);
         if (deck.Count > _deckUICards.Count)
         {
             for (int i = 0; i < deck.Count - _deckUICards.Count; ++i)
             {
-                Instantiate(_uiCard, _viewDeckContent);
+                _deckUICards.Add(Instantiate(_uiCard, _viewDeckContent).GetComponent<UICard>());
             }
         }
         for (int j = 0; j < _deckUICards.Count; ++j)

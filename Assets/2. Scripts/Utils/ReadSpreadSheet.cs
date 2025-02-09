@@ -237,8 +237,8 @@ public class ReadSpreadSheet : MonoBehaviour
     //        print(cells[2]);
 
     //        cardDB.Add(Convert.ToInt32(cells[0].ToString()), data);
-    //        //GameManager.Instance.ArtifactDict.Add(Convert.ToInt32(cells[0].ToString()), false);
-    //        //GameManager.Instance.ObtainableArtifact.Add(Convert.ToInt32(cells[0].ToString()));
+    //        //InGameManager.Instance.ArtifactDict.Add(Convert.ToInt32(cells[0].ToString()), false);
+    //        //InGameManager.Instance.ObtainableArtifact.Add(Convert.ToInt32(cells[0].ToString()));
     //    }
     //    dataDict = cardDB;
     //    return dataDict;

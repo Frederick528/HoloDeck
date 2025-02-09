@@ -57,7 +57,7 @@ public class ButtonManager : MonoBehaviour
 
     public void Pause(bool isOn)
     {
-        GameManager.Instance.Pause(isOn);
+        InGameManager.Instance.Pause(isOn);
     }
 
     public void SetViewDeck(int deckIdx)
@@ -65,9 +65,12 @@ public class ButtonManager : MonoBehaviour
         switch (deckIdx)
         {
             case 0:
-                UiManager.Instance.SetViewDeck(CardManager.Instance.DrawDeck);
+                UiManager.Instance.SetViewDeck(CardManager.Instance.TotalDeck);
                 break;
             case 1:
+                UiManager.Instance.SetViewDeck(CardManager.Instance.DrawDeck);
+                break;
+            case 2:
                 UiManager.Instance.SetViewDeck(CardManager.Instance.CardDummy);
                 break;
         }

@@ -80,8 +80,8 @@ public class Card : MonoBehaviour
 
         _defaultData = data;
         StringBuilder sb = new StringBuilder(_defaultData.Descript);
-        sb.Replace("{Damage}", (_defaultData.Damage + GameManager.Instance.player.AttackPower.Value).ToString());
-        sb.Replace("{Shield}", (_defaultData.Shield + GameManager.Instance.player.DefencePower.Value).ToString());
+        sb.Replace("{Damage}", (_defaultData.Damage + InGameManager.Instance.player.AttackPower.Value).ToString());
+        sb.Replace("{Shield}", (_defaultData.Shield + InGameManager.Instance.player.DefencePower.Value).ToString());
         sb.Replace("{Count}", (_defaultData.Count).ToString());
         sb.Replace("{Draw}", (_defaultData.Draw).ToString());
         sb.Replace("{Reduce}", (_defaultData.Reduce).ToString());
@@ -191,8 +191,8 @@ public class Card : MonoBehaviour
         //}
         //else
         //{
-            Data.Damage = _defaultData.Damage + GameManager.Instance.player.AttackPower.Value;
-            Data.Shield = _defaultData.Shield + GameManager.Instance.player.DefencePower.Value;
+            Data.Damage = _defaultData.Damage + InGameManager.Instance.player.AttackPower.Value;
+            Data.Shield = _defaultData.Shield + InGameManager.Instance.player.DefencePower.Value;
             Data.Count = _defaultData.Count + 0;
             Data.Draw = _defaultData.Draw + 0;
             Data.Reduce = _defaultData.Reduce + 0;
@@ -209,8 +209,8 @@ public class Card : MonoBehaviour
     public void ChangeCardDesc(/*string data*/)
     {
         StringBuilder sb = new StringBuilder(_defaultData.Descript);
-        sb.Replace("{Damage}", (_defaultData.Damage + GameManager.Instance.player.AttackPower.Value).ToString());
-        sb.Replace("{Shield}", (_defaultData.Shield + GameManager.Instance.player.DefencePower.Value).ToString());
+        sb.Replace("{Damage}", (_defaultData.Damage + InGameManager.Instance.player.AttackPower.Value).ToString());
+        sb.Replace("{Shield}", (_defaultData.Shield + InGameManager.Instance.player.DefencePower.Value).ToString());
         sb.Replace("{Count}", (_defaultData.Count).ToString());
         sb.Replace("{Draw}", (_defaultData.Draw).ToString());
         sb.Replace("{Reduce}", (_defaultData.Reduce).ToString());
@@ -219,11 +219,11 @@ public class Card : MonoBehaviour
         //switch (data)
         //{
         //    case "Attack":
-        //        sb.Replace("{Damage}", (_defaultData.Damage+GameManager.Instance.player.AttackPower.Value).ToString());
+        //        sb.Replace("{Damage}", (_defaultData.Damage+InGameManager.Instance.player.AttackPower.Value).ToString());
         //        Desc = sb.ToString();
         //        break;
         //    case "Shield":
-        //        sb.Replace("{Shield}", (_defaultData.Shield + GameManager.Instance.player.DefencePower.Value).ToString());
+        //        sb.Replace("{Shield}", (_defaultData.Shield + InGameManager.Instance.player.DefencePower.Value).ToString());
         //        Desc = sb.ToString();
         //        break;
         //    case "Count":
@@ -235,7 +235,7 @@ public class Card : MonoBehaviour
 
     public void Setup(int id)
     {
-        Data = GameManager.Instance.FindCardData(id);
+        Data = InGameManager.Instance.FindCardData(id);
 
         _nameText.text = Data.Name;
         _costText.text = Data.Cost.ToString();
@@ -308,7 +308,7 @@ public class Card : MonoBehaviour
             transform.position = prs.pos;
             transform.rotation = prs.rot;
             transform.localScale = prs.scale;
-            //if (GameManager.Instance.PauseInt != 0)
+            //if (InGameManager.Instance.PauseInt != 0)
             //{
             //    Physics2D.SyncTransforms();
             //    //SetPRSCollider();
@@ -342,11 +342,11 @@ public class Card : MonoBehaviour
         if (Block)
             return;
         CardManager.Instance.CardMouseDown(this);
-        //if (GameManager.Instance.blockClick || TurnManager.Instance.IsLoading)
+        //if (InGameManager.Instance.blockClick || TurnManager.Instance.IsLoading)
         //    return;
         //comeBackCard = false;
         //draggable = true;
-        //GameManager.Instance.blockClick = true;
+        //InGameManager.Instance.blockClick = true;
     }
 
     void OnMouseUp()

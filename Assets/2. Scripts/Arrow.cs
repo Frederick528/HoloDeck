@@ -121,9 +121,9 @@ public class Arrow : MonoBehaviour
         //}
         CardManager.Instance.useSingleTargetCard = true;        // 따로 체크해서 받아주는 거랑 그냥 true 하는 거랑 비슷할 것 같아서 걍 if문 없이 진행
         EnemyManager.Instance.targetEnemy = collision.gameObject;       // Enemy 스크립트를 여기서 받는 건 너무 오바라서 그냥 카드 사용할 때 받기로 함.
-        for (int i = 0; i < GameManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
+        for (int i = 0; i < InGameManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
         {
-            GameManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.red;
+            InGameManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.red;
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
@@ -148,9 +148,9 @@ public class Arrow : MonoBehaviour
         //}
         CardManager.Instance.useSingleTargetCard = false;
         EnemyManager.Instance.targetEnemy = null;
-        for (int i = 0; i < GameManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
+        for (int i = 0; i < InGameManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
         {
-            GameManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.white;
+            InGameManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.white;
         }
     }
     #endregion

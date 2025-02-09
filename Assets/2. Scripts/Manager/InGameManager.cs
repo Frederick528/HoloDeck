@@ -4,9 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class InGameManager : MonoBehaviour
 {
-    public static GameManager Instance { get; private set; }
+    public static InGameManager Instance { get; private set; }
 
     public Dictionary<int, CardData> CardDatas { get; private set; } = new Dictionary<int, CardData>();
 
@@ -145,6 +145,10 @@ public class GameManager : MonoBehaviour
                 if (i > EnemyManager.Instance.enemySpawnPosition.Count - 1)
                     break; 
             }
+        }
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            fastMode = !fastMode;
         }
         if (Input.GetKeyDown(KeyCode.M))
         {

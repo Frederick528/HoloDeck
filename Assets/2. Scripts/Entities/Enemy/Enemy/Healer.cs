@@ -21,7 +21,7 @@ public class Healer : Enemy
 
     protected override async UniTask AfterTakeDamage()
     {
-        GameManager.Instance.player.TakeDamagePlayer(enemyData.damage).Forget();
+        InGameManager.Instance.player.TakeDamagePlayer(enemyData.damage).Forget();
         await base.AfterTakeDamage();
     }
 

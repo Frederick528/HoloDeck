@@ -87,8 +87,8 @@ public class TurnManager : MonoBehaviour
         //GameSetup();
         MyTurn = true;
 
-        GameManager.Instance.player.ChangeHoloValue(GameManager.Instance.player.MaxHolo);
-        GameManager.Instance.player.DefenceReset();
+        InGameManager.Instance.player.ChangeHoloValue(InGameManager.Instance.player.MaxHolo);
+        InGameManager.Instance.player.DefenceReset();
 
         UiManager.Instance.ChangeTurnButtonText(MyTurn);
 
@@ -170,7 +170,7 @@ public class TurnManager : MonoBehaviour
 
     public async UniTask EndTurn(bool endBattle = false)
     {
-        if (GameManager.Instance.PauseInt != 0) return;     // Pause 상태면 턴종 불가능
+        if (InGameManager.Instance.PauseInt != 0) return;     // Pause 상태면 턴종 불가능
         if (!_canEndTurn && !endBattle) return;             // 턴종 가능한지 확인, 단, 배틀 종료 상태에서는 턴종 가능한가와 상관없이 진행
         MyTurn = false;
         ButtonManager.Instance.TurnEndButtonInvert(MyTurn);
@@ -187,7 +187,7 @@ public class TurnManager : MonoBehaviour
     }
     //public async UniTask MyTurnTask(int drawCardValue)  // 나중에 스타트턴이랑 합칠 예정
     //{
-    //    GameManager.Instance.player.ChangeHoloValue(GameManager.Instance.player.MaxHolo);
+    //    InGameManager.Instance.player.ChangeHoloValue(InGameManager.Instance.player.MaxHolo);
     //    await StartTurnTask();
     //    //IsLoading = false;    // 위 코드에서 IsLoading = false로 변경
     //    //MyTurn = true;
@@ -210,6 +210,7 @@ public class TurnManager : MonoBehaviour
     public void StartBattle()       // 배틀 시작시, 덱 섞기 및 액션 추가
     {
         InBattle = true;
+        InGameManager.Instance.player.StartOrEndBattle(InBattle);
         CancelSource = new();
 
         UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.Battle, true);
@@ -226,6 +227,7 @@ public class TurnManager : MonoBehaviour
     public async UniTask EndBattle()         // 리팩토링 필요해보임.
     {
         InBattle = false;
+        InGameManager.Instance.player.StartOrEndBattle(InBattle);
         CancelSource.Cancel();
 
         UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.Battle, false);

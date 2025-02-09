@@ -49,7 +49,7 @@ public class EventQueue
             _isPending = false;
             if (!EnemyManager.Instance.MapClear)
                 ButtonManager.Instance.TurnEndButtonInvert(!_isPending);
-            if (GameManager.Instance.player.CurHolo == 0)
+            if (InGameManager.Instance.player.CurHolo == 0)
                 TurnManager.Instance.EndTurn().Forget();
             return;
         }

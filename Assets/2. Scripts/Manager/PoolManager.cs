@@ -10,7 +10,7 @@ public class PoolManager : MonoBehaviour
     public int defaultCapacity = 10;
     //public int maxPoolSize = 10;
     public GameObject cardPrefab;
-    //public GameObject mapPrefab;
+    //public GameObject _mapPrefab;
 
     [SerializeField] Transform cardSpawnPoint;
     [SerializeField] Transform deck;
@@ -59,7 +59,7 @@ public class PoolManager : MonoBehaviour
     }
     //private GameObject CreateMapPooledItem()
     //{
-    //    GameObject mapPoolGo = Instantiate(mapPrefab, Vector3.one * 0.5f, Quaternion.identity, map);
+    //    GameObject mapPoolGo = Instantiate(_mapPrefab, Vector3.one * 0.5f, Quaternion.identity, map);
     //    mapPoolGo.GetComponent<Map>().MapPool = this.MapPool;
     //    return mapPoolGo;
     //}

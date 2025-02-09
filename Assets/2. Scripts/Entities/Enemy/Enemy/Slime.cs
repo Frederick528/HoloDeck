@@ -19,7 +19,7 @@ public class Slime : Enemy
         switch (turn)
         {
             case 1:
-                GameManager.Instance.player.TakeDamagePlayer(enemyData.damage).Forget();
+                InGameManager.Instance.player.TakeDamagePlayer(enemyData.damage).Forget();
                 break;
             case 2:
                 base.Heal(enemyData.damage);

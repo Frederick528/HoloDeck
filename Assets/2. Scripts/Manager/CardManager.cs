@@ -90,7 +90,7 @@ public class CardManager : MonoBehaviour
             _selectCard?.TurnOnOutline(canUse);
             if (canUse && _selectCard.Data.CardTag == CardTag.SingleAttack && !isSingleTarget)
             {
-                GameManager.Instance.SetActiveArrowCursor(true);
+                InGameManager.Instance.SetActiveArrowCursor(true);
                 //PullCard();
                 _selectCard.transform.DOKill();        // 마우스 커서가 카드를 나갈 때 카드 크기가 원래대로 돌아가는 코드를 멈춰주는 함수.
                 _selectCard.transform.position = new Vector2(0, CardUtils.LargeCardPosY);
@@ -98,7 +98,7 @@ public class CardManager : MonoBehaviour
             }
             else if (!canUse && isSingleTarget)
             {
-                GameManager.Instance.SetActiveArrowCursor(false);
+                InGameManager.Instance.SetActiveArrowCursor(false);
                 isSingleTarget = false;
             }
         });
@@ -166,7 +166,7 @@ public class CardManager : MonoBehaviour
     }
     public void AddDeck(int id, EAddDeck eAddDeck)     // 덱에 카드를 아이디로 추가할 때 사용, 핸드로 카드를 가져올 때는 DrawCard 함수 사용.
     {
-        CardData cardData = GameManager.Instance.FindCardData(id);
+        CardData cardData = InGameManager.Instance.FindCardData(id);
 
         AddDeck(cardData, eAddDeck);
     }
@@ -212,7 +212,7 @@ public class CardManager : MonoBehaviour
 
     async UniTask<bool> BeforeUsingCard(Card card)
     {
-        if (GameManager.Instance.player.CurHolo < card.Data.Cost)
+        if (InGameManager.Instance.player.CurHolo < card.Data.Cost)
         {
             return false;
         }
@@ -222,7 +222,7 @@ public class CardManager : MonoBehaviour
             return false;
         }
 
-        GameManager.Instance.player.ChangeHoloValue(-card.Data.Cost);
+        InGameManager.Instance.player.ChangeHoloValue(-card.Data.Cost);
 
         CheckEnemyDead(card);
 
@@ -499,7 +499,7 @@ public class CardManager : MonoBehaviour
         isSingleTarget = false;
         useSingleTargetCard = false;
         draggable = false;
-        GameManager.Instance.SetActiveArrowCursor(false);
+        InGameManager.Instance.SetActiveArrowCursor(false);
         isUseCard.Value = false;
 
         _selectCard = null;      // isUseCard와 순서 중요! selectCard가 밑에 있어야 함.
@@ -576,7 +576,7 @@ public class CardManager : MonoBehaviour
     public void ChangeDiscard(bool discard)
     {
         _discard = discard;
-        //GameManager.Instance.Pause(discard);
+        //InGameManager.Instance.Pause(discard);
         UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.SelectedCard, discard);
         if (discard)
         {

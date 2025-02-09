@@ -464,11 +464,11 @@ public class CardAbility
     }
     async UniTask ShieldAb(Card card)
     {
-        await GameManager.Instance.player.Shield(card.Data.Shield);
+        await InGameManager.Instance.player.Shield(card.Data.Shield);
         //if (!card.Enhanced)
-        //    GameManager.Instance.player.Shield(card.Data.Shield);
+        //    InGameManager.Instance.player.Shield(card.Data.Shield);
         //else
-        //    GameManager.Instance.player.Shield(card.Data.EnhancedDefence);
+        //    InGameManager.Instance.player.Shield(card.Data.EnhancedDefence);
     }
 
     async UniTask<bool> DiscardAb(int discardCnt)

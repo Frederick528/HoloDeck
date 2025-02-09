@@ -17,6 +17,10 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] protected BoxCollider2D col2d;
     [SerializeField] protected Transform canvas;
 
+    SendAnimEvent _AnimEvent;
+
+    bool _isDied;
+
     protected Animator animator;
     protected ReactiveProperty<int> maxHp = new();
     protected ReactiveProperty<int> curHp = new();
@@ -56,7 +60,7 @@ public abstract class Entity : MonoBehaviour
             shield.Value = 0;
             curHp.Value -= dmg;
         }
-        animator.Play("Hit", 0);  // 타격 당하는 애니메이션 실행
+        animator.Play("Hit", -1, 0);  // 타격 당하는 애니메이션 실행
         if (curHp.Value > 0)
             return false;
         //col2d.enabled = false;
@@ -64,11 +68,17 @@ public abstract class Entity : MonoBehaviour
         canvas.gameObject.SetActive(false);
         return true;
     }
+
+    public void DieAnimEnd()
+    {
+        _isDied = true;
+    }
+
     public virtual async UniTask DieAnimation()
     {
-        animator.Play("Die", 0);  // 사망 애니메이션 실행
-        await UniTask.Delay(1000);
-        //await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1);
+        animator.Play("Die", -1, 0);  // 사망 애니메이션 실행
+        //await UniTask.Delay(1000);
+        await UniTask.WaitUntil(() => _isDied);
         Destroy(gameObject);
     }
     public virtual void Heal(int amount)
@@ -124,6 +134,9 @@ public abstract class Entity : MonoBehaviour
     protected void StartEntity()
     {
         animator = transform.GetChild(0).GetComponent<Animator>();      // 위치로 찾는 거 약간 불편함.
+        _AnimEvent = transform.GetChild(0).GetComponent<SendAnimEvent>();
+        _AnimEvent.ParentEntity = this;
+
         //entitySprite = GetComponent<SpriteRenderer>();
         canvas = transform.Find("EntityCanvas");
         hpBar = canvas.Find("HPBar").GetComponent<Image>();

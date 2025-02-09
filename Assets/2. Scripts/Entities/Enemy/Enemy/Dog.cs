@@ -19,10 +19,10 @@ public class Dog : Enemy
         switch (turn)
         {
             case 1:
-                GameManager.Instance.player.TakeDamagePlayer(enemyData.damage).Forget();
+                InGameManager.Instance.player.TakeDamagePlayer(enemyData.damage).Forget();
                 break;
             case 2:
-                GameManager.Instance.player.TakeDamagePlayer((int)(enemyData.damage/2)).Forget();
+                InGameManager.Instance.player.TakeDamagePlayer((int)(enemyData.damage/2)).Forget();
                 turn = 0;
                 break;
         }

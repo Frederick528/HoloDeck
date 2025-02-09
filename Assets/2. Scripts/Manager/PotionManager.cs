@@ -43,19 +43,19 @@ public class PotionManager : MonoBehaviour
         switch (id)
         {
             case 0:
-                GameManager.Instance.player.Heal(10);
+                InGameManager.Instance.player.Heal(10);
                 potionBtns[idx].onClick.RemoveAllListeners();
                 boolPotion[idx] = false;
                 break;
             case 1:
-                GameManager.Instance.ChangeCoinValue(20);
+                InGameManager.Instance.ChangeCoinValue(20);
                 potionBtns[idx].onClick.RemoveAllListeners();
                 boolPotion[idx] = false;
                 break;
             case 2:
                 if (TurnManager.Instance.MyTurn)
                 {
-                    GameManager.Instance.player.Shield(15).Forget();
+                    InGameManager.Instance.player.Shield(15).Forget();
                     potionBtns[idx].onClick.RemoveAllListeners();
                     boolPotion[idx] = false;
                 }

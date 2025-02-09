@@ -14,6 +14,8 @@ public class Player : Entity
     public ReactiveProperty<int> AttackPower { get; private set; } = new();
     public ReactiveProperty<int> DefencePower { get; private set; } = new();
 
+    readonly int _battleAnimBool = Animator.StringToHash("Battle");
+
     int _attackPower;
     int _defencePower;
     //[SerializeField] TMP_Text holoValue;
@@ -89,5 +91,10 @@ public class Player : Entity
     public void ChangeDefencePower(int value)
     {
         DefencePower.Value += value;
+    }
+
+    public void StartOrEndBattle(bool isBattleStart)
+    {
+        animator.SetBool(_battleAnimBool, isBattleStart);
     }
 }

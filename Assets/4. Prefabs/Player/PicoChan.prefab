@@ -3402,7 +3402,6 @@ MonoBehaviour:
   shieldText: {fileID: 0}
   col2d: {fileID: 0}
   canvas: {fileID: 0}
-  holoValue: {fileID: 0}
 --- !u!61 &3567756569159866137
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4199,6 +4198,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4439548786378751044}
   - component: {fileID: 7745169697798284862}
+  - component: {fileID: 7667693962035605442}
   m_Layer: 0
   m_Name: pico_chan_chr_pico_00
   m_TagString: Untagged
@@ -4245,6 +4245,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7667693962035605442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3951806100301375230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 096e0d3835e04eb44bd7486b47742e30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ParentEntity: {fileID: 0}
 --- !u!1 &3992181753212852008
 GameObject:
   m_ObjectHideFlags: 0
