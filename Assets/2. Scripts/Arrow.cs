@@ -68,11 +68,14 @@ public class Arrow : MonoBehaviour
         this.controlPoints[1] = this.controlPoints[0] + (this.controlPoints[3] - this.controlPoints[0]) * this.controlPointFactors[0];
         this.controlPoints[2] = this.controlPoints[0] + (this.controlPoints[3] - this.controlPoints[0]) * this.controlPointFactors[1];
 
-        this.controlPoints[1] = new Vector2(this.controlPoints[3].x - 3 * this.controlPoints[1].x, this.controlPoints[1].y);
-        this.controlPoints[2] = new Vector2(this.controlPoints[3].x + 3 * this.controlPoints[2].x, this.controlPoints[2].y);
+        if (MapManager.Instance.currStage.State == Map.StageState.Boss)
+        {
+            this.controlPoints[1] = new Vector2(this.controlPoints[3].x - 3 * this.controlPoints[1].x, 0.75f * this.controlPoints[1].y);        // Boss용 베지어 곡선
+            this.controlPoints[2] = new Vector2(this.controlPoints[3].x + 3 * this.controlPoints[2].x, 0.75f * this.controlPoints[2].y);        // Boss용 베지어 곡선
+        }
 
 
-        for (int i = 0; i < this.arrowNodes.Count; ++i)
+        for (int i = 0; i < this.arrowNodes.Count; ++i)     // 보스방에서 Node수 적어보이면 그냥 처음에 많이 만들고, 보스방에서는 노드 전부 사용, 일반 적은 일부만 사용 방식 쳬택할 예정.
         {
             //var t = Mathf.Log(1f * i / (this.arrowNodes.Count - 1) + 1f, 2f);
             var t = Mathf.Pow(2, i/(this.arrowNodes.Count - 1f)) - 1f;
@@ -88,7 +91,7 @@ public class Arrow : MonoBehaviour
                 this.arrowNodes[i].rotation = Quaternion.Euler(euler);
             }
             
-            var scale = this.scaleFactor * (1f - 0.025f * (this.arrowNodes.Count - 1 - i));
+            var scale = this.scaleFactor * (1f - 0.03f * (this.arrowNodes.Count - 1 - i));
 
             if (i == this.arrowNodes.Count - 1)
                 scale = 1.2f * scale;
@@ -120,7 +123,7 @@ public class Arrow : MonoBehaviour
         //    }
         //}
         CardManager.Instance.useSingleTargetCard = true;        // 따로 체크해서 받아주는 거랑 그냥 true 하는 거랑 비슷할 것 같아서 걍 if문 없이 진행
-        EnemyManager.Instance.targetEnemy = collision.gameObject;       // Enemy 스크립트를 여기서 받는 건 너무 오바라서 그냥 카드 사용할 때 받기로 함.
+        EnemyManager.Instance.targetEnemy = collision.gameObject;       // Enemy 스크립트를 여기서 받는 건 너무 오바라서 그냥 카드 사용할 때 받기로 함. (Enemy한테 OnTrigger 하는 것보다 이게 좀 더 비용적으로 나을 듯?)
         for (int i = 0; i < InGameManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
         {
             InGameManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.red;

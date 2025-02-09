@@ -10,6 +10,11 @@ public class BossStage : MonoBehaviour, IStage
     {
         if (!_map)
             _map = map;
+        if (!map.cleared)
+        {
+            TurnManager.Instance.StartBattle();
+            //EnemySpawn(0);
+        }
         print("Boss");
     }
 }
