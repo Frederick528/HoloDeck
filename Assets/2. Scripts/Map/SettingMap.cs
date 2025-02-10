@@ -3,9 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -211,7 +208,7 @@ public class SettingMap : MonoBehaviour
 
             if (_mark != null)
             {
-                _mark.transform.position = stage.transform.localPosition + _markDefaultPos;
+                _mark.transform.position = stage.transform.position + _markDefaultPos;
             }
             
             // 방 입장 코드 추가
@@ -231,7 +228,7 @@ public class SettingMap : MonoBehaviour
 
             // 이동 모션 코드 추가
 
-            UiManager.Instance.LookMap();
+            UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.Map, false);
         });
     }
 
@@ -517,7 +514,7 @@ public class SettingMap : MonoBehaviour
         if (_markPrefab != null)
         {
             _mark = Instantiate(_markPrefab, mapCanvas);
-            _markDefaultPos = _mark.transform.position;
+            _markDefaultPos = _mark.transform.localPosition;
         }
         //foreach (Map map in maps)
         //{

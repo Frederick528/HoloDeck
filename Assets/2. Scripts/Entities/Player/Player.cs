@@ -23,7 +23,7 @@ public class Player : Entity
     void Start()
     {
         PlayerSubScribe();
-        SetupPlayer(10, 3);
+        SetupPlayer(80, 3);
     }
 
     void PlayerSubScribe()

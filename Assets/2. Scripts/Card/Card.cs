@@ -92,6 +92,7 @@ public class Card : MonoBehaviour
 
         _nameText.text = Data.Name;
         _character.sprite = Data.Sprite;
+        _character.size = new Vector2(7.8f, 4.6f);
         switch (Data.CardTag)
         {
             case CardTag.SingleAttack:

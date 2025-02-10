@@ -21,9 +21,9 @@ public class ButtonManager : MonoBehaviour
 
     private void Start()
     {
-        _turnEndButton = UiManager.Instance.FindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.Battle), "TurnEndButton").GetComponent<Button>();
-        DiscardButton = UiManager.Instance.FindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.SelectedCard), "DiscardButton").GetComponent<Button>();
-        DiscardCancelButton = UiManager.Instance.FindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.SelectedCard), "CancelButton").GetComponent<Button>();
+        _turnEndButton = UiManager.Instance.ContinueFindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.Battle), "TurnEndButton").GetComponent<Button>();
+        DiscardButton = UiManager.Instance.ContinueFindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.SelectedCard), "DiscardButton").GetComponent<Button>();
+        DiscardCancelButton = UiManager.Instance.ContinueFindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.SelectedCard), "CancelButton").GetComponent<Button>();
     }
 
     public void DiscardButtonInvert(bool state)
@@ -76,6 +76,10 @@ public class ButtonManager : MonoBehaviour
         }
     }
 
+    public void LookMap()
+    {
+        UiManager.Instance.LookMap();
+    }
     public void ChangeScene(int idx)
     {
         SceneManager.LoadScene(idx);

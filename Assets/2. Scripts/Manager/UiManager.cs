@@ -22,9 +22,11 @@ public class UiManager : MonoBehaviour
         SelectedCard,
         ViewDeck
     }
-    public List<GameObject> CanvasList;
+    //public List<GameObject> CanvasList;
     List<GraphicRaycaster> _canvasRaycaster = new();
-    public Dictionary<int, GameObject> CanvasDict = new();
+    public Dictionary<int, Transform> CanvasDict = new();
+
+    Transform _canvas;
 
     [Header("UICardPrefab")]
     [SerializeField] GameObject _uiCard;
@@ -60,18 +62,23 @@ public class UiManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        for (int i = 0; i < CanvasList.Count; ++i)
+
+        _canvas = GameObject.Find("Canvas").GetComponent<Transform>();
+
+        for (int i = 0; i < /*CanvasList.Count*/_canvas.childCount; ++i)
         {
-            _canvasRaycaster.Add(CanvasList[i].GetComponent<GraphicRaycaster>());
-            CanvasDict.Add(i, CanvasList[i]);
+            //_canvasRaycaster.Add(CanvasList[i].GetComponent<GraphicRaycaster>());
+            //CanvasDict.Add(i, CanvasList[i]);
+            _canvasRaycaster.Add(_canvas.GetChild(i).GetComponent<GraphicRaycaster>());
+            CanvasDict.Add(i, _canvas.GetChild(i));
         }
 
         _cardEnlargePanel = Canvas(CanvasName.CardReward).Find("CardEnlargePanel");
-        _cardRewardContent = FindChildByName(Canvas(CanvasName.CardReward), "Content");
+        _cardRewardContent = ContinueFindChildByName(Canvas(CanvasName.CardReward), "Content");
         _itemEnlargePanel = Canvas(CanvasName.ItemReward).Find("ItemEnlargePanel");
-        _itemRewardContent = FindChildByName(Canvas(CanvasName.ItemReward), "Content");
+        _itemRewardContent = ContinueFindChildByName(Canvas(CanvasName.ItemReward), "Content");
 
-        _viewDeckContent = FindChildByName(Canvas(CanvasName.ViewDeck), "Content");
+        _viewDeckContent = ContinueFindChildByName(Canvas(CanvasName.ViewDeck), "Content");
         for (int i = 0; i < _viewDeckContent.childCount; ++i)
         {
             _deckUICards.Add(_viewDeckContent.GetChild(i).GetComponent<UICard>());
@@ -80,13 +87,13 @@ public class UiManager : MonoBehaviour
         _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel");
         _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel");
 
-        _topHealthText = FindChildByName(Canvas(CanvasName.InGame), "HealthText").GetComponent<TMP_Text>();
-        _topCoinText = FindChildByName(Canvas(CanvasName.InGame), "CoinText").GetComponent<TMP_Text>();
+        _topHealthText = ContinueFindChildByName(Canvas(CanvasName.InGame), "HealthText").GetComponent<TMP_Text>();
+        _topCoinText = ContinueFindChildByName(Canvas(CanvasName.InGame), "CoinText").GetComponent<TMP_Text>();
 
-        _holoValue = FindChildByName(Canvas(CanvasName.Battle), "HoloValueText").GetComponent<TMP_Text>();
-        _turnEndButtonText = FindChildByName(Canvas(CanvasName.Battle), "TurnText").GetComponent<TMP_Text>();
-        _drawCount = FindChildByName(Canvas(CanvasName.Battle), "DrawCountText").GetComponent<TMP_Text>();
-        _dummyCount = FindChildByName(Canvas(CanvasName.Battle), "DummyCountText").GetComponent<TMP_Text>();
+        _holoValue = ContinueFindChildByName(Canvas(CanvasName.Battle), "HoloValueText").GetComponent<TMP_Text>();
+        _turnEndButtonText = ContinueFindChildByName(Canvas(CanvasName.Battle), "TurnText").GetComponent<TMP_Text>();
+        _drawCount = ContinueFindChildByName(Canvas(CanvasName.Battle), "DrawCountText").GetComponent<TMP_Text>();
+        _dummyCount = ContinueFindChildByName(Canvas(CanvasName.Battle), "DummyCountText").GetComponent<TMP_Text>();
 
         Transform rewardBoxCanvas = Canvas(CanvasName.RewardBox);
         _rewardBoxes = new Transform[rewardBoxCanvas.childCount];
@@ -131,19 +138,24 @@ public class UiManager : MonoBehaviour
         SetActiveCanvas(CanvasName.Map, true);
     }
 
-    public Transform FindChildByName(Transform parent, string name)
+    public Transform ContinueFindChildByName(Transform parent, string name)
     {
         foreach (Transform child in parent)
         {
             if (child.name == name)
                 return child;
 
-            Transform found = FindChildByName(child, name);
+            Transform found = ContinueFindChildByName(child, name);
             if (found != null)
                 return found;
         }
         return null;
     }
+
+    //public Transform FindChildByName(CanvasName canvasName, string name)
+    //{
+    //    return CanvasDict[(int)canvasName].Find(name);
+    //}
 
 
     public void SetActiveCanvas(CanvasName canvasName, bool state, int idx = -1)
@@ -168,16 +180,27 @@ public class UiManager : MonoBehaviour
                     break;
             }
 
-            CanvasDict[(int)canvasName].SetActive(false);
+            CanvasDict[(int)canvasName].gameObject.SetActive(false);
         }
         else
         {
-            CanvasDict[(int)canvasName].SetActive(true);
+            CanvasDict[(int)canvasName].gameObject.SetActive(true);
 
             switch (canvasName)
             {
                 case CanvasName.RewardBox:
                     _rewardBoxes[idx].gameObject.SetActive(true);
+                    break;
+                case CanvasName.Map:
+                    if (Canvas(CanvasName.ViewDeck).gameObject.activeSelf)
+                    {
+                        SetActiveCanvas(CanvasName.ViewDeck, false);
+                        //InGameManager.Instance.Pause(false);      // UI가 막아서 뷰덱 중에는 맵 화면 클릭 불가
+                    }
+                    break;
+                case CanvasName.ViewDeck:
+                    if (Canvas(CanvasName.Map).gameObject.activeSelf)
+                        SetActiveCanvas(CanvasName.Map, false);
                     break;
             }
         }
@@ -186,7 +209,7 @@ public class UiManager : MonoBehaviour
 
     public Transform Canvas(CanvasName canvasName)
     {
-        return CanvasDict[(int)canvasName].transform;
+        return CanvasDict[(int)canvasName];
     }
 
     public void SetCanvasRaycast(CanvasName canvasName, bool isOn)
@@ -212,7 +235,7 @@ public class UiManager : MonoBehaviour
 
     public void SetViewDeck(List<Card> deck)
     {
-        _viewDeckContent.transform.localPosition = new Vector3(_viewDeckContent.transform.localPosition.x, 0);
+        _viewDeckContent.localPosition = new Vector3(_viewDeckContent.localPosition.x, 0);
         if (deck.Count > _deckUICards.Count)
         {
             for (int i = 0; i < deck.Count - _deckUICards.Count; ++i)
@@ -230,6 +253,8 @@ public class UiManager : MonoBehaviour
             _deckUICards[j].gameObject.SetActive(true);
             _deckUICards[j].Setup(deck[j].Data);
         }
+        SetActiveCanvas(CanvasName.ViewDeck, true);
+        InGameManager.Instance.Pause(true);
     }
 
     //public void SetupGameUi(bool state)
@@ -258,8 +283,7 @@ public class UiManager : MonoBehaviour
     }
     public void LookMap()
     {
-        GameObject map = CanvasDict[(int)CanvasName.Map];
-        map.SetActive(!map.activeSelf);
+        SetActiveCanvas(CanvasName.Map, !Canvas(CanvasName.Map).gameObject.activeSelf);
     }
 
     public void SetHolo(int curHolo, int maxHolo)

@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_Data:
+    m_SerializedData: []
+  m_GUID: c81c0ab54cdcdd944abec45594749f94
+  m_SerializeEntries:
+  - m_GUID: fb7e25f00b434b447ba0b2db46622238
+    m_Address: Assets/4. Prefabs/Enemy/Slime.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Entity
+    - Enemy
+  - m_GUID: b7362bd93fac5cf4a9d671b7ce1493c4
+    m_Address: Assets/4. Prefabs/Enemy/Swarm.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Entity
+    - Enemy
+  - m_GUID: 671ee7bd8898ae942820b3810882fc4e
+    m_Address: Assets/4. Prefabs/Enemy/TurtleShell.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Entity
+    - Enemy
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 8ddab990de4121140909e54570afce17, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: cb98b778e308a684ba585ba9a54d7ab0, type: 2}
+    - {fileID: 11400000, guid: c79ccc4c010ef3e4d97e84a2e90f1c40, type: 2}

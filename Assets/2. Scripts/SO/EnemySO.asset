@@ -24,7 +24,7 @@ MonoBehaviour:
     sprite: {fileID: 0}
     enemyTag: 0
     enemyPrefab: {fileID: 5423766591507928315, guid: fb7e25f00b434b447ba0b2db46622238, type: 3}
-  - name: Dog
+  - name: Swarm
     id: 101
     level: 0
     damage: 10
@@ -34,7 +34,7 @@ MonoBehaviour:
     sprite: {fileID: 0}
     enemyTag: 0
     enemyPrefab: {fileID: 8476364101092123999, guid: b7362bd93fac5cf4a9d671b7ce1493c4, type: 3}
-  - name: Healer
+  - name: TurtleShell
     id: 102
     level: 0
     damage: 3
@@ -53,7 +53,7 @@ MonoBehaviour:
     descript: E
     sprite: {fileID: 0}
     enemyTag: 1
-    enemyPrefab: {fileID: 0}
+    enemyPrefab: {fileID: 5423766591507928315, guid: fb7e25f00b434b447ba0b2db46622238, type: 3}
   - name: B
     id: 104
     level: 0
@@ -63,4 +63,4 @@ MonoBehaviour:
     descript: B
     sprite: {fileID: 0}
     enemyTag: 2
-    enemyPrefab: {fileID: 0}
+    enemyPrefab: {fileID: 5423766591507928315, guid: fb7e25f00b434b447ba0b2db46622238, type: 3}

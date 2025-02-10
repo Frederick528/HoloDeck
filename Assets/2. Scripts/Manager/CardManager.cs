@@ -50,8 +50,8 @@ public class CardManager : MonoBehaviour
 
     //public Transform cardRewardContent;
 
-    [SerializeField] Transform shopCard;
-    [SerializeField] Transform shopCardPrice;
+    //[SerializeField] Transform shopCard;
+    //[SerializeField] Transform shopCardPrice;
 
 
     public Sprite[] CommonSprites;
@@ -109,7 +109,7 @@ public class CardManager : MonoBehaviour
     {
         AddDeck(GetCardData, EAddDeck.Main);
         MapManager.Instance.GetReward();
-        UiManager.Instance.LookMap();
+        UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.Map, true);
     }
 
     void SetupStartCardDeck()   // 시작할 때, 메인덱을 설정하는 함수 (게임 시작 이후에는 사용하지 않음.)

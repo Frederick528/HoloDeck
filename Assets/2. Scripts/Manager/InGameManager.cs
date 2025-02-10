@@ -199,6 +199,10 @@ public class InGameManager : MonoBehaviour
         {
             CardManager.Instance.AddCard(cardSO.Cards[0]);
         }
+        if (Input.GetKeyDown(KeyCode.Alpha7))
+        {
+            ShopManager.Instance.ChangeCardShop();
+        }
         if (Input.GetKeyDown(KeyCode.Alpha8))
         {
             TurnManager.Instance.EndBattle().Forget();

@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class ReadSpreadSheet : MonoBehaviour
 {
@@ -150,7 +152,9 @@ public class ReadSpreadSheet : MonoBehaviour
             cardSO.Cards[i] = data;
             ++i;
         }
+#if UNITY_EDITOR
         EditorUtility.SetDirty(cardSO);
+#endif
     }
 
     void SetEnemySO()
@@ -178,12 +182,21 @@ public class ReadSpreadSheet : MonoBehaviour
                 Debug.Log("스프라이트가 없습니다.");
             }
             data.enemyTag = (EnemyTag)Enum.Parse(typeof(EnemyTag), cells[6]);
-            data.enemyPrefab = Resources.Load<GameObject>($"Enemy/{data.name}");
+            //data.enemyPrefab = Resources.Load<GameObject>($"Enemy/{data.name}");
+            //AsyncOperationHandle<GameObject> handle = Addressables.LoadAssetAsync<GameObject>("Enemy");
+            //handle.Completed += (op) =>
+            //{
+            //    data.enemyPrefab = op.Result;
+
+            //    Addressables.Release(handle);
+            //};
 
             enemySO.enemyDatas[i] = data;
             ++i;
         }
+#if UNITY_EDITOR
         EditorUtility.SetDirty(enemySO);
+#endif
     }
 
     //private void SystemIOFileLoad()

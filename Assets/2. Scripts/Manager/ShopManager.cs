@@ -10,22 +10,38 @@ public class ShopManager : MonoBehaviour
     [SerializeField] Transform _shopCard;
     [SerializeField] Transform _shopCardPrice;
 
+    UICard[] _shopCards;
+    TMP_Text[] _shopCardPrices;
+
     int _shopCardIdx;
     void Awake() { Instance = this; }
 
-    //private void Start()
-    //{
-    //    _shopCard = UiManager.Instance.ShopPanel.Find("Card");
-    //    _shopCardPrice = UiManager.Instance.ShopPanel.Find("Price");
-    //}
-
-    public void SettingCardShop()
+    private void Start()
     {
-        for (int i = 0; i < _shopCard.childCount; ++i)
+
+        //_shopCard = UiManager.Instance.FindChildByName(UiManager.CanvasName.Shop, "Card");
+        //_shopCardPrice = UiManager.Instance.FindChildByName(UiManager.CanvasName.Shop, "Price");
+        SettingCardShop();
+    }
+
+    void SettingCardShop()
+    {
+        _shopCards = new UICard[_shopCard.childCount];
+        _shopCardPrices = new TMP_Text[_shopCard.childCount];
+        for (int i = 0; i < _shopCards.Length; ++i)
+        {
+            _shopCards[i] = _shopCard.GetChild(i).GetComponent<UICard>();
+            _shopCardPrices[i] = _shopCardPrice.GetChild(i).GetComponent<TMP_Text>();
+        }
+        ChangeCardShop();
+    }
+    public void ChangeCardShop()
+    {
+        for (int i = 0; i < _shopCards.Length; ++i)
         {
             CardData _cardData = InGameManager.Instance.FindCardData(Random.Range(100, 106));
-            _shopCard.GetChild(i).GetComponent<UICard>().Setup(_cardData);       // 나중에 다 캐싱할 것
-            _shopCardPrice.GetChild(i).GetComponent<TMP_Text>().text = _cardData.Price.ToString();
+            _shopCards[i].Setup(_cardData);
+            _shopCardPrices[i].text = _cardData.Price.ToString();
         }
     }
     public void BuyCard()

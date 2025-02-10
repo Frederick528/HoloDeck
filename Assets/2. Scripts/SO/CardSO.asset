@@ -12,7 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b620d7a90ab39544c93be59b611da5e7, type: 3}
   m_Name: CardSO
   m_EditorClassIdentifier: 
-  CardSprites: []
+  CardSprites:
+  - {fileID: 21300000, guid: 333b7c667071587429495f9d7a0e30ab, type: 3}
+  - {fileID: 21300000, guid: 4ce8264444c6f514389a17a43b7c06a2, type: 3}
+  - {fileID: 21300000, guid: b623f7f0719d30347aa015ccca90bb88, type: 3}
+  - {fileID: 21300000, guid: 196654c1199bc374382e8a9cb436bb23, type: 3}
+  - {fileID: 21300000, guid: a1db32974a8af034ebc447482b88d69d, type: 3}
+  - {fileID: 21300000, guid: e134758ca8a46bb4684676ec229a43d9, type: 3}
   Cards:
   - Name: Name1
     Id: 100
@@ -24,7 +30,7 @@ MonoBehaviour:
     Reduce: 2
     Price: 5
     Descript: After discarding {Reduce} cards, {Damage} Damage
-    Sprite: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: 333b7c667071587429495f9d7a0e30ab, type: 3}
     CardTag: 0
     CardRarity: 0
   - Name: Name2
@@ -39,7 +45,7 @@ MonoBehaviour:
     Descript: '{Damage} Damage
 
       {Draw} Draw'
-    Sprite: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: 4ce8264444c6f514389a17a43b7c06a2, type: 3}
     CardTag: 0
     CardRarity: 0
   - Name: Name3
@@ -52,7 +58,7 @@ MonoBehaviour:
     Reduce: 0
     Price: 20
     Descript: '{Damage} Damage X {Count}'
-    Sprite: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: b623f7f0719d30347aa015ccca90bb88, type: 3}
     CardTag: 0
     CardRarity: 1
   - Name: Name4
@@ -65,7 +71,7 @@ MonoBehaviour:
     Reduce: 0
     Price: 20
     Descript: All {Damage} Damage X {Count}
-    Sprite: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: 196654c1199bc374382e8a9cb436bb23, type: 3}
     CardTag: 1
     CardRarity: 0
   - Name: Name5
@@ -78,7 +84,7 @@ MonoBehaviour:
     Reduce: 0
     Price: 15
     Descript: '{Draw} Draw'
-    Sprite: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: a1db32974a8af034ebc447482b88d69d, type: 3}
     CardTag: 2
     CardRarity: 0
   - Name: Name6
@@ -91,7 +97,7 @@ MonoBehaviour:
     Reduce: 0
     Price: 5
     Descript: '{Shield} Shield'
-    Sprite: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: e134758ca8a46bb4684676ec229a43d9, type: 3}
     CardTag: 2
     CardRarity: 0
   - Name: EnhancedName1
