@@ -474,7 +474,7 @@ public class CardAbility
     async UniTask<bool> DiscardAb(int discardCnt)
     {
         bool discarded = false;
-        ButtonManager.Instance.DiscardButtonInvert(false);
+        ButtonManager.Instance.DiscardBtnInvert(false);
         CardManager.Instance.ChangeDiscard(true);
         await UniTask.WhenAny(
             UniTask.Create(async () =>

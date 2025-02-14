@@ -14,6 +14,8 @@ public class ButtonManager : MonoBehaviour
     public Button DiscardButton;
     [HideInInspector]
     public Button DiscardCancelButton;
+    [HideInInspector]
+    public Button ActiveItemButton;
 
     int _nowCardState;
 
@@ -24,21 +26,26 @@ public class ButtonManager : MonoBehaviour
         _turnEndButton = UiManager.Instance.ContinueFindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.Battle), "TurnEndButton").GetComponent<Button>();
         DiscardButton = UiManager.Instance.ContinueFindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.SelectedCard), "DiscardButton").GetComponent<Button>();
         DiscardCancelButton = UiManager.Instance.ContinueFindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.SelectedCard), "CancelButton").GetComponent<Button>();
+        ActiveItemButton = UiManager.Instance.ContinueFindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.InGame), "ActiveItemButton").GetComponent<Button>();
     }
 
-    public void DiscardButtonInvert(bool state)
+    public void DiscardBtnInvert(bool state)
     {
         DiscardButton.interactable = state;
     }
-    public void TurnEndButton()
+    public void TurnEndBtn()
     {
         TurnManager.Instance.EndTurn().Forget();
     }
 
-    public void TurnEndButtonInvert(bool state)
+    public void TurnEndBtnInvert(bool state)
     {
         TurnManager.Instance.ChangeCanEnd(state);
         _turnEndButton.interactable = state;
+    }
+    public void ActItemBtnInvert(bool state)
+    {
+        ActiveItemButton.interactable = state;
     }
 
     public void RewardedCardBtn()

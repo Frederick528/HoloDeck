@@ -13,13 +13,13 @@ public class Slime : Enemy
     }
 
 
-    public override void Pattern()
+    public override async UniTask Pattern()
     {
         turn++;
         switch (turn)
         {
             case 1:
-                InGameManager.Instance.player.TakeDamagePlayer(enemyData.damage).Forget();
+                await Attack(enemyData.damage);
                 break;
             case 2:
                 base.Heal(enemyData.damage);

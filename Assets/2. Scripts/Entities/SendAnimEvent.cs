@@ -10,4 +10,9 @@ public class SendAnimEvent : MonoBehaviour
     {
         ParentEntity.DieAnimEnd();
     }
+
+    void OnAtkAnimTiming()
+    {
+        ParentEntity.AtkAnimtiming();
+    }
 }

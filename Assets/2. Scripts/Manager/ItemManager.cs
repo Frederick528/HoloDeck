@@ -19,7 +19,7 @@ public class ItemManager : MonoBehaviour
     [SerializeField]
     Transform itemRewardContent;
     [SerializeField]
-    Button activeItemBtn;
+    //Button activeItemBtn;
 
     void Awake() { Instance = this; }
 
@@ -50,13 +50,13 @@ public class ItemManager : MonoBehaviour
         switch (id)
         {
             case 0:
-                TurnManager.Instance.ChangeStartCardCount(1);
+                TurnManager.Instance.AddStartCardCount(1);
                 break;
             case 1:
-                InGameManager.Instance.player.ChangeHealth(25);
+                InGameManager.Instance.player.AddMaxHealth(25);
                 break;
             case 2:
-                InGameManager.Instance.player.ChangeHolo(1);
+                InGameManager.Instance.player.AddMaxHolo(1);
                 break;
             case 3:
                 UiManager.Instance.ChangeRewardCardCount(true);
@@ -65,13 +65,14 @@ public class ItemManager : MonoBehaviour
                 //activeItem = 나중에 itemSO에서 가져올 것. 그럼 밑에 코드도 필요없음.
                 activeItem = new()
                 {
+                    Damage = 0,
                     maxCharge = 6,
                     curCharge = 6
                 };
                 activeItemCharge.text = activeItem.curCharge.ToString();
                 //activeItem.curCharge = activeItem.maxCharge;
-                activeItemBtn.onClick.RemoveAllListeners();
-                activeItemBtn.onClick.AddListener(() =>
+                ButtonManager.Instance.ActiveItemButton.onClick.RemoveAllListeners();
+                ButtonManager.Instance.ActiveItemButton.onClick.AddListener(() =>
                 {
                     if (activeItem.curCharge >= activeItem.maxCharge)
                     {
@@ -84,17 +85,19 @@ public class ItemManager : MonoBehaviour
                 //activeItem = 나중에 itemSO에서 가져올 것. 그럼 밑에 코드도 필요없음.
                 activeItem = new()
                 {
+                    Damage = 2,
                     maxCharge = 2,
                     curCharge = 2
                 };
                 activeItemCharge.text = activeItem.curCharge.ToString();
                 //activeItem.curCharge = activeItem.maxCharge;
-                activeItemBtn.onClick.RemoveAllListeners();
-                activeItemBtn.onClick.AddListener(() =>
+                ButtonManager.Instance.ActiveItemButton.onClick.RemoveAllListeners();
+                ButtonManager.Instance.ActiveItemButton.onClick.AddListener(() =>
                 {
                     if (TurnManager.Instance.MyTurn && activeItem.curCharge >= activeItem.maxCharge)
                     {
-                        SettingSingleTarget(true, 10);
+                        BattleManager.Instance.SetActiveArrowCursor(true, 1);
+                        //SettingSingleTarget(true, 10);
                     }
                 });
                 break;
@@ -107,13 +110,13 @@ public class ItemManager : MonoBehaviour
         switch (id)
         {
             case 0:
-                TurnManager.Instance.ChangeStartCardCount(-1);
+                TurnManager.Instance.AddStartCardCount(-1);
                 break;
             case 1:
-                InGameManager.Instance.player.ChangeHealth(-25);
+                InGameManager.Instance.player.AddMaxHealth(-25);
                 break;
             case 2:
-                InGameManager.Instance.player.ChangeHolo(-1);
+                InGameManager.Instance.player.AddMaxHolo(-1);
                 break;
             case 3:
                 UiManager.Instance.ChangeRewardCardCount(false);
@@ -132,23 +135,24 @@ public class ItemManager : MonoBehaviour
         activeItemCharge.text = activeItem.curCharge.ToString();
     }
 
-    public void SettingSingleTarget(bool arrow, int value = 0)
-    {
-        arrowOn = arrow;
-        activeValue = value;
-        InGameManager.Instance.SetActiveArrowCursor(arrow);
-    }
+    //public void SettingSingleTarget(bool arrow, int value = 0)
+    //{
+    //    arrowOn = arrow;
+    //    activeValue = value;
+    //    InGameManager.Instance.SetActiveArrowCursor(arrow);
+    //}
 
-    public bool AttackSingleTarget(Enemy enemy)     // 아이템 비사용시, 끄는 방법이 필요함. + 다른 것들 터치 안 되도록 설정
+    public void AttackSingleTarget(Enemy enemy)     // 아이템 비사용시, 끄는 방법이 필요함. + 다른 것들 터치 안 되도록 설정
     {
-        if (!arrowOn) return false;
+        //if (!arrowOn) return false;
 
-        enemy.TakeDamageEnemy(activeValue).Forget();            // 일단 forget했는데, 상황에 따라 달라짐
+        enemy.TakeDamageEnemy(activeItem.Damage).Forget();            // 일단 forget했는데, 상황에 따라 달라짐
 
         Charge(-activeItem.maxCharge);
 
-        SettingSingleTarget(false);
+        //SettingSingleTarget(false);
+        BattleManager.Instance.SetActiveArrowCursor(false, 1);
 
-        return true;
+        //return true;
     }
 }

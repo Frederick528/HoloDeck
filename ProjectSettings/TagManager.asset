@@ -55,6 +55,9 @@ TagManager:
   - name: Card
     uniqueID: 598417717
     locked: 0
+  - name: GameUI
+    uniqueID: 2499505143
+    locked: 0
   - name: Arrow
     uniqueID: 2445369295
     locked: 0

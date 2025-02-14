@@ -71,11 +71,11 @@ public class TurnManager : MonoBehaviour
     public void SetLoading(bool isOn)
     {
         IsLoading = isOn;
-        ButtonManager.Instance.TurnEndButtonInvert(!isOn);
+        ButtonManager.Instance.TurnEndBtnInvert(!isOn);
         ChangeCardState().Forget();
     }
 
-    public void ChangeStartCardCount(int count)
+    public void AddStartCardCount(int count)
     {
         startCardCount += count;
         //if (startCardCount < 0)
@@ -87,7 +87,7 @@ public class TurnManager : MonoBehaviour
         //GameSetup();
         MyTurn = true;
 
-        InGameManager.Instance.player.ChangeHoloValue(InGameManager.Instance.player.MaxHolo);
+        InGameManager.Instance.player.AddCurHolo(InGameManager.Instance.player.MaxHolo);
         InGameManager.Instance.player.DefenceReset();
 
         UiManager.Instance.ChangeTurnButtonText(MyTurn);
@@ -173,7 +173,7 @@ public class TurnManager : MonoBehaviour
         if (InGameManager.Instance.PauseInt != 0) return;     // Pause 상태면 턴종 불가능
         if (!_canEndTurn && !endBattle) return;             // 턴종 가능한지 확인, 단, 배틀 종료 상태에서는 턴종 가능한가와 상관없이 진행
         MyTurn = false;
-        ButtonManager.Instance.TurnEndButtonInvert(MyTurn);
+        ButtonManager.Instance.TurnEndBtnInvert(MyTurn);
         UiManager.Instance.ChangeTurnButtonText(MyTurn);
         SetLoading(true);
         await CardManager.Instance.ThrowAwayCard();
@@ -197,8 +197,8 @@ public class TurnManager : MonoBehaviour
         await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, false, PlayerLoopTiming.Update, CancelSource.Token);  // 카드 다 버린 이후 적 행동 시작
         for (int i = 0; i < EnemyManager.Instance.enemies.Count; ++i)
         {
-            EnemyManager.Instance.enemies[i].Pattern();
-            await UniTask.WaitForSeconds(1f, false, PlayerLoopTiming.Update, CancelSource.Token); // 지금은 적 코드가 없으므로 대신 딜레이 코드 추가
+            await EnemyManager.Instance.enemies[i].Pattern();
+            await UniTask.WaitForSeconds(0.5f/*, false, PlayerLoopTiming.Update, CancelSource.Token*/); // 적 코드 이후 잠시 딜레이 (적이 공격 중에는 죽을 일 없으니 토큰 안 쓰기)
         }
         // 적 턴 시작, 적 코드 작성
         // 적 턴이 끝나면 내 턴 시작.

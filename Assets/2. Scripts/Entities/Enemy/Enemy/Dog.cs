@@ -13,16 +13,18 @@ public class Dog : Enemy
     }
 
 
-    public override void Pattern()
+    public override async UniTask Pattern()
     {
         turn++;
         switch (turn)
         {
             case 1:
-                InGameManager.Instance.player.TakeDamagePlayer(enemyData.damage).Forget();
+                await Attack(enemyData.damage);
+                //InGameManager.Instance.player.TakeDamagePlayer(enemyData.damage).Forget();
                 break;
             case 2:
-                InGameManager.Instance.player.TakeDamagePlayer((int)(enemyData.damage/2)).Forget();
+                await Attack(enemyData.damage / 2);
+                //InGameManager.Instance.player.TakeDamagePlayer((int)(enemyData.damage/2)).Forget();
                 turn = 0;
                 break;
         }

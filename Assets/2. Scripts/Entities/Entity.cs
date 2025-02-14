@@ -19,6 +19,7 @@ public abstract class Entity : MonoBehaviour
 
     SendAnimEvent _AnimEvent;
 
+    bool _isAtk;
     bool _isDied;
 
     protected Animator animator;
@@ -48,7 +49,7 @@ public abstract class Entity : MonoBehaviour
         //slider.value = maxHp.Value;
         //hpText.text = maxHp.ToString();
     }
-    public bool TakeDamage(int dmg)
+    public virtual bool TakeDamage(int dmg)
     {
         if (shield.Value >= dmg)
         {
@@ -67,6 +68,20 @@ public abstract class Entity : MonoBehaviour
         //slider.gameObject.SetActive(false);
         canvas.gameObject.SetActive(false);
         return true;
+    }
+
+    public void AtkAnimtiming()
+    {
+        _isAtk = true;
+    }
+
+    public virtual async UniTask AttackAnimation(bool checkAtkTiming = false)
+    {
+        animator.Play("Attack", -1, 0);  // 공격 애니메이션 실행
+        if (checkAtkTiming)
+        {
+            await UniTask.WaitUntil(() => _isAtk/*, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token*/);    // 공격하는 모션 중에는 게임이 끝나지 않을 것
+        }
     }
 
     public void DieAnimEnd()

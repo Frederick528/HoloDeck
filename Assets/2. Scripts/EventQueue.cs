@@ -48,14 +48,14 @@ public class EventQueue
         {
             _isPending = false;
             if (!EnemyManager.Instance.MapClear)
-                ButtonManager.Instance.TurnEndButtonInvert(!_isPending);
+                ButtonManager.Instance.TurnEndBtnInvert(!_isPending);
             if (InGameManager.Instance.player.CurHolo == 0)
                 TurnManager.Instance.EndTurn().Forget();
             return;
         }
 
         _isPending = true;      // 턴매니저에 있는 로딩과는 느낌이 다름.
-        ButtonManager.Instance.TurnEndButtonInvert(!_isPending);
+        ButtonManager.Instance.TurnEndBtnInvert(!_isPending);
         if (_queue.Peek() is Card cardEvent)
         {
             _queue.Dequeue();

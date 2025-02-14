@@ -55,40 +55,41 @@ public class Player : Entity
         CurHolo = MaxHolo;
         UiManager.Instance.SetHolo(CurHolo, MaxHolo);
     }
-    public async UniTask<bool> TakeDamagePlayer(int dmg)
+    public async UniTaskVoid TakeDamagePlayer(int dmg)
     {
         if (!TakeDamage(dmg))
-            return false;
+            return;
         TurnManager.Instance.EndBattle().Forget();
         await base.DieAnimation();
         print("플레이어가 죽었습니다.");
         UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.GameOver, true);
-        return true;
+        //return true;
     }
 
-    public void ChangeHoloValue(int chargeOrUse)
+    public void AddCurHolo(int chargeOrUse)
     {
         CurHolo = Mathf.Clamp(CurHolo + chargeOrUse, 0, MaxHolo);
         UiManager.Instance.SetHolo(CurHolo, MaxHolo);
     }
 
-    public void ChangeHealth(int value)
+    public void AddMaxHealth(int value)
     {
         maxHp.Value += value;
         Heal(value);
     }
 
-    public void ChangeHolo(int value)
+    public void AddMaxHolo(int value)
     {
         MaxHolo += value;
         if (MaxHolo < 0)
             MaxHolo = 0;
+        //UiManager.Instance.SetHolo(CurHolo, MaxHolo);
     }
-    public void ChangeAttackPower(int value)
+    public void AddAttackPower(int value)
     {
         AttackPower.Value += value;
     }
-    public void ChangeDefencePower(int value)
+    public void AddDefencePower(int value)
     {
         DefencePower.Value += value;
     }

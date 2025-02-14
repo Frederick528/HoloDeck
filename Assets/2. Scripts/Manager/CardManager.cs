@@ -90,7 +90,7 @@ public class CardManager : MonoBehaviour
             _selectCard?.TurnOnOutline(canUse);
             if (canUse && _selectCard.Data.CardTag == CardTag.SingleAttack && !isSingleTarget)
             {
-                InGameManager.Instance.SetActiveArrowCursor(true);
+                BattleManager.Instance.SetActiveArrowCursor(true, 0);
                 //PullCard();
                 _selectCard.transform.DOKill();        // 마우스 커서가 카드를 나갈 때 카드 크기가 원래대로 돌아가는 코드를 멈춰주는 함수.
                 _selectCard.transform.position = new Vector2(0, CardUtils.LargeCardPosY);
@@ -98,7 +98,7 @@ public class CardManager : MonoBehaviour
             }
             else if (!canUse && isSingleTarget)
             {
-                InGameManager.Instance.SetActiveArrowCursor(false);
+                BattleManager.Instance.SetActiveArrowCursor(false, 0);
                 isSingleTarget = false;
             }
         });
@@ -222,7 +222,7 @@ public class CardManager : MonoBehaviour
             return false;
         }
 
-        InGameManager.Instance.player.ChangeHoloValue(-card.Data.Cost);
+        InGameManager.Instance.player.AddCurHolo(-card.Data.Cost);
 
         CheckEnemyDead(card);
 
@@ -499,7 +499,7 @@ public class CardManager : MonoBehaviour
         isSingleTarget = false;
         useSingleTargetCard = false;
         draggable = false;
-        InGameManager.Instance.SetActiveArrowCursor(false);
+        BattleManager.Instance.SetActiveArrowCursor(false, 0);
         isUseCard.Value = false;
 
         _selectCard = null;      // isUseCard와 순서 중요! selectCard가 밑에 있어야 함.
@@ -550,26 +550,26 @@ public class CardManager : MonoBehaviour
         {
             if (_selectedCards.Count == _usedCard.Data.Reduce)
             {
-                ButtonManager.Instance.DiscardButtonInvert(true);
+                ButtonManager.Instance.DiscardBtnInvert(true);
             }
             else
             {
-                ButtonManager.Instance.DiscardButtonInvert(false);
+                ButtonManager.Instance.DiscardBtnInvert(false);
             }
         }
         else if (_usedCard.Data.Reduce == 0)
         {
-            ButtonManager.Instance.DiscardButtonInvert(true);
+            ButtonManager.Instance.DiscardBtnInvert(true);
         }
         else
         {
             if (_selectedCards.Count >= -_usedCard.Data.Reduce)
             {
-                ButtonManager.Instance.DiscardButtonInvert(true);
+                ButtonManager.Instance.DiscardBtnInvert(true);
             }
             else
             {
-                ButtonManager.Instance.DiscardButtonInvert(false);
+                ButtonManager.Instance.DiscardBtnInvert(false);
             }
         }
     }
@@ -581,10 +581,14 @@ public class CardManager : MonoBehaviour
         if (discard)
         {
             SetCardState(3);   // Click
+            UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.Battle, false);
+            ButtonManager.Instance.ActItemBtnInvert(false);
         }
         else
         {
             SetCardState(2);    // Drag
+            UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.Battle, true);
+            ButtonManager.Instance.ActItemBtnInvert(true);
         }
     }
     public void ChangeRemove(bool remove)

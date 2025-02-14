@@ -55,7 +55,7 @@ public class Healer : Enemy
     }
 
 
-    public override void Pattern()
+    public override async UniTask Pattern()
     {
         turn++;
         switch (turn)
@@ -68,5 +68,6 @@ public class Healer : Enemy
                 turn = 0;
                 break;
         }
+        await base.Pattern();
     }
 }

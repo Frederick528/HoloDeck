@@ -6,9 +6,10 @@ using UnityEngine;
 
 public abstract class Enemy : Entity
 {
-    int spawnPos;
+    public int spawnPosIdx;
     protected EnemyData enemyData;
     public bool CanClear = false;
+    protected Player player;
 
     //public bool Death;
 
@@ -69,7 +70,8 @@ public abstract class Enemy : Entity
     {
         enemyData = eD;
         SetupEntity(enemyData.hp);
-        spawnPos = pos;
+        spawnPosIdx = pos;
+        player = InGameManager.Instance.player;
     }
 
     public async UniTask<bool> TakeDamageEnemy(int dmg)
@@ -133,10 +135,13 @@ public abstract class Enemy : Entity
     public async UniTaskVoid KillEnemy()        // 클리어 체크도 같이 함.
     {
         //Death = true;
-        EnemyManager.Instance.enemies.Remove(this);
-        bool clear = EnemyManager.Instance.enemies.Count == 0;
-        await base.DieAnimation();  // destroy(gameObject)가 들어가있기 때문에, 만약 죽고 난 다음에 추가 행동이 있다면, 이 함수 내에서 작동해야 함.
-        EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);      // 에너미 자리로 클리어 확인을 하기 때문에 적 죽는 모션 기다린 후, 자리 삭제  // 자리는 나중에 배열로 만들고 코드상으로만 확인하도록 변경
+        //EnemyManager.Instance.enemies.Remove(this);
+        //bool clear = EnemyManager.Instance.enemies.Count == 0;
+        //await base.DieAnimation();  // destroy(gameObject)가 들어가있기 때문에, 만약 죽고 난 다음에 추가 행동이 있다면, 이 함수 내에서 작동해야 함.
+
+        bool clear = await EnemyManager.Instance.KillEnemyCheck(this, base.DieAnimation());
+        
+        //EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);      // 에너미 자리로 클리어 확인을 하기 때문에 적 죽는 모션 기다린 후, 자리 삭제  // 자리는 나중에 배열로 만들고 코드상으로만 확인하도록 변경
         InGameManager.Instance.ChangeCoinValue(enemyData.dropCoin);
         if (clear)
         {
@@ -161,6 +166,12 @@ public abstract class Enemy : Entity
         ItemManager.Instance.Charge(1);
     }
 
+    protected async UniTask Attack(int damage)
+    {
+        await AttackAnimation();
+        player.TakeDamagePlayer(damage).Forget();
+    }
+
     protected virtual async UniTask BeforeTakeDamage()
     {
         await UniTask.CompletedTask;
@@ -171,7 +182,10 @@ public abstract class Enemy : Entity
         await UniTask.CompletedTask;
     }
 
-    public abstract void Pattern();
+    public virtual async UniTask Pattern()
+    {
+        await UniTask.CompletedTask;        // 이거 고치자
+    }
 
     //public void EnemyTakeDamage(int dmg)
     //{

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ActiveItem
 {
+    public int Damage;
     public int maxCharge;
     public int curCharge;
 

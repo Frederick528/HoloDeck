@@ -20,6 +20,9 @@ public class Arrow : MonoBehaviour
 
     [Tooltip("The arrow renderer list")]
     public List<SpriteRenderer> arrowRenderer = new();
+
+    [HideInInspector]
+    public int ArrowIndex = -1;
     
     #endregion
     
@@ -27,9 +30,31 @@ public class Arrow : MonoBehaviour
     private Transform origin;
     private List<Transform> arrowNodes = new();
     private List<Vector2> controlPoints = new();
-    private readonly List<Vector2> controlPointFactors = new List<Vector2> { new Vector2(-0.3f, 0.8f), new Vector2(0.1f, 1.4f) };
+    private readonly Vector2[][] controlPointFactors =
+        new Vector2[][]
+        {
+            new Vector2[2] { new Vector2(-0.3f, 0.8f), new Vector2(0.1f, 1.4f) },
+            new Vector2[2] { new Vector2(0f, 0.8f), new Vector2(0f, 1.5f) },
+        };
     #endregion
+    #region Public Methods
+    public void SetStartArrow()
+    {
+        switch (ArrowIndex)
+        {
+            case 0:
+                this.controlPoints[0] = new Vector2(this.origin.position.x, this.origin.position.y + CardUtils.LargeCardPosY);
+                break;
+            case 1:
+                this.controlPoints[0] = new Vector2(ButtonManager.Instance.ActiveItemButton.transform.position.x, ButtonManager.Instance.ActiveItemButton.transform.position.y - 0.4f);
+                break;
+        }
+        this.controlPoints[3] = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
+        this.controlPoints[1] = this.controlPoints[0] + (this.controlPoints[3] - this.controlPoints[0]) * this.controlPointFactors[ArrowIndex][0];
+        this.controlPoints[2] = this.controlPoints[0] + (this.controlPoints[3] - this.controlPoints[0]) * this.controlPointFactors[ArrowIndex][1];
+    }
+    #endregion
     #region Private Methods
 
     private void Awake()
@@ -59,19 +84,26 @@ public class Arrow : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            print("S");
+            if (EnemyManager.Instance.targetEnemy != null)
+            {
+                if (ArrowIndex == 1)
+                {
+                    ItemManager.Instance.AttackSingleTarget(EnemyManager.Instance.targetEnemy.GetComponent<Enemy>());
+                }
+            }
+            BattleManager.Instance.SetActiveArrowCursor(false, ArrowIndex);
         }
-        this.controlPoints[0] = new Vector2(this.origin.position.x, this.origin.position.y + CardUtils.LargeCardPosY);
+        //this.controlPoints[0] = new Vector2(this.origin.position.x, this.origin.position.y + CardUtils.LargeCardPosY);
 
         this.controlPoints[3] = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        this.controlPoints[1] = this.controlPoints[0] + (this.controlPoints[3] - this.controlPoints[0]) * this.controlPointFactors[0];
-        this.controlPoints[2] = this.controlPoints[0] + (this.controlPoints[3] - this.controlPoints[0]) * this.controlPointFactors[1];
+        this.controlPoints[1] = this.controlPoints[0] + (this.controlPoints[3] - this.controlPoints[0]) * this.controlPointFactors[ArrowIndex][0];
+        this.controlPoints[2] = this.controlPoints[0] + (this.controlPoints[3] - this.controlPoints[0]) * this.controlPointFactors[ArrowIndex][1];
 
         if (MapManager.Instance.currStage.State == Map.StageState.Boss)
         {
-            this.controlPoints[1] = new Vector2(this.controlPoints[3].x - 3 * this.controlPoints[1].x, 0.75f * this.controlPoints[1].y);        // Boss용 베지어 곡선
-            this.controlPoints[2] = new Vector2(this.controlPoints[3].x + 3 * this.controlPoints[2].x, 0.75f * this.controlPoints[2].y);        // Boss용 베지어 곡선
+            this.controlPoints[1] = new Vector2(this.controlPoints[3].x - 3 * this.controlPoints[1].x, 0.75f * this.controlPoints[1].y);        // Boss용 Card 베지어 곡선
+            this.controlPoints[2] = new Vector2(this.controlPoints[3].x + 3 * this.controlPoints[2].x, 0.75f * this.controlPoints[2].y);        // Boss용 Card 베지어 곡선
         }
 
 
@@ -100,6 +132,10 @@ public class Arrow : MonoBehaviour
         }
 
         this.arrowNodes[0].transform.rotation = this.arrowNodes[1].transform.rotation;
+        //this.arrowNodes[4].transform.position = this.controlPointFactors[1][0];
+        //this.arrowNodes[6].transform.position = this.controlPointFactors[1][1];
+        //this.arrowNodes[8].transform.position = this.controlPointFactors[2][0];
+        //this.arrowNodes[10].transform.position = this.controlPointFactors[2][1];
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -124,9 +160,9 @@ public class Arrow : MonoBehaviour
         //}
         CardManager.Instance.useSingleTargetCard = true;        // 따로 체크해서 받아주는 거랑 그냥 true 하는 거랑 비슷할 것 같아서 걍 if문 없이 진행
         EnemyManager.Instance.targetEnemy = collision.gameObject;       // Enemy 스크립트를 여기서 받는 건 너무 오바라서 그냥 카드 사용할 때 받기로 함. (Enemy한테 OnTrigger 하는 것보다 이게 좀 더 비용적으로 나을 듯?)
-        for (int i = 0; i < InGameManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
+        for (int i = 0; i < BattleManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
         {
-            InGameManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.red;
+            BattleManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.red;
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
@@ -151,9 +187,9 @@ public class Arrow : MonoBehaviour
         //}
         CardManager.Instance.useSingleTargetCard = false;
         EnemyManager.Instance.targetEnemy = null;
-        for (int i = 0; i < InGameManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
+        for (int i = 0; i < BattleManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
         {
-            InGameManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.white;
+            BattleManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.white;
         }
     }
     #endregion

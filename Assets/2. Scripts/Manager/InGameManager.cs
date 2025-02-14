@@ -14,7 +14,7 @@ public class InGameManager : MonoBehaviour
 
     [SerializeField] CardSO cardSO;
 
-    public Arrow ArrowCursor;
+    //public Arrow ArrowCursor;
 
     public Player player;
 
@@ -44,12 +44,12 @@ public class InGameManager : MonoBehaviour
         //}
     }
 
-    private void Start()
-    {
-        ArrowCursor = FindObjectOfType<Arrow>(true);
-        //UiManager.Instance.SetupGameUi(true);
-        //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
-    }
+    //private void Start()
+    //{
+    //    ArrowCursor = FindObjectOfType<Arrow>(true);
+    //    //UiManager.Instance.SetupGameUi(true);
+    //    //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
+    //}
     public CardData FindCardData(int id)   // Id 값으로 카드데이터 가져오기
     {
         CardData _cardData;
@@ -66,11 +66,30 @@ public class InGameManager : MonoBehaviour
         //return cardSO.Cards.Find(x => x.Id == Id);
         //return Array.Find(cardSO.Cards, x => x.Id == Id);
     }
-    public void SetActiveArrowCursor(bool isOn)
-    {
-        ArrowCursor.gameObject.SetActive(isOn);
-        Cursor.visible = !isOn;
-    }
+
+    /// <summary>
+    /// Arrow커서의 활성화 여부와 위치를 설정합니다.
+    /// </summary>
+    /// <param name="isOn"></param>
+    /// <param name="arrowIdx">Arrow의 위치를 의미(0 = Card, 1 = Active, 2 = Potion)</param>
+    //public void SetActiveArrowCursor(bool isOn, int arrowIdx)
+    //{
+    //    if (isOn)
+    //    {
+    //        UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.Map, false);
+    //        UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.InGame, false);
+    //        UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.Battle, false);
+    //    }
+    //    else
+    //    {
+    //        UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.InGame, true);
+    //        UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.Battle, true);
+    //    }
+    //    ArrowCursor.ArrowIndex = arrowIdx;
+    //    ArrowCursor.SetStartArrow();
+    //    ArrowCursor.gameObject.SetActive(isOn);
+    //    Cursor.visible = !isOn;
+    //}
 
     public void ChangeCoinValue(int coin)
     {
@@ -128,12 +147,12 @@ public class InGameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.A))
         {
-            player.ChangeAttackPower(1);
+            player.AddAttackPower(1);
         }
 
         if (Input.GetKeyDown(KeyCode.D))
         {
-            player.ChangeDefencePower(1);
+            player.AddDefencePower(1);
         }
 
         if (Input.GetKeyDown(KeyCode.S))
