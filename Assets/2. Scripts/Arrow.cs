@@ -35,6 +35,7 @@ public class Arrow : MonoBehaviour
         {
             new Vector2[2] { new Vector2(-0.3f, 0.8f), new Vector2(0.1f, 1.4f) },
             new Vector2[2] { new Vector2(0f, 0.8f), new Vector2(0f, 1.5f) },
+            new Vector2[2] { new Vector2(0f, 0.8f), new Vector2(0f, 1.5f) }
         };
     #endregion
     #region Public Methods
@@ -47,6 +48,9 @@ public class Arrow : MonoBehaviour
                 break;
             case 1:
                 this.controlPoints[0] = new Vector2(ButtonManager.Instance.ActiveItemButton.transform.position.x, ButtonManager.Instance.ActiveItemButton.transform.position.y - 0.4f);
+                break;
+            case 2:
+                this.controlPoints[0] = PotionManager.Instance.ArrowPotionPos();
                 break;
         }
         this.controlPoints[3] = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -84,11 +88,15 @@ public class Arrow : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if (EnemyManager.Instance.targetEnemy != null)
+            if (EnemyManager.Instance.TargetEnemy != null)
             {
                 if (ArrowIndex == 1)
                 {
-                    ItemManager.Instance.AttackSingleTarget(EnemyManager.Instance.targetEnemy.GetComponent<Enemy>());
+                    ItemManager.Instance.AttackSingleTarget(EnemyManager.Instance.TargetEnemy/*.GetComponent<Enemy>()*/);
+                }
+                else if (ArrowIndex == 2)
+                {
+
                 }
             }
             BattleManager.Instance.SetActiveArrowCursor(false, ArrowIndex);
@@ -141,15 +149,10 @@ public class Arrow : MonoBehaviour
     {
         if (!collision.CompareTag("Enemy")) return;
 
-        //if (CardManager.Instance.isSingleTarget)
-        //{
-        //    CardManager.Instance.useSingleTargetCard = true;
-        //    //EnemyManager.Instance.targetEnemy = other.gameObject;
-        //    for (int i = 0; i < EnemyManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
-        //    {
-        //        EnemyManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.red;
-        //    }
-        //}
+        if (CardManager.Instance.isSingleTarget)
+        {
+            CardManager.Instance.useSingleTargetCard = true;
+        }
         //else if (ItemManager.Instance.arrowOn)
         //{
         //    //EnemyManager.Instance.targetEnemy = other.gameObject;
@@ -158,9 +161,11 @@ public class Arrow : MonoBehaviour
         //        EnemyManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.red;
         //    }
         //}
-        CardManager.Instance.useSingleTargetCard = true;        // 따로 체크해서 받아주는 거랑 그냥 true 하는 거랑 비슷할 것 같아서 걍 if문 없이 진행
-        EnemyManager.Instance.targetEnemy = collision.gameObject;       // Enemy 스크립트를 여기서 받는 건 너무 오바라서 그냥 카드 사용할 때 받기로 함. (Enemy한테 OnTrigger 하는 것보다 이게 좀 더 비용적으로 나을 듯?)
-        for (int i = 0; i < BattleManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
+        //CardManager.Instance.useSingleTargetCard = true;        // 따로 체크해서 받아주는 거랑 그냥 true 하는 거랑 비슷할 것 같아서 걍 if문 없이 진행 => 근데 그럼 일관성을 해치는 듯 다시 체크해줌.
+
+        //EnemyManager.Instance.TargetEnemy = collision.gameObject;       // Enemy 스크립트를 여기서 받는 건 너무 오바라서 그냥 카드 사용할 때 받기로 함. (Enemy한테 OnTrigger 하는 것보다 이게 좀 더 비용적으로 나을 듯?)
+        EnemyManager.Instance.TargetEnemy = EnemyManager.Instance.EnemyDict[collision.gameObject.GetInstanceID()];
+        for (int i = 0; i < BattleManager.Instance.ArrowCursor.arrowRenderer.Count; ++i)
         {
             BattleManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.red;
         }
@@ -185,9 +190,9 @@ public class Arrow : MonoBehaviour
         //        EnemyManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.white;
         //    }
         //}
-        CardManager.Instance.useSingleTargetCard = false;
-        EnemyManager.Instance.targetEnemy = null;
-        for (int i = 0; i < BattleManager.Instance.ArrowCursor.arrowRenderer.Count; i++)
+        CardManager.Instance.useSingleTargetCard = false;       // 나갈 때 무조건 꺼야하는데, 굳이 조건문 확인해서 체크 꺼주는 것보다 그냥 꺼주는 게 더 나을 듯?
+        EnemyManager.Instance.TargetEnemy = null;
+        for (int i = 0; i < BattleManager.Instance.ArrowCursor.arrowRenderer.Count; ++i)
         {
             BattleManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.white;
         }

@@ -195,9 +195,9 @@ public class TurnManager : MonoBehaviour
     public async UniTask EnemyTurnTask()
     {
         await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, false, PlayerLoopTiming.Update, CancelSource.Token);  // 카드 다 버린 이후 적 행동 시작
-        for (int i = 0; i < EnemyManager.Instance.enemies.Count; ++i)
+        for (int i = 0; i < EnemyManager.Instance.EnemyList.Count; ++i)
         {
-            await EnemyManager.Instance.enemies[i].Pattern();
+            await EnemyManager.Instance.EnemyList[i].Pattern();
             await UniTask.WaitForSeconds(0.5f/*, false, PlayerLoopTiming.Update, CancelSource.Token*/); // 적 코드 이후 잠시 딜레이 (적이 공격 중에는 죽을 일 없으니 토큰 안 쓰기)
         }
         // 적 턴 시작, 적 코드 작성
@@ -229,6 +229,7 @@ public class TurnManager : MonoBehaviour
         InBattle = false;
         InGameManager.Instance.player.StartOrEndBattle(InBattle);
         CancelSource.Cancel();
+        InGameManager.Instance.AbilityEventQueue.QueueClear();
 
         UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.Battle, false);
         //OnAddCard = null;

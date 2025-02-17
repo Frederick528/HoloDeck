@@ -99,23 +99,25 @@ public class EventQueue
     public void QueueClear()
     {
         //_isPending = false;         // Ability를 Action으로 할 경우에는 사용해야 함.
-        for (int i = 0; i < _queue.Count; ++i)
+        int count = _queue.Count;
+        for (int i = 0; i < count; ++i)
         {
             if (_queue.Peek() is Card card)
             {
                 _queue.Dequeue();
-                QueueClearCard(card).Forget();
+                QueueClearCard(card)/*.Forget()*/;
             }
-            --i;
+            //--i;
         }
         ////_isPending = false;
         //_queue.Clear();
     }
 
-    async UniTask QueueClearCard(Card card)
+    void QueueClearCard(Card card)
     {
-        await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay);
-        CardManager.Instance.FailedUseCard(card);
+        //await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay);
+        //CardManager.Instance.FailedUseCard(card);
+        card.AfterCardAbility(true).Forget();
     }
 
     //async UniTaskVoid OnBtnInteract()

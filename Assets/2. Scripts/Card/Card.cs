@@ -79,6 +79,8 @@ public class Card : MonoBehaviour
         //_boxCollider2 = GetComponent<BoxCollider2D>();
 
         _defaultData = data;
+        Data = (CardData)_defaultData.Clone();
+        
         StringBuilder sb = new StringBuilder(_defaultData.Descript);
         sb.Replace("{Damage}", (_defaultData.Damage + InGameManager.Instance.player.AttackPower.Value).ToString());
         sb.Replace("{Shield}", (_defaultData.Shield + InGameManager.Instance.player.DefencePower.Value).ToString());
@@ -88,7 +90,6 @@ public class Card : MonoBehaviour
         _defaultDesc = sb.ToString();
         Desc = sb.ToString();
 
-        Data = (CardData)_defaultData.Clone();
 
         _nameText.text = Data.Name;
         _character.sprite = Data.Sprite;
@@ -234,27 +235,27 @@ public class Card : MonoBehaviour
         //}
     }
 
-    public void Setup(int id)
-    {
-        Data = InGameManager.Instance.FindCardData(id);
+    //public void Setup(int id)
+    //{
+    //    Data = InGameManager.Instance.FindCardData(id);
 
-        _nameText.text = Data.Name;
-        _costText.text = Data.Cost.ToString();
-        _descText.text = Data.Descript;
-        _character.sprite = Data.Sprite;
+    //    _nameText.text = Data.Name;
+    //    _costText.text = Data.Cost.ToString();
+    //    _descText.text = Data.Descript;
+    //    _character.sprite = Data.Sprite;
 
-        //CardAction = CardAbility.SetCardActionAbility(this);
-        //CardAbility.SetCardAbility(this);
-        //CardLazy = CardAbility.SetCardLazyAbility(this);
+    //    //CardAction = CardAbility.SetCardActionAbility(this);
+    //    //CardAbility.SetCardAbility(this);
+    //    //CardLazy = CardAbility.SetCardLazyAbility(this);
 
-    }
+    //}
 
-    public void EnhancedCard()
-    {
-        if (Enhanced) return;
-        Enhanced = true;
-        Setup(Data.Id * 10);
-    }
+    //public void EnhancedCard()
+    //{
+    //    if (Enhanced) return;
+    //    Enhanced = true;
+    //    Setup(Data.Id * 10);
+    //}
 
     public void ResetCard()
     {
@@ -316,6 +317,79 @@ public class Card : MonoBehaviour
             //}
         }
     }
+
+    public async UniTaskVoid WaitUnblock(float waitTime)
+    {
+        Block = true;
+        await UniTask.WaitForSeconds(waitTime, true);       // 카드를 가져오기 위해 블락하는 거라, TimeScale은 무시함.
+        Block = false;
+    }
+
+    public void BlockCard()
+    {
+        Block = true;
+    }
+    public void UnblockCard()
+    {
+        Block = false;
+    }
+
+    public void FailedUseCard()
+    {
+        Block = false;
+        Used = false;
+    }
+
+    public void CheckEnemyDead()
+    {
+        int count = (Data.Count == 0) ? 1 : Data.Count;
+        switch (Data.CardTag)
+        {
+            case CardTag.SingleAttack:
+                TargetEnemy.CheckIfDead(Data.Damage, count);
+                break;
+            case CardTag.MultiAttack:
+                foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
+                {
+                    enemy.CheckIfDead(Data.Damage, count);
+                }
+                break;
+        }
+    }
+
+    public async UniTask<bool> BeforeUsingCard()
+    {
+        if (InGameManager.Instance.player.CurHolo < Data.Cost)
+        {
+            return false;
+        }
+        MoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale * 0.8f), true, CardUtils.CardAlignmentDelay);
+        if (!await CheckUseConditions())
+        {
+            return false;
+        }
+
+        InGameManager.Instance.player.AddCurHolo(-Data.Cost);
+
+        CheckEnemyDead();
+
+        return true;
+    }
+
+    public async UniTask AfterCardAbility(bool endBattle = false)
+    {
+        await TaskMoveTransform(new PRS(CardManager.Instance.CardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), false, CardUtils.ThrowAwayCardDelay);
+
+        if (!endBattle)
+        {
+            CardManager.Instance.CardDummy.Add(this);
+            UiManager.Instance.SetDummyCount();
+        }
+        Block = false;
+        Used = false;
+    }
+
+
 
     //async UniTask AutoSyncTr(float time)              // TimeScale = 0 되는 곳에서 그냥 true함.
     //{

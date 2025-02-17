@@ -95,10 +95,10 @@ public class Map : MonoBehaviour
             //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(true);
             UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.RewardBox, true, rewardBox);
             // 캐릭터별로 보상이 바뀌는 코드 넣어야 함.
-            item[0] = Random.Range(0, 4);     // 나중에 중복은 제외하는 코드로 변경해야 함.
-            item[1] = Random.Range(0, 4);
-            item[2] = Random.Range(0, 4);
-            item[3] = Random.Range(0, 4);     // 유물 효과로 아이템 선택지 +1
+            item[0] = Random.Range(0, 6);     // 나중에 중복은 제외하는 코드로 변경해야 함.
+            item[1] = Random.Range(0, 6);
+            item[2] = Random.Range(0, 6);
+            item[3] = Random.Range(0, 6);     // 유물 효과로 아이템 선택지 +1
             ItemManager.Instance.SettingItem(item);
 
         }

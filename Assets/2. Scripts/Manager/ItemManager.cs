@@ -13,7 +13,7 @@ public class ItemManager : MonoBehaviour
     public ActiveItem activeItem;
     public TMP_Text activeItemCharge;
 
-    public bool arrowOn;   // 게임매니저에서 한 번에 처리하고 싶었으나, Card 사용 코드 때문에 그냥 각각의 코드에서 실행하는 방법 사용.
+    //public bool arrowOn;   // 게임매니저에서 한 번에 처리하고 싶었으나, Card 사용 코드 때문에 그냥 각각의 코드에서 실행하는 방법 사용. => 성공함.
     int activeValue;
 
     [SerializeField]
@@ -145,13 +145,13 @@ public class ItemManager : MonoBehaviour
     public void AttackSingleTarget(Enemy enemy)     // 아이템 비사용시, 끄는 방법이 필요함. + 다른 것들 터치 안 되도록 설정
     {
         //if (!arrowOn) return false;
-
+        enemy.CheckIfDead(activeItem.Damage, 1);
         enemy.TakeDamageEnemy(activeItem.Damage).Forget();            // 일단 forget했는데, 상황에 따라 달라짐
 
         Charge(-activeItem.maxCharge);
 
         //SettingSingleTarget(false);
-        BattleManager.Instance.SetActiveArrowCursor(false, 1);
+        //BattleManager.Instance.SetActiveArrowCursor(false, 1);
 
         //return true;
     }

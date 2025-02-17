@@ -7,11 +7,12 @@ using UnityEngine;
 public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager Instance { get; private set; }
-    public Dictionary<int, EnemyData> enemyDatas { get; private set; } = new Dictionary<int, EnemyData>();
-    public List<Enemy> enemies;
-    public List<Transform> enemySpawnPosition;
-    bool[] enemySpawn;
-    public GameObject targetEnemy;
+    public Dictionary<int, EnemyData> EnemyDatas { get; private set; } = new Dictionary<int, EnemyData>();
+    public List<Enemy> EnemyList;
+    public Dictionary<int, Enemy> EnemyDict = new();     // OnTriggerEnter에서 gameObject로 받기 때문에 List에서 확인이 안 됨. 그렇다고 GetComponent 하면 비용적으로 별로라서 그냥 Dict 하나 만듦.
+    public List<Transform> EnemySpawnPosition;
+    bool[] _enemySpawn;
+    public Enemy TargetEnemy;
     //public Arrow ArrowCursor;
 
     public bool MapClear = false;
@@ -33,20 +34,21 @@ public class EnemyManager : MonoBehaviour
 
     private void Start()
     {
-        enemySpawn = new bool[enemySpawnPosition.Count];
-        Array.Fill(enemySpawn, true);
+        _enemySpawn = new bool[EnemySpawnPosition.Count];
+        Array.Fill(_enemySpawn, true);
     }
 
     public bool SpawnEnemy(int enemyId, int spawnPosIndex)       // 체력 설정이 아니라 ID를 통해 몬스터 종류와 체력, 공격력을 가져오는 형식으로 변경함.
     {
-        if (!enemySpawn[spawnPosIndex]/*enemySpawnPosition[spawnPosIndex].gameObject.activeSelf*/)       // 나중에 배열 만들어서 gameObject가 아니라 bool값으로 바로 받아올 것.
+        if (!_enemySpawn[spawnPosIndex]/*enemySpawnPosition[spawnPosIndex].gameObject.activeSelf*/)       // 나중에 배열 만들어서 gameObject가 아니라 bool값으로 바로 받아올 것.
             return false;
         EnemyData enemyData = FindEnemyData(enemyId);
-        GameObject enemyObject = Instantiate(enemyData.enemyPrefab, enemySpawnPosition[spawnPosIndex].position, Quaternion.identity);
+        GameObject enemyObject = Instantiate(enemyData.enemyPrefab, EnemySpawnPosition[spawnPosIndex].position, Quaternion.identity);
         Enemy enemy = enemyObject.GetComponent<Enemy>();
-        enemies.Add(enemy);
+        EnemyList.Add(enemy);
+        EnemyDict.Add(enemyObject.GetInstanceID(), enemy);
         enemy.SetupEnemy(enemyData, spawnPosIndex);
-        enemySpawn[spawnPosIndex] = false;
+        _enemySpawn[spawnPosIndex] = false;
         //enemySpawnPosition[spawnPosIndex].gameObject.SetActive(false);
         return true;
     }
@@ -56,16 +58,17 @@ public class EnemyManager : MonoBehaviour
         EnemyData enemyData;
         GameObject enemyObject;
         Enemy enemy;
-        for (int i = 0; i < enemySpawnPosition.Count; ++i)
+        for (int i = 0; i < EnemySpawnPosition.Count; ++i)
         {
-            if (!enemySpawn[i]/*enemySpawnPosition[i].gameObject.activeSelf*/)
+            if (!_enemySpawn[i]/*enemySpawnPosition[i].gameObject.activeSelf*/)
                 continue;
             enemyData = FindEnemyData(enemyId);
-            enemyObject = Instantiate(enemyData.enemyPrefab, enemySpawnPosition[i].position, Quaternion.identity);
+            enemyObject = Instantiate(enemyData.enemyPrefab, EnemySpawnPosition[i].position, Quaternion.identity);
             enemy = enemyObject.GetComponent<Enemy>();
-            enemies.Add(enemy);
+            EnemyList.Add(enemy);
+            EnemyDict.Add(enemyObject.GetInstanceID(), enemy);
             enemy.SetupEnemy(enemyData, i);
-            enemySpawn[i] = false;
+            _enemySpawn[i] = false;
             //enemySpawnPosition[i].gameObject.SetActive(false);
             return true;
         }
@@ -74,23 +77,24 @@ public class EnemyManager : MonoBehaviour
 
     public async UniTask<bool> KillEnemyCheck(Enemy enemy, UniTask task)
     {
-        enemies.Remove(enemy);
+        EnemyList.Remove(enemy);
+        EnemyDict.Remove(enemy.gameObject.GetInstanceID());
         await task;
-        enemySpawn[enemy.spawnPosIdx] = true;
-        return enemies.Count == 0;
+        _enemySpawn[enemy.spawnPosIdx] = true;
+        return EnemyList.Count == 0;
     }
 
     public EnemyData FindEnemyData(int id)   // Id 값으로 적 데이터 가져오기
     {
         EnemyData enemyData;
-        if (enemyDatas.TryGetValue(id, out enemyData))
+        if (EnemyDatas.TryGetValue(id, out enemyData))
         {
             return enemyData;
         }
         else
         {
             enemyData = Array.Find(enemySO.enemyDatas, x => x.id == id);
-            enemyDatas.Add(id, enemyData);
+            EnemyDatas.Add(id, enemyData);
             return enemyData;
         }
         //return Array.Find(enemySO.enemyDatas, x => x.Id == Id);

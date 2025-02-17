@@ -119,7 +119,7 @@ public abstract class Enemy : Entity
         {
             col2d.enabled = false;
             CanClear = true;
-            foreach (Enemy enemy in EnemyManager.Instance.enemies)
+            foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
             {
                 if (!enemy.CanClear)
                 {

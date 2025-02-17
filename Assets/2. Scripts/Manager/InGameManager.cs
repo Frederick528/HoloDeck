@@ -9,10 +9,14 @@ public class InGameManager : MonoBehaviour
     public static InGameManager Instance { get; private set; }
 
     public Dictionary<int, CardData> CardDatas { get; private set; } = new Dictionary<int, CardData>();
+    public Dictionary<int, ItemData> ItemDatas { get; private set; } = new Dictionary<int, ItemData>();
+
+    public EventQueue AbilityEventQueue = new();
 
     [SerializeField] bool fastMode;
 
     [SerializeField] CardSO cardSO;
+    [SerializeField] ItemSO _itemSO;
 
     //public Arrow ArrowCursor;
 
@@ -52,16 +56,32 @@ public class InGameManager : MonoBehaviour
     //}
     public CardData FindCardData(int id)   // Id 값으로 카드데이터 가져오기
     {
-        CardData _cardData;
-        if (CardDatas.TryGetValue(id, out _cardData))
+        //CardData cardData;
+        if (CardDatas.TryGetValue(id, out CardData cardData))
         {
-            return _cardData;
+            return cardData;
         }
         else
         {
-            _cardData = (CardData)Array.Find(cardSO.Cards, x => x.Id == id).Clone();
-            CardDatas.Add(id, _cardData);
-            return _cardData;
+            cardData = (CardData)Array.Find(cardSO.Cards, x => x.Id == id).Clone();
+            CardDatas.Add(id, cardData);
+            return cardData;
+        }
+        //return cardSO.Cards.Find(x => x.Id == Id);
+        //return Array.Find(cardSO.Cards, x => x.Id == Id);
+    }
+    public ItemData FindItemData(int id)   // Id 값으로 카드데이터 가져오기
+    {
+        //ItemData itemData;
+        if (ItemDatas.TryGetValue(id, out ItemData itemData))
+        {
+            return itemData;
+        }
+        else
+        {
+            itemData = Array.Find(_itemSO.Items, x => x.Id == id);
+            ItemDatas.Add(id, itemData);
+            return itemData;
         }
         //return cardSO.Cards.Find(x => x.Id == Id);
         //return Array.Find(cardSO.Cards, x => x.Id == Id);
@@ -161,7 +181,7 @@ public class InGameManager : MonoBehaviour
             while (!EnemyManager.Instance.SpawnEnemy(100, i))
             {
                 i++;
-                if (i > EnemyManager.Instance.enemySpawnPosition.Count - 1)
+                if (i > EnemyManager.Instance.EnemySpawnPosition.Count - 1)
                     break; 
             }
         }
@@ -177,10 +197,10 @@ public class InGameManager : MonoBehaviour
         {
             if (MapManager.Instance.currStage.State == Map.StageState.Enemy)
             {
-                for (int i = EnemyManager.Instance.enemies.Count - 1; i >= 0; --i)
+                for (int i = EnemyManager.Instance.EnemyList.Count - 1; i >= 0; --i)
                 {
-                    EnemyManager.Instance.enemies[i].CheckIfDead(9999, 1);
-                    EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
+                    EnemyManager.Instance.EnemyList[i].CheckIfDead(9999, 1);
+                    EnemyManager.Instance.EnemyList[i].TakeDamageEnemy(9999).Forget();
                     //EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
                 }
             }
@@ -216,7 +236,7 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha4))       // 카드 생성
         {
-            CardManager.Instance.AddCard(cardSO.Cards[0]);
+            CardManager.Instance.AddCard(FindCardData(100));
         }
         if (Input.GetKeyDown(KeyCode.Alpha7))
         {
@@ -244,7 +264,12 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.P))
         {
-            PotionManager.Instance.GetPotion(2);
+            PotionManager.Instance.GetPotion(1);
+        }
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            print(FindItemData(100));
+
         }
 #endif
     }

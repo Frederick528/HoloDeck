@@ -348,9 +348,9 @@ public class CardAbility
     }
     async UniTask MultiAttackAb(Card card)
     {
-        int enemyCount = EnemyManager.Instance.enemies.Count;
+        int enemyCount = EnemyManager.Instance.EnemyList.Count;
         await UniTask.WhenAll(Enumerable.Range(0, enemyCount).
-            Select(i => EnemyManager.Instance.enemies[(enemyCount - 1) - i].TakeDamageEnemy(card.Data.Damage)));
+            Select(i => EnemyManager.Instance.EnemyList[(enemyCount - 1) - i].TakeDamageEnemy(card.Data.Damage)));
         //for (int i = EnemyManager.Instance.enemies.Count - 1; i >= 0; i--)
         //{
         //    await EnemyManager.Instance.enemies[i].TakeDamageEnemy(card.Data.Damage);
