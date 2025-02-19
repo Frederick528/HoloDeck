@@ -140,6 +140,8 @@ public class InGameManager : MonoBehaviour
         }
         else { Time.timeScale = PauseInt != 0 ? 0 : 1; }
 
+        //print(AbilityEventQueue._queue.Count);
+
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -260,7 +262,7 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.I))
         {
-            ItemManager.Instance.ItemAbility(5);
+            ItemManager.Instance.GetItem(500);
         }
         if (Input.GetKeyDown(KeyCode.P))
         {

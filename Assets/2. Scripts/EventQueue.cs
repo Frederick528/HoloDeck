@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 public class EventQueue
 {
-    readonly Queue<object> _queue = new Queue<object>();
+    readonly Queue<object> _queue;
     bool _isPending;
     public EventQueue()
     {
@@ -73,6 +73,11 @@ public class EventQueue
             //await CardManager.Instance.CheckCanUseCard(cardEvent);
             await CardManager.Instance.UsedCard(cardEvent);
         }
+        else if (_queue.Peek() is Item itemEvent)
+        {
+            _queue.Dequeue();
+            await itemEvent.UseTask();
+        }
         //else if (!CardManager.Instance.CanUseHolo(cardEvent))
         //{
         //    CardManager.Instance.PutDownCard(cardEvent).Forget();
@@ -96,7 +101,7 @@ public class EventQueue
         //gameEvent.Invoke();
     }
 
-    public void QueueClear()
+    public void QueueClear()        // 큐에 있는 능력들로 적이 다 죽었다고 판단되면, 더 이상 카드를 못 쓰기 때문에 사실상 필요없음. 그래도 혹시 모르니깐.. (가능성 생겨서 쓰는 게 맞음.)
     {
         //_isPending = false;         // Ability를 Action으로 할 경우에는 사용해야 함.
         int count = _queue.Count;
@@ -107,9 +112,17 @@ public class EventQueue
                 _queue.Dequeue();
                 QueueClearCard(card)/*.Forget()*/;
             }
+            else if (_queue.Peek() is Item item)
+            {
+                _queue.Dequeue();
+                if (item.Data.ItemTag == ItemTag.Active)
+                {
+                    ItemManager.Instance.Charge(item.Data.MaxCharge);
+                }
+            }
             //--i;
         }
-        ////_isPending = false;
+        _isPending = false;
         //_queue.Clear();
     }
 

@@ -10,6 +10,7 @@ public class CardAbility
 {
     //public UniTask Task;
     //public UniTask<Action<Card>> cardActionTask;
+    CancellationTokenSource _cts;
 
     const float attackSpeed = 0.3f;
     public Action<T> Action<T>(Func<T, UniTaskVoid> asyncAction)
@@ -52,11 +53,11 @@ public class CardAbility
         switch (card.Data.Id)       // Defer => await 한 번일 때 유용, Lazy => await 여러 번일 때 유용
         {
             case 100:
-                card.UseConditions = UniTask.Defer(async () =>
+                card.UseConditions = () => UniTask.Create(async () =>
                 {
                     return await DiscardAb(2);
                 });
-                card.CardTask = UniTask.Defer(async () =>
+                card.CardTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
                     await SingleAttackAb(card);
@@ -69,7 +70,7 @@ public class CardAbility
                 //}/*, true, TurnManager.Instance.CancelSource.Token*/);      // false면 await 이후 코드가 스레드 풀에서 진행된다고 하는데, 아직 정확히는 모르겠어서 이건 일단 좀 더 공부해봐야 할 듯.
                 break;
             case 101:
-                card.CardTask = UniTask.Defer(async () =>
+                card.CardTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
                     await SingleAttackAb(card);
@@ -99,35 +100,35 @@ public class CardAbility
                 //});
                 break;
             case 102:
-                card.CardTask = UniTask.Defer(async () =>
+                card.CardTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
                     await ContinuousSinglettackAb(card, 0.3f);
                 });
                 break;
             case 103:
-                card.CardTask = UniTask.Defer(async () =>
+                card.CardTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
                     await ContinuousMultiAttackAb(card, 0.3f);
                 });
                 break;
             case 104:
-                card.CardTask = UniTask.Defer(async () =>
+                card.CardTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
                     await ContinuousDrawAb(card);
                 });
                 break;
             case 105:
-                card.CardTask = UniTask.Defer(async () =>
+                card.CardTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
                     await ShieldAb(card);
                 });
                 break;
             default:
-                card.CardTask = UniTask.CompletedTask;
+                card.CardTask = () => UniTask.CompletedTask;
                 break;
         }
         //return cardActTask;
@@ -476,23 +477,38 @@ public class CardAbility
         bool discarded = false;
         ButtonManager.Instance.DiscardBtnInvert(false);
         CardManager.Instance.ChangeDiscard(true);
-        await UniTask.WhenAny(
-            UniTask.Create(async () =>
-            {
-                await ButtonManager.Instance.DiscardButton.OnClickAsync();
-                CardManager.Instance.ThrowAwaySelectedCard().Forget();
-                discarded = true;
+        _cts = new();
+        var task1 = UniTask.Create(async () =>
+        {
+            await ButtonManager.Instance.DiscardButton.OnClickAsync(_cts.Token);
+            CardManager.Instance.ThrowAwaySelectedCard().Forget();
+            discarded = true;
+        });
+        var task2 = UniTask.Create(async () =>
+        {
+            await ButtonManager.Instance.DiscardCancelButton.OnClickAsync(_cts.Token);
+            CardManager.Instance.ReturnSelectedCard();
+            discarded = false;
+        });
+        await UniTask.WhenAny(task1, task2);
+        _cts.Cancel();
+        //await UniTask.WhenAny(
+        //    UniTask.Create(async () =>
+        //    {
+        //        await ButtonManager.Instance.DiscardButton.OnClickAsync();
+        //        CardManager.Instance.ThrowAwaySelectedCard().Forget();
+        //        discarded = true;
 
 
-            }),
-            UniTask.Create(async () =>
-            {
-                await ButtonManager.Instance.DiscardCancelButton.OnClickAsync();
-                CardManager.Instance.ReturnSelectedCard();
-                discarded = false;
+        //    }),
+        //    UniTask.Create(async () =>
+        //    {
+        //        await ButtonManager.Instance.DiscardCancelButton.OnClickAsync();
+        //        CardManager.Instance.ReturnSelectedCard();
+        //        discarded = false;
 
-            })
-            );
+        //    })
+        //    );
         CardManager.Instance.ChangeDiscard(false);
         return discarded;
 

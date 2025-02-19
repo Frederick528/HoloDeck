@@ -96,9 +96,10 @@ public abstract class Entity : MonoBehaviour
         await UniTask.WaitUntil(() => _isDied);
         Destroy(gameObject);
     }
-    public virtual void Heal(int amount)
+    public virtual async UniTask Heal(int amount)
     {
         curHp.Value = Mathf.Clamp(curHp.Value + amount, 0, maxHp.Value);
+        await UniTask.WaitForSeconds(0.5f);
     }
 
     public virtual async UniTask Shield(int amount)
@@ -107,7 +108,7 @@ public abstract class Entity : MonoBehaviour
         await UniTask.WaitForSeconds(0.5f);
     }
 
-    public virtual void DefenceReset()
+    public virtual void ShieldReset()
     {
         shield.Value = 0;
     }

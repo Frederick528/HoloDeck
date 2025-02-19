@@ -37,7 +37,7 @@ public class Card : MonoBehaviour
     //private Animator _anim;
 
     CardData _defaultData = null;
-    string _defaultDesc = null;
+    //string _defaultDesc = null;
     public CardData Data;
     public string Desc;
     public int ID;      // 일단 혹시 몰라서 만들었으나, Data.Id로 받을 수 있음.
@@ -50,11 +50,11 @@ public class Card : MonoBehaviour
 
     public CardAbility CardAbility = new();
 
-    public UniTask<bool>? UseConditions;
+    public Func<UniTask<bool>?> UseConditions;
 
     //public Action<Card> CardAction { get; private set; }
     //public Action CardAction { get; private set; }
-    public UniTask CardTask;
+    public Func<UniTask> CardTask;
     //public AsyncLazy CardLazy { get; private set; }
 
     public bool Enhanced = false;
@@ -81,14 +81,14 @@ public class Card : MonoBehaviour
         _defaultData = data;
         Data = (CardData)_defaultData.Clone();
         
-        StringBuilder sb = new StringBuilder(_defaultData.Descript);
-        sb.Replace("{Damage}", (_defaultData.Damage + InGameManager.Instance.player.AttackPower.Value).ToString());
-        sb.Replace("{Shield}", (_defaultData.Shield + InGameManager.Instance.player.DefencePower.Value).ToString());
-        sb.Replace("{Count}", (_defaultData.Count).ToString());
-        sb.Replace("{Draw}", (_defaultData.Draw).ToString());
-        sb.Replace("{Reduce}", (_defaultData.Reduce).ToString());
-        _defaultDesc = sb.ToString();
-        Desc = sb.ToString();
+        //StringBuilder sb = new StringBuilder(_defaultData.Descript);
+        //sb.Replace("{Damage}", (_defaultData.Damage + InGameManager.Instance.player.AttackPower.Value).ToString());
+        //sb.Replace("{Shield}", (_defaultData.Shield + InGameManager.Instance.player.DefencePower.Value).ToString());
+        //sb.Replace("{Count}", (_defaultData.Count).ToString());
+        //sb.Replace("{Draw}", (_defaultData.Draw).ToString());
+        //sb.Replace("{Reduce}", (_defaultData.Reduce).ToString());
+        //_defaultDesc = sb.ToString();
+        //Desc = sb.ToString();
 
 
         _nameText.text = Data.Name;
@@ -123,6 +123,7 @@ public class Card : MonoBehaviour
                     _rararityBG[i].sprite = CardManager.Instance.LegendarySprites[i];
                 break;
         }
+        CardAbility.SetCardAbility(this);
         //CardAction = CardAbility.SetCardActionAbility(this);     // Action<Card> 버전 (드로우 시간 체크 때문에 일단 사용하지 않음.)
         //CardTask = CardAbility.SetCardAbility(this);              // 그냥 카드어빌리티 실행하면 Task 바꾸도록 함.
         //CardAbility.SetCardAbility(this);     // 사용 전에 받기 때문에 굳이 사용 안 해도 됨. 나중에 따로 필요하면 킬 것.
@@ -156,12 +157,12 @@ public class Card : MonoBehaviour
 
     public async UniTask<bool> CheckUseConditions()
     {
-        CardAbility.SetCardAbility(this);
-        if (!UseConditions.HasValue)
+        //CardAbility.SetCardAbility(this);
+        if (UseConditions == null)
         {
             return true;
         }
-        return await UseConditions.Value;
+        return await UseConditions().Value;
     }
 
     public async UniTask UseTask()
@@ -169,7 +170,7 @@ public class Card : MonoBehaviour
         //CardAbility.SetCardAbility(this);   // checkUseConditions에서 받게 되면 이건 사용 안 할 예정
         //UniTask uniTask = UniTask.Create(() => CardTask);
         //await CardAbility.SetCardAbility(this);     // 다른 방식이 있는지 찾아봐야할 듯
-        await CardTask;
+        await CardTask();
     }
     //public async UniTask UseLazy()
     //{
@@ -193,13 +194,25 @@ public class Card : MonoBehaviour
         //}
         //else
         //{
-            Data.Damage = _defaultData.Damage + InGameManager.Instance.player.AttackPower.Value;
-            Data.Shield = _defaultData.Shield + InGameManager.Instance.player.DefencePower.Value;
-            Data.Count = _defaultData.Count + 0;
-            Data.Draw = _defaultData.Draw + 0;
-            Data.Reduce = _defaultData.Reduce + 0;
-            _costText.text = (_defaultData.Cost + 0).ToString();
-            _descText.text = Desc;
+
+        Data.Damage = _defaultData.Damage + InGameManager.Instance.player.AttackPower.Value;
+        Data.Shield = _defaultData.Shield + InGameManager.Instance.player.DefencePower.Value;
+        if (Data.Damage < 0) { Data.Damage = 0; }
+        if (Data.Shield < 0) { Data.Shield = 0; }
+        Data.Count = _defaultData.Count + 0;
+        Data.Draw = _defaultData.Draw + 0;
+        Data.Reduce = _defaultData.Reduce + 0;
+        
+        StringBuilder sb = new StringBuilder(_defaultData.Descript);
+        sb.Replace("{Damage}", Data.Damage.ToString());
+        sb.Replace("{Shield}", Data.Shield.ToString());
+        sb.Replace("{Count}", Data.Count.ToString());
+        sb.Replace("{Draw}", Data.Draw.ToString());
+        sb.Replace("{Reduce}", Data.Reduce.ToString());
+        Desc = sb.ToString();
+            
+        _costText.text = (_defaultData.Cost + 0).ToString();
+        _descText.text = Desc;
         //}
 
         //nameText.text = Data.Name;
@@ -208,32 +221,32 @@ public class Card : MonoBehaviour
         //character.sprite = Data.Sprite;
     }
 
-    public void ChangeCardDesc(/*string data*/)
-    {
-        StringBuilder sb = new StringBuilder(_defaultData.Descript);
-        sb.Replace("{Damage}", (_defaultData.Damage + InGameManager.Instance.player.AttackPower.Value).ToString());
-        sb.Replace("{Shield}", (_defaultData.Shield + InGameManager.Instance.player.DefencePower.Value).ToString());
-        sb.Replace("{Count}", (_defaultData.Count).ToString());
-        sb.Replace("{Draw}", (_defaultData.Draw).ToString());
-        sb.Replace("{Reduce}", (_defaultData.Reduce).ToString());
-        Desc = sb.ToString();
-        CardDataReset();
-        //switch (data)
-        //{
-        //    case "Attack":
-        //        sb.Replace("{Damage}", (_defaultData.Damage+InGameManager.Instance.player.AttackPower.Value).ToString());
-        //        Desc = sb.ToString();
-        //        break;
-        //    case "Shield":
-        //        sb.Replace("{Shield}", (_defaultData.Shield + InGameManager.Instance.player.DefencePower.Value).ToString());
-        //        Desc = sb.ToString();
-        //        break;
-        //    case "Count":
-        //        break;
-        //    case "Draw":
-        //        break;
-        //}
-    }
+    //public void ChangeCardDesc(/*string data*/)
+    //{
+    //    StringBuilder sb = new StringBuilder(_defaultData.Descript);
+    //    sb.Replace("{Damage}", (_defaultData.Damage + InGameManager.Instance.player.AttackPower.Value).ToString());
+    //    sb.Replace("{Shield}", (_defaultData.Shield + InGameManager.Instance.player.DefencePower.Value).ToString());
+    //    sb.Replace("{Count}", (_defaultData.Count).ToString());
+    //    sb.Replace("{Draw}", (_defaultData.Draw).ToString());
+    //    sb.Replace("{Reduce}", (_defaultData.Reduce).ToString());
+    //    Desc = sb.ToString();
+    //    CardDataReset();
+    //    //switch (data)
+    //    //{
+    //    //    case "Attack":
+    //    //        sb.Replace("{Damage}", (_defaultData.Damage+InGameManager.Instance.player.AttackPower.Value).ToString());
+    //    //        Desc = sb.ToString();
+    //    //        break;
+    //    //    case "Shield":
+    //    //        sb.Replace("{Shield}", (_defaultData.Shield + InGameManager.Instance.player.DefencePower.Value).ToString());
+    //    //        Desc = sb.ToString();
+    //    //        break;
+    //    //    case "Count":
+    //    //        break;
+    //    //    case "Draw":
+    //    //        break;
+    //    //}
+    //}
 
     //public void Setup(int id)
     //{
@@ -262,7 +275,7 @@ public class Card : MonoBehaviour
         _outline.gameObject.SetActive(false);
     }
 
-    public void Target(Enemy enemy)
+    public void Target(Enemy enemy)     // 이거 필요없음. 죽는 적은 애초에 지정이 안 되기 때문에 따로 타켓 안 해도 됨.
     {
         TargetEnemy = enemy;
     }
@@ -361,11 +374,13 @@ public class Card : MonoBehaviour
     {
         if (InGameManager.Instance.player.CurHolo < Data.Cost)
         {
+            Target(null);
             return false;
         }
         MoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale * 0.8f), true, CardUtils.CardAlignmentDelay);
         if (!await CheckUseConditions())
         {
+            Target(null);
             return false;
         }
 

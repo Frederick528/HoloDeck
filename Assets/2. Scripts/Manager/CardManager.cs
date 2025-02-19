@@ -254,10 +254,6 @@ public class CardManager : MonoBehaviour
         //    card.Target(EnemyManager.Instance.targetEnemy);
         if (!await card.BeforeUsingCard())
         {
-            if (card.TargetEnemy)
-            {
-                card.Target(null);
-            }
             HandCard.Add(card);
             SetOriginOrder();
             CardAlignment();
@@ -277,7 +273,7 @@ public class CardManager : MonoBehaviour
     {
         foreach (Card card in TotalDeck)
         {
-            card.ChangeCardDesc();
+            card.CardDataReset();
         }
     }
 

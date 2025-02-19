@@ -88,7 +88,7 @@ public class TurnManager : MonoBehaviour
         MyTurn = true;
 
         InGameManager.Instance.player.AddCurHolo(InGameManager.Instance.player.MaxHolo);
-        InGameManager.Instance.player.DefenceReset();
+        InGameManager.Instance.player.ShieldReset();
 
         UiManager.Instance.ChangeTurnButtonText(MyTurn);
 
@@ -180,6 +180,7 @@ public class TurnManager : MonoBehaviour
         if (endBattle)
         {
             CardManager.Instance.ClearCard();
+            InGameManager.Instance.player.ShieldReset();
             return;
         }
 

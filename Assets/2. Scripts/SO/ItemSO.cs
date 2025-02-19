@@ -9,6 +9,12 @@ public enum ItemTag
     Active,
     Potion
 }
+public enum AttackType
+{
+    None,
+    Single,
+    Multi
+}
 public enum ItemRarity
 {
     Common,
@@ -16,6 +22,13 @@ public enum ItemRarity
     Epic,
     Legendary
 }
+
+public enum ItemCanUse
+{
+    OnlyBattle,
+    Anytime
+}
+
 [Serializable]
 public class ItemData
 {
@@ -37,6 +50,8 @@ public class ItemData
     public Sprite Sprite;
     public ItemTag ItemTag;
     public ItemRarity ItemRarity;
+    public AttackType AttackType;
+    public ItemCanUse ItemCanUse;
 }
 
 [CreateAssetMenu(fileName = "ItemSO", menuName = "Scriptable Object/ItemSO")]

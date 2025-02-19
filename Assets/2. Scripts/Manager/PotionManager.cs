@@ -54,7 +54,7 @@ public class PotionManager : MonoBehaviour
         switch (id)
         {
             case 0:
-                InGameManager.Instance.player.Heal(10);
+                InGameManager.Instance.player.Heal(10).Forget();
                 _potionBtns[idx].onClick.RemoveAllListeners();
                 _boolPotion[idx] = false;
                 _potionImgs[idx].color = _colors[0];

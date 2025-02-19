@@ -5,45 +5,59 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class ItemAbility : MonoBehaviour
+public class ItemAbility
 {
 
     public void SetItemAbility(Item item)
     {
-        //UniTask cardActTask;
-        switch (item.Data.Id)       // Defer => await 한 번일 때 유용, Lazy => await 여러 번일 때 유용
+        switch (item.Data.Id)
         {
-            case 100:
-                item.ItemTask = UniTask.Defer(async () =>
+            case 1:
+                TurnManager.Instance.AddStartCardCount(1);
+                break;
+            case 2:
+                InGameManager.Instance.player.AddMaxHealth(25);
+                break;
+            case 3:
+                InGameManager.Instance.player.AddMaxHolo(1);
+                break;
+            case 4:
+                UiManager.Instance.ChangeRewardCardCount(true);
+                break;
+            case 500:
+                ItemManager.Instance.ChanageActiveItem(item);
+                item.ItemTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
                     await SingleAttackAb(item);
                 });
                 break;
-            case 101:
-                item.ItemTask = UniTask.Defer(async () =>
+            case 501:
+                ItemManager.Instance.ChanageActiveItem(item);
+                item.ItemTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
-                    await SingleAttackAb(item);
-                    await DrawAb();
+                    await HealAb(item);
                 });
                 break;
-            case 102:
-                item.ItemTask = UniTask.Defer(async () =>
+            case 502:
+                ItemManager.Instance.ChanageActiveItem(item);
+                item.ItemTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
                     await ContinuousDrawAb(item);
                 });
                 break;
-            case 103:
-                item.ItemTask = UniTask.Defer(async () =>
+            case 503:
+                ItemManager.Instance.ChanageActiveItem(item);
+                item.ItemTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
                     await ShieldAb(item);
                 });
                 break;
             default:
-                item.ItemTask = UniTask.CompletedTask;
+                item.ItemTask = () => UniTask.CompletedTask;
                 break;
         }
     }
@@ -94,6 +108,11 @@ public class ItemAbility : MonoBehaviour
         await InGameManager.Instance.player.Shield(item.Data.Shield);
     }
 
+    async UniTask HealAb(Item item)
+    {
+        await InGameManager.Instance.player.Heal(item.Data.Heal);
+    }
+
     //async UniTask<bool> DiscardAb(int discardCnt)
     //{
     //    bool discarded = false;
@@ -123,6 +142,6 @@ public class ItemAbility : MonoBehaviour
 
     async UniTask DelayTask(float delay = 0.3f)
     {
-        await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+        await UniTask.WaitForSeconds(delay/*, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token*/);
     }
 }

@@ -75,7 +75,7 @@ public class Player : Entity
     public void AddMaxHealth(int value)
     {
         maxHp.Value += value;
-        Heal(value);
+        Heal(value).Forget();
     }
 
     public void AddMaxHolo(int value)

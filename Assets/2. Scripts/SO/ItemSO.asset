@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ItemSprites: []
   Items:
-  - Name: 123
-    Id: 100
+  - Name: 500
+    Id: 500
     MaxCharge: 6
-    CurCharge: 6
+    CurCharge: 0
     Damage: 6
     Shield: 0
+    Draw: 0
     Heal: 0
     Duration: 0
     Price: 10
@@ -27,3 +28,37 @@ MonoBehaviour:
     Sprite: {fileID: 0}
     ItemTag: 1
     ItemRarity: 0
+    AttackType: 1
+    ItemCanUse: 0
+  - Name: 501
+    Id: 501
+    MaxCharge: 6
+    CurCharge: 0
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 10
+    Duration: 0
+    Price: 10
+    Descript: 
+    Sprite: {fileID: 0}
+    ItemTag: 1
+    ItemRarity: 0
+    AttackType: 0
+    ItemCanUse: 1
+  - Name: 503
+    Id: 503
+    MaxCharge: 6
+    CurCharge: 0
+    Damage: 0
+    Shield: 10
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    Price: 10
+    Descript: 
+    Sprite: {fileID: 0}
+    ItemTag: 1
+    ItemRarity: 0
+    AttackType: 0
+    ItemCanUse: 1
