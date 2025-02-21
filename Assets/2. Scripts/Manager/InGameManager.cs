@@ -63,7 +63,7 @@ public class InGameManager : MonoBehaviour
         }
         else
         {
-            cardData = (CardData)Array.Find(cardSO.Cards, x => x.Id == id).Clone();
+            cardData = (CardData)Array.Find(cardSO.Cards, x => x.ID == id).Clone();
             CardDatas.Add(id, cardData);
             return cardData;
         }

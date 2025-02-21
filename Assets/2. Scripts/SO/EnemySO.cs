@@ -11,17 +11,17 @@ public enum EnemyTag
 [System.Serializable]
 public class EnemyData
 {
-    public string name;
-    public int id;
-    public int level;
-    public int damage;
-    public int hp;
-    public int dropCoin;
+    public string Name;
+    public int ID;
+    public int Level;
+    public int Damage;
+    public int HP;
+    public int DropCoin;
     [TextArea(1, 5)]
-    public string descript;
-    public Sprite sprite;
-    public EnemyTag enemyTag;
-    public GameObject enemyPrefab;
+    public string Descript;
+    public Sprite Sprite;
+    public EnemyTag EnemyTag;
+    public GameObject EnemyPrefab;
 }
 
 
@@ -29,8 +29,9 @@ public class EnemyData
 [CreateAssetMenu(fileName = "EnemySO", menuName = "Scriptable Object/EnemySO")]
 public class EnemySO : ScriptableObject
 {
-    public Sprite[] enemySprites;
+    public Sprite[] EnemySprites;
+    public GameObject[] EnemyPrefabs;
 
 
-    public EnemyData[] enemyDatas;
+    public EnemyData[] EnemyDatas;
 }

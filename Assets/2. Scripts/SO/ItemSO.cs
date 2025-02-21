@@ -5,9 +5,9 @@ using UnityEngine;
 
 public enum ItemTag
 {
-    Passive,
-    Active,
-    Potion
+    Passive,        // 1~500
+    Active,         // 501~1000
+    Potion          // 1001~
 }
 public enum AttackType
 {
@@ -25,6 +25,7 @@ public enum ItemRarity
 
 public enum ItemCanUse
 {
+    None,
     OnlyBattle,
     Anytime
 }

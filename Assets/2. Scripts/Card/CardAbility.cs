@@ -50,7 +50,7 @@ public class CardAbility
     public void SetCardAbility(Card card)
     {
         //UniTask cardActTask;
-        switch (card.Data.Id)       // Defer => await 한 번일 때 유용, Lazy => await 여러 번일 때 유용
+        switch (card.Data.ID)       // Defer => await 한 번일 때 유용, Lazy => await 여러 번일 때 유용
         {
             case 100:
                 card.UseConditions = () => UniTask.Create(async () =>

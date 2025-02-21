@@ -34,7 +34,7 @@ public enum CardRarity
 public class CardData : ICloneable
 {
     public string Name;
-    public int Id;
+    public int ID;
     public int Cost;
     //public int EnhancedCost;
     public int Damage;
@@ -61,7 +61,7 @@ public class CardData : ICloneable
         return new CardData
         {
             Name = Name,
-            Id = Id,
+            ID = ID,
             Cost = Cost,
             Damage = Damage,
             Shield = Shield,

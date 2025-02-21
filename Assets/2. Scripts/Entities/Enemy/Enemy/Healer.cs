@@ -21,7 +21,7 @@ public class Healer : Enemy
 
     protected override async UniTask AfterTakeDamage()
     {
-        InGameManager.Instance.player.TakeDamagePlayer(enemyData.damage).Forget();
+        InGameManager.Instance.player.TakeDamagePlayer(enemyData.Damage).Forget();
         await base.AfterTakeDamage();
     }
 
@@ -61,10 +61,10 @@ public class Healer : Enemy
         switch (turn)
         {
             case 1:
-                await base.Heal(enemyData.damage);
+                await base.Heal(enemyData.Damage);
                 break;
             case 2:
-                await base.Heal(enemyData.damage);
+                await base.Heal(enemyData.Damage);
                 turn = 0;
                 break;
         }

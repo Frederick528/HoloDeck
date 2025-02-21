@@ -69,7 +69,7 @@ public abstract class Enemy : Entity
     public void SetupEnemy(EnemyData eD, int pos)     // 데이터를 받는 형식으로 변경함.
     {
         enemyData = eD;
-        SetupEntity(enemyData.hp);
+        SetupEntity(enemyData.HP);
         spawnPosIdx = pos;
         player = InGameManager.Instance.player;
     }
@@ -142,7 +142,7 @@ public abstract class Enemy : Entity
         bool clear = await EnemyManager.Instance.KillEnemyCheck(this, base.DieAnimation());
         
         //EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);      // 에너미 자리로 클리어 확인을 하기 때문에 적 죽는 모션 기다린 후, 자리 삭제  // 자리는 나중에 배열로 만들고 코드상으로만 확인하도록 변경
-        InGameManager.Instance.ChangeCoinValue(enemyData.dropCoin);
+        InGameManager.Instance.ChangeCoinValue(enemyData.DropCoin);
         if (clear)
         {
             ClearCheck();

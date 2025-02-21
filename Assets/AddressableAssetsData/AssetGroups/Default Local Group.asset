@@ -16,25 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: c81c0ab54cdcdd944abec45594749f94
-  m_SerializeEntries:
-  - m_GUID: fb7e25f00b434b447ba0b2db46622238
-    m_Address: Assets/4. Prefabs/Enemy/Slime.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Entity
-    - Enemy
-  - m_GUID: b7362bd93fac5cf4a9d671b7ce1493c4
-    m_Address: Assets/4. Prefabs/Enemy/Swarm.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Entity
-    - Enemy
-  - m_GUID: 671ee7bd8898ae942820b3810882fc4e
-    m_Address: Assets/4. Prefabs/Enemy/TurtleShell.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Entity
-    - Enemy
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 8ddab990de4121140909e54570afce17, type: 2}
   m_SchemaSet:

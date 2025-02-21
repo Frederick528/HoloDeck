@@ -24,7 +24,7 @@ public class ItemAbility
             case 4:
                 UiManager.Instance.ChangeRewardCardCount(true);
                 break;
-            case 500:
+            case 501:
                 ItemManager.Instance.ChanageActiveItem(item);
                 item.ItemTask = () => UniTask.Create(async () =>
                 {
@@ -32,7 +32,7 @@ public class ItemAbility
                     await SingleAttackAb(item);
                 });
                 break;
-            case 501:
+            case 502:
                 ItemManager.Instance.ChanageActiveItem(item);
                 item.ItemTask = () => UniTask.Create(async () =>
                 {
@@ -40,7 +40,7 @@ public class ItemAbility
                     await HealAb(item);
                 });
                 break;
-            case 502:
+            case 503:
                 ItemManager.Instance.ChanageActiveItem(item);
                 item.ItemTask = () => UniTask.Create(async () =>
                 {
@@ -48,7 +48,7 @@ public class ItemAbility
                     await ContinuousDrawAb(item);
                 });
                 break;
-            case 503:
+            case 504:
                 ItemManager.Instance.ChanageActiveItem(item);
                 item.ItemTask = () => UniTask.Create(async () =>
                 {

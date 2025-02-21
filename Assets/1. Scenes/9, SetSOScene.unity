@@ -236,8 +236,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 669e1c91b31f51944bf49d9a06fcd256, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardSO: {fileID: 11400000, guid: 41dad1336250ac04ead82446813d3850, type: 2}
-  enemySO: {fileID: 11400000, guid: 3bcdae0f294187b46889e43b613ea3e6, type: 2}
+  CardSO: {fileID: 11400000, guid: 41dad1336250ac04ead82446813d3850, type: 2}
+  EnemySO: {fileID: 11400000, guid: 3bcdae0f294187b46889e43b613ea3e6, type: 2}
+  AssetLabel:
+    m_LabelString: Enemy
+  ItemSO: {fileID: 11400000, guid: e0a522c5b9163b147a4f499e0fde1067, type: 2}
 --- !u!4 &1618557158
 Transform:
   m_ObjectHideFlags: 0

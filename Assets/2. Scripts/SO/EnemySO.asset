@@ -12,55 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6be26d70c40554488cedafdcde64ff0, type: 3}
   m_Name: EnemySO
   m_EditorClassIdentifier: 
-  enemySprites: []
-  enemyDatas:
-  - name: Slime
-    id: 100
-    level: 0
-    damage: 7
-    hp: 10
-    dropCoin: 10
-    descript: Slime
-    sprite: {fileID: 0}
-    enemyTag: 0
-    enemyPrefab: {fileID: 5423766591507928315, guid: fb7e25f00b434b447ba0b2db46622238, type: 3}
-  - name: Swarm
-    id: 101
-    level: 0
-    damage: 10
-    hp: 7
-    dropCoin: 17
-    descript: Dog
-    sprite: {fileID: 0}
-    enemyTag: 0
-    enemyPrefab: {fileID: 8476364101092123999, guid: b7362bd93fac5cf4a9d671b7ce1493c4, type: 3}
-  - name: TurtleShell
-    id: 102
-    level: 0
-    damage: 3
-    hp: 5
-    dropCoin: 5
-    descript: Healer
-    sprite: {fileID: 0}
-    enemyTag: 0
-    enemyPrefab: {fileID: 4086410140833498804, guid: 671ee7bd8898ae942820b3810882fc4e, type: 3}
-  - name: E
-    id: 103
-    level: 0
-    damage: 20
-    hp: 30
-    dropCoin: 85
-    descript: E
-    sprite: {fileID: 0}
-    enemyTag: 1
-    enemyPrefab: {fileID: 5423766591507928315, guid: fb7e25f00b434b447ba0b2db46622238, type: 3}
-  - name: B
-    id: 104
-    level: 0
-    damage: 15
-    hp: 80
-    dropCoin: 160
-    descript: B
-    sprite: {fileID: 0}
-    enemyTag: 2
-    enemyPrefab: {fileID: 5423766591507928315, guid: fb7e25f00b434b447ba0b2db46622238, type: 3}
+  EnemySprites: []
+  EnemyPrefabs:
+  - {fileID: 5423766591507928315, guid: fb7e25f00b434b447ba0b2db46622238, type: 3}
+  - {fileID: 8476364101092123999, guid: b7362bd93fac5cf4a9d671b7ce1493c4, type: 3}
+  - {fileID: 4086410140833498804, guid: 671ee7bd8898ae942820b3810882fc4e, type: 3}
+  EnemyDatas: []

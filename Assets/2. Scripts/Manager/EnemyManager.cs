@@ -43,7 +43,7 @@ public class EnemyManager : MonoBehaviour
         if (!_enemySpawn[spawnPosIndex]/*enemySpawnPosition[spawnPosIndex].gameObject.activeSelf*/)       // 나중에 배열 만들어서 gameObject가 아니라 bool값으로 바로 받아올 것.
             return false;
         EnemyData enemyData = FindEnemyData(enemyId);
-        GameObject enemyObject = Instantiate(enemyData.enemyPrefab, EnemySpawnPosition[spawnPosIndex].position, Quaternion.identity);
+        GameObject enemyObject = Instantiate(enemyData.EnemyPrefab, EnemySpawnPosition[spawnPosIndex].position, Quaternion.identity);
         Enemy enemy = enemyObject.GetComponent<Enemy>();
         EnemyList.Add(enemy);
         EnemyDict.Add(enemyObject.GetInstanceID(), enemy);
@@ -63,7 +63,7 @@ public class EnemyManager : MonoBehaviour
             if (!_enemySpawn[i]/*enemySpawnPosition[i].gameObject.activeSelf*/)
                 continue;
             enemyData = FindEnemyData(enemyId);
-            enemyObject = Instantiate(enemyData.enemyPrefab, EnemySpawnPosition[i].position, Quaternion.identity);
+            enemyObject = Instantiate(enemyData.EnemyPrefab, EnemySpawnPosition[i].position, Quaternion.identity);
             enemy = enemyObject.GetComponent<Enemy>();
             EnemyList.Add(enemy);
             EnemyDict.Add(enemyObject.GetInstanceID(), enemy);
@@ -93,7 +93,7 @@ public class EnemyManager : MonoBehaviour
         }
         else
         {
-            enemyData = Array.Find(enemySO.enemyDatas, x => x.id == id);
+            enemyData = Array.Find(enemySO.EnemyDatas, x => x.ID == id);
             EnemyDatas.Add(id, enemyData);
             return enemyData;
         }

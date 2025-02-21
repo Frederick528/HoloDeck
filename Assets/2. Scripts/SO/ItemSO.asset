@@ -14,11 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ItemSprites: []
   Items:
-  - Name: 500
-    Id: 500
-    MaxCharge: 6
+  - Name: Passive1
+    Id: 1
+    MaxCharge: 0
     CurCharge: 0
-    Damage: 6
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    Price: 5
+    Descript: 
+    Sprite: {fileID: 0}
+    ItemTag: 0
+    ItemRarity: 0
+    AttackType: 0
+    ItemCanUse: 0
+  - Name: Passive2
+    Id: 2
+    MaxCharge: 0
+    CurCharge: 0
+    Damage: 0
     Shield: 0
     Draw: 0
     Heal: 0
@@ -26,39 +42,137 @@ MonoBehaviour:
     Price: 10
     Descript: 
     Sprite: {fileID: 0}
-    ItemTag: 1
+    ItemTag: 0
     ItemRarity: 0
-    AttackType: 1
+    AttackType: 0
     ItemCanUse: 0
-  - Name: 501
-    Id: 501
-    MaxCharge: 6
+  - Name: Passive3
+    Id: 3
+    MaxCharge: 0
     CurCharge: 0
     Damage: 0
     Shield: 0
     Draw: 0
-    Heal: 10
+    Heal: 0
     Duration: 0
-    Price: 10
+    Price: 20
     Descript: 
+    Sprite: {fileID: 0}
+    ItemTag: 0
+    ItemRarity: 1
+    AttackType: 0
+    ItemCanUse: 0
+  - Name: Passive4
+    Id: 4
+    MaxCharge: 0
+    CurCharge: 0
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    Price: 20
+    Descript: 
+    Sprite: {fileID: 0}
+    ItemTag: 0
+    ItemRarity: 0
+    AttackType: 0
+    ItemCanUse: 0
+  - Name: Passive5
+    Id: 5
+    MaxCharge: 0
+    CurCharge: 0
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    Price: 15
+    Descript: 
+    Sprite: {fileID: 0}
+    ItemTag: 0
+    ItemRarity: 0
+    AttackType: 0
+    ItemCanUse: 0
+  - Name: Passive6
+    Id: 6
+    MaxCharge: 0
+    CurCharge: 0
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    Price: 5
+    Descript: 
+    Sprite: {fileID: 0}
+    ItemTag: 0
+    ItemRarity: 0
+    AttackType: 0
+    ItemCanUse: 0
+  - Name: Active1
+    Id: 501
+    MaxCharge: 6
+    CurCharge: 0
+    Damage: 6
+    Shield: 0
+    Draw: 1
+    Heal: 0
+    Duration: 0
+    Price: 50
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    ItemTag: 1
+    ItemRarity: 0
+    AttackType: 1
+    ItemCanUse: 1
+  - Name: Active2
+    Id: 502
+    MaxCharge: 3
+    CurCharge: 0
+    Damage: 0
+    Shield: 6
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    Price: 50
+    Descript: '{Shield} Shield'
     Sprite: {fileID: 0}
     ItemTag: 1
     ItemRarity: 0
     AttackType: 0
     ItemCanUse: 1
-  - Name: 503
+  - Name: Active3
     Id: 503
-    MaxCharge: 6
-    CurCharge: 0
+    MaxCharge: 5
+    CurCharge: -1
     Damage: 0
-    Shield: 10
+    Shield: 0
     Draw: 0
-    Heal: 0
+    Heal: 10
     Duration: 0
-    Price: 10
-    Descript: 
+    Price: 50
+    Descript: '{Heal} Heal'
     Sprite: {fileID: 0}
     ItemTag: 1
     ItemRarity: 0
     AttackType: 0
+    ItemCanUse: 2
+  - Name: Potion1
+    Id: 1001
+    MaxCharge: 0
+    CurCharge: 0
+    Damage: 10
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    Price: 30
+    Descript: 
+    Sprite: {fileID: 0}
+    ItemTag: 2
+    ItemRarity: 0
+    AttackType: 1
     ItemCanUse: 1
