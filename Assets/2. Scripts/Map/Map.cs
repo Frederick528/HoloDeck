@@ -70,14 +70,55 @@ public class Map : MonoBehaviour
     {
         if (rewardBox == -1)
         {
-            rewardBox = Random.Range(1, 5);
+            int probability = Random.Range(1, 101);
+            if (probability > 30 + 0)       // 현재 스테이지 레벨에 따른 가중치 필요
+            {
+                rewardBox = 1;
+            }
+            else if (probability > 10 + 0)
+            {
+                rewardBox = 2;
+            }
+            else if (probability > 1 + 0)
+            {
+                rewardBox = 3;
+            }
+            else if (probability > 0)
+            {
+                rewardBox = 4;
+            }
+            //rewardBox = Random.Range(1, 5);
             //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(true);
             UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.RewardBox, true, rewardBox);
             // 캐릭터별로 보상이 바뀌는 코드 넣어야 함.
-            reward[0] = Random.Range(100, 106);     // 나중에 중복은 제외하는 코드로 변경해야 함.
-            reward[1] = Random.Range(100, 106);
-            reward[2] = Random.Range(100, 106);
-            reward[3] = Random.Range(100, 106);     // 유물 효과로 카드 선택지 +1
+            //int rangeMin = -1;
+            //int rangeMax = -1;
+            //switch (rewardBox)
+            //{
+            //    case 1:
+            //        rangeMin = InGameManager.Instance.CardRarityID[0].x;
+            //        rangeMax = InGameManager.Instance.CardRarityID[0].y + 1;
+            //        break;
+            //    case 2:
+            //        rangeMin = InGameManager.Instance.CardRarityID[1].x;
+            //        rangeMax = InGameManager.Instance.CardRarityID[1].y + 1;
+            //        break;
+            //    case 3:
+            //        rangeMin = InGameManager.Instance.CardRarityID[2].x;
+            //        rangeMax = InGameManager.Instance.CardRarityID[2].y + 1;
+            //        break;
+            //    case 4:
+            //        rangeMin = InGameManager.Instance.CardRarityID[3].x;
+            //        rangeMax = InGameManager.Instance.CardRarityID[3].y + 1;
+            //        break;
+            //}
+            //if (rangeMin == rangeMax)
+            //    return;
+            reward[0] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;     // 나중에 중복은 제외하는 코드로 변경해야 함.
+            reward[1] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;
+            reward[2] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;
+            reward[3] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;     // 유물 효과로 카드 선택지 +1
+            InGameManager.Instance.ReturnRandomCard();
             UiManager.Instance.ShowRewardCard(reward);
 
         }
@@ -91,14 +132,16 @@ public class Map : MonoBehaviour
     {
         if (rewardBox == -1)
         {
+            int probability = Random.Range(1, 101);     // 아이템도 등급이 생길 경우, 확률 개념 도입해야 함.
             rewardBox = 0;
             //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(true);
             UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.RewardBox, true, rewardBox);
             // 캐릭터별로 보상이 바뀌는 코드 넣어야 함.
-            item[0] = Random.Range(0, 6);     // 나중에 중복은 제외하는 코드로 변경해야 함.
-            item[1] = Random.Range(0, 6);
-            item[2] = Random.Range(0, 6);
-            item[3] = Random.Range(0, 6);     // 유물 효과로 아이템 선택지 +1
+            item[0] = InGameManager.Instance.RandomItem()/*Random.Range(0, 6)*/;     // 나중에 중복은 제외하는 코드로 변경해야 함.
+            item[1] = InGameManager.Instance.RandomItem()/*Random.Range(0, 6)*/;
+            item[2] = InGameManager.Instance.RandomItem()/*Random.Range(0, 6)*/;
+            item[3] = InGameManager.Instance.RandomItem()/*Random.Range(0, 6)*/;     // 유물 효과로 아이템 선택지 +1
+            //InGameManager.Instance.ReturnRandomItem();            // 카드와 다르게, 아이템은 먹을 경우, 더 이상 뜨지 않도록 바꿔야 함.
             ItemManager.Instance.SettingItem(item);
 
         }

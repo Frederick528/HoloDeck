@@ -1,21 +1,33 @@
 ﻿using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class InGameManager : MonoBehaviour
 {
     public static InGameManager Instance { get; private set; }
 
-    public Dictionary<int, CardData> CardDatas { get; private set; } = new Dictionary<int, CardData>();
-    public Dictionary<int, ItemData> ItemDatas { get; private set; } = new Dictionary<int, ItemData>();
+    public Dictionary<int, CardData> CardDatas { get; private set; } = new Dictionary<int, CardData>();     // 나중에 CardManager로 이동
+    public Vector2Int[] CardRarityID { get; private set; }
+    public Vector2Int[] EnhancedCardRarityID { get; private set; }
 
-    public EventQueue AbilityEventQueue = new();
+    List<int>[] _randomCardList = new List<int>[4];
+    List<int> _popRandomCardList = new();
+
+
+    public Dictionary<int, ItemData> ItemDatas { get; private set; } = new Dictionary<int, ItemData>();     // 나중에 ItemManager로 이동
+    public Vector2Int PassiveID { get; private set; }
+    public Vector2Int ActiveID { get; private set; }
+    public Vector2Int PotionID { get; private set; }
+    List<int>[] _randomItemList = new List<int>[3];
+    List<int> _popRandomItemList = new();
+
+    public EventQueue AbilityEventQueue = new();                // 나중에 BattleManager로 이동
 
     [SerializeField] bool fastMode;
 
-    [SerializeField] CardSO cardSO;
+    [SerializeField] CardSO _cardSO;
     [SerializeField] ItemSO _itemSO;
 
     //public Arrow ArrowCursor;
@@ -41,20 +53,210 @@ public class InGameManager : MonoBehaviour
         //DontDestroyOnLoad(gameObject);
 
         //StartCoroutine(ReadSpreadSheet.LoadData("https://docs.google.com/spreadsheets/d/1CqNR2Rh_OIVe8n0CG8vC7YVpbNUn_-0rXeBab72gXvs", "A3:D14", 0));
-        
+
         //if (!CardDataDeserializer.TryGetData(1015, out CardData row))
         //{
         //    Debug.Log("데이터 테이블을 불러오는 과정에서 문제가 발생했습니다.");
         //}
     }
 
-    //private void Start()
-    //{
-    //    ArrowCursor = FindObjectOfType<Arrow>(true);
-    //    //UiManager.Instance.SetupGameUi(true);
-    //    //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
-    //}
-    public CardData FindCardData(int id)   // Id 값으로 카드데이터 가져오기
+    private void Start()
+    {
+        CardRarityID = _cardSO.ClassifyCardRarityID;
+        EnhancedCardRarityID = _cardSO.ClassifyEnhancedCardRarityID;
+
+        PassiveID = _itemSO.PassiveID; ActiveID = _itemSO.ActiveID; PotionID = _itemSO.PotionID;
+
+        SettingRandomCardList();
+        SettingRandomItemList();
+
+        //UiManager.Instance.SetupGameUi(true);
+        //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
+    }
+    void SettingRandomCardList()
+    {
+        for (int i = 0; i < 4; ++i)
+        {
+            _randomCardList[i] = new();
+            for (int j = CardRarityID[i].x; j < CardRarityID[i].y + 1; ++j)
+            {
+                _randomCardList[i].Add(j);
+            }
+        }
+    }
+
+    void SettingRandomItemList()
+    {
+        _randomItemList[0] = new();
+        for (int j = PassiveID.x; j < PassiveID.y + 1; ++j)
+        {
+            _randomItemList[0].Add(j);
+        }
+        _randomItemList[1] = new();
+        for (int j = ActiveID.x; j < ActiveID.y + 1; ++j)
+        {
+            _randomItemList[1].Add(j);
+        }
+        _randomItemList[2] = new();
+        for (int j = PotionID.x; j < PotionID.y + 1; ++j)
+        {
+            _randomItemList[2].Add(j);
+        }
+    }
+    public int CardSwapAndPop(int listIdx, int randomIdx)
+    {
+        int randomID = -1;
+        if (_randomCardList[listIdx].Count > 1)
+        {
+            (_randomCardList[listIdx][randomIdx], _randomCardList[listIdx][^1]) = (_randomCardList[listIdx][^1], _randomCardList[listIdx][randomIdx]);
+            randomID = _randomCardList[listIdx][^1];
+            _popRandomCardList.Add(randomID);
+            _randomCardList[listIdx].RemoveAt(_randomCardList[listIdx].Count - 1);
+        }
+        else if (_randomCardList[listIdx].Count == 1)       // 카드풀이 늘어나면 if문은 빼도 됨. 에픽이랑 레전더리 개수가 부족해서 카드 시각화 안 되는 오류 때문에 조건문 걸어놓은 거임.
+        {
+            randomID = _randomCardList[listIdx][0];
+            _popRandomCardList.Add(randomID);
+            _randomCardList[listIdx].RemoveAt(0);
+        }
+        else
+        {
+            print("End");
+        }
+        return randomID;
+    }
+    public int RandomCard(int rewardIdx)
+    {
+        int probability;
+        switch (rewardIdx)
+        {
+            case 1:
+                probability = Random.Range(1, 101);
+                if (probability > 10)
+                {
+                    return CardSwapAndPop(0, Random.Range(0, _randomCardList[0].Count));
+                }
+                else if (probability > 5)
+                {
+                    return CardSwapAndPop(1, Random.Range(0, _randomCardList[1].Count));
+                }
+                else if (probability > 1)
+                {
+                    return CardSwapAndPop(2, Random.Range(0, _randomCardList[2].Count));
+                }
+                else
+                {
+                    return CardSwapAndPop(3, Random.Range(0, _randomCardList[3].Count));
+                }
+            case 2:
+                probability = Random.Range(1, 101);
+                if (probability > 7)
+                {
+                    return CardSwapAndPop(1, Random.Range(0, _randomCardList[1].Count));
+                }
+                else if (probability > 2)
+                {
+                    return CardSwapAndPop(2, Random.Range(0, _randomCardList[2].Count));
+                }
+                else
+                {
+                    return CardSwapAndPop(3, Random.Range(0, _randomCardList[3].Count));
+                }
+            case 3:
+                probability = Random.Range(1, 101);
+                if (probability > 4)
+                {
+                    return CardSwapAndPop(2, Random.Range(0, _randomCardList[2].Count));
+                }
+                else
+                {
+                    return CardSwapAndPop(3, Random.Range(0, _randomCardList[3].Count));
+                }
+            case 4:
+                return CardSwapAndPop(3, Random.Range(0, _randomCardList[3].Count));
+            default:
+                return -1;
+        }
+    }
+    public void ReturnRandomCard()
+    {
+        foreach (int id in _popRandomCardList)
+        {
+            if (id >= 1000)
+            {
+                _randomCardList[3].Add(id);
+            }
+            else if (id >= 800)
+            {
+                _randomCardList[2].Add(id);
+            }
+            else if (id >= 500)
+            {
+                _randomCardList[1].Add(id);
+            }
+            else
+            {
+                _randomCardList[0].Add(id);
+            }
+        }
+        _popRandomCardList.Clear();
+    }
+    public int ItemSwapAndPop(int listIdx, int randomIdx)
+    {
+        int randomID = -1;
+        if (_randomItemList[listIdx].Count > 1)
+        {
+            (_randomItemList[listIdx][randomIdx], _randomItemList[listIdx][^1]) = (_randomItemList[listIdx][^1], _randomItemList[listIdx][randomIdx]);
+            randomID = _randomItemList[listIdx][^1];
+            _popRandomItemList.Add(randomID);
+            _randomItemList[listIdx].RemoveAt(_randomItemList[listIdx].Count - 1);
+        }
+        else if (_randomItemList[listIdx].Count == 1)       // 카드풀이 늘어나면 if문은 빼도 됨. 에픽이랑 레전더리 개수가 부족해서 카드 시각화 안 되는 오류 때문에 조건문 걸어놓은 거임.
+        {
+            randomID = _randomItemList[listIdx][0];
+            _popRandomItemList.Add(randomID);
+            _randomItemList[listIdx].RemoveAt(0);
+        }
+        else
+        {
+            print("End");
+        }
+        return randomID;
+    }
+    public int RandomItem()     // Potion은 따로 만들 것.
+    {
+        int probability = Random.Range(1, 3);
+        if (probability == 1)
+        {
+            return ItemSwapAndPop(0, Random.Range(0, _randomItemList[0].Count));
+        }
+        else
+        {
+            return ItemSwapAndPop(1, Random.Range(0, _randomItemList[1].Count));
+        }
+        
+    }
+    public void ReturnRandomItem()
+    {
+        foreach (int id in _popRandomItemList)
+        {
+            if (ItemManager.Instance.itemDict.ContainsKey(id) && ItemManager.Instance.itemDict[id]) continue;
+            if (id > 1000)
+            {
+                _randomItemList[2].Add(id);
+            }
+            else if (id > 500)
+            {
+                _randomItemList[1].Add(id);
+            }
+            else
+            {
+                _randomItemList[0].Add(id);
+            }
+        }
+        _popRandomItemList.Clear();
+    }
+    public CardData FindCardData(int id)   // ID 값으로 카드데이터 가져오기
     {
         //CardData cardData;
         if (CardDatas.TryGetValue(id, out CardData cardData))
@@ -63,14 +265,14 @@ public class InGameManager : MonoBehaviour
         }
         else
         {
-            cardData = (CardData)Array.Find(cardSO.Cards, x => x.ID == id).Clone();
+            cardData = (CardData)Array.Find(_cardSO.Cards, x => x.ID == id).Clone();
             CardDatas.Add(id, cardData);
             return cardData;
         }
-        //return cardSO.Cards.Find(x => x.Id == Id);
-        //return Array.Find(cardSO.Cards, x => x.Id == Id);
+        //return _cardSO.Cards.Find(x => x.ID == ID);
+        //return Array.Find(_cardSO.Cards, x => x.ID == ID);
     }
-    public ItemData FindItemData(int id)   // Id 값으로 카드데이터 가져오기
+    public ItemData FindItemData(int id)   // ID 값으로 카드데이터 가져오기
     {
         //ItemData itemData;
         if (ItemDatas.TryGetValue(id, out ItemData itemData))
@@ -79,12 +281,12 @@ public class InGameManager : MonoBehaviour
         }
         else
         {
-            itemData = Array.Find(_itemSO.Items, x => x.Id == id);
+            itemData = Array.Find(_itemSO.Items, x => x.ID == id);
             ItemDatas.Add(id, itemData);
             return itemData;
         }
-        //return cardSO.Cards.Find(x => x.Id == Id);
-        //return Array.Find(cardSO.Cards, x => x.Id == Id);
+        //return _cardSO.Cards.Find(x => x.ID == ID);
+        //return Array.Find(_cardSO.Cards, x => x.ID == ID);
     }
 
     /// <summary>
@@ -158,6 +360,10 @@ public class InGameManager : MonoBehaviour
             CardManager.Instance.DrawCard().Forget();
             //TurnManager.Instance.DrawCardTask().Forget();
         }
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            CardSwapAndPop(0, Random.Range(0, _randomCardList[0].Count));
+        }
         if (Input.GetKeyDown(KeyCode.W))
         {
             TurnManager.Instance.EndTurn().Forget();
@@ -224,7 +430,7 @@ public class InGameManager : MonoBehaviour
         }
         //if (Input.GetKeyDown(KeyCode.C))
         //{
-        //    AddDeck(cardSO.Cards[1], EAddDeck.Draw);
+        //    AddDeck(_cardSO.Cards[1], EAddDeck.Draw);
         //}
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {

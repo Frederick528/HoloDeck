@@ -71,7 +71,7 @@ public class EventQueue
             //}
 
             //await CardManager.Instance.CheckCanUseCard(cardEvent);
-            await CardManager.Instance.UsedCard(cardEvent);
+            await CardManager.Instance.PlayedCard(cardEvent);
         }
         else if (_queue.Peek() is Item itemEvent)
         {
@@ -87,7 +87,7 @@ public class EventQueue
 
         //await UniTask.WaitForSeconds(cardEvent.Data.CardUseDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
 
-        //CardManager.Instance.UsedCard(cardEvent).Forget();
+        //CardManager.Instance.PlayedCard(cardEvent).Forget();
 
 
         DoNext().Forget();

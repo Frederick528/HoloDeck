@@ -226,7 +226,10 @@ public class UiManager : MonoBehaviour
     public void ShowRewardCard(int[] reward)        // 해당 부분들 맵, 상점으로 다 이동시켜야 함.
     {
         for (int i = 0; i < reward.Length; ++i)
+        {
+            if (reward[i] == -1) continue;
             _uiCards[i].Setup(InGameManager.Instance.FindCardData(reward[i]));
+        }
     }
     public void ChangeRewardCardCount(bool isOn)
     {

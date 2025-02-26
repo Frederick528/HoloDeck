@@ -84,4 +84,7 @@ public class CardSO : ScriptableObject
     public Sprite[] CardSprites;
 
     public CardData[] Cards;
+
+    public Vector2Int[] ClassifyCardRarityID = new Vector2Int[4];
+    public Vector2Int[] ClassifyEnhancedCardRarityID = new Vector2Int[4];
 }

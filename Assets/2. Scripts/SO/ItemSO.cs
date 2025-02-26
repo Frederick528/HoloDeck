@@ -34,7 +34,7 @@ public enum ItemCanUse
 public class ItemData
 {
     public string Name;
-    public int Id;
+    public int ID;
     public int MaxCharge;
     public int CurCharge;
 
@@ -61,4 +61,8 @@ public class ItemSO : ScriptableObject
     public Sprite[] ItemSprites;
 
     public ItemData[] Items;
+
+    public Vector2Int PassiveID = new();
+    public Vector2Int ActiveID = new();
+    public Vector2Int PotionID = new();
 }

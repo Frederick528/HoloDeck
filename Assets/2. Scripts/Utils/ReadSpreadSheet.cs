@@ -33,9 +33,21 @@ public class ReadSpreadSheet : MonoBehaviour
 
     private void Start()
     {
-        LoadCardSO().Forget();
-        LoadEnemySO().Forget();
-        LoadItemSO().Forget();
+        LoadStart().Forget();
+    }
+
+    async UniTaskVoid LoadStart()
+    {
+        Debug.Log("Load Start");
+        await UniTask.WhenAll(
+            LoadCardSO(),
+            LoadEnemySO(),
+            LoadItemSO()
+            );
+        Debug.Log("Load End");
+#if UNITY_EDITOR
+        EditorApplication.isPlaying = false;
+#endif
     }
     //public static async UniTaskVoid LoadData(/*string address, string range, ulong sheetID*/)
     //{
@@ -55,10 +67,11 @@ public class ReadSpreadSheet : MonoBehaviour
     //    }
     //}
 
-    async UniTaskVoid LoadCardSO()
+    async UniTask LoadCardSO()
     {
+        Debug.Log("Card Load Start");
         string address = "https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8";
-        string range = "A3:L";
+        string range = "A4:L";
         string cardSheetID = "1809511646";
         string enhancedCardSheetID = "1928890928";
         using UnityWebRequest wwwC =
@@ -79,8 +92,9 @@ public class ReadSpreadSheet : MonoBehaviour
         }
     }
 
-    async UniTaskVoid LoadEnemySO()
+    async UniTask LoadEnemySO()
     {
+        Debug.Log("Enemy Load Start");
         using UnityWebRequest wwwE =
             UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1ReoyeaeB220v3EhNHWEefLY9KB2ScyttVtCqg6Rj6IA/export?format=tsv&range=A3:G&gid=0");
         await wwwE.SendWebRequest();
@@ -93,8 +107,9 @@ public class ReadSpreadSheet : MonoBehaviour
         }
     }
 
-    async UniTaskVoid LoadItemSO()
+    async UniTask LoadItemSO()
     {
+        Debug.Log("Item Load Start");
         string address = "https://docs.google.com/spreadsheets/d/1Vgmh15r623LlejfgjKGYfoWfYRTz9tK385wjA79b4eU";
         string range = "A3:O";
         string passiveSheetID = "0";
@@ -126,8 +141,16 @@ public class ReadSpreadSheet : MonoBehaviour
     {
         string[] rows = _dataCardGS.Split("\n");
         CardSO.Cards = new CardData[rows.Length];
-        //cardSO.CardSprites = new Sprite[rows.Length];
+        //_cardSO.CardSprites = new Sprite[rows.Length];
         //SystemIOFileLoad();
+        for (int idx = 0;  idx < CardSO.ClassifyCardRarityID.Length; ++idx)
+        {
+            CardSO.ClassifyCardRarityID[idx].x = -1;
+        }
+        for (int idx = 0; idx < CardSO.ClassifyEnhancedCardRarityID.Length; ++idx)
+        {
+            CardSO.ClassifyEnhancedCardRarityID[idx].x = -1;
+        }
         int i = 0;
         foreach (string row in rows)
         {
@@ -148,16 +171,17 @@ public class ReadSpreadSheet : MonoBehaviour
                 CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[10]),
                 CardRarity = (CardRarity)Enum.Parse(typeof(CardRarity), cells[11])
             };
-            try
-            {
-                data.Sprite = Array.Find(CardSO.CardSprites, x => x.name == data.ID.ToString());
-            }
-            catch (UnassignedReferenceException)
-            {
-                data.Sprite = null;
-                Debug.Log("스프라이트가 없습니다.");
-            }
-            //data.Id = ConvertInt32(cells[0]);
+            data.Sprite = Array.Find(CardSO.CardSprites, x => x.name == data.ID.ToString());
+            //try
+            //{
+            //    data.Sprite = Array.Find(CardSO.CardSprites, x => x.name == data.ID.ToString());
+            //}
+            //catch (UnassignedReferenceException)
+            //{
+            //    data.Sprite = CardSO.CardSprites[0];
+            //    Debug.Log("스프라이트가 없습니다.");
+            //}
+            //data.ID = ConvertInt32(cells[0]);
             //data.Name = LineBreakStr(cells[1]);
             //data.Cost = ConvertInt32(cells[2]);
             //data.EnhancedCost = ConvertInt32(cells[3]);
@@ -175,7 +199,7 @@ public class ReadSpreadSheet : MonoBehaviour
             //data.EnhancedDescript = LineBreakStr(cells[15]);
             //try
             //{
-            //    data.Sprite = Array.Find(cardSO.CardSprites, x => x.name == data.Id.ToString());
+            //    data.Sprite = Array.Find(_cardSO.CardSprites, x => x.name == data.ID.ToString());
             //}
             //catch (UnassignedReferenceException)
             //{
@@ -183,10 +207,78 @@ public class ReadSpreadSheet : MonoBehaviour
             //    Debug.Log("스프라이트가 없습니다.");
             //}
             //data.CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[16]);
-
+            if (data.ID < 10000)
+            {
+                switch (data.CardRarity)
+                {
+                    case CardRarity.Common:
+                        if (CardSO.ClassifyCardRarityID[0].x == -1)
+                        {
+                            CardSO.ClassifyCardRarityID[0].x = data.ID;
+                        }
+                        CardSO.ClassifyCardRarityID[0].y = data.ID;
+                        break;
+                    case CardRarity.Rare:
+                        if (CardSO.ClassifyCardRarityID[1].x == -1)
+                        {
+                            CardSO.ClassifyCardRarityID[1].x = data.ID;
+                        }
+                        CardSO.ClassifyCardRarityID[1].y = data.ID;
+                        break;
+                    case CardRarity.Epic:
+                        if (CardSO.ClassifyCardRarityID[2].x == -1)
+                        {
+                            CardSO.ClassifyCardRarityID[2].x = data.ID;
+                        }
+                        CardSO.ClassifyCardRarityID[2].y = data.ID;
+                        break;
+                    case CardRarity.Legendary:
+                        if (CardSO.ClassifyCardRarityID[3].x == -1)
+                        {
+                            CardSO.ClassifyCardRarityID[3].x = data.ID;
+                        }
+                        CardSO.ClassifyCardRarityID[3].y = data.ID;
+                        break;
+                }
+            }
+            else
+            {
+                switch (data.CardRarity)
+                {
+                    case CardRarity.Common:
+                        if (CardSO.ClassifyEnhancedCardRarityID[0].x == -1)
+                        {
+                            CardSO.ClassifyEnhancedCardRarityID[0].x = data.ID;
+                        }
+                        CardSO.ClassifyEnhancedCardRarityID[0].y = data.ID;
+                        break;
+                    case CardRarity.Rare:
+                        if (CardSO.ClassifyEnhancedCardRarityID[1].x == -1)
+                        {
+                            CardSO.ClassifyEnhancedCardRarityID[1].x = data.ID;
+                        }
+                        CardSO.ClassifyEnhancedCardRarityID[1].y = data.ID;
+                        break;
+                    case CardRarity.Epic:
+                        if (CardSO.ClassifyEnhancedCardRarityID[2].x == -1)
+                        {
+                            CardSO.ClassifyEnhancedCardRarityID[2].x = data.ID;
+                        }
+                        CardSO.ClassifyEnhancedCardRarityID[2].y = data.ID;
+                        break;
+                    case CardRarity.Legendary:
+                        if (CardSO.ClassifyEnhancedCardRarityID[3].x == -1)
+                        {
+                            CardSO.ClassifyEnhancedCardRarityID[3].x = data.ID;
+                        }
+                        CardSO.ClassifyEnhancedCardRarityID[3].y = data.ID;
+                        break;
+                }
+            }
             CardSO.Cards[i] = data;
             ++i;
         }
+        Debug.Log("Card Load End");
 #if UNITY_EDITOR
         EditorUtility.SetDirty(CardSO);
 #endif
@@ -290,6 +382,7 @@ public class ReadSpreadSheet : MonoBehaviour
             EnemySO.EnemyDatas[i] = data;
             ++i;
         }
+        Debug.Log("Enemy Load End");
 #if UNITY_EDITOR
         EditorUtility.SetDirty(EnemySO);
 #endif
@@ -299,15 +392,18 @@ public class ReadSpreadSheet : MonoBehaviour
     {
         string[] rows = _dataItemGS.Split("\n");
         ItemSO.Items = new ItemData[rows.Length];
-        //cardSO.CardSprites = new Sprite[rows.Length];
+        //_cardSO.CardSprites = new Sprite[rows.Length];
         //SystemIOFileLoad();
+        ItemSO.PassiveID.x = -1;
+        ItemSO.ActiveID.x = -1;
+        ItemSO.PotionID.x = -1;
         int i = 0;
         foreach (string row in rows)
         {
             string[] cells = row.Split("\t");
             ItemData data = new()
             {
-                Id = ConvertInt32(cells[0]),
+                ID = ConvertInt32(cells[0]),
                 Name = LineBreakStr(cells[1]),
                 MaxCharge = ConvertInt32(cells[2]),
                 CurCharge = ConvertInt32(cells[3]),
@@ -321,15 +417,43 @@ public class ReadSpreadSheet : MonoBehaviour
                 ItemTag = (ItemTag)Enum.Parse(typeof(ItemTag), cells[11]),
                 ItemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), cells[12])
             };
-            if (data.ItemTag != ItemTag.Passive)
+            switch (data.ItemTag)
             {
-                data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[13]));
-                data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[14]));
+                case ItemTag.Passive:
+                    if (ItemSO.PassiveID.x == -1)
+                    {
+                        ItemSO.PassiveID.x = data.ID;
+                    }
+                    ItemSO.PassiveID.y = data.ID;
+                    break;
+                case ItemTag.Active:
+                    if (ItemSO.ActiveID.x == -1)
+                    {
+                        ItemSO.ActiveID.x = data.ID;
+                    }
+                    ItemSO.ActiveID.y = data.ID;
+                    data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[13]));
+                    data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[14]));
+                    break;
+                case ItemTag.Potion:
+                    if (ItemSO.PotionID.x == -1)
+                    {
+                        ItemSO.PotionID.x = data.ID;
+                    }
+                    ItemSO.PotionID.y = data.ID;
+                    data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[13]));
+                    data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[14]));
+                    break;
             }
+            //if (data.ItemTag != ItemTag.Passive)
+            //{
+            //    data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[13]));
+            //    data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[14]));
+            //}
 
             try
             {
-                data.Sprite = Array.Find(ItemSO.ItemSprites, x => x.name == data.Id.ToString());
+                data.Sprite = Array.Find(ItemSO.ItemSprites, x => x.name == data.ID.ToString());
             }
             catch (UnassignedReferenceException)
             {
@@ -339,6 +463,7 @@ public class ReadSpreadSheet : MonoBehaviour
             ItemSO.Items[i] = data;
             ++i;
         }
+        Debug.Log("Item Load End");
 #if UNITY_EDITOR
         EditorUtility.SetDirty(ItemSO);
 #endif
@@ -359,7 +484,7 @@ public class ReadSpreadSheet : MonoBehaviour
     //        Sprite.Name = imageName;
     //        gameSprite.Sprite = Sprite;
     //        s[j] = (Sprite);
-    //        cardSO.CardSprites[j] = Sprite;
+    //        _cardSO.CardSprites[j] = Sprite;
     //        j++;
     //    }
     //}

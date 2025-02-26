@@ -132,7 +132,7 @@ public class Card : MonoBehaviour
         CardDataReset();
         //Data = _defaultData;
         ////Data.Name = data.Name;
-        ////Data.Id = data.Id;
+        ////Data.ID = data.ID;
         ////Data.Cost = data.Cost;
         ////Data.Damage = data.Damage;
         ////Data.EnhancedDamage = data.EnhancedDamage;
@@ -152,7 +152,7 @@ public class Card : MonoBehaviour
         //desText.text = Data.Descript;
         //character.sprite = Data.Sprite;
 
-        //CardTask = CardAbility.SetCardTaskAbility(Data.Id);
+        //CardTask = CardAbility.SetCardTaskAbility(Data.ID);
     }
 
     public async UniTask<bool> CheckUseConditions()
@@ -267,7 +267,7 @@ public class Card : MonoBehaviour
     //{
     //    if (Enhanced) return;
     //    Enhanced = true;
-    //    Setup(Data.Id * 10);
+    //    Setup(Data.ID * 10);
     //}
 
     public void ResetCard()

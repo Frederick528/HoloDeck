@@ -61,10 +61,10 @@ public class Healer : Enemy
         switch (turn)
         {
             case 1:
-                await base.Heal(enemyData.Damage);
+                await Heal(enemyData.Damage);
                 break;
             case 2:
-                await base.Heal(enemyData.Damage);
+                await Heal(enemyData.Damage);
                 turn = 0;
                 break;
         }

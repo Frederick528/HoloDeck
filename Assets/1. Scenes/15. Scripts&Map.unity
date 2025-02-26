@@ -7168,7 +7168,7 @@ MonoBehaviour:
   CardState: 0
   GetCardData:
     Name: 
-    Id: 0
+    ID: 0
     Cost: 0
     Damage: 0
     Shield: 0
@@ -16477,7 +16477,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fastMode: 0
-  cardSO: {fileID: 11400000, guid: 41dad1336250ac04ead82446813d3850, type: 2}
+  _cardSO: {fileID: 11400000, guid: 41dad1336250ac04ead82446813d3850, type: 2}
   _itemSO: {fileID: 11400000, guid: e0a522c5b9163b147a4f499e0fde1067, type: 2}
   player: {fileID: 1616187528}
   PauseInt: 0

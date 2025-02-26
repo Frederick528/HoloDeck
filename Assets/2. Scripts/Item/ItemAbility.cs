@@ -10,7 +10,7 @@ public class ItemAbility
 
     public void SetItemAbility(Item item)
     {
-        switch (item.Data.Id)
+        switch (item.Data.ID)
         {
             case 1:
                 TurnManager.Instance.AddStartCardCount(1);
@@ -29,7 +29,7 @@ public class ItemAbility
                 item.ItemTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
-                    await SingleAttackAb(item);
+                    await SingleAttackAB(item);
                 });
                 break;
             case 502:
@@ -37,7 +37,7 @@ public class ItemAbility
                 item.ItemTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
-                    await HealAb(item);
+                    await HealAB(item);
                 });
                 break;
             case 503:
@@ -45,7 +45,7 @@ public class ItemAbility
                 item.ItemTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
-                    await ContinuousDrawAb(item);
+                    await ContinuousDrawAB(item);
                 });
                 break;
             case 504:
@@ -53,7 +53,7 @@ public class ItemAbility
                 item.ItemTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
-                    await ShieldAb(item);
+                    await ShieldAB(item);
                 });
                 break;
             default:
@@ -62,18 +62,18 @@ public class ItemAbility
         }
     }
 
-    async UniTask SingleAttackAb(Item item)
+    async UniTask SingleAttackAB(Item item)
     {
         await item.TargetEnemy.TakeDamageEnemy(item.Data.Damage);        // 이 전 단계에서 null 검사를 하기 때문에 ?. 할 필요 없음.
         item.Target(null);                                         // missing 체크를 위한 거였으나.. 안 되나..??
     }
-    async UniTask MultiAttackAb(Item item)
+    async UniTask MultiAttackAB(Item item)
     {
         int enemyCount = EnemyManager.Instance.EnemyList.Count;
         await UniTask.WhenAll(Enumerable.Range(0, enemyCount).
             Select(i => EnemyManager.Instance.EnemyList[(enemyCount - 1) - i].TakeDamageEnemy(item.Data.Damage)));
     }
-    //async UniTask ContinuousSinglettackAb(Card card, float delay)
+    //async UniTask ContinuousSinglettackAB(Card card, float delay)
     //{
     //    if (await card.TargetEnemy.TakeDamageEnemy(card.Data.Damage))
     //        return;
@@ -85,35 +85,35 @@ public class ItemAbility
     //    }
     //    card.Target(null);
     //}
-    //async UniTask ContinuousMultiAttackAb(Card card, float delay)
+    //async UniTask ContinuousMultiAttackAB(Card card, float delay)
     //{
-    //    await MultiAttackAb(card);
+    //    await MultiAttackAB(card);
     //    for (int j = 1; j < card.Data.Count; ++j)
     //    {
     //        await DelayTask(delay);
-    //        await MultiAttackAb(card);
+    //        await MultiAttackAB(card);
     //    }
     //}
-    async UniTask DrawAb()
+    async UniTask DrawAB()
     {
         await CardManager.Instance.DrawCard();       // 최하위 UniTask에서 Cancel를 확인하는데... 혹시 문제가 발생할 수도 있나..?
     }
 
-    async UniTask ContinuousDrawAb(Item item)     // 드로우 같은 경우, 덱에 남아있는 카드를 확인하기 위해 Data.Count 값이 아닌 Data.Draw 값으로 얼마나 뽑을지 정함.
+    async UniTask ContinuousDrawAB(Item item)     // 드로우 같은 경우, 덱에 남아있는 카드를 확인하기 위해 Data.Count 값이 아닌 Data.Draw 값으로 얼마나 뽑을지 정함.
     {
         await CardManager.Instance.DrawCard(item.Data.Draw);
     }
-    async UniTask ShieldAb(Item item)
+    async UniTask ShieldAB(Item item)
     {
         await InGameManager.Instance.player.Shield(item.Data.Shield);
     }
 
-    async UniTask HealAb(Item item)
+    async UniTask HealAB(Item item)
     {
         await InGameManager.Instance.player.Heal(item.Data.Heal);
     }
 
-    //async UniTask<bool> DiscardAb(int discardCnt)
+    //async UniTask<bool> ConditionDiscardAB(int discardCnt)
     //{
     //    bool discarded = false;
     //    ButtonManager.Instance.DiscardBtnInvert(false);

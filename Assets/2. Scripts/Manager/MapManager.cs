@@ -58,10 +58,10 @@ public class MapManager : MonoBehaviour
         {
             case Map.StageState.Enemy:
             case Map.StageState.Boss:
-                currStage.RewardBox();
+                RewardStage();
                 break;
             case Map.StageState.Treasure:
-                currStage.TreasureBox();
+                Treasure();
                 break;
         }
     }

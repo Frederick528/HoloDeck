@@ -50,19 +50,6 @@ MonoBehaviour:
     CardRarity: 0
   - Name: Name3
     ID: 102
-    Cost: 1
-    Damage: 3
-    Shield: 0
-    Count: 2
-    Draw: 0
-    Reduce: 0
-    Price: 20
-    Descript: '{Damage} Damage X {Count}'
-    Sprite: {fileID: 21300000, guid: b623f7f0719d30347aa015ccca90bb88, type: 3}
-    CardTag: 0
-    CardRarity: 1
-  - Name: Name4
-    ID: 103
     Cost: 2
     Damage: 2
     Shield: 0
@@ -71,11 +58,11 @@ MonoBehaviour:
     Reduce: 0
     Price: 20
     Descript: All {Damage} Damage X {Count}
-    Sprite: {fileID: 21300000, guid: 196654c1199bc374382e8a9cb436bb23, type: 3}
+    Sprite: {fileID: 21300000, guid: b623f7f0719d30347aa015ccca90bb88, type: 3}
     CardTag: 1
     CardRarity: 0
-  - Name: Name5
-    ID: 104
+  - Name: Name4
+    ID: 103
     Cost: 1
     Damage: 0
     Shield: 0
@@ -84,11 +71,11 @@ MonoBehaviour:
     Reduce: 0
     Price: 15
     Descript: '{Draw} Draw'
-    Sprite: {fileID: 21300000, guid: a1db32974a8af034ebc447482b88d69d, type: 3}
+    Sprite: {fileID: 21300000, guid: 196654c1199bc374382e8a9cb436bb23, type: 3}
     CardTag: 2
     CardRarity: 0
-  - Name: Name6
-    ID: 105
+  - Name: Name5
+    ID: 104
     Cost: 1
     Damage: 0
     Shield: 6
@@ -97,24 +84,121 @@ MonoBehaviour:
     Reduce: 0
     Price: 5
     Descript: '{Shield} Shield'
+    Sprite: {fileID: 21300000, guid: a1db32974a8af034ebc447482b88d69d, type: 3}
+    CardTag: 2
+    CardRarity: 0
+  - Name: Name6
+    ID: 105
+    Cost: 0
+    Damage: 0
+    Shield: 0
+    Count: 0
+    Draw: 1
+    Reduce: 1
+    Price: 10
+    Descript: After {Draw} Draw, discarding {Reduce} card
     Sprite: {fileID: 21300000, guid: e134758ca8a46bb4684676ec229a43d9, type: 3}
     CardTag: 2
     CardRarity: 0
-  - Name: EnhancedName1
-    ID: 1000
+  - Name: Name7
+    ID: 106
     Cost: 1
-    Damage: 7
-    Shield: 0
+    Damage: 0
+    Shield: 5
+    Count: 0
+    Draw: 0
+    Reduce: 1
+    Price: 5
+    Descript: After discarding {Reduce} card, {Shield} Shield
+    Sprite: {fileID: 0}
+    CardTag: 2
+    CardRarity: 0
+  - Name: Name8
+    ID: 107
+    Cost: 0
+    Damage: 1
+    Shield: 1
     Count: 1
     Draw: 0
-    Reduce: 2
-    Price: 20
-    Descript: After discarding {Reduce} cards, {Damage} Damage
+    Reduce: 0
+    Price: 15
+    Descript: '{Damage} Damage
+
+      {Shield} Shield'
     Sprite: {fileID: 0}
     CardTag: 0
     CardRarity: 0
+  - Name: Name9
+    ID: 500
+    Cost: 1
+    Damage: 3
+    Shield: 0
+    Count: 2
+    Draw: 0
+    Reduce: 0
+    Price: 20
+    Descript: '{Damage} Damage X {Count}'
+    Sprite: {fileID: 0}
+    CardTag: 0
+    CardRarity: 1
+  - Name: Name10
+    ID: 501
+    Cost: 1
+    Damage: 3
+    Shield: 3
+    Count: 1
+    Draw: 1
+    Reduce: 0
+    Price: 35
+    Descript: '{Damage} Damage
+
+      {Shield} Shield
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    CardTag: 0
+    CardRarity: 1
+  - Name: Name11
+    ID: 502
+    Cost: 2
+    Damage: 1
+    Shield: 0
+    Count: 4
+    Draw: 0
+    Reduce: 0
+    Price: 30
+    Descript: All {Damage} Damage X {Count}
+    Sprite: {fileID: 0}
+    CardTag: 1
+    CardRarity: 1
+  - Name: Name12
+    ID: 800
+    Cost: 3
+    Damage: 30
+    Shield: 0
+    Count: 1
+    Draw: 0
+    Reduce: 0
+    Price: 40
+    Descript: '{Damage} Damage'
+    Sprite: {fileID: 0}
+    CardTag: 0
+    CardRarity: 2
+  - Name: Name13
+    ID: 1000
+    Cost: 1
+    Damage: 10
+    Shield: 0
+    Count: 3
+    Draw: 0
+    Reduce: 0
+    Price: 105
+    Descript: All {Damage} Damage X {Count}
+    Sprite: {fileID: 0}
+    CardTag: 1
+    CardRarity: 3
   - Name: EnhancedName2
-    ID: 1010
+    ID: 10001
     Cost: 1
     Damage: 4
     Shield: 0
@@ -129,7 +213,7 @@ MonoBehaviour:
     CardTag: 0
     CardRarity: 0
   - Name: EnhancedName3
-    ID: 1020
+    ID: 10002
     Cost: 2
     Damage: 5
     Shield: 0
@@ -142,7 +226,7 @@ MonoBehaviour:
     CardTag: 0
     CardRarity: 1
   - Name: EnhancedName4
-    ID: 1030
+    ID: 10003
     Cost: 2
     Damage: 3
     Shield: 0
@@ -155,7 +239,7 @@ MonoBehaviour:
     CardTag: 1
     CardRarity: 0
   - Name: EnhancedName5
-    ID: 1040
+    ID: 10004
     Cost: 1
     Damage: 0
     Shield: 0
@@ -168,7 +252,7 @@ MonoBehaviour:
     CardTag: 2
     CardRarity: 0
   - Name: EnhancedName6
-    ID: 1050
+    ID: 10005
     Cost: 1
     Damage: 0
     Shield: 11
@@ -180,3 +264,13 @@ MonoBehaviour:
     Sprite: {fileID: 0}
     CardTag: 2
     CardRarity: 0
+  ClassifyCardRarityID:
+  - {x: 100, y: 107}
+  - {x: 500, y: 502}
+  - {x: 800, y: 800}
+  - {x: 1000, y: 1000}
+  ClassifyEnhancedCardRarityID:
+  - {x: 10001, y: 10005}
+  - {x: 10002, y: 10002}
+  - {x: -1, y: 0}
+  - {x: -1, y: 0}

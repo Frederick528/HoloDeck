@@ -40,6 +40,7 @@ public class ItemManager : MonoBehaviour
             {
                 print(_item);
                 GetItem(_item);
+                InGameManager.Instance.ReturnRandomItem();
             });
         }
     }
@@ -144,13 +145,23 @@ public class ItemManager : MonoBehaviour
         ButtonManager.Instance.ActiveItemButton.onClick.RemoveAllListeners();
         ButtonManager.Instance.ActiveItemButton.onClick.AddListener(() =>
         {
-            if (item.Data.ItemCanUse == ItemCanUse.Anytime)
-            {
-                UseActiveItem();
-            }
-            else if (item.Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.MyTurn)      // Arrow Cursor 쓰는 것들을 의미함.
+            if (_activeItem.Data.ItemCanUse == ItemCanUse.Anytime)
             {
                 if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+                {
+                    UseActiveItem();
+                }
+            }
+            else if (_activeItem.Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.MyTurn)      // Arrow Cursor 쓰는 것들을 의미함.
+            {
+                if (_activeItem.Data.AttackType == AttackType.None)
+                {
+                    if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+                    {
+                        UseActiveItem();
+                    }
+                }
+                else if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
                 {
                     BattleManager.Instance.SetActiveArrowCursor(true, 1);
                 }
@@ -160,11 +171,8 @@ public class ItemManager : MonoBehaviour
 
     public void UseActiveItem()
     {
-        if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
-        {
-            InGameManager.Instance.AbilityEventQueue.Enqueue(_activeItem);
-            Charge(-_activeItem.CurCharge);
-        }
+        InGameManager.Instance.AbilityEventQueue.Enqueue(_activeItem);
+        Charge(-_activeItem.CurCharge);
     }
 
     public void Charge(int value)
@@ -185,10 +193,16 @@ public class ItemManager : MonoBehaviour
 
     public void AttackSingleTarget(Enemy enemy)     // 아이템 비사용시, 끄는 방법이 필요함. + 다른 것들 터치 안 되도록 설정
     {
+        if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+        {
+            _activeItem.Target(EnemyManager.Instance.TargetEnemy);
+            enemy.CheckIfDead(_activeItem.Data.Damage, 1);      // CheckEnemyDead 이걸로 바꿔야 함.
+            UseActiveItem();
+        }
         //if (!arrowOn) return false;
-        _activeItem.Target(EnemyManager.Instance.TargetEnemy);
-        enemy.CheckIfDead(_activeItem.Data.Damage, 1);      // CheckEnemyDead 이걸로 바꿔야 함.
-        UseActiveItem();
+        //_activeItem.Target(EnemyManager.Instance.TargetEnemy);
+        //enemy.CheckIfDead(_activeItem.Data.Damage, 1);      // CheckEnemyDead 이걸로 바꿔야 함.
+        //UseActiveItem();
         //InGameManager.Instance.AbilityEventQueue.Enqueue(_activeItem);
         //enemy.TakeDamageEnemy(_activeItem.Damage).Forget();            // 일단 forget했는데, 상황에 따라 달라짐
 

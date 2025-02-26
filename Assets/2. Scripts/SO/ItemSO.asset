@@ -15,7 +15,7 @@ MonoBehaviour:
   ItemSprites: []
   Items:
   - Name: Passive1
-    Id: 1
+    ID: 1
     MaxCharge: 0
     CurCharge: 0
     Damage: 0
@@ -31,7 +31,7 @@ MonoBehaviour:
     AttackType: 0
     ItemCanUse: 0
   - Name: Passive2
-    Id: 2
+    ID: 2
     MaxCharge: 0
     CurCharge: 0
     Damage: 0
@@ -47,7 +47,7 @@ MonoBehaviour:
     AttackType: 0
     ItemCanUse: 0
   - Name: Passive3
-    Id: 3
+    ID: 3
     MaxCharge: 0
     CurCharge: 0
     Damage: 0
@@ -63,7 +63,7 @@ MonoBehaviour:
     AttackType: 0
     ItemCanUse: 0
   - Name: Passive4
-    Id: 4
+    ID: 4
     MaxCharge: 0
     CurCharge: 0
     Damage: 0
@@ -79,7 +79,7 @@ MonoBehaviour:
     AttackType: 0
     ItemCanUse: 0
   - Name: Passive5
-    Id: 5
+    ID: 5
     MaxCharge: 0
     CurCharge: 0
     Damage: 0
@@ -95,7 +95,7 @@ MonoBehaviour:
     AttackType: 0
     ItemCanUse: 0
   - Name: Passive6
-    Id: 6
+    ID: 6
     MaxCharge: 0
     CurCharge: 0
     Damage: 0
@@ -111,7 +111,7 @@ MonoBehaviour:
     AttackType: 0
     ItemCanUse: 0
   - Name: Active1
-    Id: 501
+    ID: 501
     MaxCharge: 6
     CurCharge: 0
     Damage: 6
@@ -129,7 +129,7 @@ MonoBehaviour:
     AttackType: 1
     ItemCanUse: 1
   - Name: Active2
-    Id: 502
+    ID: 502
     MaxCharge: 3
     CurCharge: 0
     Damage: 0
@@ -145,7 +145,7 @@ MonoBehaviour:
     AttackType: 0
     ItemCanUse: 1
   - Name: Active3
-    Id: 503
+    ID: 503
     MaxCharge: 5
     CurCharge: -1
     Damage: 0
@@ -161,7 +161,7 @@ MonoBehaviour:
     AttackType: 0
     ItemCanUse: 2
   - Name: Potion1
-    Id: 1001
+    ID: 1001
     MaxCharge: 0
     CurCharge: 0
     Damage: 10
@@ -176,3 +176,6 @@ MonoBehaviour:
     ItemRarity: 0
     AttackType: 1
     ItemCanUse: 1
+  PassiveID: {x: 1, y: 6}
+  ActiveID: {x: 501, y: 503}
+  PotionID: {x: 1001, y: 1001}

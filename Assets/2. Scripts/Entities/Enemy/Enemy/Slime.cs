@@ -22,7 +22,7 @@ public class Slime : Enemy
                 await Attack(enemyData.Damage);
                 break;
             case 2:
-                await base.Heal(enemyData.Damage);
+                await Heal(enemyData.Damage);
                 turn = 0;
                 break;
         }

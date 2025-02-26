@@ -84,7 +84,7 @@ public class EnemyManager : MonoBehaviour
         return EnemyList.Count == 0;
     }
 
-    public EnemyData FindEnemyData(int id)   // Id 값으로 적 데이터 가져오기
+    public EnemyData FindEnemyData(int id)   // ID 값으로 적 데이터 가져오기
     {
         EnemyData enemyData;
         if (EnemyDatas.TryGetValue(id, out enemyData))
@@ -97,6 +97,6 @@ public class EnemyManager : MonoBehaviour
             EnemyDatas.Add(id, enemyData);
             return enemyData;
         }
-        //return Array.Find(enemySO.enemyDatas, x => x.Id == Id);
+        //return Array.Find(enemySO.enemyDatas, x => x.ID == ID);
     }
 }

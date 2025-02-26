@@ -33,6 +33,10 @@ public class ButtonManager : MonoBehaviour
     {
         DiscardButton.interactable = state;
     }
+    public void DiscardCancelBtnInvert(bool state)
+    {
+        DiscardCancelButton.interactable = state;
+    }
     public void TurnEndBtn()
     {
         TurnManager.Instance.EndTurn().Forget();

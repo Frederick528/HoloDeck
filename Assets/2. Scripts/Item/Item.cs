@@ -25,8 +25,11 @@ public class Item
     {
         _defaultData = data;
         Data = _defaultData;
-        if (Data.CurCharge == 0) { CurCharge = Data.MaxCharge; }
-        else if (Data.CurCharge == -1) { CurCharge = 0; }
+        if (Data.MaxCharge != 0)
+        {
+            if (Data.CurCharge == 0) { CurCharge = Data.MaxCharge; }
+            else if (Data.CurCharge == -1) { CurCharge = 0; }
+        }
 
         StringBuilder sb = new StringBuilder(_defaultData.Descript);
 

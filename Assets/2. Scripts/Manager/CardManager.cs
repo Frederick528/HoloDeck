@@ -62,6 +62,7 @@ public class CardManager : MonoBehaviour
 
     List<Card> _selectedCards = new();           // 배틀 중 버리기, 강화, 교환 등에서 선택한 카드 리스트
 
+    Card _playedCard;                            // 큐에서 실행한 카드
     Card _usedCard;                              // 사용되고 있는 카드(버리기 효과나 다른 효과가 진행되고 있는 카드)
     Card _selectCard;                            // 들고 있는 카드(drag 중인 카드)
     bool draggable;
@@ -229,17 +230,17 @@ public class CardManager : MonoBehaviour
     //    return true;
     //}
 
-    //public async UniTask AfterCardAbility(Card usedCard, bool endBattle = false)
+    //public async UniTask AfterCardAbility(Card playedCard, bool endBattle = false)
     //{
-    //    await usedCard.TaskMoveTransform(new PRS(CardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), false, CardUtils.ThrowAwayCardDelay);
+    //    await playedCard.TaskMoveTransform(new PRS(CardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), false, CardUtils.ThrowAwayCardDelay);
 
     //    if (!endBattle)
     //    {
-    //        CardDummy.Add(usedCard);
+    //        CardDummy.Add(playedCard);
     //        UiManager.Instance.SetDummyCount();
     //    }
-    //    usedCard.Block = false;
-    //    usedCard.Used = false;
+    //    playedCard.Block = false;
+    //    playedCard.Used = false;
     //}
 
     async UniTask CheckCanUseingCard(Card card/*, bool singleAtk = false*/)
@@ -542,30 +543,65 @@ public class CardManager : MonoBehaviour
         //{
         //    // 카드 효과가 버리기일 경우, 위 상황에서는 바로 버리기 가능해야 함. 반대로 카드조건이 버리기일 경우, 불가능.
         //}
-        if (_usedCard.Data.Reduce > 0)
+        if (_usedCard != null)      // 카드 조건이 버리기인 경우
         {
-            if (_selectedCards.Count == _usedCard.Data.Reduce)
+            if (_usedCard.Data.Reduce > 0)
+            {
+                if (_selectedCards.Count == _usedCard.Data.Reduce)
+                {
+                    ButtonManager.Instance.DiscardBtnInvert(true);
+                }
+                else
+                {
+                    ButtonManager.Instance.DiscardBtnInvert(false);
+                }
+            }
+            else if (_usedCard.Data.Reduce == 0)
             {
                 ButtonManager.Instance.DiscardBtnInvert(true);
             }
             else
             {
-                ButtonManager.Instance.DiscardBtnInvert(false);
+                if (_selectedCards.Count >= -_usedCard.Data.Reduce)
+                {
+                    ButtonManager.Instance.DiscardBtnInvert(true);
+                }
+                else
+                {
+                    ButtonManager.Instance.DiscardBtnInvert(false);
+                }
             }
-        }
-        else if (_usedCard.Data.Reduce == 0)
-        {
-            ButtonManager.Instance.DiscardBtnInvert(true);
         }
         else
         {
-            if (_selectedCards.Count >= -_usedCard.Data.Reduce)
+                                    // 카드 효과가 버리기인 경우
+        }
+        {
+            if (_playedCard.Data.Reduce > 0)
+            {
+                if (_selectedCards.Count == _playedCard.Data.Reduce)
+                {
+                    ButtonManager.Instance.DiscardBtnInvert(true);
+                }
+                else
+                {
+                    ButtonManager.Instance.DiscardBtnInvert(false);
+                }
+            }
+            else if (_playedCard.Data.Reduce == 0)
             {
                 ButtonManager.Instance.DiscardBtnInvert(true);
             }
             else
             {
-                ButtonManager.Instance.DiscardBtnInvert(false);
+                if (_selectedCards.Count >= -_playedCard.Data.Reduce)
+                {
+                    ButtonManager.Instance.DiscardBtnInvert(true);
+                }
+                else
+                {
+                    ButtonManager.Instance.DiscardBtnInvert(false);
+                }
             }
         }
     }
@@ -649,25 +685,26 @@ public class CardManager : MonoBehaviour
         UiManager.Instance.SetDummyCount();
     }
 
-    public async UniTask UsedCard(Card usedCard)
+    public async UniTask PlayedCard(Card playedCard)
     {
         if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
         {
-            usedCard.FailedUseCard();
+            playedCard.FailedUseCard();
             return;
         }
+        _playedCard = playedCard;       // 마지막으로 시전한 카드 정보를 받아와야 할 수도 있기 때문에 일단 초기화는 안 함.
 
-        HandCard.Remove(usedCard);
+        HandCard.Remove(playedCard);
 
         SetOriginOrder();
         CardAlignment();
 
-        bool endBattle = await usedCard.UseTask().SuppressCancellationThrow();
+        bool endBattle = await playedCard.UseTask().SuppressCancellationThrow();
         //if (endBattle)
         //{
         //    //_eventQueue.QueueClear();
         //}
-        await usedCard.AfterCardAbility(endBattle);
+        await playedCard.AfterCardAbility(endBattle);
     }
 
 
