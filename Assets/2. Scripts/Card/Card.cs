@@ -473,7 +473,7 @@ public class Card : MonoBehaviour
 
     public void CardRelease()
     {
-        PoolManager.Instance.ReleaseCard(this.gameObject, this);
+        PoolManager.Instance.ReleaseCard(/*this.gameObject, */this);
     }
 
     //private void OnEnable()

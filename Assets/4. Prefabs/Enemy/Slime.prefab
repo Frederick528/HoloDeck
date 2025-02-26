@@ -53,6 +53,7 @@ MonoBehaviour:
   shieldText: {fileID: 0}
   col2d: {fileID: 0}
   canvas: {fileID: 0}
+  spawnPosIdx: 0
   CanClear: 0
 --- !u!61 &5423766591507928312
 BoxCollider2D:
@@ -101,7 +102,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4047972025199878, guid: 928a1377c1cd4515b208fef3a396b8ea, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4047972025199878, guid: 928a1377c1cd4515b208fef3a396b8ea, type: 3}
       propertyPath: m_LocalPosition.z
@@ -241,7 +242,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3212883658074943697, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3212883658074943697, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -254,6 +255,10 @@ PrefabInstance:
     - target: {fileID: 3212883658074943697, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3212883658074943703, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}

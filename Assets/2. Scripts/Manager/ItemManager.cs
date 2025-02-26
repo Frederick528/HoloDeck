@@ -15,7 +15,7 @@ public class ItemManager : MonoBehaviour
     TMP_Text _activeItemCharge;
 
     //public bool arrowOn;   // 게임매니저에서 한 번에 처리하고 싶었으나, Card 사용 코드 때문에 그냥 각각의 코드에서 실행하는 방법 사용. => 성공함.
-    int activeValue;
+    public string ItemDesc;
 
     [SerializeField]
     Transform itemRewardContent;

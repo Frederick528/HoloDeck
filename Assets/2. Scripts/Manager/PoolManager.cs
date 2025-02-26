@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -9,16 +10,20 @@ public class PoolManager : MonoBehaviour
 
     public int defaultCapacity = 10;
     //public int maxPoolSize = 10;
-    public GameObject cardPrefab;
+    public Card cardPrefab;
+    public TMP_Text TextEffect;
     //public GameObject _mapPrefab;
 
     [SerializeField] Transform cardSpawnPoint;
     [SerializeField] Transform deck;
 
+    [SerializeField] Transform _textParent;
+
     //[SerializeField] Transform map;
     //[SerializeField] Transform HandCard;
 
-    public IObjectPool<System.Tuple<GameObject, Card>> CardPool { get; private set; }
+    public IObjectPool<Card> CardPool { get; private set; }
+    public IObjectPool<TMP_Text> TextPool { get; private set; }
     //public IObjectPool<GameObject> MapPool { get; private set; }
 
     private void Awake()
@@ -28,16 +33,23 @@ public class PoolManager : MonoBehaviour
         else
             Destroy(this.gameObject);
 
-
         Init();
     }
+
+    //private void Start()
+    //{
+    //    _textParent = UiManager.Instance.ContinueFindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.InGame), "TextEffect");
+    //    Init();
+    //}
 
     private void Init()
     {
         //MapPool = new ObjectPool<GameObject>(CreateMapPooledItem, OnTakeFromPool, OnReturnedToPool,
         //OnDestroyPoolObject, true, defaultCapacity/*, maxPoolSize*/);
-        CardPool = new ObjectPool<System.Tuple<GameObject, Card>>(CreateCardPooledItem, OnTakeFromPool, OnReturnedToPool,
-        OnDestroyPoolObject, true, defaultCapacity/*, maxPoolSize*/);
+        CardPool = new ObjectPool<Card>(CreateCardPooledItem, OnTakeFromPoolCard, OnReturnedToPoolCard,
+        OnDestroyPoolCard, true, defaultCapacity/*, maxPoolSize*/);
+
+        TextPool = new ObjectPool<TMP_Text>(CreateTextPooledItem, OnTakeFromPoolText, OnReturnedToPoolText, OnDestroyPoolText, true, defaultCapacity);
 
         // 미리 오브젝트 생성 해놓기
         for (int i = 0; i < defaultCapacity; i++)
@@ -45,17 +57,18 @@ public class PoolManager : MonoBehaviour
             //Map map = CreateMapPooledItem().GetComponent<Map>();
             //map.MapRelease();
             ReleaseCard(CreateCardPooledItem());
+            ReleaseText(CreateTextPooledItem());
         }
     }
 
     // 생성
-    private System.Tuple<GameObject, Card> CreateCardPooledItem()
+    private Card CreateCardPooledItem()
     {
-        GameObject cardObj = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, deck);
-        Card card = cardObj.GetComponent<Card>();
+        Card cardObj = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, deck);
+        //Card card = cardObj.GetComponent<Card>();
         //card.CardPool = this.CardPool;
 
-        return new System.Tuple<GameObject, Card>(cardObj, card);
+        return cardObj;
     }
     //private GameObject CreateMapPooledItem()
     //{
@@ -63,37 +76,60 @@ public class PoolManager : MonoBehaviour
     //    mapPoolGo.GetComponent<Map>().MapPool = this.MapPool;
     //    return mapPoolGo;
     //}
+    private TMP_Text CreateTextPooledItem()
+    {
+        return Instantiate(TextEffect, _textParent);
+    }
+    private void OnTakeFromPoolText(TMP_Text text)
+    {
+        text.gameObject.SetActive(true);
+    }
+    private void OnReturnedToPoolText(TMP_Text text)
+    {
+        text.gameObject.SetActive(false);
+    }
+    private void OnDestroyPoolText(TMP_Text text)
+    {
+        Destroy(text.gameObject);
+    }
 
     // 사용
-    private void OnTakeFromPool(System.Tuple<GameObject, Card> card)
+    private void OnTakeFromPoolCard(Card card)
     {
-        card.Item1.SetActive(true);
+        card.gameObject.SetActive(true);
     }
 
     // 반환
-    private void OnReturnedToPool(System.Tuple<GameObject, Card> card)
+    private void OnReturnedToPoolCard(Card card)
     {
-        card.Item1.SetActive(false);
+        card.gameObject.SetActive(false);
     }
 
     // 삭제
-    private void OnDestroyPoolObject(System.Tuple<GameObject, Card> card)
+    private void OnDestroyPoolCard(Card card)
     {
-        Destroy(card.Item1 );
+        Destroy(card.gameObject);
     }
 
-    public void GetCard(out GameObject obj, out Card card)
+    public void ReleaseText(TMP_Text text)
     {
-        var poolObject = CardPool.Get();
-        obj = poolObject.Item1;
-        card = poolObject.Item2;
+        TextPool.Release(text);
     }
-    public void ReleaseCard(System.Tuple<GameObject, Card> card)
+    public void GetText(out TMP_Text text)
+    {
+        text = TextPool.Get();
+    }
+
+    public void GetCard(/*out GameObject obj, */out Card card)
+    {
+        card = CardPool.Get();
+    }
+    public void ReleaseCard(Card card)
     {
         CardPool.Release(card);
     }
-    public void ReleaseCard(GameObject obj, Card card)
-    {
-        CardPool.Release(new System.Tuple<GameObject, Card>(obj, card));
-    }
+    //public void ReleaseCard(GameObject obj, Card card)
+    //{
+    //    CardPool.Release(new System.Tuple<GameObject, Card>(obj, card));
+    //}
 }

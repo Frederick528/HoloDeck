@@ -121,8 +121,8 @@ public class CardManager : MonoBehaviour
     }
     public void AddDeck(CardData cardData, EAddDeck eAddDeck)       // 덱에 카드를 추가할 때 사용, 핸드로 카드를 가져올 때는 DrawCard 함수 사용. (주로 데이터 자체가 이동할 때 사용)
     {
-        PoolManager.Instance.GetCard(out GameObject cardObject, out Card setCard);
-
+        PoolManager.Instance.GetCard(/*out GameObject cardObject, */out Card setCard);
+        GameObject cardObject = setCard.gameObject;
         setCard.name = cardData.Name;
         cardObject.name = cardData.Name;    // 시각화 용도
 
@@ -572,10 +572,7 @@ public class CardManager : MonoBehaviour
                 }
             }
         }
-        else
-        {
-                                    // 카드 효과가 버리기인 경우
-        }
+        else                        // 카드 효과가 버리기인 경우
         {
             if (_playedCard.Data.Reduce > 0)
             {

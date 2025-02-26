@@ -49,8 +49,8 @@ public class EventQueue
             _isPending = false;
             if (!EnemyManager.Instance.MapClear)
                 ButtonManager.Instance.TurnEndBtnInvert(!_isPending);
-            if (InGameManager.Instance.player.CurHolo == 0)
-                TurnManager.Instance.EndTurn().Forget();
+            //if (InGameManager.Instance.player.CurHolo == 0)           // 강제 턴종은 포션이나 스킬 효과를 못 쓰게 만드므로 그냥 제거
+            //    TurnManager.Instance.EndTurn().Forget();
             return;
         }
 
