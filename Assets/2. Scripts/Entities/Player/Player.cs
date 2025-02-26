@@ -29,12 +29,12 @@ public class Player : Entity
     void PlayerSubScribe()
     {
         EntitySubScribe();
-        maxHp.Subscribe(hp => UiManager.Instance.SetHealth(curHp.Value, maxHp.Value));
-        curHp.Subscribe(hp => UiManager.Instance.SetHealth(curHp.Value, maxHp.Value));
+        maxHp.Subscribe(hp => UIManager.Instance.SetHealth(curHp.Value, maxHp.Value));
+        curHp.Subscribe(hp => UIManager.Instance.SetHealth(curHp.Value, maxHp.Value));
 
         Coin.Subscribe(coin =>
         {
-            UiManager.Instance.SetCoin(coin);
+            UIManager.Instance.SetCoin(coin);
         });
 
         AttackPower.Subscribe(attackPower =>
@@ -53,7 +53,7 @@ public class Player : Entity
         SetupEntity(hp);
         MaxHolo = startHoloValue;
         CurHolo = MaxHolo;
-        UiManager.Instance.SetHolo(CurHolo, MaxHolo);
+        UIManager.Instance.SetHolo(CurHolo, MaxHolo);
     }
     public async UniTaskVoid TakeDamagePlayer(int dmg)
     {
@@ -62,14 +62,14 @@ public class Player : Entity
         TurnManager.Instance.EndBattle().Forget();
         await base.DieAnimation();
         print("플레이어가 죽었습니다.");
-        UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.GameOver, true);
+        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.GameOver, true);
         //return true;
     }
 
     public void AddCurHolo(int chargeOrUse)
     {
         CurHolo = Mathf.Clamp(CurHolo + chargeOrUse, 0, MaxHolo);
-        UiManager.Instance.SetHolo(CurHolo, MaxHolo);
+        UIManager.Instance.SetHolo(CurHolo, MaxHolo);
     }
 
     public void AddMaxHealth(int value)
@@ -83,7 +83,7 @@ public class Player : Entity
         MaxHolo += value;
         if (MaxHolo < 0)
             MaxHolo = 0;
-        //UiManager.Instance.SetHolo(CurHolo, MaxHolo);
+        //UIManager.Instance.SetHolo(CurHolo, MaxHolo);
     }
     public void AddAttackPower(int value)
     {

@@ -70,7 +70,7 @@ public class InGameManager : MonoBehaviour
         SettingRandomCardList();
         SettingRandomItemList();
 
-        //UiManager.Instance.SetupGameUi(true);
+        //UIManager.Instance.SetupGameUi(true);
         //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     }
     void SettingRandomCardList()
@@ -298,14 +298,14 @@ public class InGameManager : MonoBehaviour
     //{
     //    if (isOn)
     //    {
-    //        UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.Map, false);
-    //        UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.InGame, false);
-    //        UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.Battle, false);
+    //        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.Map, false);
+    //        UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.InGame, false);
+    //        UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.Battle, false);
     //    }
     //    else
     //    {
-    //        UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.InGame, true);
-    //        UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.Battle, true);
+    //        UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.InGame, true);
+    //        UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.Battle, true);
     //    }
     //    ArrowCursor.ArrowIndex = arrowIdx;
     //    ArrowCursor.SetStartArrow();
@@ -399,7 +399,7 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.M))
         {
-            UiManager.Instance.LookMap();
+            UIManager.Instance.LookMap();
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
@@ -468,11 +468,11 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.I))
         {
-            ItemManager.Instance.GetItem(500);
+            ItemManager.Instance.GetItem(501);
         }
         if (Input.GetKeyDown(KeyCode.P))
         {
-            PotionManager.Instance.GetPotion(1);
+            ItemManager.Instance.GetItem(1001);
         }
         if (Input.GetKeyDown(KeyCode.B))
         {

@@ -16,6 +16,8 @@ public class ButtonManager : MonoBehaviour
     public Button DiscardCancelButton;
     [HideInInspector]
     public Button ActiveItemButton;
+    [HideInInspector]
+    public Button[] PotionButtons = new Button[4];
 
     int _nowCardState;
 
@@ -23,10 +25,12 @@ public class ButtonManager : MonoBehaviour
 
     private void Start()
     {
-        _turnEndButton = UiManager.Instance.ContinueFindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.Battle), "TurnEndButton").GetComponent<Button>();
-        DiscardButton = UiManager.Instance.ContinueFindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.SelectedCard), "DiscardButton").GetComponent<Button>();
-        DiscardCancelButton = UiManager.Instance.ContinueFindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.SelectedCard), "CancelButton").GetComponent<Button>();
-        ActiveItemButton = UiManager.Instance.ContinueFindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.InGame), "ActiveItemButton").GetComponent<Button>();
+        _turnEndButton = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.Battle), "TurnEndButton").GetComponent<Button>();
+        DiscardButton = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.SelectedCard), "DiscardButton").GetComponent<Button>();
+        DiscardCancelButton = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.SelectedCard), "CancelButton").GetComponent<Button>();
+        ActiveItemButton = UIManager.Instance.ActiveTransform.GetComponent<Button>();
+
+        PotionButtons = UIManager.Instance.PotionTransform.GetComponentsInChildren<Button>();
     }
 
     public void DiscardBtnInvert(bool state)
@@ -76,20 +80,20 @@ public class ButtonManager : MonoBehaviour
         switch (deckIdx)
         {
             case 0:
-                UiManager.Instance.SetViewDeck(CardManager.Instance.TotalDeck);
+                UIManager.Instance.SetViewDeck(CardManager.Instance.TotalDeck);
                 break;
             case 1:
-                UiManager.Instance.SetViewDeck(CardManager.Instance.DrawDeck);
+                UIManager.Instance.SetViewDeck(CardManager.Instance.DrawDeck);
                 break;
             case 2:
-                UiManager.Instance.SetViewDeck(CardManager.Instance.CardDummy);
+                UIManager.Instance.SetViewDeck(CardManager.Instance.CardDummy);
                 break;
         }
     }
 
     public void LookMap()
     {
-        UiManager.Instance.LookMap();
+        UIManager.Instance.LookMap();
     }
     public void ChangeScene(int idx)
     {

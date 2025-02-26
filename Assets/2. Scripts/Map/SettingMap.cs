@@ -198,11 +198,11 @@ public class SettingMap : MonoBehaviour
             if (MapManager.Instance.currStage.rewardBox != -1 && !MapManager.Instance.currStage.rewarded)
             {
                 //MapManager.Instance.rewardCanvas.GetChild(MapManager.Instance.currStage.rewardBox).gameObject.SetActive(false);
-                UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.RewardBox, false, MapManager.Instance.currStage.rewardBox);
+                UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, false, MapManager.Instance.currStage.rewardBox);
             }
 
             // 보상과 상관없이 EnlargePanel와 RewardCanvas는 새로운 방에 들어갈 때마다 숨김 처리.
-            UiManager.Instance.MoveMap();
+            UIManager.Instance.MoveMap();
 
             MapManager.Instance.currStage = stage;
 
@@ -218,17 +218,17 @@ public class SettingMap : MonoBehaviour
             if (stage.rewardBox != -1 && !stage.rewarded)
             {
                 //MapManager.Instance.rewardCanvas.GetChild(stage.rewardBox).gameObject.SetActive(true);
-                UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.RewardBox, true, stage.rewardBox);
+                UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, true, stage.rewardBox);
                 if (stage.rewardBox != 0)
                 {
-                    UiManager.Instance.ShowRewardCard(stage.reward);
+                    UIManager.Instance.ShowRewardCard(stage.reward);
                 }
             }
 
 
             // 이동 모션 코드 추가
 
-            UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.Map, false);
+            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.Map, false);
         });
     }
 
@@ -435,7 +435,7 @@ public class SettingMap : MonoBehaviour
         //}
         //validMapCount = validMapList.Count;
 
-        Transform mapCanvas = UiManager.Instance.Canvas(UiManager.CanvasName.Map);
+        Transform mapCanvas = UIManager.Instance.Canvas(UIManager.CanvasName.Map);
 
         int treasureIdx = Random.Range(1, validMapList.Count-1);
         int shopIdx = Random.Range(1, validMapList.Count-1);
@@ -525,7 +525,7 @@ public class SettingMap : MonoBehaviour
         //        else if (map.cleared)
         //        {
         //            currStage = map;
-        //            UiManager.Instance.LookMap();
+        //            UIManager.Instance.LookMap();
         //            return;
         //        }
         //        canMove = false;
@@ -536,7 +536,7 @@ public class SettingMap : MonoBehaviour
         //        // 이동 모션 코드 추가
         //        // 방 입장 코드 추가
 
-        //        UiManager.Instance.LookMap();
+        //        UIManager.Instance.LookMap();
         //    });
         //}
 

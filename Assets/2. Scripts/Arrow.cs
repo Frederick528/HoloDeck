@@ -47,11 +47,12 @@ public class Arrow : MonoBehaviour
                 this.controlPoints[0] = new Vector2(this.origin.position.x, this.origin.position.y + CardUtils.LargeCardPosY);
                 break;
             case 1:
-                this.controlPoints[0] = new Vector2(ButtonManager.Instance.ActiveItemButton.transform.position.x, ButtonManager.Instance.ActiveItemButton.transform.position.y - 0.4f);
-                break;
             case 2:
-                this.controlPoints[0] = PotionManager.Instance.ArrowPotionPos();
+                this.controlPoints[0] = ItemManager.Instance.SettingArrowPos(ArrowIndex);
                 break;
+            //case 2:
+            //    this.controlPoints[0] = PotionManager.Instance.ArrowPotionPos();
+            //    break;
         }
         this.controlPoints[3] = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 

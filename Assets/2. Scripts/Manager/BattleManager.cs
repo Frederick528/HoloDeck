@@ -12,7 +12,7 @@ public class BattleManager : MonoBehaviour
     private void Start()
     {
         ArrowCursor = FindObjectOfType<Arrow>(true);
-        //UiManager.Instance.SetupGameUi(true);
+        //UIManager.Instance.SetupGameUi(true);
         //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     }
     /// <summary>
@@ -24,14 +24,14 @@ public class BattleManager : MonoBehaviour
     {
         if (isOn)
         {
-            UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.Map, false);
-            UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.InGame, false);
-            UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.Battle, false);
+            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.Map, false);
+            UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.InGame, false);
+            UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.Battle, false);
         }
         else
         {
-            UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.InGame, true);
-            UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.Battle, true);
+            UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.InGame, true);
+            UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.Battle, true);
         }
         ArrowCursor.ArrowIndex = arrowIdx;
         ArrowCursor.SetStartArrow();

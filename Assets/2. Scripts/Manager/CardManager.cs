@@ -110,7 +110,7 @@ public class CardManager : MonoBehaviour
     {
         AddDeck(GetCardData, EAddDeck.Main);
         MapManager.Instance.GetReward();
-        UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.Map, true);
+        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.Map, true);
     }
 
     void SetupStartCardDeck()   // 시작할 때, 메인덱을 설정하는 함수 (게임 시작 이후에는 사용하지 않음.)
@@ -138,14 +138,14 @@ public class CardManager : MonoBehaviour
             case EAddDeck.Draw:
                 cardObject.transform.localScale = CardUtils.CardScale * 0.5f;
                 DrawDeck.Add(setCard);
-                UiManager.Instance.SetDrawCount();
+                UIManager.Instance.SetDrawCount();
                 ShuffleDeck();
                 break;
 
             case EAddDeck.Dummy:
                 cardObject.transform.localScale = CardUtils.CardScale * 0.5f;
                 CardDummy.Add(setCard);
-                UiManager.Instance.SetDummyCount();
+                UIManager.Instance.SetDummyCount();
                 break;
 
             case EAddDeck.Hand:                 // 핸드로 가져오는 건 카드 정렬 때문에 DrawCard 함수를 이용해서만 접근할 것.
@@ -159,7 +159,7 @@ public class CardManager : MonoBehaviour
                 {
                     cardObject.transform.localScale = CardUtils.CardScale * 0.5f;
                     CardDummy.Add(setCard);
-                    UiManager.Instance.SetDummyCount();
+                    UIManager.Instance.SetDummyCount();
                 }
                 break;
         }
@@ -237,7 +237,7 @@ public class CardManager : MonoBehaviour
     //    if (!endBattle)
     //    {
     //        CardDummy.Add(playedCard);
-    //        UiManager.Instance.SetDummyCount();
+    //        UIManager.Instance.SetDummyCount();
     //    }
     //    playedCard.Block = false;
     //    playedCard.Used = false;
@@ -282,8 +282,8 @@ public class CardManager : MonoBehaviour
     {
         DrawDeck.Clear();
         CardDummy.Clear();
-        UiManager.Instance.SetDrawCount();
-        UiManager.Instance.SetDummyCount();
+        UIManager.Instance.SetDrawCount();
+        UIManager.Instance.SetDummyCount();
         //HandCard.Clear();     클리어카드 전에 카드를 전부 버리기 때문에 HandCard.Clear()는 안 해도 됨.
         for (int i = 0; i < TotalDeck.Count; ++i)
         {
@@ -306,11 +306,11 @@ public class CardManager : MonoBehaviour
             foreach (Card card in CardDummy)
             {
                 DrawDeck.Add(card);         // 여기선 AddDeck 안 씀.
-                UiManager.Instance.SetDrawCount();
+                UIManager.Instance.SetDrawCount();
                 card.transform.position = CardSpawnPoint.position;
             }
             CardDummy.Clear();
-            UiManager.Instance.SetDummyCount();
+            UIManager.Instance.SetDummyCount();
         }
         else
         {
@@ -318,7 +318,7 @@ public class CardManager : MonoBehaviour
             foreach (Card card in MainDeck)
             {
                 DrawDeck.Add(card);
-                UiManager.Instance.SetDrawCount();
+                UIManager.Instance.SetDrawCount();
                 card.transform.position = CardSpawnPoint.position;
             }
         }
@@ -351,7 +351,7 @@ public class CardManager : MonoBehaviour
 
         Card card = DrawDeck[0];
         DrawDeck.RemoveAt(0);
-        UiManager.Instance.SetDrawCount();
+        UIManager.Instance.SetDrawCount();
         return card;
     }
 
@@ -361,7 +361,7 @@ public class CardManager : MonoBehaviour
 
         Card card = DrawDeck.Find(x => x == drawCard);
         DrawDeck.Remove(card);
-        UiManager.Instance.SetDrawCount();
+        UIManager.Instance.SetDrawCount();
         return card;
     }
 
@@ -503,7 +503,7 @@ public class CardManager : MonoBehaviour
 
         canPush = true;         // PullCard랑 중복 호출이긴 함.
 
-        UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.Battle, true);
+        UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.Battle, true);
     }
     public void ReturnSelectedCard()
     {
@@ -606,17 +606,17 @@ public class CardManager : MonoBehaviour
     {
         _discard = discard;
         //InGameManager.Instance.Pause(discard);
-        UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.SelectedCard, discard);
+        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.SelectedCard, discard);
         if (discard)
         {
             SetCardState(3);   // Click
-            UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.Battle, false);
+            UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.Battle, false);
             ButtonManager.Instance.ActItemBtnInvert(false);
         }
         else
         {
             SetCardState(2);    // Drag
-            UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.Battle, true);
+            UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.Battle, true);
             ButtonManager.Instance.ActItemBtnInvert(true);
         }
     }
@@ -648,7 +648,7 @@ public class CardManager : MonoBehaviour
             CardDummy.Add(targetCard);
             targetCard.UnblockCard();
         }
-        UiManager.Instance.SetDummyCount();
+        UIManager.Instance.SetDummyCount();
         _selectedCards.Clear();
     }
 
@@ -666,7 +666,7 @@ public class CardManager : MonoBehaviour
             CardDummy.Add(targetCard);
             targetCard.UnblockCard();
         }
-        UiManager.Instance.SetDummyCount();
+        UIManager.Instance.SetDummyCount();
         HandCard.Clear();
     }
     public async UniTask ThrowAwayCard(Card throwCard)
@@ -679,7 +679,7 @@ public class CardManager : MonoBehaviour
         await throwCard.TaskMoveTransform(new PRS(CardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), false, CardUtils.ThrowAwayCardDelay);
 
         CardDummy.Add(throwCard);
-        UiManager.Instance.SetDummyCount();
+        UIManager.Instance.SetDummyCount();
     }
 
     public async UniTask PlayedCard(Card playedCard)
@@ -922,7 +922,7 @@ public class CardManager : MonoBehaviour
         if (CardState != ECardState.CanMouseDrag)
             return;
 
-        UiManager.Instance.SetCanvasRaycast(UiManager.CanvasName.Battle, false);
+        UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.Battle, false);
 
         _selectCard = card;
         draggable = true;

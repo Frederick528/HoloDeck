@@ -90,7 +90,7 @@ public class TurnManager : MonoBehaviour
         InGameManager.Instance.player.AddCurHolo(InGameManager.Instance.player.MaxHolo);
         InGameManager.Instance.player.ShieldReset();
 
-        UiManager.Instance.ChangeTurnButtonText(MyTurn);
+        UIManager.Instance.ChangeTurnButtonText(MyTurn);
 
         SetLoading(true);
         //await CardManager.Instance.DrawCards(startCardCount);      // DrawCard(int count)로 대체 가능
@@ -174,7 +174,7 @@ public class TurnManager : MonoBehaviour
         if (!_canEndTurn && !endBattle) return;             // 턴종 가능한지 확인, 단, 배틀 종료 상태에서는 턴종 가능한가와 상관없이 진행
         MyTurn = false;
         ButtonManager.Instance.TurnEndBtnInvert(MyTurn);
-        UiManager.Instance.ChangeTurnButtonText(MyTurn);
+        UIManager.Instance.ChangeTurnButtonText(MyTurn);
         SetLoading(true);
         await CardManager.Instance.ThrowAwayCard();
         if (endBattle)
@@ -214,7 +214,7 @@ public class TurnManager : MonoBehaviour
         InGameManager.Instance.player.StartOrEndBattle(InBattle);
         CancelSource = new();
 
-        UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.Battle, true);
+        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.Battle, true);
         CardManager.Instance.SetupDrawDeck(true);
         //TurnManager.OnAddCard += async () =>
         //    await DrawCard();
@@ -232,7 +232,7 @@ public class TurnManager : MonoBehaviour
         CancelSource.Cancel();
         InGameManager.Instance.AbilityEventQueue.QueueClear();
 
-        UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.Battle, false);
+        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.Battle, false);
         //OnAddCard = null;
 
         //TurnManager.OnAddCard -= () =>

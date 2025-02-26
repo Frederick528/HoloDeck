@@ -5,9 +5,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UiManager : MonoBehaviour
+public class UIManager : MonoBehaviour
 {
-    public static UiManager Instance { get; private set; }
+    public static UIManager Instance { get; private set; }
 
     public enum CanvasName
     {
@@ -35,12 +35,17 @@ public class UiManager : MonoBehaviour
     Transform _cardEnlargePanel;
     Transform _itemEnlargePanel;
 
-    
+
     Transform _shopPanel;
     Transform _shopEnlargePanel;
 
     [Header("Box")]
     Transform[] _rewardBoxes;
+
+    [HideInInspector]
+    public Transform ActiveTransform;
+    [HideInInspector]
+    public Transform PotionTransform;
 
     Transform _cardRewardContent;
     Transform _itemRewardContent;
@@ -49,6 +54,7 @@ public class UiManager : MonoBehaviour
     List<UICard> _deckUICards = new();
 
     UICard[] _uiCards = new UICard[4];
+    Item[] _items = new Item[4];
 
     TMP_Text _topHealthText;     // TMP텍스트로 변경가능성있음
     TMP_Text _topCoinText;
@@ -83,6 +89,9 @@ public class UiManager : MonoBehaviour
         {
             _deckUICards.Add(_viewDeckContent.GetChild(i).GetComponent<UICard>());
         }
+
+        ActiveTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "ActiveItemButton");
+        PotionTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "Potion");
 
         _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel");
         _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel");

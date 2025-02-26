@@ -22,39 +22,82 @@ public class ItemAbility
                 InGameManager.Instance.player.AddMaxHolo(1);
                 break;
             case 4:
-                UiManager.Instance.ChangeRewardCardCount(true);
+                UIManager.Instance.ChangeRewardCardCount(true);
                 break;
             case 501:
-                ItemManager.Instance.ChanageActiveItem(item);
                 item.ItemTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
                     await SingleAttackAB(item);
+                    await DrawAB();
                 });
                 break;
             case 502:
-                ItemManager.Instance.ChanageActiveItem(item);
+                item.ItemTask = () => UniTask.Create(async () =>
+                {
+                    await DelayTask(0.5f);
+                    await ShieldAB(item);
+                });
+                break;
+            case 503:
                 item.ItemTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
                     await HealAB(item);
                 });
                 break;
-            case 503:
-                ItemManager.Instance.ChanageActiveItem(item);
+            case 504:
                 item.ItemTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
                     await ContinuousDrawAB(item);
                 });
                 break;
-            case 504:
-                ItemManager.Instance.ChanageActiveItem(item);
+            case 1001:
+                item.ItemTask = () => UniTask.Create(async () =>
+                {
+                    await DelayTask(0.5f);
+                    await HealAB(item);
+                });
+                //InGameManager.Instance.player.Heal(10).Forget();
+                //_potionBtns[idx].onClick.RemoveAllListeners();
+                //_boolPotion[idx] = false;
+                break;
+            case 1002:
+                item.ItemTask = () => UniTask.Create(async () =>
+                {
+                    await DelayTask(0.5f);
+                    InGameManager.Instance.ChangeCoinValue(20);
+                });
+                //InGameManager.Instance.ChangeCoinValue(20);
+                //_potionBtns[idx].onClick.RemoveAllListeners();
+                //_boolPotion[idx] = false;
+                break;
+            case 1003:
                 item.ItemTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
                     await ShieldAB(item);
                 });
+                //if (TurnManager.Instance.MyTurn)
+                //{
+                //    InGameManager.Instance.player.Shield(15).Forget();
+                //    _potionBtns[idx].onClick.RemoveAllListeners();
+                //    _boolPotion[idx] = false;
+                //}
+                break;
+            case 1004:
+                item.ItemTask = () => UniTask.Create(async () =>
+                {
+                    await DelayTask(0.5f);
+                    await SingleAttackAB(item);
+                });
+                //if (TurnManager.Instance.MyTurn)
+                //{
+                //    BattleManager.Instance.SetActiveArrowCursor(true, 2);
+                //    //PotionBtns[idx].onClick.RemoveAllListeners();
+                //    //boolPotion[idx] = false;
+                //}
                 break;
             default:
                 item.ItemTask = () => UniTask.CompletedTask;

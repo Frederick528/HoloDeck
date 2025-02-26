@@ -367,6 +367,7 @@ public class Card : MonoBehaviour
                     enemy.CheckIfDead(Data.Damage, count);
                 }
                 break;
+            default: break;
         }
     }
 
@@ -386,7 +387,7 @@ public class Card : MonoBehaviour
 
         InGameManager.Instance.player.AddCurHolo(-Data.Cost);
 
-        CheckEnemyDead();
+        //CheckEnemyDead();
 
         return true;
     }
@@ -398,7 +399,7 @@ public class Card : MonoBehaviour
         if (!endBattle)
         {
             CardManager.Instance.CardDummy.Add(this);
-            UiManager.Instance.SetDummyCount();
+            UIManager.Instance.SetDummyCount();
         }
         Block = false;
         Used = false;

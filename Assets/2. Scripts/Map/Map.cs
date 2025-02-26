@@ -89,7 +89,7 @@ public class Map : MonoBehaviour
             }
             //rewardBox = Random.Range(1, 5);
             //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(true);
-            UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.RewardBox, true, rewardBox);
+            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, true, rewardBox);
             // 캐릭터별로 보상이 바뀌는 코드 넣어야 함.
             //int rangeMin = -1;
             //int rangeMax = -1;
@@ -119,13 +119,13 @@ public class Map : MonoBehaviour
             reward[2] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;
             reward[3] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;     // 유물 효과로 카드 선택지 +1
             InGameManager.Instance.ReturnRandomCard();
-            UiManager.Instance.ShowRewardCard(reward);
+            UIManager.Instance.ShowRewardCard(reward);
 
         }
 
         else if (rewardBox != -1 && rewarded)
             //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(false);
-            UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.RewardBox, false, rewardBox);
+            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, false, rewardBox);
     }
 
     public void TreasureBox()
@@ -135,7 +135,7 @@ public class Map : MonoBehaviour
             int probability = Random.Range(1, 101);     // 아이템도 등급이 생길 경우, 확률 개념 도입해야 함.
             rewardBox = 0;
             //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(true);
-            UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.RewardBox, true, rewardBox);
+            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, true, rewardBox);
             // 캐릭터별로 보상이 바뀌는 코드 넣어야 함.
             item[0] = InGameManager.Instance.RandomItem()/*Random.Range(0, 6)*/;     // 나중에 중복은 제외하는 코드로 변경해야 함.
             item[1] = InGameManager.Instance.RandomItem()/*Random.Range(0, 6)*/;
@@ -148,7 +148,7 @@ public class Map : MonoBehaviour
 
         else if (rewardBox != -1 && rewarded)
             //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(false);
-            UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.RewardBox, false, rewardBox);
+            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, false, rewardBox);
     }
 
     //public void EnterStage()

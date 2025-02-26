@@ -20,6 +20,7 @@ public class EventQueue
         if (usedCard.Used) return;
         _queue.Enqueue(usedCard);
 
+        usedCard.CheckEnemyDead();
         usedCard.Used = true;
 
         if (!_isPending)
@@ -30,6 +31,10 @@ public class EventQueue
     public void Enqueue(object usedObject)
     {
         _queue.Enqueue(usedObject);
+        if (usedObject is Item item)
+        {
+            item.CheckEnemyDead();
+        }
 
         if (!_isPending )
         {

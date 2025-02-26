@@ -12,6 +12,6 @@ public class ShopStage : MonoBehaviour, IStage
             _map = map;
         print("Shop");
 
-        UiManager.Instance.SetActiveCanvas(UiManager.CanvasName.Shop, true);
+        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.Shop, true);
     }
 }

@@ -73,10 +73,8 @@ public class CardAbility
                 card.CardTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
-                    await UniTask.WhenAll(
-                        SingleAttackAB(card),
-                        DrawAB()
-                    );
+                    await SingleAttackAB(card);         // whenAll 안 하는 이유는 때린 다음 드로우하는 게 좀 더 자연스럽기 때문
+                    await DrawAB();
                 });
 
                 //cardActTask = UniTask.Defer(async () =>
@@ -145,7 +143,7 @@ public class CardAbility
                 card.CardTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
-                    await UniTask.WhenAll(
+                    await UniTask.WhenAll(              // 이건 그냥 같이
                         SingleAttackAB(card),
                         ShieldAB(card)
                     );
@@ -162,8 +160,8 @@ public class CardAbility
                 card.CardTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
+                    await SingleAttackAB(card);     // 떄린 다음에 쉴드랑 드로우 느낌.
                     await UniTask.WhenAll(
-                        SingleAttackAB(card),
                         ShieldAB(card),
                         DrawAB()
                     );

@@ -38,7 +38,7 @@ public class PoolManager : MonoBehaviour
 
     //private void Start()
     //{
-    //    _textParent = UiManager.Instance.ContinueFindChildByName(UiManager.Instance.Canvas(UiManager.CanvasName.InGame), "TextEffect");
+    //    _textParent = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.InGame), "TextEffect");
     //    Init();
     //}
 
