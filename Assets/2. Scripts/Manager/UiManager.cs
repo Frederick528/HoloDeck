@@ -33,7 +33,7 @@ public class UIManager : MonoBehaviour
 
 
     [Header("UICardPrefab")]
-    [SerializeField] GameObject _uiCard;
+    [SerializeField] UICard _uiCard;
 
     [Header("Panel")]
     Transform _cardEnlargePanel;
@@ -56,7 +56,8 @@ public class UIManager : MonoBehaviour
     Transform _cardRewardContent;
     Transform _itemRewardContent;
 
-    public Transform ViewDeckContent;
+    int _lastViewDeckCount;
+    public Transform _viewDeckContent;
     List<UICard> _deckUICards = new();
 
     UICard[] _uiCards = new UICard[4];
@@ -91,7 +92,7 @@ public class UIManager : MonoBehaviour
         _itemEnlargePanel = Canvas(CanvasName.ItemReward).Find("ItemEnlargePanel");
         _itemRewardContent = ContinueFindChildByName(Canvas(CanvasName.ItemReward), "Content");
 
-        ViewDeckContent = ContinueFindChildByName(Canvas(CanvasName.ViewDeck), "Content");
+        _viewDeckContent = ContinueFindChildByName(Canvas(CanvasName.ViewDeck), "Content");
         //for (int i = 0; i < ViewDeckContent.childCount; ++i)
         //{
         //    _deckUICards.Add(ViewDeckContent.GetChild(i).GetComponent<UICard>());
@@ -240,12 +241,12 @@ public class UIManager : MonoBehaviour
         SetActiveCanvas(CanvasName.ItemReward, false);
         SetActiveCanvas(CanvasName.Shop, false);
     }
-    public void ShowRewardCard(int[] reward)        // 해당 부분들 맵, 상점으로 다 이동시켜야 함.
+    public void ShowRewardCard(CardData[] reward)        // 해당 부분들 맵, 상점으로 다 이동시켜야 함.
     {
         for (int i = 0; i < reward.Length; ++i)
         {
-            if (reward[i] == -1) continue;
-            _uiCards[i].Setup(InGameManager.Instance.FindCardData(reward[i]));
+            if (reward[i] == null) continue;
+            _uiCards[i].Setup(/*InGameManager.Instance.FindCardData(reward[i])*/reward[i]);
         }
     }
     public void ChangeRewardCardCount(bool isOn)
@@ -253,33 +254,54 @@ public class UIManager : MonoBehaviour
         _cardRewardContent.GetChild(3).gameObject.SetActive(isOn);
     }
 
-    public void SetViewDeck(List<Card> deck)
+    public void SetViewDeck(List<Card> deck)                // 풀링이지만, Release 개념이 아닌, 활성화 비활성화로 진행됨. Release는 인덱스로 넣는데, Get은 Release된 것 중에서 마지막에 넣었던 것을 꺼내오기 때문에 생긴 문제
     {
-        ViewDeckContent.localPosition = new Vector3(ViewDeckContent.localPosition.x, 0);
-        for (int j = 0; j < _deckUICards.Count; ++j)
-        {
-            if (j > deck.Count - 1)
-            {
-                if (_deckUICards[j].gameObject.activeSelf)
-                    PoolManager.Instance.ReleaseUICard(_deckUICards[j], deck.Count);
-                //continue;
-            }
-            else
-            {
-                PoolManager.Instance.GetUICard(deck.Count);
-                _deckUICards[j].Setup(deck[j].Data);
-            }
-        }
+        _viewDeckContent.localPosition = new Vector3(_viewDeckContent.localPosition.x, 0);
         if (deck.Count > _deckUICards.Count)
         {
             int deckUICardCount = _deckUICards.Count;
-            for (int i = 0; i < deck.Count - deckUICardCount; ++i)
+            for (int i = 0; i < _lastViewDeckCount; ++i)
             {
-                UICard uiCard = PoolManager.Instance.GetUICard();
-                uiCard.Setup(deck[deckUICardCount + i].Data);
-                _deckUICards.Add(uiCard);
+                _deckUICards[i].Setup(deck[i].Data);
+            }
+            for (int i = _lastViewDeckCount; i < _deckUICards.Count; ++i)
+            {
+                _deckUICards[i].gameObject.SetActive(true);
+                _deckUICards[i].Setup(deck[i].Data);
+            }
+            for (int i = deckUICardCount; i < deck.Count; ++i)
+            {
+                _deckUICards.Add(Instantiate(_uiCard, _viewDeckContent));
+                _deckUICards[i].Setup(deck[i].Data);
             }
         }
+        else
+        {
+            if (deck.Count > _lastViewDeckCount)
+            {
+                for (int i = 0; i < _lastViewDeckCount; ++i)
+                {
+                    _deckUICards[i].Setup(deck[i].Data);
+                }
+                for (int i = _lastViewDeckCount; i < deck.Count; ++i)
+                {
+                    _deckUICards[i].gameObject.SetActive(true);
+                    _deckUICards[i].Setup(deck[i].Data);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < deck.Count; ++i)
+                {
+                    _deckUICards[i].Setup(deck[i].Data);
+                }
+                for (int i = deck.Count; i < _lastViewDeckCount; ++i)
+                {
+                    _deckUICards[i].gameObject.SetActive(false);
+                }
+            }
+        }
+        _lastViewDeckCount = deck.Count;
         SetActiveCanvas(CanvasName.ViewDeck, true);
         InGameManager.Instance.Pause(true);
     }

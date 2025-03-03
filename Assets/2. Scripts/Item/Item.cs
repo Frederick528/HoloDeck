@@ -12,33 +12,33 @@ using UnityEngine.UI;
 
 public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    ItemData _defaultData = null;
-    string _defaultDesc = null;
-    public ItemData Data { get; private set; }
+    protected ItemData _defaultData = null;
+    protected string _defaultDesc = null;
+    public ItemData Data { get; protected set; }
     public string Desc;
-    ItemAbility _itemAbility = new();
+    protected ItemAbility _itemAbility = new();
 
-    public Func<UniTask> ItemTask;
+    //public Func<UniTask> ItemTask;
 
-    public Enemy TargetEnemy { get; private set; } = null;        // 아이템 사용 시, 타겟에너미를 받아옴. (나중에 큐에서 체크하기 위함.)
+    //public Enemy TargetEnemy { get; private set; } = null;        // 아이템 사용 시, 타겟에너미를 받아옴. (나중에 큐에서 체크하기 위함.)
 
-    public int CurCharge;
+    //public int CurCharge;
 
     TMP_Text _text;                 // 텍스트 컴포넌트
     Image _backgroundImage;         // 배경 이미지
     RectTransform _textRect;
     RectTransform _bgRect;
 
-    void Start()
+    void Awake()
     {
         _backgroundImage = transform.Find("ItemDescWindow").GetComponent<Image>();
         _text = _backgroundImage.transform.Find("DescText").GetComponent<TMP_Text>();
         _textRect = _text.GetComponent<RectTransform>();
         _bgRect = _backgroundImage.GetComponent<RectTransform>();
-        AdjustBackgroundSize();
+        //AdjustBackgroundSize();
     }
 
-    void AdjustBackgroundSize()
+    public void AdjustBackgroundSize()
     {
         _text.text = Desc;
         if (Desc == "")
@@ -54,10 +54,10 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         _bgRect.sizeDelta = new Vector2(width, height);
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    public virtual void OnPointerEnter(PointerEventData eventData)
     {
         //if (Data.ID == 0) return;
-        if (Desc == "")
+        if (Desc != "")
         {
             _backgroundImage.gameObject.SetActive(true);
         }
@@ -75,7 +75,7 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         _backgroundImage.gameObject.SetActive(false);
     }
 
-    public void Setup(ItemData data)
+    public virtual void Setup(ItemData data)
     {
         _defaultData = data;
         Data = _defaultData;
@@ -85,36 +85,40 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         //_nameText.text = Data.Name;
         //_character.sprite = Data.Sprite;
         //_character.size = new Vector2(7.8f, 4.6f);
-        switch (Data.ItemTag)
-        {
-            case ItemTag.Passive:
-            case ItemTag.Potion:
-                sb.Replace("{Damage}", (_defaultData.Damage).ToString());
-                sb.Replace("{Shield}", (_defaultData.Shield).ToString());
-                sb.Replace("{Draw}", (_defaultData.Draw).ToString());
-                sb.Replace("{Heal}", (_defaultData.Heal).ToString());
-                sb.Replace("{Duration}", (_defaultData.Duration).ToString());
-                break;
-            case ItemTag.Active:
-                if (Data.CurCharge == 0) { CurCharge = Data.MaxCharge; }
-                else if (Data.CurCharge == -1) { CurCharge = 0; }
 
-                int damage = _defaultData.Damage + InGameManager.Instance.player.AttackPower.Value;
-                int shield = _defaultData.Shield + InGameManager.Instance.player.DefencePower.Value;
-                if (damage < 0) { damage = 0; }
-                if (shield < 0) { shield = 0; }
-                sb.Replace("{Damage}", damage.ToString());
-                sb.Replace("{Shield}", shield.ToString());
-                sb.Replace("{Draw}", (_defaultData.Draw).ToString());
-                sb.Replace("{Heal}", (_defaultData.Heal).ToString());
-                sb.Replace("{Duration}", (_defaultData.Duration).ToString());
-                break;
-        }
+        //switch (Data.ItemTag)
+        //{
+        //    case ItemTag.Passive:
+        //    case ItemTag.Potion:
+        //        sb.Replace("{Damage}", (_defaultData.Damage).ToString());
+        //        sb.Replace("{Shield}", (_defaultData.Shield).ToString());
+        //        sb.Replace("{Draw}", (_defaultData.Draw).ToString());
+        //        sb.Replace("{Heal}", (_defaultData.Heal).ToString());
+        //        sb.Replace("{Duration}", (_defaultData.Duration).ToString());
+        //        break;
+        //    case ItemTag.Active:
+        //        if (Data.CurCharge == 0) { CurCharge = Data.MaxCharge; }
+        //        else if (Data.CurCharge == -1) { CurCharge = 0; }
 
-        _defaultDesc = sb.ToString();
-        Desc = sb.ToString();
+        //        int damage = _defaultData.Damage + InGameManager.Instance.player.AttackPower.Value;
+        //        int shield = _defaultData.Shield + InGameManager.Instance.player.DefencePower.Value;
+        //        if (damage < 0) { damage = 0; }
+        //        if (shield < 0) { shield = 0; }
+        //        sb.Replace("{Damage}", damage.ToString());
+        //        sb.Replace("{Shield}", shield.ToString());
+        //        sb.Replace("{Draw}", (_defaultData.Draw).ToString());
+        //        sb.Replace("{Heal}", (_defaultData.Heal).ToString());
+        //        sb.Replace("{Duration}", (_defaultData.Duration).ToString());
+        //        break;
+        //}
 
-        _itemAbility.SetItemAbility(this);
+        //_defaultDesc = sb.ToString();
+        //Desc = sb.ToString();
+
+        _defaultDesc = _defaultData.Descript;
+        Desc = _defaultDesc;
+
+        _itemAbility.SetPassiveItemAbility(this);
 
         AdjustBackgroundSize();
 
@@ -139,68 +143,46 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         //}
     }
 
-    public void ActiveItemDataReset()
-    {
-        if (Data.ItemTag == ItemTag.Active)
-        {
-            Data.Damage = _defaultData.Damage + InGameManager.Instance.player.AttackPower.Value;
-            Data.Shield = _defaultData.Shield + InGameManager.Instance.player.DefencePower.Value;
-            if (Data.Damage < 0) { Data.Damage = 0; }
-            if (Data.Shield < 0) { Data.Shield = 0; }
-            Data.Draw = _defaultData.Draw;
-            Data.Heal = _defaultData.Heal;
-            Data.Duration = _defaultData.Duration;
+    //public void CheckEnemyDead()
+    //{
+    //    switch (Data.AttackType)
+    //    {
+    //        case AttackType.Single:
+    //            TargetEnemy.CheckIfDead(Data.Damage, 1);
+    //            break;
+    //        case AttackType.Multi:
+    //            foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
+    //            {
+    //                enemy.CheckIfDead(Data.Damage, 1);
+    //            }
+    //            break;
+    //        default: break;
+    //    }
+    //}
 
-            StringBuilder sb = new StringBuilder(_defaultData.Descript);
-            sb.Replace("{Damage}", Data.Damage.ToString());
-            sb.Replace("{Shield}", Data.Shield.ToString());
-            sb.Replace("{Draw}", Data.Draw.ToString());
-            sb.Replace("{Heal}", Data.Heal.ToString());
-            sb.Replace("{Duration}", Data.Duration.ToString());
-            Desc = sb.ToString();
-        }
-    }
+    //public void Target(Enemy enemy)
+    //{
+    //    TargetEnemy = enemy;
+    //}
 
-    public void CheckEnemyDead()
-    {
-        switch (Data.AttackType)
-        {
-            case AttackType.Single:
-                TargetEnemy.CheckIfDead(Data.Damage, 1);
-                break;
-            case AttackType.Multi:
-                foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
-                {
-                    enemy.CheckIfDead(Data.Damage, 1);
-                }
-                break;
-            default: break;
-        }
-    }
+    //public async UniTask UseTask()
+    //{
+    //    if (Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
+    //    {
+    //        switch (Data.ItemTag)
+    //        {
+    //            case ItemTag.Potion:
 
-    public void Target(Enemy enemy)
-    {
-        TargetEnemy = enemy;
-    }
-
-    public async UniTask UseTask()
-    {
-        if (Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
-        {
-            switch (Data.ItemTag)
-            {
-                case ItemTag.Potion:
-
-                    break;
-                case ItemTag.Active:
-                    ItemManager.Instance.Charge(Data.MaxCharge);
-                    break;
-            }
-            return;
-        }
-        //CardAbility.SetCardAbility(this);   // checkUseConditions에서 받게 되면 이건 사용 안 할 예정
-        //UniTask uniTask = UniTask.Create(() => CardTask);
-        //await CardAbility.SetCardAbility(this);     // 다른 방식이 있는지 찾아봐야할 듯
-        await ItemTask();
-    }
+    //                break;
+    //            case ItemTag.Active:
+    //                ItemManager.Instance.Charge(Data.MaxCharge);
+    //                break;
+    //        }
+    //        return;
+    //    }
+    //    //CardAbility.SetCardAbility(this);   // checkUseConditions에서 받게 되면 이건 사용 안 할 예정
+    //    //UniTask uniTask = UniTask.Create(() => CardTask);
+    //    //await CardAbility.SetCardAbility(this);     // 다른 방식이 있는지 찾아봐야할 듯
+    //    await ItemTask();
+    //}
 }

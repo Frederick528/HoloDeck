@@ -20,7 +20,7 @@ public class PRS
 public class CardUtils
 {
     public static Vector3 CardScale => new Vector3(2.1f, 2.4f, 1f);
-    public static float LargeCardPosY => -3.15f;
+    public static float LargeCardPosY => -3.2f;
     public static float ThrowAwayCardDelay => 0.3f;
     public static float LoadCardDummyDelay => 0.4f;
     public static float CardAlignmentDelay => 0.3f;

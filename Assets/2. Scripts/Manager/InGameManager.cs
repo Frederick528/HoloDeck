@@ -12,16 +12,16 @@ public class InGameManager : MonoBehaviour
     public Vector2Int[] CardRarityID { get; private set; }
     public Vector2Int[] EnhancedCardRarityID { get; private set; }
 
-    List<int>[] _randomCardList = new List<int>[4];
-    List<int> _popRandomCardList = new();
+    List<CardData>[] _randomCardList = new List<CardData>[4];
+    List<CardData> _popRandomCardList = new();
 
 
     public Dictionary<int, ItemData> ItemDatas { get; private set; } = new Dictionary<int, ItemData>();     // 나중에 ItemManager로 이동
     public Vector2Int PassiveID { get; private set; }
     public Vector2Int ActiveID { get; private set; }
     public Vector2Int PotionID { get; private set; }
-    List<int>[] _randomItemList = new List<int>[3];
-    List<int> _popRandomItemList = new();
+    List<ItemData>[] _randomItemList = new List<ItemData>[3];
+    List<ItemData> _popRandomItemList = new();
 
     public EventQueue AbilityEventQueue = new();                // 나중에 BattleManager로 이동
 
@@ -80,7 +80,7 @@ public class InGameManager : MonoBehaviour
             _randomCardList[i] = new();
             for (int j = CardRarityID[i].x; j < CardRarityID[i].y + 1; ++j)
             {
-                _randomCardList[i].Add(j);
+                _randomCardList[i].Add(FindCardData(j));
             }
         }
     }
@@ -90,48 +90,48 @@ public class InGameManager : MonoBehaviour
         _randomItemList[0] = new();
         for (int j = PassiveID.x; j < PassiveID.y + 1; ++j)
         {
-            _randomItemList[0].Add(j);
+            _randomItemList[0].Add(FindItemData(j));
         }
         _randomItemList[1] = new();
         for (int j = ActiveID.x; j < ActiveID.y + 1; ++j)
         {
-            _randomItemList[1].Add(j);
+            _randomItemList[1].Add(FindItemData(j));
         }
         _randomItemList[2] = new();
         for (int j = PotionID.x; j < PotionID.y + 1; ++j)
         {
-            _randomItemList[2].Add(j);
+            _randomItemList[2].Add(FindItemData(j));
         }
     }
-    public int CardSwapAndPop(int listIdx, int randomIdx)
+    public CardData CardSwapAndPop(int listIdx, int randomIdx)
     {
-        int randomID = -1;
+        CardData randomCard = null;
         if (_randomCardList[listIdx].Count > 1)
         {
             (_randomCardList[listIdx][randomIdx], _randomCardList[listIdx][^1]) = (_randomCardList[listIdx][^1], _randomCardList[listIdx][randomIdx]);
-            randomID = _randomCardList[listIdx][^1];
-            _popRandomCardList.Add(randomID);
+            randomCard = _randomCardList[listIdx][^1];
+            _popRandomCardList.Add(randomCard);
             _randomCardList[listIdx].RemoveAt(_randomCardList[listIdx].Count - 1);
         }
         else if (_randomCardList[listIdx].Count == 1)       // 카드풀이 늘어나면 if문은 빼도 됨. 에픽이랑 레전더리 개수가 부족해서 카드 시각화 안 되는 오류 때문에 조건문 걸어놓은 거임.
         {
-            randomID = _randomCardList[listIdx][0];
-            _popRandomCardList.Add(randomID);
+            randomCard = _randomCardList[listIdx][0];
+            _popRandomCardList.Add(randomCard);
             _randomCardList[listIdx].RemoveAt(0);
         }
         else
         {
             print("End");
         }
-        return randomID;
+        return randomCard;
     }
-    public int RandomCard(int rewardIdx)
+    public CardData RandomCard(int rewardIdx)
     {
         int probability;
         switch (rewardIdx)
         {
             case 1:
-                probability = Random.Range(1, 101);
+                probability = Random.Range(1, 1001);
                 if (probability > 10)
                 {
                     return CardSwapAndPop(0, Random.Range(0, _randomCardList[0].Count));
@@ -149,7 +149,7 @@ public class InGameManager : MonoBehaviour
                     return CardSwapAndPop(3, Random.Range(0, _randomCardList[3].Count));
                 }
             case 2:
-                probability = Random.Range(1, 101);
+                probability = Random.Range(1, 1001);
                 if (probability > 7)
                 {
                     return CardSwapAndPop(1, Random.Range(0, _randomCardList[1].Count));
@@ -163,7 +163,7 @@ public class InGameManager : MonoBehaviour
                     return CardSwapAndPop(3, Random.Range(0, _randomCardList[3].Count));
                 }
             case 3:
-                probability = Random.Range(1, 101);
+                probability = Random.Range(1, 1001);
                 if (probability > 4)
                 {
                     return CardSwapAndPop(2, Random.Range(0, _randomCardList[2].Count));
@@ -175,55 +175,55 @@ public class InGameManager : MonoBehaviour
             case 4:
                 return CardSwapAndPop(3, Random.Range(0, _randomCardList[3].Count));
             default:
-                return -1;
+                return null;
         }
     }
     public void ReturnRandomCard()
     {
-        foreach (int id in _popRandomCardList)
+        foreach (CardData cardData in _popRandomCardList)
         {
-            if (id >= 1000)
+            if (cardData.CardRarity == CardRarity.Legendary)
             {
-                _randomCardList[3].Add(id);
+                _randomCardList[3].Add(cardData);
             }
-            else if (id >= 800)
+            else if (cardData.CardRarity == CardRarity.Epic)
             {
-                _randomCardList[2].Add(id);
+                _randomCardList[2].Add(cardData);
             }
-            else if (id >= 500)
+            else if (cardData.CardRarity == CardRarity.Rare)
             {
-                _randomCardList[1].Add(id);
+                _randomCardList[1].Add(cardData);
             }
             else
             {
-                _randomCardList[0].Add(id);
+                _randomCardList[0].Add(cardData);
             }
         }
         _popRandomCardList.Clear();
     }
-    public int ItemSwapAndPop(int listIdx, int randomIdx)
+    public ItemData ItemSwapAndPop(int listIdx, int randomIdx)
     {
-        int randomID = -1;
+        ItemData randomItem = null;
         if (_randomItemList[listIdx].Count > 1)
         {
             (_randomItemList[listIdx][randomIdx], _randomItemList[listIdx][^1]) = (_randomItemList[listIdx][^1], _randomItemList[listIdx][randomIdx]);
-            randomID = _randomItemList[listIdx][^1];
-            _popRandomItemList.Add(randomID);
+            randomItem = _randomItemList[listIdx][^1];
+            _popRandomItemList.Add(randomItem);
             _randomItemList[listIdx].RemoveAt(_randomItemList[listIdx].Count - 1);
         }
         else if (_randomItemList[listIdx].Count == 1)       // 카드풀이 늘어나면 if문은 빼도 됨. 에픽이랑 레전더리 개수가 부족해서 카드 시각화 안 되는 오류 때문에 조건문 걸어놓은 거임.
         {
-            randomID = _randomItemList[listIdx][0];
-            _popRandomItemList.Add(randomID);
+            randomItem = _randomItemList[listIdx][0];
+            _popRandomItemList.Add(randomItem);
             _randomItemList[listIdx].RemoveAt(0);
         }
         else
         {
             print("End");
         }
-        return randomID;
+        return randomItem;
     }
-    public int RandomItem()     // Potion은 따로 만들 것.
+    public ItemData RandomItem()     // Potion은 따로 만들 것.
     {
         int probability = Random.Range(1, 3);
         if (probability == 1)
@@ -238,20 +238,20 @@ public class InGameManager : MonoBehaviour
     }
     public void ReturnRandomItem()
     {
-        foreach (int id in _popRandomItemList)
+        foreach (ItemData itemData in _popRandomItemList)
         {
-            if (ItemManager.Instance.itemDict.ContainsKey(id) && ItemManager.Instance.itemDict[id]) continue;
-            if (id > 1000)
+            if (ItemManager.Instance.itemDict.ContainsKey(itemData.ID) && ItemManager.Instance.itemDict[itemData.ID]) continue;
+            if (itemData.ItemTag == ItemTag.Potion)
             {
-                _randomItemList[2].Add(id);
+                _randomItemList[2].Add(itemData);
             }
-            else if (id > 500)
+            else if (itemData.ItemTag == ItemTag.Active)
             {
-                _randomItemList[1].Add(id);
+                _randomItemList[1].Add(itemData);
             }
             else
             {
-                _randomItemList[0].Add(id);
+                _randomItemList[0].Add(itemData);
             }
         }
         _popRandomItemList.Clear();
@@ -468,11 +468,11 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.I))
         {
-            ItemManager.Instance.GetItem(501);
+            ItemManager.Instance.GetItem(FindItemData(501));
         }
         if (Input.GetKeyDown(KeyCode.P))
         {
-            ItemManager.Instance.GetItem(1001);
+            ItemManager.Instance.GetItem(FindItemData(1));
         }
         if (Input.GetKeyDown(KeyCode.B))
         {

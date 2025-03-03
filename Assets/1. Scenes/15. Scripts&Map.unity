@@ -4079,7 +4079,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 589534112}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &466297716
 MonoBehaviour:
@@ -5168,7 +5168,6 @@ Transform:
   - {fileID: 1189286151}
   - {fileID: 713989429}
   - {fileID: 1976785166}
-  - {fileID: 1806661065}
   - {fileID: 1200405083}
   - {fileID: 466297715}
   m_Father: {fileID: 0}
@@ -11517,7 +11516,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 589534112}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1200405084
 MonoBehaviour:
@@ -15367,11 +15366,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 0}
-  _uiCard: {fileID: 8050772954400068714, guid: ee0a7fa36e737f0488bb04b744274eda, type: 3}
+  _uiCard: {fileID: 8050772954400068717, guid: ee0a7fa36e737f0488bb04b744274eda, type: 3}
   ActiveTransform: {fileID: 0}
   PotionTransform: {fileID: 0}
   PassiveTransform: {fileID: 0}
-  ViewDeckContent: {fileID: 0}
+  _viewDeckContent: {fileID: 0}
 --- !u!1 &1724400765
 GameObject:
   m_ObjectHideFlags: 0
@@ -15816,52 +15815,6 @@ Transform:
   m_Father: {fileID: 593273568}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -15}
---- !u!1 &1806661064
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1806661065}
-  - component: {fileID: 1806661066}
-  m_Layer: 0
-  m_Name: PotionManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1806661065
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1806661064}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 589534112}
-  m_RootOrder: 9
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1806661066
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1806661064}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49af1d4b3e1edd748a10ef0e9cfb4bd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  potion: {fileID: 1368492783}
-  ClickedPotion: 0
 --- !u!1 &1812277479
 GameObject:
   m_ObjectHideFlags: 0
@@ -16725,7 +16678,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1885827337}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d351617861f5f99488e5f92475256a28, type: 3}
+  m_Script: {fileID: 11500000, guid: 4a970ecc5a948634b817853aab9b7538, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Desc: 
@@ -18112,6 +18065,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb7d34c82c63b6a4087c4f4b47d661cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _passiveItemPrefab: {fileID: 611870843125136255, guid: f735cdbaa04c8f7439f948e9d05ba4d1, type: 3}
   HaveActiveItem: 0
   HavePotionItem: 00000000
   ItemDesc: 

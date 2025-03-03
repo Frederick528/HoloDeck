@@ -15,23 +15,28 @@ public class EventQueue
         _isPending = false;
     }
 
-    public void Enqueue(Card usedCard)      // 체크하려고 했는데, 굳이 is 써서 체크할 바에 그냥 함수 2개 만들기로 함.
-    {
-        //if (usedCard.Used) return;      // 이 전에 막도록 바꿈.
-        _queue.Enqueue(usedCard);
+    //public void Enqueue(Card usedCard)      // 체크하려고 했는데, 굳이 is 써서 체크할 바에 그냥 함수 2개 만들기로 함.
+    //{
+    //    //if (usedCard.Used) return;      // 이 전에 막도록 바꿈.
+    //    _queue.Enqueue(usedCard);
 
-        usedCard.CheckEnemyDead();
-        //usedCard.Used = true;
+    //    usedCard.CheckEnemyDead();
+    //    //usedCard.Used = true;
 
-        if (!_isPending)
-        {
-            DoNext().Forget();
-        }
-    }
+    //    if (!_isPending)
+    //    {
+    //        DoNext().Forget();
+    //    }
+    //}
     public void Enqueue(object usedObject)
     {
         _queue.Enqueue(usedObject);
-        if (usedObject is Item item)
+        
+        if (usedObject is Card card)
+        {
+            card.CheckEnemyDead();
+        }
+        else if (usedObject is UseItem item)
         {
             item.CheckEnemyDead();
         }
@@ -78,7 +83,7 @@ public class EventQueue
             //await CardManager.Instance.CheckCanUseCard(cardEvent);
             await CardManager.Instance.PlayedCard(cardEvent);
         }
-        else if (_queue.Peek() is Item itemEvent)
+        else if (_queue.Peek() is UseItem itemEvent)
         {
             _queue.Dequeue();
             await itemEvent.UseTask();

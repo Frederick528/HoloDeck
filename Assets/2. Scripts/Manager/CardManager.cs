@@ -249,7 +249,7 @@ public class CardManager : MonoBehaviour
 
     async UniTask CheckCanUseingCard(Card card/*, bool singleAtk = false*/)
     {
-        if (card.Used) return;
+        //if (card.Used) return;
         card.Used = true;
         card.CardOrder.SetOriginOrder(-10);
 
@@ -960,6 +960,7 @@ public class CardManager : MonoBehaviour
 
         if (EventSystem.current.IsPointerOverGameObject())
             return;
+        if (card.Used) return;
 
         if (isUseCard.Value)        // 카드 사용 가능 범위에 들어왔는지 확인
         {

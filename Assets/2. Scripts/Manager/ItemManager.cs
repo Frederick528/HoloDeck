@@ -12,13 +12,14 @@ public class ItemManager : MonoBehaviour
     public static ItemManager Instance { get; private set; }
     public Dictionary<int, bool> itemDict = new();      // 리스트로 하고, 중복 제거하는 형식으로도 가능할 듯
 
-    List<Item> _passiveItem;
+    [SerializeField] Item _passiveItemPrefab;
+    List<Item> _passiveItem = new();
 
-    Item _activeItem;
+    ActiveItem _activeItem;
     TMP_Text _activeItemCharge;
     public bool HaveActiveItem;
 
-    Item[] _potionItem = new Item[4];
+    PotionItem[] _potionItem = new PotionItem[4];
     public bool[] HavePotionItem = new bool[4];
 
     int _clickedPotionIdx;
@@ -37,25 +38,24 @@ public class ItemManager : MonoBehaviour
 
     private void Start()
     {
-        _activeItemCharge = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.InGame), "Skill(NIY)").GetComponent<TMP_Text>();      // 이미지로 변경해야 함.
+        _activeItemCharge = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.ActiveTransform, "Skill(NIY)").GetComponent<TMP_Text>();      // 이미지로 변경해야 함.
 
-        _passiveItem = new(UIManager.Instance.PassiveTransform.GetComponentsInChildren<Item>());
-        _activeItem = UIManager.Instance.ActiveTransform.GetComponent<Item>();
-        _potionItem = UIManager.Instance.PotionTransform.GetComponentsInChildren<Item>();
+        _activeItem = UIManager.Instance.ActiveTransform.GetComponent<ActiveItem>();
+        _potionItem = UIManager.Instance.PotionTransform.GetComponentsInChildren<PotionItem>();
         //print(_potionItem[0].Data == null);
     }
 
     // 여기도 SO 이용해서 Dict 만들고 정보 가져올 듯?
 
-    public void SettingItem(int[] reward)
+    public void SettingItem(ItemData[] reward)
     {
         for (int i = 0; i < reward.Length; ++i)
         {
-            int itemIdx = reward[i];      // 값을 미리 저장하지 않으면 에러가 뜸.
+            //int itemIdx = reward[i];      // 값을 미리 저장하지 않으면 에러가 뜸.
             itemRewardContent.GetChild(i).GetComponent<Button>().onClick.AddListener(() =>  // 캐싱할 거임.
             {
-                print(itemIdx);
-                GetItem(itemIdx);
+                //print(itemIdx);
+                GetItem(/*InGameManager.Instance.FindItemData(itemIdx)*/reward[i]);
                 InGameManager.Instance.ReturnRandomItem();
             });
         }
@@ -90,23 +90,23 @@ public class ItemManager : MonoBehaviour
     //    }
     //}
 
-    public void GetItem(int id)
+    public void GetItem(ItemData itemData)
     {
         //Item item = new();
         //item.Setup(InGameManager.Instance.FindItemData(id));
-        if (id > 1000)
+        switch (itemData.ItemTag)
         {
-            ChangePotionItem(id);
+            case ItemTag.Passive:
+                GetPassiveItem(itemData);
+                break;
+            case ItemTag.Active:
+                ChanageActiveItem(itemData);
+                break;
+            case ItemTag.Potion:
+                ChangePotionItem(itemData);
+                break;
         }
-        else if (id > 500)
-        {
-            ChanageActiveItem(id);
-        }
-        else if (id > 0)
-        {
-            _potionItem[3].Setup(InGameManager.Instance.FindItemData(id));      // 효과 적용되는 지만 확인용
-        }
-        itemDict[id] = true;
+        itemDict[itemData.ID] = true;
         //MapManager.Instance.GetReward();
     }
     //public void GetItem(ItemData itemData)
@@ -206,12 +206,17 @@ public class ItemManager : MonoBehaviour
         }
         return Vector2.zero;
     }
-
-    public void ChanageActiveItem(int id)       // 아이템 체인지하는 코드 추가해야 함.
+    public void GetPassiveItem(ItemData itemData)
     {
-        _activeItem.Setup(InGameManager.Instance.FindItemData(id));
-        _activeItemCharge.text = _activeItem.CurCharge.ToString();
+        Item passiveItem = Instantiate(_passiveItemPrefab, UIManager.Instance.PassiveTransform);
+        passiveItem.Setup(itemData);
+        _passiveItem.Add(passiveItem);
+    }
+    public void ChanageActiveItem(ItemData itemData)       // 아이템 체인지하는 코드 추가해야 함.
+    {
         ButtonManager.Instance.ActiveItemButton.onClick.RemoveAllListeners();
+        _activeItem.Setup(itemData);
+        _activeItemCharge.text = _activeItem.CurCharge.ToString();
         HaveActiveItem = true;
         ButtonManager.Instance.ActiveItemButton.onClick.AddListener(() =>
         {
@@ -251,15 +256,17 @@ public class ItemManager : MonoBehaviour
         });
     }
 
-    public void ChangePotionItem(int id)        // 다 차있으면 바꾸는 코드 필요
+    public void ChangePotionItem(ItemData itemData)        // 다 차있으면 바꾸는 코드 필요
     {
-        for (int i = 0; i < HavePotionItem.Length; ++i)        // 칸 다 차있으면 막는 코드 필요
+        for (int i = 0; i < HavePotionItem.Length; ++i)
         {
             if (!HavePotionItem[i])
             {
+                HavePotionItem[i] = true;
 
                 ButtonManager.Instance.PotionButtons[i].onClick.RemoveAllListeners();
-                _potionItem[i].Setup(InGameManager.Instance.FindItemData(id));
+                _potionItem[i].Setup(itemData);
+                _potionItem[i].BtnIdx = i;
                 ButtonManager.Instance.PotionButtons[i].onClick.AddListener(() =>
                 {
                     _clickedPotionIdx = i;
@@ -283,7 +290,6 @@ public class ItemManager : MonoBehaviour
                     _potionItem[i].DescWindowOff();
                     //ButtonManager.Instance.PotionButtons[i].onClick.RemoveAllListeners();
                 });
-                HavePotionItem[i] = true;
                 return;
             }
         }

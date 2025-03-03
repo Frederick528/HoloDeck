@@ -221,7 +221,7 @@ public class SettingMap : MonoBehaviour
                 UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, true, stage.rewardBox);
                 if (stage.rewardBox != 0)
                 {
-                    UIManager.Instance.ShowRewardCard(stage.reward);
+                    UIManager.Instance.ShowRewardCard(stage.CardReward);
                 }
             }
 

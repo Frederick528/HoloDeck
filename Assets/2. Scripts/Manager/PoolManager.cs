@@ -49,14 +49,14 @@ public class PoolManager : MonoBehaviour
 
         TextPool = new ObjectPool<TMP_Text>(CreateTextPooled, OnTakeFromPoolText, OnReturnedToPoolText, OnDestroyPoolText, true, defaultCapacity);
 
-        UICardPool = new ObjectPool<UICard>(CreateUICardPooled, OnTakeFromPoolUICard, OnReturnedToPoolUICard, OnDestroyPoolUICard, true, defaultCapacity);
+        //UICardPool = new ObjectPool<UICard>(CreateUICardPooled, OnTakeFromPoolUICard, OnReturnedToPoolUICard, OnDestroyPoolUICard, true, defaultCapacity);
 
         // 미리 오브젝트 생성 해놓기
         for (int i = 0; i < defaultCapacity; ++i)
         {
             ReleaseCard(CreateCardPooled());
             ReleaseText(CreateTextPooled());
-            ReleaseUICard(CreateUICardPooled());
+            //ReleaseUICard(CreateUICardPooled());
         }
     }
 
@@ -125,49 +125,49 @@ public class PoolManager : MonoBehaviour
         return TextPool.Get();
     }
 
-    UICard CreateUICardPooled()
-    {
-        ++_setActiveUICard;
-        return Instantiate(UICardPrefab, UIManager.Instance.ViewDeckContent);
-    }
-    private void OnTakeFromPoolUICard(UICard uiCard)
-    {
-        uiCard.gameObject.SetActive(true);
-    }
-    private void OnReturnedToPoolUICard(UICard uiCard)
-    {
-        uiCard.gameObject.SetActive(false);
-    }
-    private void OnDestroyPoolUICard(UICard uiCard)
-    {
-        Destroy(uiCard.gameObject);
-    }
-    public UICard GetUICard()
-    {
-        ++_setActiveUICard;
-        return UICardPool.Get();
-    }
-    public UICard GetUICard(int count)
-    {
-        if (_setActiveUICard < count)
-        {
-            ++_setActiveUICard;
-            return UICardPool.Get();
-        }
-        return null;
-    }
-    public void ReleaseUICard(UICard uiCard)
-    {
-        --_setActiveUICard;
-        UICardPool.Release(uiCard);
-    }
-    public void ReleaseUICard(UICard uiCard, int count)
-    {
-        if (_setActiveUICard > count)
-        {
-            --_setActiveUICard;
-            UICardPool.Release(uiCard);
-        }
-    }
+    //UICard CreateUICardPooled()
+    //{
+    //    ++_setActiveUICard;
+    //    return Instantiate(UICardPrefab, UIManager.Instance.ViewDeckContent);
+    //}
+    //private void OnTakeFromPoolUICard(UICard uiCard)
+    //{
+    //    uiCard.gameObject.SetActive(true);
+    //}
+    //private void OnReturnedToPoolUICard(UICard uiCard)
+    //{
+    //    uiCard.gameObject.SetActive(false);
+    //}
+    //private void OnDestroyPoolUICard(UICard uiCard)
+    //{
+    //    Destroy(uiCard.gameObject);
+    //}
+    //public UICard GetUICard()
+    //{
+    //    ++_setActiveUICard;
+    //    return UICardPool.Get();
+    //}
+    //public UICard GetUICard(int count)
+    //{
+    //    if (_setActiveUICard < count)
+    //    {
+    //        ++_setActiveUICard;
+    //        return UICardPool.Get();
+    //    }
+    //    return null;
+    //}
+    //public void ReleaseUICard(UICard uiCard)
+    //{
+    //    --_setActiveUICard;
+    //    UICardPool.Release(uiCard);
+    //}
+    //public void ReleaseUICard(UICard uiCard, int count)
+    //{
+    //    if (_setActiveUICard > count)
+    //    {
+    //        --_setActiveUICard;
+    //        UICardPool.Release(uiCard);
+    //    }
+    //}
 
 }
