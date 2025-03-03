@@ -17,11 +17,11 @@ public class EventQueue
 
     public void Enqueue(Card usedCard)      // 체크하려고 했는데, 굳이 is 써서 체크할 바에 그냥 함수 2개 만들기로 함.
     {
-        if (usedCard.Used) return;
+        //if (usedCard.Used) return;      // 이 전에 막도록 바꿈.
         _queue.Enqueue(usedCard);
 
         usedCard.CheckEnemyDead();
-        usedCard.Used = true;
+        //usedCard.Used = true;
 
         if (!_isPending)
         {
@@ -106,7 +106,7 @@ public class EventQueue
         //gameEvent.Invoke();
     }
 
-    public void QueueClear()        // 큐에 있는 능력들로 적이 다 죽었다고 판단되면, 더 이상 카드를 못 쓰기 때문에 사실상 필요없음. 그래도 혹시 모르니깐.. (가능성 생겨서 쓰는 게 맞음.)
+    public void QueueClear()        // 큐에 있는 능력들로 적이 다 죽었다고 판단되면, 더 이상 카드를 못 쓰기 때문에 사실상 필요없음. 그래도 혹시 모르니깐..
     {
         //_isPending = false;         // Ability를 Action으로 할 경우에는 사용해야 함.
         int count = _queue.Count;
@@ -123,6 +123,10 @@ public class EventQueue
                 if (item.Data.ItemTag == ItemTag.Active)
                 {
                     ItemManager.Instance.Charge(item.Data.MaxCharge);
+                }
+                else if (item.Data.ItemTag == ItemTag.Potion)
+                {
+                    // 사용된 포션 위치를 다시 활성화 해야 함.
                 }
             }
             //--i;

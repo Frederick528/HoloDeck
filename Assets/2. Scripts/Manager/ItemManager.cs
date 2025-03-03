@@ -3,24 +3,27 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 public class ItemManager : MonoBehaviour
 {
     public static ItemManager Instance { get; private set; }
     public Dictionary<int, bool> itemDict = new();      // 리스트로 하고, 중복 제거하는 형식으로도 가능할 듯
 
-    List<Item> _passiveItem = new();
+    List<Item> _passiveItem;
 
     Item _activeItem;
     TMP_Text _activeItemCharge;
+    public bool HaveActiveItem;
 
     Item[] _potionItem = new Item[4];
-    bool[] _boolPotion = new bool[4];
+    public bool[] HavePotionItem = new bool[4];
+
     int _clickedPotionIdx;
 
+    int _arrowIdx;
 
     //public bool arrowOn;   // 게임매니저에서 한 번에 처리하고 싶었으나, Card 사용 코드 때문에 그냥 각각의 코드에서 실행하는 방법 사용. => 성공함.
     public string ItemDesc;
@@ -34,10 +37,12 @@ public class ItemManager : MonoBehaviour
 
     private void Start()
     {
-        _activeItemCharge = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.InGame), "Skill(NIY)").GetComponent<TMP_Text>();
+        _activeItemCharge = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.InGame), "Skill(NIY)").GetComponent<TMP_Text>();      // 이미지로 변경해야 함.
 
+        _passiveItem = new(UIManager.Instance.PassiveTransform.GetComponentsInChildren<Item>());
         _activeItem = UIManager.Instance.ActiveTransform.GetComponent<Item>();
         _potionItem = UIManager.Instance.PotionTransform.GetComponentsInChildren<Item>();
+        //print(_potionItem[0].Data == null);
     }
 
     // 여기도 SO 이용해서 Dict 만들고 정보 가져올 듯?
@@ -207,6 +212,7 @@ public class ItemManager : MonoBehaviour
         _activeItem.Setup(InGameManager.Instance.FindItemData(id));
         _activeItemCharge.text = _activeItem.CurCharge.ToString();
         ButtonManager.Instance.ActiveItemButton.onClick.RemoveAllListeners();
+        HaveActiveItem = true;
         ButtonManager.Instance.ActiveItemButton.onClick.AddListener(() =>
         {
             if (_activeItem.Data.ItemCanUse == ItemCanUse.Anytime)
@@ -237,7 +243,8 @@ public class ItemManager : MonoBehaviour
                 {
                     if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
                     {
-                        BattleManager.Instance.SetActiveArrowCursor(true, 1);
+                        _arrowIdx = 1;
+                        BattleManager.Instance.SetActiveArrowCursor(true, _arrowIdx);
                     }
                 }
             }
@@ -246,16 +253,17 @@ public class ItemManager : MonoBehaviour
 
     public void ChangePotionItem(int id)        // 다 차있으면 바꾸는 코드 필요
     {
-        for (int i = 0; i < _boolPotion.Length; ++i)        // 칸 다 차있으면 막는 코드 필요
+        for (int i = 0; i < HavePotionItem.Length; ++i)        // 칸 다 차있으면 막는 코드 필요
         {
-            if (!_boolPotion[i])
+            if (!HavePotionItem[i])
             {
 
-                //potionBtns[i].onClick.RemoveAllListeners();
+                ButtonManager.Instance.PotionButtons[i].onClick.RemoveAllListeners();
                 _potionItem[i].Setup(InGameManager.Instance.FindItemData(id));
                 ButtonManager.Instance.PotionButtons[i].onClick.AddListener(() =>
                 {
                     _clickedPotionIdx = i;
+                    if (!HavePotionItem[_clickedPotionIdx]) { return; }
                     if (_potionItem[i].Data.ItemCanUse == ItemCanUse.Anytime)
                     {
                         UsePotionItem();
@@ -264,7 +272,8 @@ public class ItemManager : MonoBehaviour
                     {
                         if (_potionItem[i].Data.AttackType == AttackType.Single)
                         {
-                            BattleManager.Instance.SetActiveArrowCursor(true, 2);
+                            _arrowIdx = 2;
+                            BattleManager.Instance.SetActiveArrowCursor(true, _arrowIdx);
                         }
                         else
                         {
@@ -272,9 +281,9 @@ public class ItemManager : MonoBehaviour
                         }
                     }
                     _potionItem[i].DescWindowOff();
-                    ButtonManager.Instance.PotionButtons[i].onClick.RemoveAllListeners();
+                    //ButtonManager.Instance.PotionButtons[i].onClick.RemoveAllListeners();
                 });
-                _boolPotion[i] = true;
+                HavePotionItem[i] = true;
                 return;
             }
         }
@@ -283,19 +292,18 @@ public class ItemManager : MonoBehaviour
     public void UseActiveItem()
     {
         InGameManager.Instance.AbilityEventQueue.Enqueue(_activeItem);
-        Charge(-_activeItem.CurCharge);
+        Charge(-_activeItem.Data.MaxCharge);
     }
 
     public void UsePotionItem()
     {
         InGameManager.Instance.AbilityEventQueue.Enqueue(_potionItem[_clickedPotionIdx]);
-        ButtonManager.Instance.PotionButtons[_clickedPotionIdx].onClick.RemoveAllListeners();
-        _boolPotion[_clickedPotionIdx] = false;
+        HavePotionItem[_clickedPotionIdx] = false;
     }
 
     public void Charge(int value)
     {
-        if (_activeItem == null) return;
+        if (!HaveActiveItem) return;
 
         _activeItem.CurCharge = Mathf.Clamp(_activeItem.CurCharge + value, 0, _activeItem.Data.MaxCharge);
 
@@ -311,25 +319,22 @@ public class ItemManager : MonoBehaviour
 
     public void AttackSingleTarget(Enemy enemy)     // 아이템 비사용시, 끄는 방법이 필요함. + 다른 것들 터치 안 되도록 설정
     {
-        if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+        switch (_arrowIdx)
         {
-            _activeItem.Target(enemy);
-            _activeItem.CheckEnemyDead();
-            //enemy.CheckIfDead(_activeItem.Data.Damage, 1);      // CheckEnemyDead 이걸로 바꿔야 함.
-            UseActiveItem();
+            case 1:
+                if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+                {
+                    _activeItem.Target(enemy);
+                    _activeItem.CheckEnemyDead();
+                    //enemy.CheckIfDead(_activeItem.Data.Damage, 1);      // CheckEnemyDead 이걸로 바꿔야 함.
+                    UseActiveItem();
+                }
+                break;
+            case 2:
+                _potionItem[_clickedPotionIdx].Target(enemy);
+                _potionItem[_clickedPotionIdx].CheckEnemyDead();
+                UsePotionItem();
+                break;
         }
-        //if (!arrowOn) return false;
-        //_activeItem.Target(EnemyManager.Instance.TargetEnemy);
-        //enemy.CheckIfDead(_activeItem.Data.Damage, 1);      // CheckEnemyDead 이걸로 바꿔야 함.
-        //UseActiveItem();
-        //InGameManager.Instance.AbilityEventQueue.Enqueue(_activeItem);
-        //enemy.TakeDamageEnemy(_activeItem.Damage).Forget();            // 일단 forget했는데, 상황에 따라 달라짐
-
-        //Charge(-_activeItem.maxCharge);
-
-        //SettingSingleTarget(false);
-        //BattleManager.Instance.SetActiveArrowCursor(false, 1);
-
-        //return true;
     }
 }

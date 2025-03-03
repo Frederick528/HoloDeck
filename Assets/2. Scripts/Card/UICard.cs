@@ -44,7 +44,8 @@ public class UICard : MonoBehaviour
         sb.Replace("{Shield}", (data.Shield).ToString());
         sb.Replace("{Count}", (data.Count).ToString());
         sb.Replace("{Draw}", (data.Draw).ToString());
-        sb.Replace("{Reduce}", (data.Reduce).ToString());
+        sb.Replace("{Discard}", (data.Discard).ToString());
+        sb.Replace("{Remove}", (data.Remove).ToString());
 
         _nameText.text = data.Name;
         _costText.text = data.Cost.ToString();

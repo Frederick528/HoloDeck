@@ -46,7 +46,7 @@ public class CardManager : MonoBehaviour
 
     //[SerializeField] GameObject ArrowCursor;
 
-    //[SerializeField] GameObject cardPrefab;
+    //[SerializeField] GameObject CardPrefab;
 
     //public Transform cardRewardContent;
 
@@ -72,7 +72,7 @@ public class CardManager : MonoBehaviour
     public enum ECardState { Nothing, CanMouseOver, CanMouseDrag, OnlyMouseClick }
 
     int shopCardIdx;
-
+                                    
     //UICard[] uICards = new UICard[4];
 
     //EventQueue _eventQueue = new();
@@ -86,6 +86,10 @@ public class CardManager : MonoBehaviour
 
     private void Start()
     {
+        CardSpawnPoint = UIManager.Instance.Player.Find("CardSpawnPoint");
+        CardDummyTr = UIManager.Instance.Player.Find("CardDummy");
+        myCardLeft = UIManager.Instance.Player.Find("MyCardLeft");
+        myCardRight = UIManager.Instance.Player.Find("MyCardRight");
         isUseCard.Subscribe((canUse) =>
         {
             _selectCard?.TurnOnOutline(canUse);
@@ -121,7 +125,7 @@ public class CardManager : MonoBehaviour
     }
     public void AddDeck(CardData cardData, EAddDeck eAddDeck)       // 덱에 카드를 추가할 때 사용, 핸드로 카드를 가져올 때는 DrawCard 함수 사용. (주로 데이터 자체가 이동할 때 사용)
     {
-        PoolManager.Instance.GetCard(/*out GameObject cardObject, */out Card setCard);
+        Card setCard = PoolManager.Instance.GetCard(/*out Card setCard*/);
         GameObject cardObject = setCard.gameObject;
         setCard.name = cardData.Name;
         cardObject.name = cardData.Name;    // 시각화 용도
@@ -245,6 +249,8 @@ public class CardManager : MonoBehaviour
 
     async UniTask CheckCanUseingCard(Card card/*, bool singleAtk = false*/)
     {
+        if (card.Used) return;
+        card.Used = true;
         card.CardOrder.SetOriginOrder(-10);
 
         HandCard.Remove(card);
@@ -255,6 +261,7 @@ public class CardManager : MonoBehaviour
         //    card.Target(EnemyManager.Instance.targetEnemy);
         if (!await card.BeforeUsingCard())
         {
+            card.Used = false;
             HandCard.Add(card);
             SetOriginOrder();
             CardAlignment();
@@ -444,7 +451,7 @@ public class CardManager : MonoBehaviour
     //    if (drawCard == null)
     //        return;
 
-    //    //GameObject cardObject = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity);
+    //    //GameObject cardObject = Instantiate(CardPrefab, cardSpawnPoint.position, Quaternion.identity);
     //    //Card card = drawCard.GetComponent<Card>();
     //    //drawCard.Setup(drawCard.Data);
     //    for (int i = 0; i < drawCard.Length; ++i)
@@ -539,15 +546,15 @@ public class CardManager : MonoBehaviour
             SetOriginOrder();
             CardAlignment();
         }
-        //if (HandCard.Count <= _usedCard.Data.Reduce)
+        //if (HandCard.Count <= _usedCard.Data.Discard)
         //{
         //    // 카드 효과가 버리기일 경우, 위 상황에서는 바로 버리기 가능해야 함. 반대로 카드조건이 버리기일 경우, 불가능.
         //}
         if (_usedCard != null)      // 카드 조건이 버리기인 경우
         {
-            if (_usedCard.Data.Reduce > 0)
+            if (_usedCard.Data.Discard > 0)
             {
-                if (_selectedCards.Count == _usedCard.Data.Reduce)
+                if (_selectedCards.Count == _usedCard.Data.Discard)
                 {
                     ButtonManager.Instance.DiscardBtnInvert(true);
                 }
@@ -556,13 +563,13 @@ public class CardManager : MonoBehaviour
                     ButtonManager.Instance.DiscardBtnInvert(false);
                 }
             }
-            else if (_usedCard.Data.Reduce == 0)
+            else if (_usedCard.Data.Discard == 0)
             {
                 ButtonManager.Instance.DiscardBtnInvert(true);
             }
             else
             {
-                if (_selectedCards.Count >= -_usedCard.Data.Reduce)
+                if (_selectedCards.Count >= -_usedCard.Data.Discard)
                 {
                     ButtonManager.Instance.DiscardBtnInvert(true);
                 }
@@ -574,9 +581,9 @@ public class CardManager : MonoBehaviour
         }
         else                        // 카드 효과가 버리기인 경우
         {
-            if (_playedCard.Data.Reduce > 0)
+            if (_playedCard.Data.Discard > 0)
             {
-                if (_selectedCards.Count == _playedCard.Data.Reduce)
+                if (_selectedCards.Count == _playedCard.Data.Discard)
                 {
                     ButtonManager.Instance.DiscardBtnInvert(true);
                 }
@@ -585,13 +592,13 @@ public class CardManager : MonoBehaviour
                     ButtonManager.Instance.DiscardBtnInvert(false);
                 }
             }
-            else if (_playedCard.Data.Reduce == 0)
+            else if (_playedCard.Data.Discard == 0)
             {
                 ButtonManager.Instance.DiscardBtnInvert(true);
             }
             else
             {
-                if (_selectedCards.Count >= -_playedCard.Data.Reduce)
+                if (_selectedCards.Count >= -_playedCard.Data.Discard)
                 {
                     ButtonManager.Instance.DiscardBtnInvert(true);
                 }
@@ -623,6 +630,19 @@ public class CardManager : MonoBehaviour
     public void ChangeRemove(bool remove)
     {
         _discard = remove;
+        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.SelectedCard, remove);
+        if (remove)
+        {
+            SetCardState(3);   // Click
+            UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.Battle, false);
+            ButtonManager.Instance.ActItemBtnInvert(false);
+        }
+        else
+        {
+            SetCardState(2);    // Drag
+            UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.Battle, true);
+            ButtonManager.Instance.ActItemBtnInvert(true);
+        }
     }
     void DiscardCard(Card card)      // 카드 선택해서 버리기
     {
@@ -717,7 +737,7 @@ public class CardManager : MonoBehaviour
     void SelectedCardsAlignment(List<Card> cardList)     // 버리기, 삭제 등에서 사용할 예정
     {
         List<PRS> CardPRSs;
-        CardPRSs = SerialAlignment(new Vector2(-6, 1), new Vector2(6, 1), cardList.Count, CardUtils.CardScale * 0.7f);
+        CardPRSs = SerialAlignment(new Vector2(-6, 0.5f), new Vector2(6, 0.5f), cardList.Count, CardUtils.CardScale * 0.7f);
         for (int i = 0; i < cardList.Count; i++)
         {
             Card targetCard = cardList[i];
@@ -846,7 +866,7 @@ public class CardManager : MonoBehaviour
         //    return;
         if (card.Selected)
         {
-            card.MoveTransform(new PRS(card.transform.position, Quaternion.identity, CardUtils.CardScale * 0.7f));
+            card.MoveTransform(new PRS(new(card.transform.position.x, card.transform.position.y, 0), Quaternion.identity, CardUtils.CardScale * 0.7f));
             card.CardOrder.SetMostFrontOrder(false);
             return;
         }
@@ -859,13 +879,14 @@ public class CardManager : MonoBehaviour
         if (card.Selected)
         {
             card.transform.DOKill();
-            card.MoveTransform(new PRS(card.transform.position, Quaternion.identity, CardUtils.CardScale * 0.8f));
+            //Vector3 selectedLargePos = new(card.transform.position.x, card.transform.position.y, 0);      // z축 변경 안 하면, MouseOver 문제 생김.
+            card.MoveTransform(new PRS(new(card.transform.position.x, card.transform.position.y, -1), Quaternion.identity, CardUtils.CardScale * 0.8f));
             card.CardOrder.SetMostFrontOrder(true);
             return;
         }
 
         card.transform.DOKill();              // 정렬 드로우 문제 등 제거
-        Vector3 largePos = new Vector3(card.OriginPRS.pos.x, CardUtils.LargeCardPosY, -1f);      // z축 변경 안 하면, MouseOver 문제 생김.
+        Vector3 largePos = new(card.OriginPRS.pos.x, CardUtils.LargeCardPosY, -1f);      // z축 변경 안 하면, MouseOver 문제 생김.
         card.MoveTransform(new PRS(largePos, Quaternion.identity, CardUtils.CardScale * 1.2f));
 
         card.CardOrder.SetMostFrontOrder(true);

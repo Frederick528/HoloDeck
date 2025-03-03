@@ -272,7 +272,7 @@ public class InGameManager : MonoBehaviour
         //return _cardSO.Cards.Find(x => x.ID == ID);
         //return Array.Find(_cardSO.Cards, x => x.ID == ID);
     }
-    public ItemData FindItemData(int id)   // ID 값으로 카드데이터 가져오기
+    public ItemData FindItemData(int id)   // ID 값으로 데이터 가져오기
     {
         //ItemData itemData;
         if (ItemDatas.TryGetValue(id, out ItemData itemData))

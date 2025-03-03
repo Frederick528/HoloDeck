@@ -14,7 +14,7 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     ItemData _defaultData = null;
     string _defaultDesc = null;
-    public ItemData Data;
+    public ItemData Data { get; private set; }
     public string Desc;
     ItemAbility _itemAbility = new();
 
@@ -35,10 +35,17 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         _text = _backgroundImage.transform.Find("DescText").GetComponent<TMP_Text>();
         _textRect = _text.GetComponent<RectTransform>();
         _bgRect = _backgroundImage.GetComponent<RectTransform>();
+        AdjustBackgroundSize();
     }
 
     void AdjustBackgroundSize()
     {
+        _text.text = Desc;
+        if (Desc == "")
+        {
+            _bgRect.sizeDelta = Vector2.zero;
+            return;
+        }
         // 텍스트의 크기를 가져와서 배경 이미지 크기 설정 (_textRectWidth = 처음 정해준 width 길이, _text.preferredHeight 줄바꿈 되는만큼의 길이)
         float width;
         float height;
@@ -49,10 +56,13 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (Data == null) return;
-        _backgroundImage.gameObject.SetActive(true);
-        _text.text = Desc;
-        AdjustBackgroundSize();
+        //if (Data.ID == 0) return;
+        if (Desc == "")
+        {
+            _backgroundImage.gameObject.SetActive(true);
+        }
+        //_text.text = Desc;
+        //AdjustBackgroundSize();
     }
     public void OnPointerExit(PointerEventData eventData)
     {
@@ -69,11 +79,6 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         _defaultData = data;
         Data = _defaultData;
-        if (Data.MaxCharge != 0)
-        {
-            if (Data.CurCharge == 0) { CurCharge = Data.MaxCharge; }
-            else if (Data.CurCharge == -1) { CurCharge = 0; }
-        }
 
         StringBuilder sb = new StringBuilder(_defaultData.Descript);
 
@@ -91,6 +96,9 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 sb.Replace("{Duration}", (_defaultData.Duration).ToString());
                 break;
             case ItemTag.Active:
+                if (Data.CurCharge == 0) { CurCharge = Data.MaxCharge; }
+                else if (Data.CurCharge == -1) { CurCharge = 0; }
+
                 int damage = _defaultData.Damage + InGameManager.Instance.player.AttackPower.Value;
                 int shield = _defaultData.Shield + InGameManager.Instance.player.DefencePower.Value;
                 if (damage < 0) { damage = 0; }
@@ -107,6 +115,8 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         Desc = sb.ToString();
 
         _itemAbility.SetItemAbility(this);
+
+        AdjustBackgroundSize();
 
         //switch (Data.CardRarity)
         //{
@@ -177,7 +187,15 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         if (Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
         {
-            ItemManager.Instance.Charge(Data.MaxCharge);
+            switch (Data.ItemTag)
+            {
+                case ItemTag.Potion:
+
+                    break;
+                case ItemTag.Active:
+                    ItemManager.Instance.Charge(Data.MaxCharge);
+                    break;
+            }
             return;
         }
         //CardAbility.SetCardAbility(this);   // checkUseConditions에서 받게 되면 이건 사용 안 할 예정

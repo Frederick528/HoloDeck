@@ -71,7 +71,7 @@ public class ReadSpreadSheet : MonoBehaviour
     {
         Debug.Log("Card Load Start");
         string address = "https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8";
-        string range = "A4:L";
+        string range = "A4:O";
         string cardSheetID = "1809511646";
         string enhancedCardSheetID = "1928890928";
         using UnityWebRequest wwwC =
@@ -164,12 +164,15 @@ public class ReadSpreadSheet : MonoBehaviour
                 Shield = ConvertInt32(cells[4]),
                 Count = ConvertInt32(cells[5]),
                 Draw = ConvertInt32(cells[6]),
-                Reduce = ConvertInt32(cells[7]),
+                Discard = ConvertInt32(cells[7]),
+                Remove = ConvertInt32(cells[8]),
                 //data.CardUseDelay = ConvertSingle(cells[7]);
-                Price = ConvertInt32(cells[8]),
-                Descript = LineBreakStr(cells[9]),
-                CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[10]),
-                CardRarity = (CardRarity)Enum.Parse(typeof(CardRarity), cells[11])
+                Price = ConvertInt32(cells[9]),
+                Descript = LineBreakStr(cells[10]),
+                IsSimpleAB = NullTrueBool(cells[11]),
+                HasCondition = NullFalseBool(cells[12]),
+                CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[13]),
+                CardRarity = (CardRarity)Enum.Parse(typeof(CardRarity), cells[14])
             };
             data.Sprite = Array.Find(CardSO.CardSprites, x => x.name == data.ID.ToString());
             //try
@@ -499,6 +502,15 @@ public class ReadSpreadSheet : MonoBehaviour
     {
         //int _value = Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
         return Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
+    }
+
+    bool NullFalseBool(string str)
+    {
+        return string.IsNullOrEmpty(str) ? false : bool.Parse(str);
+    }
+    bool NullTrueBool(string str)
+    {
+        return string.IsNullOrEmpty(str) ? true : bool.Parse(str);
     }
 
     string ItemEnumCellCheck(string str)

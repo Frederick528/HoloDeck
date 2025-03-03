@@ -27,6 +27,10 @@ public class UIManager : MonoBehaviour
     public Dictionary<int, Transform> CanvasDict = new();
 
     Transform _canvas;
+    [HideInInspector]
+    public Transform Player;
+
+
 
     [Header("UICardPrefab")]
     [SerializeField] GameObject _uiCard;
@@ -46,11 +50,13 @@ public class UIManager : MonoBehaviour
     public Transform ActiveTransform;
     [HideInInspector]
     public Transform PotionTransform;
+    [HideInInspector]
+    public Transform PassiveTransform;
 
     Transform _cardRewardContent;
     Transform _itemRewardContent;
 
-    Transform _viewDeckContent;
+    public Transform ViewDeckContent;
     List<UICard> _deckUICards = new();
 
     UICard[] _uiCards = new UICard[4];
@@ -70,6 +76,7 @@ public class UIManager : MonoBehaviour
         Instance = this;
 
         _canvas = GameObject.Find("Canvas").GetComponent<Transform>();
+        Player = GameObject.Find("Player").GetComponent<Transform>();
 
         for (int i = 0; i < /*CanvasList.Count*/_canvas.childCount; ++i)
         {
@@ -84,14 +91,15 @@ public class UIManager : MonoBehaviour
         _itemEnlargePanel = Canvas(CanvasName.ItemReward).Find("ItemEnlargePanel");
         _itemRewardContent = ContinueFindChildByName(Canvas(CanvasName.ItemReward), "Content");
 
-        _viewDeckContent = ContinueFindChildByName(Canvas(CanvasName.ViewDeck), "Content");
-        for (int i = 0; i < _viewDeckContent.childCount; ++i)
-        {
-            _deckUICards.Add(_viewDeckContent.GetChild(i).GetComponent<UICard>());
-        }
+        ViewDeckContent = ContinueFindChildByName(Canvas(CanvasName.ViewDeck), "Content");
+        //for (int i = 0; i < ViewDeckContent.childCount; ++i)
+        //{
+        //    _deckUICards.Add(ViewDeckContent.GetChild(i).GetComponent<UICard>());
+        //}
 
         ActiveTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "ActiveItemButton");
-        PotionTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "Potion");
+        PotionTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "PotionItem");
+        PassiveTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "PassiveContent");
 
         _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel");
         _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel");
@@ -247,23 +255,30 @@ public class UIManager : MonoBehaviour
 
     public void SetViewDeck(List<Card> deck)
     {
-        _viewDeckContent.localPosition = new Vector3(_viewDeckContent.localPosition.x, 0);
-        if (deck.Count > _deckUICards.Count)
-        {
-            for (int i = 0; i < deck.Count - _deckUICards.Count; ++i)
-            {
-                _deckUICards.Add(Instantiate(_uiCard, _viewDeckContent).GetComponent<UICard>());
-            }
-        }
+        ViewDeckContent.localPosition = new Vector3(ViewDeckContent.localPosition.x, 0);
         for (int j = 0; j < _deckUICards.Count; ++j)
         {
             if (j > deck.Count - 1)
             {
-                _deckUICards[j].gameObject.SetActive(false);
-                continue;
+                if (_deckUICards[j].gameObject.activeSelf)
+                    PoolManager.Instance.ReleaseUICard(_deckUICards[j], deck.Count);
+                //continue;
             }
-            _deckUICards[j].gameObject.SetActive(true);
-            _deckUICards[j].Setup(deck[j].Data);
+            else
+            {
+                PoolManager.Instance.GetUICard(deck.Count);
+                _deckUICards[j].Setup(deck[j].Data);
+            }
+        }
+        if (deck.Count > _deckUICards.Count)
+        {
+            int deckUICardCount = _deckUICards.Count;
+            for (int i = 0; i < deck.Count - deckUICardCount; ++i)
+            {
+                UICard uiCard = PoolManager.Instance.GetUICard();
+                uiCard.Setup(deck[deckUICardCount + i].Data);
+                _deckUICards.Add(uiCard);
+            }
         }
         SetActiveCanvas(CanvasName.ViewDeck, true);
         InGameManager.Instance.Pause(true);

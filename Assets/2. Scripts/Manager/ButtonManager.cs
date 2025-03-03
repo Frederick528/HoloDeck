@@ -37,9 +37,9 @@ public class ButtonManager : MonoBehaviour
     {
         DiscardButton.interactable = state;
     }
-    public void DiscardCancelBtnInvert(bool state)
+    public void SetActiveDiscardCancelBtn(bool state)
     {
-        DiscardCancelButton.interactable = state;
+        DiscardCancelButton.gameObject.SetActive(state);
     }
     public void TurnEndBtn()
     {

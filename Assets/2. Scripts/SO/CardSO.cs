@@ -45,7 +45,8 @@ public class CardData : ICloneable
     //public int EnhancedCount;
     public int Draw;
     //public int EnhancedDraw;
-    public int Reduce;
+    public int Discard;
+    public int Remove;
     //public float CardUseDelay;
     public int Price;
     [TextArea(1, 5)]
@@ -53,6 +54,8 @@ public class CardData : ICloneable
     //[TextArea(1, 5)]
     //public string EnhancedDescript;
     public Sprite Sprite;
+    public bool IsSimpleAB;
+    public bool HasCondition;
     public CardTag CardTag;
     public CardRarity CardRarity;
 
@@ -67,11 +70,14 @@ public class CardData : ICloneable
             Shield = Shield,
             Count = Count,
             Draw = Draw,
-            Reduce = Reduce,
+            Discard = Discard,
+            Remove = Remove,
             //CardUseDelay = CardUseDelay,
             Price = Price,
             Descript = Descript,
             Sprite = Sprite,
+            IsSimpleAB = IsSimpleAB,
+            HasCondition = HasCondition,
             CardTag = CardTag,
             CardRarity = CardRarity
         };

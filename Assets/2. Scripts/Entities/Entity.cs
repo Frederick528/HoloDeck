@@ -51,6 +51,7 @@ public abstract class Entity : MonoBehaviour
     }
     public virtual bool TakeDamage(int dmg)
     {
+        TextEffect(-dmg).Forget();
         if (shield.Value >= dmg)
         {
             shield.Value -= dmg;
@@ -61,7 +62,6 @@ public abstract class Entity : MonoBehaviour
             shield.Value = 0;
             curHp.Value -= dmg;
         }
-        TextEffect(-dmg).Forget();
         animator.Play("Hit", -1, 0);  // 타격 당하는 애니메이션 실행
         if (curHp.Value > 0)
             return false;
@@ -87,7 +87,7 @@ public abstract class Entity : MonoBehaviour
 
     async UniTask TextEffect(int value)
     {
-        PoolManager.Instance.GetText(out TMP_Text textEffect);
+        TMP_Text textEffect = PoolManager.Instance.GetText(/*out TMP_Text textEffect*/);
         textEffect.transform.position = transform.position;
         textEffect.transform.localScale = Vector3.one;
         textEffect.color = value < 0 ? Color.red : Color.green;

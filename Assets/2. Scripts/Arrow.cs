@@ -97,7 +97,7 @@ public class Arrow : MonoBehaviour
                 }
                 else if (ArrowIndex == 2)
                 {
-
+                    ItemManager.Instance.AttackSingleTarget(EnemyManager.Instance.TargetEnemy);
                 }
             }
             BattleManager.Instance.SetActiveArrowCursor(false, ArrowIndex);

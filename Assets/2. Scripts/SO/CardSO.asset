@@ -25,12 +25,15 @@ MonoBehaviour:
     Cost: 1
     Damage: 5
     Shield: 0
-    Count: 1
+    Count: 0
     Draw: 0
-    Reduce: 2
+    Discard: 2
+    Remove: 0
     Price: 5
-    Descript: After discarding {Reduce} cards, {Damage} Damage
+    Descript: After discarding {Discard} cards, {Damage} Damage
     Sprite: {fileID: 21300000, guid: 333b7c667071587429495f9d7a0e30ab, type: 3}
+    IsSimpleAB: 1
+    HasCondition: 1
     CardTag: 0
     CardRarity: 0
   - Name: Name2
@@ -38,14 +41,17 @@ MonoBehaviour:
     Cost: 1
     Damage: 3
     Shield: 0
-    Count: 1
+    Count: 0
     Draw: 1
-    Reduce: 0
+    Discard: 0
+    Remove: 0
     Price: 10
     Descript: '{Damage} Damage
 
       {Draw} Draw'
     Sprite: {fileID: 21300000, guid: 4ce8264444c6f514389a17a43b7c06a2, type: 3}
+    IsSimpleAB: 1
+    HasCondition: 0
     CardTag: 0
     CardRarity: 0
   - Name: Name3
@@ -55,10 +61,13 @@ MonoBehaviour:
     Shield: 0
     Count: 2
     Draw: 0
-    Reduce: 0
+    Discard: 0
+    Remove: 0
     Price: 20
     Descript: All {Damage} Damage X {Count}
     Sprite: {fileID: 21300000, guid: b623f7f0719d30347aa015ccca90bb88, type: 3}
+    IsSimpleAB: 1
+    HasCondition: 0
     CardTag: 1
     CardRarity: 0
   - Name: Name4
@@ -68,10 +77,13 @@ MonoBehaviour:
     Shield: 0
     Count: 0
     Draw: 2
-    Reduce: 0
+    Discard: 0
+    Remove: 0
     Price: 15
     Descript: '{Draw} Draw'
     Sprite: {fileID: 21300000, guid: 196654c1199bc374382e8a9cb436bb23, type: 3}
+    IsSimpleAB: 1
+    HasCondition: 0
     CardTag: 2
     CardRarity: 0
   - Name: Name5
@@ -81,10 +93,13 @@ MonoBehaviour:
     Shield: 6
     Count: 0
     Draw: 0
-    Reduce: 0
+    Discard: 0
+    Remove: 0
     Price: 5
     Descript: '{Shield} Shield'
     Sprite: {fileID: 21300000, guid: a1db32974a8af034ebc447482b88d69d, type: 3}
+    IsSimpleAB: 1
+    HasCondition: 0
     CardTag: 2
     CardRarity: 0
   - Name: Name6
@@ -94,10 +109,13 @@ MonoBehaviour:
     Shield: 0
     Count: 0
     Draw: 1
-    Reduce: 1
+    Discard: 1
+    Remove: 0
     Price: 10
-    Descript: After {Draw} Draw, discarding {Reduce} card
+    Descript: After {Draw} Draw, discarding {Discard} card
     Sprite: {fileID: 21300000, guid: e134758ca8a46bb4684676ec229a43d9, type: 3}
+    IsSimpleAB: 0
+    HasCondition: 0
     CardTag: 2
     CardRarity: 0
   - Name: Name7
@@ -107,10 +125,13 @@ MonoBehaviour:
     Shield: 5
     Count: 0
     Draw: 0
-    Reduce: 1
+    Discard: 1
+    Remove: 0
     Price: 5
-    Descript: After discarding {Reduce} card, {Shield} Shield
+    Descript: After discarding {Discard} card, {Shield} Shield
     Sprite: {fileID: 0}
+    IsSimpleAB: 1
+    HasCondition: 1
     CardTag: 2
     CardRarity: 0
   - Name: Name8
@@ -118,14 +139,17 @@ MonoBehaviour:
     Cost: 0
     Damage: 1
     Shield: 1
-    Count: 1
+    Count: 0
     Draw: 0
-    Reduce: 0
+    Discard: 0
+    Remove: 0
     Price: 15
     Descript: '{Damage} Damage
 
       {Shield} Shield'
     Sprite: {fileID: 0}
+    IsSimpleAB: 1
+    HasCondition: 0
     CardTag: 0
     CardRarity: 0
   - Name: Name9
@@ -135,10 +159,13 @@ MonoBehaviour:
     Shield: 0
     Count: 2
     Draw: 0
-    Reduce: 0
+    Discard: 0
+    Remove: 0
     Price: 20
     Descript: '{Damage} Damage X {Count}'
     Sprite: {fileID: 0}
+    IsSimpleAB: 1
+    HasCondition: 0
     CardTag: 0
     CardRarity: 1
   - Name: Name10
@@ -146,9 +173,10 @@ MonoBehaviour:
     Cost: 1
     Damage: 3
     Shield: 3
-    Count: 1
+    Count: 0
     Draw: 1
-    Reduce: 0
+    Discard: 0
+    Remove: 0
     Price: 35
     Descript: '{Damage} Damage
 
@@ -156,6 +184,8 @@ MonoBehaviour:
 
       {Draw} Draw'
     Sprite: {fileID: 0}
+    IsSimpleAB: 1
+    HasCondition: 0
     CardTag: 0
     CardRarity: 1
   - Name: Name11
@@ -165,10 +195,13 @@ MonoBehaviour:
     Shield: 0
     Count: 4
     Draw: 0
-    Reduce: 0
+    Discard: 0
+    Remove: 0
     Price: 30
     Descript: All {Damage} Damage X {Count}
     Sprite: {fileID: 0}
+    IsSimpleAB: 1
+    HasCondition: 0
     CardTag: 1
     CardRarity: 1
   - Name: Name12
@@ -176,12 +209,15 @@ MonoBehaviour:
     Cost: 3
     Damage: 30
     Shield: 0
-    Count: 1
+    Count: 0
     Draw: 0
-    Reduce: 0
+    Discard: 0
+    Remove: 0
     Price: 40
     Descript: '{Damage} Damage'
     Sprite: {fileID: 0}
+    IsSimpleAB: 1
+    HasCondition: 0
     CardTag: 0
     CardRarity: 2
   - Name: Name13
@@ -191,10 +227,13 @@ MonoBehaviour:
     Shield: 0
     Count: 3
     Draw: 0
-    Reduce: 0
+    Discard: 0
+    Remove: 0
     Price: 105
     Descript: All {Damage} Damage X {Count}
     Sprite: {fileID: 0}
+    IsSimpleAB: 1
+    HasCondition: 0
     CardTag: 1
     CardRarity: 3
   - Name: EnhancedName2
@@ -202,14 +241,17 @@ MonoBehaviour:
     Cost: 1
     Damage: 4
     Shield: 0
-    Count: 1
+    Count: 0
     Draw: 2
-    Reduce: 0
+    Discard: 0
+    Remove: 0
     Price: 40
     Descript: '{Damage} Damage
 
       {Draw} Draw'
     Sprite: {fileID: 0}
+    IsSimpleAB: 1
+    HasCondition: 0
     CardTag: 0
     CardRarity: 0
   - Name: EnhancedName3
@@ -219,10 +261,13 @@ MonoBehaviour:
     Shield: 0
     Count: 3
     Draw: 0
-    Reduce: 0
+    Discard: 0
+    Remove: 0
     Price: 60
     Descript: '{Damage} Damage X {Count}'
     Sprite: {fileID: 0}
+    IsSimpleAB: 1
+    HasCondition: 0
     CardTag: 0
     CardRarity: 1
   - Name: EnhancedName4
@@ -232,10 +277,13 @@ MonoBehaviour:
     Shield: 0
     Count: 3
     Draw: 0
-    Reduce: 0
+    Discard: 0
+    Remove: 0
     Price: 50
     Descript: All {Damage} Damage X {Count}
     Sprite: {fileID: 0}
+    IsSimpleAB: 1
+    HasCondition: 0
     CardTag: 1
     CardRarity: 0
   - Name: EnhancedName5
@@ -245,10 +293,13 @@ MonoBehaviour:
     Shield: 0
     Count: 0
     Draw: 3
-    Reduce: 0
+    Discard: 0
+    Remove: 0
     Price: 30
     Descript: '{Draw} Draw'
     Sprite: {fileID: 0}
+    IsSimpleAB: 1
+    HasCondition: 0
     CardTag: 2
     CardRarity: 0
   - Name: EnhancedName6
@@ -258,10 +309,13 @@ MonoBehaviour:
     Shield: 11
     Count: 0
     Draw: 0
-    Reduce: 0
+    Discard: 0
+    Remove: 0
     Price: 10
     Descript: '{Shield} Shield'
     Sprite: {fileID: 0}
+    IsSimpleAB: 1
+    HasCondition: 0
     CardTag: 2
     CardRarity: 0
   ClassifyCardRarityID:

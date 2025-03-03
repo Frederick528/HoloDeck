@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
+using static UIManager;
 
 public class PoolManager : MonoBehaviour
 {
@@ -10,21 +11,23 @@ public class PoolManager : MonoBehaviour
 
     public int defaultCapacity = 10;
     //public int maxPoolSize = 10;
-    public Card cardPrefab;
-    public TMP_Text TextEffect;
+    public Card CardPrefab;
+    public TMP_Text TextEffectPrefab;
+    public UICard UICardPrefab;
     //public GameObject _mapPrefab;
 
-    [SerializeField] Transform cardSpawnPoint;
-    [SerializeField] Transform deck;
-
-    [SerializeField] Transform _textParent;
+    Transform _deck;
+    Transform _textParent;
+    //Transform ViewDeckContent;
 
     //[SerializeField] Transform map;
     //[SerializeField] Transform HandCard;
+    int _setActiveUICard;
+
 
     public IObjectPool<Card> CardPool { get; private set; }
     public IObjectPool<TMP_Text> TextPool { get; private set; }
-    //public IObjectPool<GameObject> MapPool { get; private set; }
+    public IObjectPool<UICard> UICardPool { get; private set; }
 
     private void Awake()
     {
@@ -36,61 +39,35 @@ public class PoolManager : MonoBehaviour
         Init();
     }
 
-    //private void Start()
-    //{
-    //    _textParent = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.InGame), "TextEffect");
-    //    Init();
-    //}
-
     private void Init()
     {
-        //MapPool = new ObjectPool<GameObject>(CreateMapPooledItem, OnTakeFromPool, OnReturnedToPool,
-        //OnDestroyPoolObject, true, defaultCapacity/*, maxPoolSize*/);
-        CardPool = new ObjectPool<Card>(CreateCardPooledItem, OnTakeFromPoolCard, OnReturnedToPoolCard,
-        OnDestroyPoolCard, true, defaultCapacity/*, maxPoolSize*/);
+        _deck = UIManager.Instance.Player.Find("Deck");
+        _textParent = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.InGame), "TextEffect");
+        //ViewDeckContent = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.ViewDeck), "Content");
 
-        TextPool = new ObjectPool<TMP_Text>(CreateTextPooledItem, OnTakeFromPoolText, OnReturnedToPoolText, OnDestroyPoolText, true, defaultCapacity);
+        CardPool = new ObjectPool<Card>(CreateCardPooled, OnTakeFromPoolCard, OnReturnedToPoolCard, OnDestroyPoolCard, true, defaultCapacity);
+
+        TextPool = new ObjectPool<TMP_Text>(CreateTextPooled, OnTakeFromPoolText, OnReturnedToPoolText, OnDestroyPoolText, true, defaultCapacity);
+
+        UICardPool = new ObjectPool<UICard>(CreateUICardPooled, OnTakeFromPoolUICard, OnReturnedToPoolUICard, OnDestroyPoolUICard, true, defaultCapacity);
 
         // 미리 오브젝트 생성 해놓기
-        for (int i = 0; i < defaultCapacity; i++)
+        for (int i = 0; i < defaultCapacity; ++i)
         {
-            //Map map = CreateMapPooledItem().GetComponent<Map>();
-            //map.MapRelease();
-            ReleaseCard(CreateCardPooledItem());
-            ReleaseText(CreateTextPooledItem());
+            ReleaseCard(CreateCardPooled());
+            ReleaseText(CreateTextPooled());
+            ReleaseUICard(CreateUICardPooled());
         }
     }
 
     // 생성
-    private Card CreateCardPooledItem()
+    private Card CreateCardPooled()
     {
-        Card cardObj = Instantiate(cardPrefab, cardSpawnPoint.position, Quaternion.identity, deck);
+        Card cardObj = Instantiate(CardPrefab, CardManager.Instance.CardSpawnPoint.position, Quaternion.identity, _deck);
         //Card card = cardObj.GetComponent<Card>();
         //card.CardPool = this.CardPool;
 
         return cardObj;
-    }
-    //private GameObject CreateMapPooledItem()
-    //{
-    //    GameObject mapPoolGo = Instantiate(_mapPrefab, Vector3.one * 0.5f, Quaternion.identity, map);
-    //    mapPoolGo.GetComponent<Map>().MapPool = this.MapPool;
-    //    return mapPoolGo;
-    //}
-    private TMP_Text CreateTextPooledItem()
-    {
-        return Instantiate(TextEffect, _textParent);
-    }
-    private void OnTakeFromPoolText(TMP_Text text)
-    {
-        text.gameObject.SetActive(true);
-    }
-    private void OnReturnedToPoolText(TMP_Text text)
-    {
-        text.gameObject.SetActive(false);
-    }
-    private void OnDestroyPoolText(TMP_Text text)
-    {
-        Destroy(text.gameObject);
     }
 
     // 사용
@@ -111,18 +88,9 @@ public class PoolManager : MonoBehaviour
         Destroy(card.gameObject);
     }
 
-    public void ReleaseText(TMP_Text text)
+    public Card GetCard(/*out Card card*/)
     {
-        TextPool.Release(text);
-    }
-    public void GetText(out TMP_Text text)
-    {
-        text = TextPool.Get();
-    }
-
-    public void GetCard(/*out GameObject obj, */out Card card)
-    {
-        card = CardPool.Get();
+       return CardPool.Get();
     }
     public void ReleaseCard(Card card)
     {
@@ -132,4 +100,74 @@ public class PoolManager : MonoBehaviour
     //{
     //    CardPool.Release(new System.Tuple<GameObject, Card>(obj, card));
     //}
+    private TMP_Text CreateTextPooled()
+    {
+        return Instantiate(TextEffectPrefab, _textParent);
+    }
+    private void OnTakeFromPoolText(TMP_Text text)
+    {
+        text.gameObject.SetActive(true);
+    }
+    private void OnReturnedToPoolText(TMP_Text text)
+    {
+        text.gameObject.SetActive(false);
+    }
+    private void OnDestroyPoolText(TMP_Text text)
+    {
+        Destroy(text.gameObject);
+    }
+    public void ReleaseText(TMP_Text text)
+    {
+        TextPool.Release(text);
+    }
+    public TMP_Text GetText()
+    {
+        return TextPool.Get();
+    }
+
+    UICard CreateUICardPooled()
+    {
+        ++_setActiveUICard;
+        return Instantiate(UICardPrefab, UIManager.Instance.ViewDeckContent);
+    }
+    private void OnTakeFromPoolUICard(UICard uiCard)
+    {
+        uiCard.gameObject.SetActive(true);
+    }
+    private void OnReturnedToPoolUICard(UICard uiCard)
+    {
+        uiCard.gameObject.SetActive(false);
+    }
+    private void OnDestroyPoolUICard(UICard uiCard)
+    {
+        Destroy(uiCard.gameObject);
+    }
+    public UICard GetUICard()
+    {
+        ++_setActiveUICard;
+        return UICardPool.Get();
+    }
+    public UICard GetUICard(int count)
+    {
+        if (_setActiveUICard < count)
+        {
+            ++_setActiveUICard;
+            return UICardPool.Get();
+        }
+        return null;
+    }
+    public void ReleaseUICard(UICard uiCard)
+    {
+        --_setActiveUICard;
+        UICardPool.Release(uiCard);
+    }
+    public void ReleaseUICard(UICard uiCard, int count)
+    {
+        if (_setActiveUICard > count)
+        {
+            --_setActiveUICard;
+            UICardPool.Release(uiCard);
+        }
+    }
+
 }

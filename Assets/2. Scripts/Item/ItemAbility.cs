@@ -57,7 +57,7 @@ public class ItemAbility
                 item.ItemTask = () => UniTask.Create(async () =>
                 {
                     await DelayTask(0.5f);
-                    await HealAB(item);
+                    await SingleAttackAB(item);
                 });
                 //InGameManager.Instance.player.Heal(10).Forget();
                 //_potionBtns[idx].onClick.RemoveAllListeners();

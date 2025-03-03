@@ -38,7 +38,7 @@ public class Card : MonoBehaviour
 
     CardData _defaultData = null;
     //string _defaultDesc = null;
-    public CardData Data;
+    public CardData Data { get; private set; }
     public string Desc;
     public int ID;      // 일단 혹시 몰라서 만들었으나, Data.Id로 받을 수 있음.
 
@@ -86,7 +86,7 @@ public class Card : MonoBehaviour
         //sb.Replace("{Shield}", (_defaultData.Shield + InGameManager.Instance.player.DefencePower.Value).ToString());
         //sb.Replace("{Count}", (_defaultData.Count).ToString());
         //sb.Replace("{Draw}", (_defaultData.Draw).ToString());
-        //sb.Replace("{Reduce}", (_defaultData.Reduce).ToString());
+        //sb.Replace("{Discard}", (_defaultData.Discard).ToString());
         //_defaultDesc = sb.ToString();
         //Desc = sb.ToString();
 
@@ -201,14 +201,15 @@ public class Card : MonoBehaviour
         if (Data.Shield < 0) { Data.Shield = 0; }
         Data.Count = _defaultData.Count + 0;
         Data.Draw = _defaultData.Draw + 0;
-        Data.Reduce = _defaultData.Reduce + 0;
+        Data.Discard = _defaultData.Discard + 0;
         
         StringBuilder sb = new StringBuilder(_defaultData.Descript);
         sb.Replace("{Damage}", Data.Damage.ToString());
         sb.Replace("{Shield}", Data.Shield.ToString());
         sb.Replace("{Count}", Data.Count.ToString());
         sb.Replace("{Draw}", Data.Draw.ToString());
-        sb.Replace("{Reduce}", Data.Reduce.ToString());
+        sb.Replace("{Discard}", Data.Discard.ToString());
+        sb.Replace("{Remove}", Data.Remove.ToString());
         Desc = sb.ToString();
             
         _costText.text = (_defaultData.Cost + 0).ToString();
@@ -228,7 +229,7 @@ public class Card : MonoBehaviour
     //    sb.Replace("{Shield}", (_defaultData.Shield + InGameManager.Instance.player.DefencePower.Value).ToString());
     //    sb.Replace("{Count}", (_defaultData.Count).ToString());
     //    sb.Replace("{Draw}", (_defaultData.Draw).ToString());
-    //    sb.Replace("{Reduce}", (_defaultData.Reduce).ToString());
+    //    sb.Replace("{Discard}", (_defaultData.Discard).ToString());
     //    Desc = sb.ToString();
     //    CardDataReset();
     //    //switch (data)
