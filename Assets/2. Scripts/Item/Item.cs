@@ -45,6 +45,8 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public void AdjustBackgroundSize()
     {
         _text.text = Desc;
+        _backgroundImage.gameObject.SetActive(true);        // 껐따 켜야 텍스트가 정렬되고, 길이와 높이값을 정확히 가져올 수 있음.
+        _backgroundImage.gameObject.SetActive(false);
         if (Desc == "")
         {
             _bgRect.sizeDelta = Vector2.zero;
@@ -84,7 +86,7 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         _defaultData = data;
         Data = _defaultData;
 
-        StringBuilder sb = new StringBuilder(_defaultData.Descript);
+        //StringBuilder sb = new StringBuilder(_defaultData.Descript);
 
         //_nameText.text = Data.Name;
         //_character.sprite = Data.Sprite;

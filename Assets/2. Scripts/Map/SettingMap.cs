@@ -197,7 +197,7 @@ public class SettingMap
             }
 
             // 떠나려는 방에 보상이 떴는데, 그 보상을 받지 않고 떠난다면, 잠시 해당 스테이지 보상을 숨김. 
-            if (MapManager.Instance.currStage.rewardBox != -1 && !MapManager.Instance.currStage.rewarded)
+            if (MapManager.Instance.currStage.rewardBox != -1 && (MapManager.Instance.currStage.ChangedItem || !MapManager.Instance.currStage.rewarded))
             {
                 //MapManager.Instance.rewardCanvas.GetChild(MapManager.Instance.currStage.rewardBox).gameObject.SetActive(false);
                 UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, false, MapManager.Instance.currStage.rewardBox);
@@ -215,13 +215,12 @@ public class SettingMap
             
             // 방 입장 코드 추가
             stage.stageContext.Transition(stage.stage);
-
             // 들어간 방에 보상이 떴었는데, 예전에 보상을 받지 않았다면, 그 보상을 다시 시각화함.
-            if (stage.rewardBox != -1 && !stage.rewarded)
+            if (stage.rewardBox != -1 && (stage.ChangedItem || !stage.rewarded))
             {
                 //MapManager.Instance.rewardCanvas.GetChild(stage.rewardBox).gameObject.SetActive(true);
                 UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, true, stage.rewardBox);
-                if (stage.rewardBox != 0)
+                if (stage.rewardBox != 0)       // 보물은 한 스테이지에 한 개이기 때문에 UI를 변경할 필요 없음.
                 {
                     UIManager.Instance.ShowRewardCard(stage.CardReward);
                 }

@@ -17,6 +17,8 @@ public class UIItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     ItemData _itemData;
 
+    int _curCharge;
+
     //private void Start()
     //{
     //    _image = GetComponent<Image>();
@@ -49,15 +51,18 @@ public class UIItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             {
                 _itemBtn.onClick.AddListener(() =>
                 {
-                    ItemManager.Instance.GetItem(_itemData);
+                    bool changed = ItemManager.Instance.GetItem(_itemData);
                     InGameManager.Instance.ReturnRandomItem();
-                    UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.ItemReward, false);
+                    MapManager.Instance.GetReward(changed);
+                    if (!changed)
+                    {
+                        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.ItemReward, false);
+                        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.Map, true);
+                    }
                 });
 
             }
         }
-        if (_backgroundImage.gameObject.activeSelf)
-            _backgroundImage.gameObject.SetActive(false);
         _itemData = itemData;
         if (_itemData.Sprite)
             _image.sprite = _itemData.Sprite;
@@ -66,11 +71,11 @@ public class UIItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void AdjustBackgroundSize()
     {
-        if (_itemData.Descript == "")
-        {
-            _bgRect.sizeDelta = Vector2.zero;
-            return;
-        }
+        //if (_itemData.Descript == "")
+        //{
+        //    _bgRect.sizeDelta = Vector2.zero;
+        //    return;
+        //}
         switch (_itemData.ItemTag)
         {
             case ItemTag.Passive:
@@ -86,6 +91,8 @@ public class UIItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 break;
         }
         // 텍스트의 크기를 가져와서 배경 이미지 크기 설정 (_textRectWidth = 처음 정해준 width 길이, _text.preferredHeight 줄바꿈 되는만큼의 길이)
+        _backgroundImage.gameObject.SetActive(true);        // 텍스트 자동줄바꿈 계산을 위해 활성화해야함. 그런데, UIItem은 캔버스도 켜야되기 때문에 설명배경창뿐만 아니라 UIManager에서 추가로 캔버스를 껐다킴.
+        _backgroundImage.gameObject.SetActive(false);
         float width;
         float height;
         width = _text.preferredWidth < _textRect.rect.width ? _text.preferredWidth : _textRect.rect.width;

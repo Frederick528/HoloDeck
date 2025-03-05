@@ -71,6 +71,8 @@ public class UIManager : MonoBehaviour
     TMP_Text _drawCount;
     TMP_Text _dummyCount;
 
+    bool _addRewardItemCount;
+
 
     private void Awake()
     {
@@ -254,11 +256,23 @@ public class UIManager : MonoBehaviour
     }
     public void ShowRewardItem(ItemData[] reward)
     {
+        SetActiveCanvas(CanvasName.ItemReward, true);
         for (int i = 0; i < reward.Length; ++i)
         {
-            if (reward[i] == null) continue;
+            if (reward[i] == null)
+            {
+                _itemRewardContent.GetChild(i).gameObject.SetActive(false);
+                continue;
+            }
+            else if (!_itemRewardContent.GetChild(i).gameObject.activeSelf)
+            {
+                if (i == reward.Length - 1 && !_addRewardItemCount)
+                    continue;
+                _itemRewardContent.GetChild(i).gameObject.SetActive(true);
+            }
             _uiItems[i].Setup(reward[i]);
         }
+        SetActiveCanvas(CanvasName.ItemReward, false);
     }
     public void ChangeRewardCardCount(bool isOn)
     {
@@ -266,6 +280,7 @@ public class UIManager : MonoBehaviour
     }
     public void ChangeRewardItemCount(bool isOn)
     {
+        _addRewardItemCount = isOn;
         _itemRewardContent.GetChild(3).gameObject.SetActive(isOn);
     }
 

@@ -37,7 +37,8 @@ public class ActiveItem : UseItem
 
         StringBuilder sb = new StringBuilder(_defaultData.Descript);
 
-        if (Data.CurCharge == 0) { CurCharge = Data.MaxCharge; }
+        if (MapManager.Instance.currStage.ChangedItem) { CurCharge = MapManager.Instance.currStage.ChangedActiveItemCharge.Item2; }     // 여기 부분 좀 더 고칠 것
+        else if (Data.CurCharge == 0) { CurCharge = Data.MaxCharge; }
         else if (Data.CurCharge == -1) { CurCharge = 0; }
 
         int damage = _defaultData.Damage + InGameManager.Instance.player.AttackPower.Value;

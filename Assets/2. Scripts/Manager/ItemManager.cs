@@ -53,6 +53,71 @@ public class ItemManager : MonoBehaviour
             _passiveTransform.offsetMin = new Vector2(_passiveTransform.offsetMin.x - 1600 < -1600 * (int)(_passiveItem.Count * 0.05f) ? -1600 * (int)(_passiveItem.Count * 0.05f) : _passiveTransform.offsetMin.x - 1600, _passiveTransform.offsetMin.y);
         });
 
+        ButtonManager.Instance.ActiveItemButton.onClick.AddListener(() =>
+        {
+            if (_activeItem.Data.ItemCanUse == ItemCanUse.Anytime)
+            {
+                if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+                {
+                    UseActiveItem();
+                }
+            }
+            else if (_activeItem.Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.MyTurn)      // Arrow Cursor 쓰는 것들을 의미함.
+            {
+                if (_activeItem.Data.AttackType == AttackType.None)
+                {
+                    if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+                    {
+                        UseActiveItem();
+                    }
+                }
+                else if (_activeItem.Data.AttackType == AttackType.Multi)
+                {
+                    if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+                    {
+                        //_activeItem.CheckEnemyDead();
+                        UseActiveItem();
+                    }
+                }
+                else if (_activeItem.Data.AttackType == AttackType.Single)
+                {
+                    if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+                    {
+                        _arrowIdx = 1;
+                        BattleManager.Instance.SetActiveArrowCursor(true, _arrowIdx);
+                    }
+                }
+            }
+        });
+
+        for (int idx = 0; idx < HavePotionItem.Length; ++idx)
+        {
+            int i = idx;
+            ButtonManager.Instance.PotionButtons[i].onClick.AddListener(() =>
+            {
+                _clickedPotionIdx = i;
+                if (!HavePotionItem[_clickedPotionIdx]) { return; }
+                if (_potionItem[i].Data.ItemCanUse == ItemCanUse.Anytime)
+                {
+                    UsePotionItem();
+                }
+                else if (_potionItem[i].Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.MyTurn)      // Arrow Cursor가 쓰이거나 전투 관련을 의미함.
+                {
+                    if (_potionItem[i].Data.AttackType == AttackType.Single)
+                    {
+                        _arrowIdx = 2;
+                        BattleManager.Instance.SetActiveArrowCursor(true, _arrowIdx);
+                    }
+                    else
+                    {
+                        UsePotionItem();
+                    }
+                }
+                _potionItem[i].DescWindowOff();
+                //ButtonManager.Instance.PotionButtons[i].onClick.RemoveAllListeners();
+            });
+        }
+
         //print(_potionItem[0].Data == null);
     }
 
@@ -101,8 +166,9 @@ public class ItemManager : MonoBehaviour
     //    }
     //}
 
-    public void GetItem(ItemData itemData)
+    public bool GetItem(ItemData itemData)
     {
+        bool changed = false;
         //Item item = new();
         //item.Setup(InGameManager.Instance.FindItemData(id));
         switch (itemData.ItemTag)
@@ -111,14 +177,15 @@ public class ItemManager : MonoBehaviour
                 GetPassiveItem(itemData);
                 break;
             case ItemTag.Active:
-                ChanageActiveItem(itemData);
+                changed = ChanageActiveItem(itemData);
                 break;
             case ItemTag.Potion:
-                ChangePotionItem(itemData);
+                changed = ChangePotionItem(itemData);
                 break;
         }
         itemDict[itemData.ID] = true;
-        //MapManager.Instance.GetReward();
+
+        return changed;
     }
     //public void GetItem(ItemData itemData)
     //{
@@ -239,87 +306,98 @@ public class ItemManager : MonoBehaviour
             ButtonManager.Instance.SetActiveTurnPassiveBtn(true);
         }
     }
-    public void ChanageActiveItem(ItemData itemData)       // 아이템 체인지하는 코드 추가해야 함.
+    public bool ChanageActiveItem(ItemData itemData)       // 아이템 체인지하는 코드 추가해야 함.
     {
-        ButtonManager.Instance.ActiveItemButton.onClick.RemoveAllListeners();
+        bool changed = false;
+        if (HaveActiveItem)
+        {
+            MapManager.Instance.ChangedUseItem(_activeItem.Data, _activeItem.CurCharge);
+            changed = true;
+        }
+        //ButtonManager.Instance.ActiveItemButton.onClick.RemoveAllListeners();
         _activeItem.Setup(itemData);
         _activeItemCharge.text = _activeItem.CurCharge.ToString();
         HaveActiveItem = true;
-        ButtonManager.Instance.ActiveItemButton.onClick.AddListener(() =>
-        {
-            if (_activeItem.Data.ItemCanUse == ItemCanUse.Anytime)
-            {
-                if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
-                {
-                    UseActiveItem();
-                }
-            }
-            else if (_activeItem.Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.MyTurn)      // Arrow Cursor 쓰는 것들을 의미함.
-            {
-                if (_activeItem.Data.AttackType == AttackType.None)
-                {
-                    if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
-                    {
-                        UseActiveItem();
-                    }
-                }
-                else if (_activeItem.Data.AttackType == AttackType.Multi)
-                {
-                    if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
-                    {
-                        //_activeItem.CheckEnemyDead();
-                        UseActiveItem();
-                    }
-                }
-                else if (_activeItem.Data.AttackType == AttackType.Single)
-                {
-                    if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
-                    {
-                        _arrowIdx = 1;
-                        BattleManager.Instance.SetActiveArrowCursor(true, _arrowIdx);
-                    }
-                }
-            }
-        });
+        //ButtonManager.Instance.ActiveItemButton.onClick.AddListener(() =>
+        //{
+        //    if (_activeItem.Data.ItemCanUse == ItemCanUse.Anytime)
+        //    {
+        //        if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+        //        {
+        //            UseActiveItem();
+        //        }
+        //    }
+        //    else if (_activeItem.Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.MyTurn)      // Arrow Cursor 쓰는 것들을 의미함.
+        //    {
+        //        if (_activeItem.Data.AttackType == AttackType.None)
+        //        {
+        //            if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+        //            {
+        //                UseActiveItem();
+        //            }
+        //        }
+        //        else if (_activeItem.Data.AttackType == AttackType.Multi)
+        //        {
+        //            if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+        //            {
+        //                //_activeItem.CheckEnemyDead();
+        //                UseActiveItem();
+        //            }
+        //        }
+        //        else if (_activeItem.Data.AttackType == AttackType.Single)
+        //        {
+        //            if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+        //            {
+        //                _arrowIdx = 1;
+        //                BattleManager.Instance.SetActiveArrowCursor(true, _arrowIdx);
+        //            }
+        //        }
+        //    }
+        //});
+        return changed;
     }
 
-    public void ChangePotionItem(ItemData itemData)        // 다 차있으면 바꾸는 코드 필요
+    public bool ChangePotionItem(ItemData itemData)        // 다 차있으면 바꾸는 코드 필요
     {
+        bool changed = false;
         for (int i = 0; i < HavePotionItem.Length; ++i)
         {
             if (!HavePotionItem[i])
             {
                 HavePotionItem[i] = true;
 
-                ButtonManager.Instance.PotionButtons[i].onClick.RemoveAllListeners();
+                //ButtonManager.Instance.PotionButtons[i].onClick.RemoveAllListeners();
                 _potionItem[i].Setup(itemData);
                 _potionItem[i].BtnIdx = i;
-                ButtonManager.Instance.PotionButtons[i].onClick.AddListener(() =>
-                {
-                    _clickedPotionIdx = i;
-                    if (!HavePotionItem[_clickedPotionIdx]) { return; }
-                    if (_potionItem[i].Data.ItemCanUse == ItemCanUse.Anytime)
-                    {
-                        UsePotionItem();
-                    }
-                    else if (_potionItem[i].Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.MyTurn)      // Arrow Cursor가 쓰이거나 전투 관련을 의미함.
-                    {
-                        if (_potionItem[i].Data.AttackType == AttackType.Single)
-                        {
-                            _arrowIdx = 2;
-                            BattleManager.Instance.SetActiveArrowCursor(true, _arrowIdx);
-                        }
-                        else
-                        {
-                            UsePotionItem();
-                        }
-                    }
-                    _potionItem[i].DescWindowOff();
-                    //ButtonManager.Instance.PotionButtons[i].onClick.RemoveAllListeners();
-                });
-                return;
+                //ButtonManager.Instance.PotionButtons[i].onClick.AddListener(() =>
+                //{
+                //    _clickedPotionIdx = i;
+                //    if (!HavePotionItem[_clickedPotionIdx]) { return; }
+                //    if (_potionItem[i].Data.ItemCanUse == ItemCanUse.Anytime)
+                //    {
+                //        UsePotionItem();
+                //    }
+                //    else if (_potionItem[i].Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.MyTurn)      // Arrow Cursor가 쓰이거나 전투 관련을 의미함.
+                //    {
+                //        if (_potionItem[i].Data.AttackType == AttackType.Single)
+                //        {
+                //            _arrowIdx = 2;
+                //            BattleManager.Instance.SetActiveArrowCursor(true, _arrowIdx);
+                //        }
+                //        else
+                //        {
+                //            UsePotionItem();
+                //        }
+                //    }
+                //    _potionItem[i].DescWindowOff();
+                //    //ButtonManager.Instance.PotionButtons[i].onClick.RemoveAllListeners();
+                //});
+                return changed;
             }
         }
+        // 포션을 교체하는 코드
+        changed = true;
+        return changed;
     }
 
     public void UseActiveItem()

@@ -15,6 +15,9 @@ public class Map : MonoBehaviour
     public bool cleared = false;
     public bool rewarded = false;
 
+    public bool ChangedItem = false;
+    public (ItemData, int) ChangedActiveItemCharge;
+
     public int rewardBox { get; private set; } = -1;
     public CardData[] CardReward { get; private set; } = new CardData[4];
     public ItemData[] ItemReward { get; private set; } = new ItemData[4];
@@ -123,12 +126,12 @@ public class Map : MonoBehaviour
 
         }
 
-        else if (rewardBox != -1 && rewarded)
+        else if (rewarded)
             //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(false);
             UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, false, rewardBox);
     }
 
-    public void TreasureBox()
+    public void TreasureBox(bool changed)
     {
         if (rewardBox == -1)
         {
@@ -146,10 +149,27 @@ public class Map : MonoBehaviour
             UIManager.Instance.ShowRewardItem(ItemReward);
 
         }
-
-        else if (rewardBox != -1 && rewarded)
+        else if (changed)
+        {
+            ChangedItem = true;
+            UIManager.Instance.ShowRewardItem(ItemReward);      // 앞에서 ChangedUseItem 진행돼야 함.
+        }
+        else if (rewarded)
+        {
+            ChangedItem = false;
             //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(false);
             UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, false, rewardBox);
+        }
+    }
+
+    public void ChangedUseItem(ItemData itemData, int curCharge)
+    {
+        ChangedActiveItemCharge.Item1 = itemData;
+        ChangedActiveItemCharge.Item2 = curCharge;
+        ItemReward[0] = itemData;
+        ItemReward[1] = null;
+        ItemReward[2] = null;
+        ItemReward[3] = null;
     }
 
     //public void EnterStage()

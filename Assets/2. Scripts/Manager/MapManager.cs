@@ -26,7 +26,7 @@ public class MapManager : MonoBehaviour
     private void Start()
     {
         _settingMap.Start();
-        //ShowAllMap();
+        ShowAllMap();
     }
 
     public async UniTaskVoid ClearStage()
@@ -65,7 +65,7 @@ public class MapManager : MonoBehaviour
     {
         currStage.RewardBox();
     }
-    public void GetReward()
+    public void GetReward(bool changed = false)
     {
         currStage.rewarded = true;
         switch (currStage.State)
@@ -75,14 +75,19 @@ public class MapManager : MonoBehaviour
                 RewardStage();
                 break;
             case Map.StageState.Treasure:
-                Treasure();
+                Treasure(changed);
                 break;
         }
     }
 
-    public void Treasure()
+    public void Treasure(bool changed)
     {
-        currStage.TreasureBox();
+        currStage.TreasureBox(changed);
+    }
+
+    public void ChangedUseItem(ItemData itemData, int curCharge)
+    {
+        currStage.ChangedUseItem(itemData, curCharge);
     }
 
     public void ShowAllMap()

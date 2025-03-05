@@ -24,7 +24,7 @@ MonoBehaviour:
     Heal: 0
     Duration: 0
     Price: 5
-    Descript: asd
+    Descript: 
     Sprite: {fileID: 0}
     ItemTag: 0
     ItemRarity: 0
@@ -40,7 +40,7 @@ MonoBehaviour:
     Heal: 0
     Duration: 0
     Price: 10
-    Descript: qwe
+    Descript: 
     Sprite: {fileID: 0}
     ItemTag: 0
     ItemRarity: 0
