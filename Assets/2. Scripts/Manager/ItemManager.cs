@@ -14,6 +14,7 @@ public class ItemManager : MonoBehaviour
 
     [SerializeField] Item _passiveItemPrefab;
     List<Item> _passiveItem = new();
+    RectTransform _passiveTransform;
 
     ActiveItem _activeItem;
     TMP_Text _activeItemCharge;
@@ -38,28 +39,38 @@ public class ItemManager : MonoBehaviour
 
     private void Start()
     {
+        _passiveTransform = (RectTransform)UIManager.Instance.ContinueFindChildByName(UIManager.Instance.PassiveTransform, "PassiveContent");
         _activeItemCharge = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.ActiveTransform, "Skill(NIY)").GetComponent<TMP_Text>();      // 이미지로 변경해야 함.
 
         _activeItem = UIManager.Instance.ActiveTransform.GetComponent<ActiveItem>();
         _potionItem = UIManager.Instance.PotionTransform.GetComponentsInChildren<PotionItem>();
+        ButtonManager.Instance.TurnPassiveButton[0].onClick.AddListener(() =>
+        {
+            _passiveTransform.offsetMin = new Vector2(_passiveTransform.offsetMin.x + 1600 > 0 ? 0 : _passiveTransform.offsetMin.x + 1600, _passiveTransform.offsetMin.y);
+        });
+        ButtonManager.Instance.TurnPassiveButton[1].onClick.AddListener(() =>
+        {
+            _passiveTransform.offsetMin = new Vector2(_passiveTransform.offsetMin.x - 1600 < -1600 * (int)(_passiveItem.Count * 0.05f) ? -1600 * (int)(_passiveItem.Count * 0.05f) : _passiveTransform.offsetMin.x - 1600, _passiveTransform.offsetMin.y);
+        });
+
         //print(_potionItem[0].Data == null);
     }
 
     // 여기도 SO 이용해서 Dict 만들고 정보 가져올 듯?
 
-    public void SettingItem(ItemData[] reward)
-    {
-        for (int i = 0; i < reward.Length; ++i)
-        {
-            //int itemIdx = reward[i];      // 값을 미리 저장하지 않으면 에러가 뜸.
-            itemRewardContent.GetChild(i).GetComponent<Button>().onClick.AddListener(() =>  // 캐싱할 거임.
-            {
-                //print(itemIdx);
-                GetItem(/*InGameManager.Instance.FindItemData(itemIdx)*/reward[i]);
-                InGameManager.Instance.ReturnRandomItem();
-            });
-        }
-    }
+    //public void SettingItem(ItemData[] reward)
+    //{
+    //    UIManager.Instance.ShowRewardItem(reward);
+    //    //for (int i = 0; i < reward.Length; ++i)
+    //    //{
+    //    //    int itemIdx = i;      // 값을 미리 저장하지 않으면 에러가 뜸.
+    //    //    itemRewardContent.GetChild(i).GetComponent<Button>().onClick.AddListener(() =>  // 캐싱할 거임.
+    //    //    {
+    //    //        GetItem(/*InGameManager.Instance.FindItemData(itemIdx)*/reward[itemIdx]);
+    //    //        InGameManager.Instance.ReturnRandomItem();
+    //    //    });
+    //    //}
+    //}
     //public void SettingPotion(int[] reward)       // 아직 포션 얻는 곳 안 정함.
     //{
     //    for (int i = 0; i < reward.Length; ++i)
@@ -206,11 +217,27 @@ public class ItemManager : MonoBehaviour
         }
         return Vector2.zero;
     }
+    //public void TurnPassiveItemPage(int idx)
+    //{
+    //    switch (idx)
+    //    {
+    //        case 0:
+    //            _passiveTransform.position = new Vector2(_passiveTransform.position.x - 1600 < 0 ? 0 : _passiveTransform.position.x - 1600, 0);
+    //            break;
+    //        case 1:
+    //            _passiveTransform.position = new Vector2(_passiveTransform.position.x + 1600 > 1600 * (int)(_passiveItem.Count * 0.05f) ? 1600 * (int)(_passiveItem.Count * 0.05f) : _passiveTransform.position.x + 1600, 0);
+    //            break;
+    //    }
+    //}
     public void GetPassiveItem(ItemData itemData)
     {
-        Item passiveItem = Instantiate(_passiveItemPrefab, UIManager.Instance.PassiveTransform);
+        Item passiveItem = Instantiate(_passiveItemPrefab, _passiveTransform);
         passiveItem.Setup(itemData);
         _passiveItem.Add(passiveItem);
+        if (_passiveItem.Count > 20 && !ButtonManager.Instance.TurnPassiveButton[0].gameObject.activeSelf)
+        {
+            ButtonManager.Instance.SetActiveTurnPassiveBtn(true);
+        }
     }
     public void ChanageActiveItem(ItemData itemData)       // 아이템 체인지하는 코드 추가해야 함.
     {

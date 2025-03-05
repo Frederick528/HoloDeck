@@ -9,11 +9,25 @@ public class MapManager : MonoBehaviour
 
     //public Transform rewardCanvas;
 
+    public int CreateMapCnt;
+    public int MaxDistance;
+
     public Map currStage;
 
     public bool canMove;
 
+    SettingMap _settingMap = new();
+
+    [SerializeField] GameObject[] _mapPrefab;
+    [SerializeField] GameObject _markPrefab;
+
     void Awake() { Instance = this; }
+
+    private void Start()
+    {
+        _settingMap.Start();
+        //ShowAllMap();
+    }
 
     public async UniTaskVoid ClearStage()
     {
@@ -69,5 +83,23 @@ public class MapManager : MonoBehaviour
     public void Treasure()
     {
         currStage.TreasureBox();
+    }
+
+    public void ShowAllMap()
+    {
+        foreach (Map map in _settingMap.Maps)
+        {
+            if (!map.gameObject.activeSelf)
+                map.gameObject.SetActive(true);
+        }
+    }
+
+    public GameObject MapInstantiate(int idx, Transform parent)
+    {
+        return Instantiate(_mapPrefab[idx], parent);
+    }
+    public GameObject MarkInstantiate(Transform parent)
+    {
+        return Instantiate(_markPrefab, parent);
     }
 }

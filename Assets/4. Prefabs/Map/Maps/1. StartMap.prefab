@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 6599197913873770386}
   - component: {fileID: 5990977913093158265}
   - component: {fileID: 7798625226091855665}
-  - component: {fileID: -7770095261128689803}
+  - component: {fileID: 7357164839488562558}
   m_Layer: 5
-  m_Name: BossMap
+  m_Name: 1. StartMap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -143,8 +143,8 @@ MonoBehaviour:
   img: {fileID: 6599197913873770386}
   array_Position: {x: 0, y: 0, z: 0}
   aroundStage: []
-  State: 1
---- !u!114 &-7770095261128689803
+  State: 0
+--- !u!114 &7357164839488562558
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -153,7 +153,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4736686227007241525}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1eca1053def8c54caa79f4a101144d3, type: 3}
+  m_Script: {fileID: 11500000, guid: e0299cf3d2427f0409347d4d6a3864b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &8293779811856995564
@@ -222,7 +222,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Boss
+  m_text: Start
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d569bcd4182783844b0320f52b6ecaf1, type: 2}
   m_sharedMaterial: {fileID: 7732405259585777707, guid: d569bcd4182783844b0320f52b6ecaf1, type: 2}
@@ -231,8 +231,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190335
-  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
+    rgba: 4294901910
+  m_fontColor: {r: 0.5882353, g: 0, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

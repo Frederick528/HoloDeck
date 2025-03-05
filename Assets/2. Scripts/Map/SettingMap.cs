@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SettingMap : MonoBehaviour
+public class SettingMap
 {
     private List<Vector3Int> direction4 = new List<Vector3Int>
     {
@@ -24,10 +24,10 @@ public class SettingMap : MonoBehaviour
     public List<MapInfo> validMapList = new List<MapInfo>();
     public List<MapInfo> availableMapList = new List<MapInfo>();
 
-    public int creatMapCnt;                       // 생성할 방 갯수
+    int _createMapCnt;                       // 생성할 방 갯수
     //public int maxMapCnt;                       // 최대 방 갯수
     //public int currMapCnt;                        // 현재 방 갯수
-    public int maxDistance;                        // 최대 거리 제한
+    int _maxDistance;                        // 최대 거리 제한
 
     //public int validMapCount;
 
@@ -36,17 +36,17 @@ public class SettingMap : MonoBehaviour
 
     public MapInfo[,] posArr;                       // 방 좌표에 대한 2차원 배열
 
-    public List<Map> maps;
+    public List<Map> Maps = new();
 
     Queue<Vector3Int> queue = new();
 
     int mapDistance = 100;
 
-    [SerializeField] GameObject[] _mapPrefab;
-    [SerializeField] GameObject _markPrefab;
+    //[SerializeField] GameObject[] _mapPrefab;
+    //[SerializeField] GameObject _markPrefab;
     GameObject _mark;
     Vector3 _markDefaultPos;
-    //[SerializeField] Transform mapCanvas;
+    //[SerializeField] Transform mapTr;
     //[SerializeField] GameObject cardRewardCanvas;
     //[SerializeField] GameObject enlargePanel;
 
@@ -55,23 +55,25 @@ public class SettingMap : MonoBehaviour
     //[SerializeField] GameObject shopCanvas;
     //[SerializeField] GameObject shopenlargePanel;
     //[SerializeField] GameObject shopPanel;
-    private void Start()
+    public void Start()
     {
-        creatMapCnt = (int)Mathf.Clamp(creatMapCnt, 1, Mathf.Pow(maxDistance * 2 + 1, 2));
+        _createMapCnt = MapManager.Instance.CreateMapCnt;
+        _maxDistance = MapManager.Instance.MaxDistance;
+        _createMapCnt = (int)Mathf.Clamp(_createMapCnt, 1, Mathf.Pow(_maxDistance * 2 + 1, 2));
         CreatedMap();
     }
 
     public void CreatedMap()
     {
         //// 배열 ReSize
-        //posArr = (MapInfo[,])ResizeArray(posArr, new int[] { maxDistance * 2 + 1, maxDistance * 2 + 1 });
-        posArr = new MapInfo[maxDistance * 2 + 1, maxDistance * 2 + 1];
+        //posArr = (MapInfo[,])ResizeArray(posArr, new int[] { _maxDistance * 2 + 1, _maxDistance * 2 + 1 });
+        posArr = new MapInfo[_maxDistance * 2 + 1, _maxDistance * 2 + 1];
 
         validMapList.Clear();
         availableMapList.Clear();
         //RealaseMap();  // 초기화
 
-        startMapPosition = new Vector3Int(maxDistance, maxDistance, 0);                        // 시작 좌표
+        startMapPosition = new Vector3Int(_maxDistance, _maxDistance, 0);                        // 시작 좌표
 
         posArr[startMapPosition.x, startMapPosition.y] = AddSingleMap(new MapInfo(), startMapPosition, "Single");
         //posArr[startMapPosition.x, startMapPosition.y].distance = 0;
@@ -91,7 +93,7 @@ public class SettingMap : MonoBehaviour
 
         SettingStage();
 
-        MapManager.Instance.SetupStart(direction4, maps);
+        MapManager.Instance.SetupStart(direction4, Maps);
 
         //SettingStage();
 
@@ -105,7 +107,7 @@ public class SettingMap : MonoBehaviour
 
     //public void SettingStage()        // 다른 함수랑 통합됨.
     //{
-    //    List<Map> stageList = maps.ToList();
+    //    List<Map> stageList = Maps.ToList();
     //    int index;
 
     //    // Start
@@ -183,7 +185,7 @@ public class SettingMap : MonoBehaviour
                 return;
             else if (!stage.cleared)
             {
-                stage.LookingStage(direction4, maps);
+                stage.LookingStage(direction4, Maps);
                 if (stage.State == Map.StageState.Treasure || stage.State == Map.StageState.Shop)
                 {
                     MapManager.Instance.ClearStage(stage).Forget();
@@ -330,8 +332,8 @@ public class SettingMap : MonoBehaviour
 
     public bool PossibleArr(Vector3Int pos)
     {
-        if ((0 <= (pos).x && (pos).x < (maxDistance * 2 + 1))
-            && (0 <= (pos).y && (pos).y < (maxDistance * 2 + 1)))
+        if ((0 <= (pos).x && (pos).x < (_maxDistance * 2 + 1))
+            && (0 <= (pos).y && (pos).y < (_maxDistance * 2 + 1)))
         {
             return true;
         }
@@ -384,9 +386,9 @@ public class SettingMap : MonoBehaviour
     //// 방의 배열을 초기화
     //public void RealaseMapPos()
     //{
-    //    for (int i = 0; i < (maxDistance * 2 + 1); i++)
+    //    for (int i = 0; i < (_maxDistance * 2 + 1); i++)
     //    {
-    //        for (int j = 0; j < (maxDistance * 2 + 1); j++)
+    //        for (int j = 0; j < (_maxDistance * 2 + 1); j++)
     //        {
     //            posArr[j, i] = new MapInfo();
     //            posArr[j, i].isValidMap = false;
@@ -397,9 +399,9 @@ public class SettingMap : MonoBehaviour
     // 모든 변수를 초기화
     //public void RealaseMap()
     //{
-    //    for (int i = 0; i < (maxDistance * 2 + 1); i++)
+    //    for (int i = 0; i < (_maxDistance * 2 + 1); i++)
     //    {
-    //        for (int j = 0; j < (maxDistance * 2 + 1); j++)
+    //        for (int j = 0; j < (_maxDistance * 2 + 1); j++)
     //        {
     //            posArr[j, i] = new MapInfo();
     //            posArr[j, i].isValidMap = false;
@@ -416,9 +418,9 @@ public class SettingMap : MonoBehaviour
     {
         //List<MapInfo> MapsList = new List<MapInfo>();
 
-        //for (int i = 0; i < (maxDistance * 2 + 1); i++)
+        //for (int i = 0; i < (_maxDistance * 2 + 1); i++)
         //{
-        //    for (int j = 0; j < (maxDistance * 2 + 1); j++)
+        //    for (int j = 0; j < (_maxDistance * 2 + 1); j++)
         //    {
         //        if (posArr[j, i].isValidMap)
         //        {
@@ -435,7 +437,7 @@ public class SettingMap : MonoBehaviour
         //}
         //validMapCount = validMapList.Count;
 
-        Transform mapCanvas = UIManager.Instance.Canvas(UIManager.CanvasName.Map);
+        Transform mapTr = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.Map), "Map");
 
         int treasureIdx = Random.Range(1, validMapList.Count-1);
         int shopIdx = Random.Range(1, validMapList.Count-1);
@@ -464,7 +466,8 @@ public class SettingMap : MonoBehaviour
                     mapIdx = 4; // Enemy
             }
             MapInfo validMap = validMapList[i];
-            GameObject mapObject = Instantiate(_mapPrefab[mapIdx], mapCanvas);/*PoolManager.Instance.MapPool.Get();*/
+            GameObject mapObject = MapManager.Instance.MapInstantiate(mapIdx, mapTr);
+            //GameObject mapObject = Instantiate(_mapPrefab[mapIdx], mapTr);/*PoolManager.Instance.MapPool.Get();*/
             Map map = mapObject.GetComponent<Map>();
             //mapObject.transform.GetComponentInChildren<TextMeshProUGUI>().text = validMap.distance.ToString();
             mapObject.transform.localPosition = validMap.transform_Position;
@@ -508,15 +511,16 @@ public class SettingMap : MonoBehaviour
                     break;
             }
 
-            maps.Add(map);
+            Maps.Add(map);
             mapObject.gameObject.SetActive(false);
         }
-        if (_markPrefab != null)
-        {
-            _mark = Instantiate(_markPrefab, mapCanvas);
+        //if (_markPrefab != null)
+        //{
+        _mark = MapManager.Instance.MarkInstantiate(mapTr);
+        if (_mark)
             _markDefaultPos = _mark.transform.localPosition;
-        }
-        //foreach (Map map in maps)
+        //}
+        //foreach (Map map in Maps)
         //{
         //    map.btn.onClick.AddListener(() =>
         //    {
@@ -529,7 +533,7 @@ public class SettingMap : MonoBehaviour
         //            return;
         //        }
         //        canMove = false;
-        //        map.LookingStage(direction4, maps);
+        //        map.LookingStage(direction4, Maps);
 
         //        currStage = map;
 
@@ -540,12 +544,12 @@ public class SettingMap : MonoBehaviour
         //    });
         //}
 
-        //foreach (Map mapObject in maps)
+        //foreach (Map mapObject in Maps)
         //    mapObject.gameObject.SetActive(false); /*MapRelease();*/
         
         //foreach (Vector3Int direction in direction4)
         //{
-        //    Map connectMap = maps.Find(x => x.array_Position == maps[0].array_Position + direction);
+        //    Map connectMap = Maps.Find(x => x.array_Position == Maps[0].array_Position + direction);
         //    if (connectMap != null)
         //    {
         //        connectMap.gameObject.SetActive(true);
@@ -569,20 +573,20 @@ public class SettingMap : MonoBehaviour
     //void SetupVisited()
     //{
     //    // 시작 장소 활성화 코드 5줄
-    //    InGameManager.Instance.currStage = maps[0];
+    //    InGameManager.Instance.currStage = Maps[0];
     //    InGameManager.Instance.currStage.gameObject.SetActive(true);
     //    //currStage.img.color = Color.white;
     //    InGameManager.Instance.currStage.btn.interactable = true;
-    //    InGameManager.Instance.currStage.LookingStage(direction4, maps);
+    //    InGameManager.Instance.currStage.LookingStage(direction4, Maps);
     //    InGameManager.Instance.ClearStage();
     //}
     //public void AddMapLIst()
     //{
     //    validMapList.Clear();
 
-    //    for (int i = 0; i < (maxDistance * 2 + 1); i++)
+    //    for (int i = 0; i < (_maxDistance * 2 + 1); i++)
     //    {
-    //        for (int j = 0; j < (maxDistance * 2 + 1); j++)
+    //        for (int j = 0; j < (_maxDistance * 2 + 1); j++)
     //        {
     //            if (posArr[j, i].isValidMap)
     //            {
@@ -646,7 +650,7 @@ public class SettingMap : MonoBehaviour
     //    int Count = 0;
 
     //    // LEFT
-    //    if ((0 <= (pos.x - 1) && (pos.x - 1) < (maxDistance * 2 + 1)))
+    //    if ((0 <= (pos.x - 1) && (pos.x - 1) < (_maxDistance * 2 + 1)))
     //    {
     //        if (posArr[pos.z, pos.x - 1].isValidMap)
     //        {
@@ -655,7 +659,7 @@ public class SettingMap : MonoBehaviour
     //    }
 
     //    // RIGHT
-    //    if ((0 <= (pos.x + 1) && (pos.x + 1) < (maxDistance * 2 + 1)))
+    //    if ((0 <= (pos.x + 1) && (pos.x + 1) < (_maxDistance * 2 + 1)))
     //    {
     //        if (posArr[pos.z, pos.x + 1].isValidMap)
     //        {
@@ -664,7 +668,7 @@ public class SettingMap : MonoBehaviour
     //    }
 
     //    // TOP
-    //    if ((0 <= (pos.z - 1) && (pos.z - 1) < (maxDistance * 2 + 1)))
+    //    if ((0 <= (pos.z - 1) && (pos.z - 1) < (_maxDistance * 2 + 1)))
     //    {
     //        if (posArr[pos.z - 1, pos.x].isValidMap)
     //        {
@@ -672,7 +676,7 @@ public class SettingMap : MonoBehaviour
     //        }
     //    }
     //    // DOWN
-    //    if ((0 <= (pos.z + 1) && (pos.z + 1) < (maxDistance * 2 + 1)))
+    //    if ((0 <= (pos.z + 1) && (pos.z + 1) < (_maxDistance * 2 + 1)))
     //    {
     //        if (posArr[pos.z + 1, pos.x].isValidMap)
     //        {
@@ -688,7 +692,7 @@ public class SettingMap : MonoBehaviour
     // Map 위치 및 방의 크키 지정
     public void MakeMapArray(Vector3Int start)
     {
-        //if (start.x >= (maxDistance * 2 + 1) || start.z >= (maxDistance * 2 + 1))
+        //if (start.x >= (_maxDistance * 2 + 1) || start.z >= (_maxDistance * 2 + 1))
         //    return;
         //Vector3Int direction = direction4[Random.Range(0, direction4.Count)];
         Vector3Int direction = posArr[start.x, start.y].haveDirect[Random.Range(0, posArr[start.x, start.y].haveDirect.Count)];
@@ -746,7 +750,7 @@ public class SettingMap : MonoBehaviour
 
     public bool MapCountCheck()
     {
-        return (creatMapCnt <= validMapList.Count);
+        return (_createMapCnt <= validMapList.Count);
     }
 
     // 방의 갯수가 최소, 최대크기에 적합한지 체크

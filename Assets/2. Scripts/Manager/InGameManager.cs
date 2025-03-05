@@ -472,7 +472,7 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.P))
         {
-            ItemManager.Instance.GetItem(FindItemData(1));
+            ItemManager.Instance.GetItem(FindItemData(1001));
         }
         if (Input.GetKeyDown(KeyCode.B))
         {

@@ -37,6 +37,10 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         _bgRect = _backgroundImage.GetComponent<RectTransform>();
         //AdjustBackgroundSize();
     }
+    //private void Update()
+    //{
+    //    AdjustBackgroundSize();
+    //}
 
     public void AdjustBackgroundSize()
     {

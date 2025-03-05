@@ -142,7 +142,8 @@ public class Map : MonoBehaviour
             ItemReward[2] = InGameManager.Instance.RandomItem()/*Random.Range(0, 6)*/;
             ItemReward[3] = InGameManager.Instance.RandomItem()/*Random.Range(0, 6)*/;     // 유물 효과로 아이템 선택지 +1
             //InGameManager.Instance.ReturnRandomItem();            // 카드와 다르게, 아이템은 먹을 경우, 더 이상 뜨지 않도록 바꿔야 함.
-            ItemManager.Instance.SettingItem(ItemReward);
+            //ItemManager.Instance.SettingItem(ItemReward);
+            UIManager.Instance.ShowRewardItem(ItemReward);
 
         }
 

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
@@ -47,21 +47,21 @@ public class UIManager : MonoBehaviour
     Transform[] _rewardBoxes;
 
     [HideInInspector]
+    public Transform PassiveTransform;
+    [HideInInspector]
     public Transform ActiveTransform;
     [HideInInspector]
     public Transform PotionTransform;
-    [HideInInspector]
-    public Transform PassiveTransform;
 
     Transform _cardRewardContent;
     Transform _itemRewardContent;
 
     int _lastViewDeckCount;
-    public Transform _viewDeckContent;
+    Transform _viewDeckContent;
     List<UICard> _deckUICards = new();
 
     UICard[] _uiCards = new UICard[4];
-    Item[] _items = new Item[4];
+    UIItem[] _uiItems = new UIItem[4];
 
     TMP_Text _topHealthText;     // TMP텍스트로 변경가능성있음
     TMP_Text _topCoinText;
@@ -98,9 +98,9 @@ public class UIManager : MonoBehaviour
         //    _deckUICards.Add(ViewDeckContent.GetChild(i).GetComponent<UICard>());
         //}
 
+        PassiveTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "PassiveItem");
         ActiveTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "ActiveItemButton");
         PotionTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "PotionItem");
-        PassiveTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "PassiveContent");
 
         _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel");
         _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel");
@@ -119,10 +119,13 @@ public class UIManager : MonoBehaviour
         {
             _rewardBoxes[i] = rewardBoxCanvas.GetChild(i);
         }
-
         for (int i = 0; i < _uiCards.Length; ++i)
         {
             _uiCards[i] = _cardRewardContent.GetChild(i).GetComponent<UICard>();
+        }
+        for (int i = 0; i < _uiItems.Length; ++i)
+        {
+            _uiItems[i] = _itemRewardContent.GetChild(i).GetComponent<UIItem>();
         }
     }
 
@@ -245,13 +248,25 @@ public class UIManager : MonoBehaviour
     {
         for (int i = 0; i < reward.Length; ++i)
         {
-            if (reward[i] == null) continue;
+            if (reward[i] == null) continue;        // 카드는 나중에 중복으로 떠도 되기 때문에 카드레어도에 따른 카드풀이 3~4장 이상이면 null이 뜰 가능성이 존재하지 않음.
             _uiCards[i].Setup(/*InGameManager.Instance.FindCardData(reward[i])*/reward[i]);
+        }
+    }
+    public void ShowRewardItem(ItemData[] reward)
+    {
+        for (int i = 0; i < reward.Length; ++i)
+        {
+            if (reward[i] == null) continue;
+            _uiItems[i].Setup(reward[i]);
         }
     }
     public void ChangeRewardCardCount(bool isOn)
     {
         _cardRewardContent.GetChild(3).gameObject.SetActive(isOn);
+    }
+    public void ChangeRewardItemCount(bool isOn)
+    {
+        _itemRewardContent.GetChild(3).gameObject.SetActive(isOn);
     }
 
     public void SetViewDeck(List<Card> deck)                // 풀링이지만, Release 개념이 아닌, 활성화 비활성화로 진행됨. Release는 인덱스로 넣는데, Get은 Release된 것 중에서 마지막에 넣었던 것을 꺼내오기 때문에 생긴 문제

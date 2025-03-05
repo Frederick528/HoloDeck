@@ -15,6 +15,8 @@ public class ButtonManager : MonoBehaviour
     [HideInInspector]
     public Button DiscardCancelButton;
     [HideInInspector]
+    public Button[] TurnPassiveButton = new Button[2];
+    [HideInInspector]
     public Button ActiveItemButton;
     [HideInInspector]
     public Button[] PotionButtons = new Button[4];
@@ -28,18 +30,20 @@ public class ButtonManager : MonoBehaviour
         _turnEndButton = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.Battle), "TurnEndButton").GetComponent<Button>();
         DiscardButton = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.SelectedCard), "DiscardButton").GetComponent<Button>();
         DiscardCancelButton = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.SelectedCard), "CancelButton").GetComponent<Button>();
+
+        TurnPassiveButton = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.PassiveTransform, "TurnButton").GetComponentsInChildren<Button>(true);
+        //TurnPassiveButton[0].onClick.AddListener(() =>
+        //{
+        //    ItemManager.Instance.TurnPassiveItemPage(0);
+        //});
+        //TurnPassiveButton[1].onClick.AddListener(() =>
+        //{
+        //    ItemManager.Instance.TurnPassiveItemPage(1);
+        //});
+
         ActiveItemButton = UIManager.Instance.ActiveTransform.GetComponent<Button>();
 
         PotionButtons = UIManager.Instance.PotionTransform.GetComponentsInChildren<Button>();
-    }
-
-    public void DiscardBtnInvert(bool state)
-    {
-        DiscardButton.interactable = state;
-    }
-    public void SetActiveDiscardCancelBtn(bool state)
-    {
-        DiscardCancelButton.gameObject.SetActive(state);
     }
     public void TurnEndBtn()
     {
@@ -50,6 +54,21 @@ public class ButtonManager : MonoBehaviour
     {
         TurnManager.Instance.ChangeCanEnd(state);
         _turnEndButton.interactable = state;
+    }
+
+    public void DiscardBtnInvert(bool state)
+    {
+        DiscardButton.interactable = state;
+    }
+    public void SetActiveDiscardCancelBtn(bool state)
+    {
+        DiscardCancelButton.gameObject.SetActive(state);
+    }
+
+    public void SetActiveTurnPassiveBtn(bool state)
+    {
+        TurnPassiveButton[0].gameObject.SetActive(state);
+        TurnPassiveButton[1].gameObject.SetActive(state);
     }
     public void ActItemBtnInvert(bool state)
     {

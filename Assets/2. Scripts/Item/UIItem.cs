@@ -1,0 +1,105 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+public class UIItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+{
+    Image _image;
+
+    TMP_Text _text;                 // 텍스트 컴포넌트
+    Image _backgroundImage;         // 배경 이미지
+    RectTransform _textRect;
+    RectTransform _bgRect;
+
+    ItemData _itemData;
+
+    //private void Start()
+    //{
+    //    _image = GetComponent<Image>();
+    //    _backgroundImage = transform.Find("ItemDescWindow").GetComponent<Image>();
+    //    _text = _backgroundImage.transform.Find("DescText").GetComponent<TMP_Text>();
+    //    _textRect = _text.GetComponent<RectTransform>();
+    //    _bgRect = _backgroundImage.GetComponent<RectTransform>();
+    //    if (TryGetComponent(out Button _itemBtn))
+    //    {
+    //        _itemBtn.onClick.AddListener(() =>
+    //        {
+    //            ItemManager.Instance.GetItem(_itemData);
+    //            InGameManager.Instance.ReturnRandomItem();
+    //            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.ItemReward, false);
+    //        });
+
+    //    }
+    //}
+
+    public void Setup(ItemData itemData)
+    {
+        if (!_image)
+        {
+            _image = GetComponent<Image>();
+            _backgroundImage = transform.Find("ItemDescWindow").GetComponent<Image>();
+            _text = _backgroundImage.transform.Find("DescText").GetComponent<TMP_Text>();
+            _textRect = _text.GetComponent<RectTransform>();
+            _bgRect = _backgroundImage.GetComponent<RectTransform>();
+            if (TryGetComponent(out Button _itemBtn))
+            {
+                _itemBtn.onClick.AddListener(() =>
+                {
+                    ItemManager.Instance.GetItem(_itemData);
+                    InGameManager.Instance.ReturnRandomItem();
+                    UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.ItemReward, false);
+                });
+
+            }
+        }
+        if (_backgroundImage.gameObject.activeSelf)
+            _backgroundImage.gameObject.SetActive(false);
+        _itemData = itemData;
+        if (_itemData.Sprite)
+            _image.sprite = _itemData.Sprite;
+        AdjustBackgroundSize();
+    }
+
+    public void AdjustBackgroundSize()
+    {
+        if (_itemData.Descript == "")
+        {
+            _bgRect.sizeDelta = Vector2.zero;
+            return;
+        }
+        switch (_itemData.ItemTag)
+        {
+            case ItemTag.Passive:
+                _text.text = "PassiveItem\n" + _itemData.Descript;
+                break;
+            case ItemTag.Active:
+                StringBuilder sb = new StringBuilder(_itemData.Descript);
+                sb.Replace("{Damage}", (_itemData.Damage).ToString());
+                sb.Replace("{Shield}", (_itemData.Shield).ToString());
+                sb.Replace("{Draw}", (_itemData.Draw).ToString());
+                sb.Replace("{Heal}", (_itemData.Heal).ToString());
+                _text.text = $"ActiveItem\n[{_itemData.MaxCharge}Charge]\n{sb}";
+                break;
+        }
+        // 텍스트의 크기를 가져와서 배경 이미지 크기 설정 (_textRectWidth = 처음 정해준 width 길이, _text.preferredHeight 줄바꿈 되는만큼의 길이)
+        float width;
+        float height;
+        width = _text.preferredWidth < _textRect.rect.width ? _text.preferredWidth : _textRect.rect.width;
+        height = _text.preferredHeight > _textRect.rect.height ? _text.preferredHeight : _textRect.rect.height;
+        _bgRect.sizeDelta = new Vector2(width, height);
+    }
+
+    public virtual void OnPointerEnter(PointerEventData eventData)
+    {
+        _backgroundImage.gameObject.SetActive(true);
+    }
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (_backgroundImage.gameObject.activeSelf)
+            _backgroundImage.gameObject.SetActive(false);
+    }
+}
