@@ -16,7 +16,7 @@ public class Map : MonoBehaviour
     public bool rewarded = false;
 
     public bool ChangedItem = false;
-    public (ItemData, int) ChangedActiveItemCharge;
+    public int ActiveItemCharge;
 
     public int rewardBox { get; private set; } = -1;
     public CardData[] CardReward { get; private set; } = new CardData[4];
@@ -164,8 +164,8 @@ public class Map : MonoBehaviour
 
     public void ChangedUseItem(ItemData itemData, int curCharge)
     {
-        ChangedActiveItemCharge.Item1 = itemData;
-        ChangedActiveItemCharge.Item2 = curCharge;
+        //ActiveItemCharge.Item1 = itemData;
+        ActiveItemCharge = curCharge;
         ItemReward[0] = itemData;
         ItemReward[1] = null;
         ItemReward[2] = null;

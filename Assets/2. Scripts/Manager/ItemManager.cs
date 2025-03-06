@@ -311,11 +311,17 @@ public class ItemManager : MonoBehaviour
         bool changed = false;
         if (HaveActiveItem)
         {
-            MapManager.Instance.ChangedUseItem(_activeItem.Data, _activeItem.CurCharge);
+            ItemData data = _activeItem.Data;
+            int curCharge = _activeItem.CurCharge;
+            _activeItem.Setup(itemData);
+            MapManager.Instance.ChangedUseItem(data, curCharge);
             changed = true;
         }
+        else
+        {
+            _activeItem.Setup(itemData);
+        }
         //ButtonManager.Instance.ActiveItemButton.onClick.RemoveAllListeners();
-        _activeItem.Setup(itemData);
         _activeItemCharge.text = _activeItem.CurCharge.ToString();
         HaveActiveItem = true;
         //ButtonManager.Instance.ActiveItemButton.onClick.AddListener(() =>

@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -37,7 +37,7 @@ public class ActiveItem : UseItem
 
         StringBuilder sb = new StringBuilder(_defaultData.Descript);
 
-        if (MapManager.Instance.currStage.ChangedItem) { CurCharge = MapManager.Instance.currStage.ChangedActiveItemCharge.Item2; }     // ¿©±â ºÎºĞ Á» ´õ °íÄ¥ °Í
+        if (MapManager.Instance.currStage.ChangedItem) { CurCharge = MapManager.Instance.currStage.ActiveItemCharge;} 
         else if (Data.CurCharge == 0) { CurCharge = Data.MaxCharge; }
         else if (Data.CurCharge == -1) { CurCharge = 0; }
 
@@ -67,7 +67,7 @@ public class ActiveItem : UseItem
 
     public async override UniTask UseTask()
     {
-        if (Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.CancelSource.Token.IsCancellationRequested)        // »ç¿ë Áß ¹èÆ²ÀÌ ³¡³ª´Â °æ¿ì
+        if (Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.CancelSource.Token.IsCancellationRequested)        // ì‚¬ìš© ì¤‘ ë°°í‹€ì´ ëë‚˜ëŠ” ê²½ìš°
         {
             ItemManager.Instance.Charge(Data.MaxCharge);
             return;
