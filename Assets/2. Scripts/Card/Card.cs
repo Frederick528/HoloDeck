@@ -194,11 +194,16 @@ public class Card : MonoBehaviour
         //}
         //else
         //{
-
-        Data.Damage = _defaultData.Damage + InGameManager.Instance.player.AttackPower.Value;
-        Data.Shield = _defaultData.Shield + InGameManager.Instance.player.DefencePower.Value;
-        if (Data.Damage < 0) { Data.Damage = 0; }
-        if (Data.Shield < 0) { Data.Shield = 0; }
+        if (_defaultData.Damage != 0)
+        {
+            Data.Damage = _defaultData.Damage + InGameManager.Instance.player.AttackPower.Value;
+            if (Data.Damage < 0) { Data.Damage = 0; }
+        }
+        if (_defaultData.Shield != 0)
+        {
+            Data.Shield = _defaultData.Shield + InGameManager.Instance.player.DefencePower.Value;
+            if (Data.Shield < 0) { Data.Shield = 0; }
+        }
         Data.Count = _defaultData.Count + 0;
         Data.Draw = _defaultData.Draw + 0;
         Data.Discard = _defaultData.Discard + 0;
