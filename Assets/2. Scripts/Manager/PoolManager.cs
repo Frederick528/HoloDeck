@@ -32,7 +32,11 @@ public class PoolManager : MonoBehaviour
     private void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+            transform.SetParent(null);
+            DontDestroyOnLoad(gameObject);
+        }
         else
             Destroy(this.gameObject);
 
@@ -42,7 +46,7 @@ public class PoolManager : MonoBehaviour
     private void Init()
     {
         _deck = UIManager.Instance.Player.Find("Deck");
-        _textParent = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.InGame), "TextEffect");
+        _textParent = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(CanvasName.InGame), "TextEffect");
         //ViewDeckContent = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.ViewDeck), "Content");
 
         CardPool = new ObjectPool<Card>(CreateCardPooled, OnTakeFromPoolCard, OnReturnedToPoolCard, OnDestroyPoolCard, true, defaultCapacity);

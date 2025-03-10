@@ -16,7 +16,6 @@ public class Map : MonoBehaviour
     public bool rewarded = false;
 
     public bool ChangedItem = false;
-    public int ActiveItemCharge;
 
     public int rewardBox { get; private set; } = -1;
     public CardData[] CardReward { get; private set; } = new CardData[4];
@@ -162,14 +161,20 @@ public class Map : MonoBehaviour
         }
     }
 
-    public void ChangedUseItem(ItemData itemData, int curCharge)
+    public void ChangedUseItem(ItemData itemData, int idx)
     {
         //ActiveItemCharge.Item1 = itemData;
-        ActiveItemCharge = curCharge;
-        ItemReward[0] = itemData;
-        ItemReward[1] = null;
-        ItemReward[2] = null;
-        ItemReward[3] = null;
+        for (int i = 0; i < ItemReward.Length; i++)
+        {
+            if (i == idx)
+            {
+                ItemReward[i] = itemData;
+            }
+            else
+            {
+                ItemReward[i] = null;
+            }
+        }
     }
 
     //public void EnterStage()

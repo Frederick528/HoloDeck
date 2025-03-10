@@ -30,12 +30,22 @@ public class ItemManager : MonoBehaviour
     //public bool arrowOn;   // 게임매니저에서 한 번에 처리하고 싶었으나, Card 사용 코드 때문에 그냥 각각의 코드에서 실행하는 방법 사용. => 성공함.
     public string ItemDesc;
 
-    [SerializeField]
-    Transform itemRewardContent;
-    [SerializeField]
+    //[SerializeField]
+    //Transform itemRewardContent;
+    //[SerializeField]
     //Button activeItemBtn;
 
-    void Awake() { Instance = this; }
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            transform.SetParent(null);
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+            Destroy(gameObject);
+    }
 
     private void Start()
     {
@@ -166,9 +176,9 @@ public class ItemManager : MonoBehaviour
     //    }
     //}
 
-    public bool GetItem(ItemData itemData)
+    public (ItemData, int)? GetItem(ItemData itemData, int value = -1)
     {
-        bool changed = false;
+        (ItemData, int)? changedItem = null;
         //Item item = new();
         //item.Setup(InGameManager.Instance.FindItemData(id));
         switch (itemData.ItemTag)
@@ -177,15 +187,15 @@ public class ItemManager : MonoBehaviour
                 GetPassiveItem(itemData);
                 break;
             case ItemTag.Active:
-                changed = ChanageActiveItem(itemData);
+                changedItem = ChanageActiveItem(itemData, value);
                 break;
             case ItemTag.Potion:
-                changed = ChangePotionItem(itemData);
+                ChangePotionItem(itemData);
                 break;
         }
         itemDict[itemData.ID] = true;
 
-        return changed;
+        return changedItem;
     }
     //public void GetItem(ItemData itemData)
     //{
@@ -306,20 +316,19 @@ public class ItemManager : MonoBehaviour
             ButtonManager.Instance.SetActiveTurnPassiveBtn(true);
         }
     }
-    public bool ChanageActiveItem(ItemData itemData)       // 아이템 체인지하는 코드 추가해야 함.
+    public (ItemData, int)? ChanageActiveItem(ItemData itemData, int value)       // 아이템 체인지하는 코드 추가해야 함.
     {
-        bool changed = false;
+        (ItemData, int)? changedItem = null;
         if (HaveActiveItem)
         {
-            ItemData data = _activeItem.Data;
-            int curCharge = _activeItem.CurCharge;
-            _activeItem.Setup(itemData);
-            MapManager.Instance.ChangedUseItem(data, curCharge);
-            changed = true;
+            changedItem = (_activeItem.Data, _activeItem.CurCharge);
+            _activeItem.Setup(itemData, value);
+            //MapManager.Instance.ChangedUseItem(data, curCharge);
+            //changed = true;
         }
         else
         {
-            _activeItem.Setup(itemData);
+            _activeItem.Setup(itemData, value);
         }
         //ButtonManager.Instance.ActiveItemButton.onClick.RemoveAllListeners();
         _activeItemCharge.text = _activeItem.CurCharge.ToString();
@@ -360,12 +369,11 @@ public class ItemManager : MonoBehaviour
         //        }
         //    }
         //});
-        return changed;
+        return changedItem;
     }
 
-    public bool ChangePotionItem(ItemData itemData)        // 다 차있으면 바꾸는 코드 필요
+    public void ChangePotionItem(ItemData itemData)        // 다 차있으면 바꾸는 코드 필요
     {
-        bool changed = false;
         for (int i = 0; i < HavePotionItem.Length; ++i)
         {
             if (!HavePotionItem[i])
@@ -398,12 +406,10 @@ public class ItemManager : MonoBehaviour
                 //    _potionItem[i].DescWindowOff();
                 //    //ButtonManager.Instance.PotionButtons[i].onClick.RemoveAllListeners();
                 //});
-                return changed;
+                break;
             }
         }
         // 포션을 교체하는 코드
-        changed = true;
-        return changed;
     }
 
     public void UseActiveItem()

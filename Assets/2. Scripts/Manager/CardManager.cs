@@ -81,7 +81,17 @@ public class CardManager : MonoBehaviour
     bool _remove;
 
 
-    private void Awake() => Instance = this;
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            transform.SetParent(null);
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+            Destroy(gameObject);
+    }
 
 
     private void Start()

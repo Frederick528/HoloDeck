@@ -1,9 +1,10 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -63,7 +64,7 @@ public class UIManager : MonoBehaviour
     UICard[] _uiCards = new UICard[4];
     UIItem[] _uiItems = new UIItem[4];
 
-    TMP_Text _topHealthText;     // TMPÅØ½ºÆ®·Î º¯°æ°¡´É¼ºÀÖÀ½
+    TMP_Text _topHealthText;     // TMPí…ìŠ¤íŠ¸ë¡œ ë³€ê²½ê°€ëŠ¥ì„±ìˆìŒ
     TMP_Text _topCoinText;
 
     TMP_Text _holoValue;
@@ -76,8 +77,6 @@ public class UIManager : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
-
         _canvas = GameObject.Find("Canvas").GetComponent<Transform>();
         Player = GameObject.Find("Player").GetComponent<Transform>();
 
@@ -129,6 +128,20 @@ public class UIManager : MonoBehaviour
         {
             _uiItems[i] = _itemRewardContent.GetChild(i).GetComponent<UIItem>();
         }
+
+        if (Instance == null)
+        {
+            Instance = this;
+            transform.SetParent(null);
+            DontDestroyOnLoad(gameObject);
+            //Canvas(CanvasName.InGame).SetParent(null);                    // ìº”ë²„ìŠ¤ ìì²´ë¥¼ DontDestroy í•´ì•¼í•  ìˆ˜ë„
+            //DontDestroyOnLoad(Canvas(CanvasName.InGame).gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+            //Destroy(Canvas(CanvasName.InGame).gameObject);
+        }
     }
 
     private void Start()
@@ -159,6 +172,62 @@ public class UIManager : MonoBehaviour
         //}
 
         SetActiveCanvas(CanvasName.Map, true);
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        print("A");
+        _canvas = GameObject.Find("Canvas").GetComponent<Transform>();
+        Player = GameObject.Find("Player").GetComponent<Transform>();
+
+        for (int i = 1; i < /*CanvasList.Count*/_canvas.childCount; ++i)
+        {
+            //_canvasRaycaster.Add(CanvasList[i].GetComponent<GraphicRaycaster>());
+            //CanvasDict.Add(i, CanvasList[i]);
+            _canvasRaycaster[i] = (_canvas.GetChild(i).GetComponent<GraphicRaycaster>());
+            CanvasDict[i] = _canvas.GetChild(i);
+        }
+
+        _cardEnlargePanel = Canvas(CanvasName.CardReward).Find("CardEnlargePanel");
+        _cardRewardContent = ContinueFindChildByName(Canvas(CanvasName.CardReward), "Content");
+        _itemEnlargePanel = Canvas(CanvasName.ItemReward).Find("ItemEnlargePanel");
+        _itemRewardContent = ContinueFindChildByName(Canvas(CanvasName.ItemReward), "Content");
+
+        _viewDeckContent = ContinueFindChildByName(Canvas(CanvasName.ViewDeck), "Content");
+        //for (int i = 0; i < ViewDeckContent.childCount; ++i)
+        //{
+        //    _deckUICards.Add(ViewDeckContent.GetChild(i).GetComponent<UICard>());
+        //}
+
+        PassiveTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "PassiveItem");
+        ActiveTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "ActiveItemButton");
+        PotionTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "PotionItem");
+
+        _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel");
+        _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel");
+
+        _topHealthText = ContinueFindChildByName(Canvas(CanvasName.InGame), "HealthText").GetComponent<TMP_Text>();
+        _topCoinText = ContinueFindChildByName(Canvas(CanvasName.InGame), "CoinText").GetComponent<TMP_Text>();
+
+        _holoValue = ContinueFindChildByName(Canvas(CanvasName.Battle), "HoloValueText").GetComponent<TMP_Text>();
+        _turnEndButtonText = ContinueFindChildByName(Canvas(CanvasName.Battle), "TurnText").GetComponent<TMP_Text>();
+        _drawCount = ContinueFindChildByName(Canvas(CanvasName.Battle), "DrawCountText").GetComponent<TMP_Text>();
+        _dummyCount = ContinueFindChildByName(Canvas(CanvasName.Battle), "DummyCountText").GetComponent<TMP_Text>();
+
+        Transform rewardBoxCanvas = Canvas(CanvasName.RewardBox);
+        _rewardBoxes = new Transform[rewardBoxCanvas.childCount];
+        for (int i = 0; i < _rewardBoxes.Length; ++i)
+        {
+            _rewardBoxes[i] = rewardBoxCanvas.GetChild(i);
+        }
+        for (int i = 0; i < _uiCards.Length; ++i)
+        {
+            _uiCards[i] = _cardRewardContent.GetChild(i).GetComponent<UICard>();
+        }
+        for (int i = 0; i < _uiItems.Length; ++i)
+        {
+            _uiItems[i] = _itemRewardContent.GetChild(i).GetComponent<UIItem>();
+        }
     }
 
     public Transform ContinueFindChildByName(Transform parent, string name)
@@ -218,7 +287,7 @@ public class UIManager : MonoBehaviour
                     if (Canvas(CanvasName.ViewDeck).gameObject.activeSelf)
                     {
                         SetActiveCanvas(CanvasName.ViewDeck, false);
-                        //InGameManager.Instance.Pause(false);      // UI°¡ ¸·¾Æ¼­ ºäµ¦ Áß¿¡´Â ¸Ê È­¸é Å¬¸¯ ºÒ°¡
+                        //InGameManager.Instance.Pause(false);      // UIê°€ ë§‰ì•„ì„œ ë·°ë± ì¤‘ì—ëŠ” ë§µ í™”ë©´ í´ë¦­ ë¶ˆê°€(ê·¸ë ‡ê²Œ ë˜ë„ë¡ ë°°ì¹˜í•œ ê±°ë¼ì„œ ë¬¸ì œì¸ ê±´ ì•„ë‹ˆê³ , ê·¸ëƒ¥ ë‚˜ì¤‘ì„ ìœ„í•œ ì½”ë©˜íŠ¸ì„.)
                     }
                     break;
                 case CanvasName.ViewDeck:
@@ -246,11 +315,11 @@ public class UIManager : MonoBehaviour
         SetActiveCanvas(CanvasName.ItemReward, false);
         SetActiveCanvas(CanvasName.Shop, false);
     }
-    public void ShowRewardCard(CardData[] reward)        // ÇØ´ç ºÎºĞµé ¸Ê, »óÁ¡À¸·Î ´Ù ÀÌµ¿½ÃÄÑ¾ß ÇÔ.
+    public void ShowRewardCard(CardData[] reward)        // í•´ë‹¹ ë¶€ë¶„ë“¤ ë§µ, ìƒì ìœ¼ë¡œ ë‹¤ ì´ë™ì‹œì¼œì•¼ í•¨.
     {
         for (int i = 0; i < reward.Length; ++i)
         {
-            if (reward[i] == null) continue;        // Ä«µå´Â ³ªÁß¿¡ Áßº¹À¸·Î ¶°µµ µÇ±â ¶§¹®¿¡ Ä«µå·¹¾îµµ¿¡ µû¸¥ Ä«µåÇ®ÀÌ 3~4Àå ÀÌ»óÀÌ¸é nullÀÌ ¶ã °¡´É¼ºÀÌ Á¸ÀçÇÏÁö ¾ÊÀ½.
+            if (reward[i] == null) continue;        // ì¹´ë“œëŠ” ë‚˜ì¤‘ì— ì¤‘ë³µìœ¼ë¡œ ë– ë„ ë˜ê¸° ë•Œë¬¸ì— ì¹´ë“œë ˆì–´ë„ì— ë”°ë¥¸ ì¹´ë“œí’€ì´ 3~4ì¥ ì´ìƒì´ë©´ nullì´ ëœ° ê°€ëŠ¥ì„±ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŒ.
             _uiCards[i].Setup(/*InGameManager.Instance.FindCardData(reward[i])*/reward[i]);
         }
     }
@@ -270,7 +339,7 @@ public class UIManager : MonoBehaviour
                     continue;
                 _itemRewardContent.GetChild(i).gameObject.SetActive(true);
             }
-            _uiItems[i].Setup(reward[i]);
+            _uiItems[i].Setup(reward[i], i);
         }
         SetActiveCanvas(CanvasName.ItemReward, false);
     }
@@ -284,7 +353,7 @@ public class UIManager : MonoBehaviour
         _itemRewardContent.GetChild(3).gameObject.SetActive(isOn);
     }
 
-    public void SetViewDeck(List<Card> deck)                // Ç®¸µÀÌÁö¸¸, Release °³³äÀÌ ¾Æ´Ñ, È°¼ºÈ­ ºñÈ°¼ºÈ­·Î ÁøÇàµÊ. Release´Â ÀÎµ¦½º·Î ³Ö´Âµ¥, GetÀº ReleaseµÈ °Í Áß¿¡¼­ ¸¶Áö¸·¿¡ ³Ö¾ú´ø °ÍÀ» ²¨³»¿À±â ¶§¹®¿¡ »ı±ä ¹®Á¦
+    public void SetViewDeck(List<Card> deck)                // í’€ë§ì´ì§€ë§Œ, Release ê°œë…ì´ ì•„ë‹Œ, í™œì„±í™” ë¹„í™œì„±í™”ë¡œ ì§„í–‰ë¨. ReleaseëŠ” ì¸ë±ìŠ¤ë¡œ ë„£ëŠ”ë°, Getì€ Releaseëœ ê²ƒ ì¤‘ì—ì„œ ë§ˆì§€ë§‰ì— ë„£ì—ˆë˜ ê²ƒì„ êº¼ë‚´ì˜¤ê¸° ë•Œë¬¸ì— ìƒê¸´ ë¬¸ì œ
     {
         _viewDeckContent.localPosition = new Vector3(_viewDeckContent.localPosition.x, 0);
         if (deck.Count > _deckUICards.Count)

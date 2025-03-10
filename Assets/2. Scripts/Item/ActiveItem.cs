@@ -30,14 +30,14 @@ public class ActiveItem : UseItem
         }
     }
 
-    public override void Setup(ItemData data)
+    public void Setup(ItemData data, int value)
     {
         _defaultData = data;
         Data = _defaultData;
 
         StringBuilder sb = new StringBuilder(_defaultData.Descript);
 
-        if (MapManager.Instance.currStage.ChangedItem) { CurCharge = MapManager.Instance.currStage.ActiveItemCharge;} 
+        if (value != -1) { CurCharge = value; } 
         else if (Data.CurCharge == 0) { CurCharge = Data.MaxCharge; }
         else if (Data.CurCharge == -1) { CurCharge = 0; }
 

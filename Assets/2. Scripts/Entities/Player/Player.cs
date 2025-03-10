@@ -7,6 +7,7 @@ using UniRx;
 
 public class Player : Entity
 {
+    public static Player Instance { get; private set; }
     public int MaxHolo { get; private set; }
     public int CurHolo { get; private set; }
 
@@ -20,6 +21,19 @@ public class Player : Entity
     int _defencePower;
     //[SerializeField] TMP_Text holoValue;
     // Start is called before the first frame update
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(transform.root.gameObject);
+        }
+        else
+        {
+            Destroy(transform.root.gameObject);
+        }
+    }
     void Start()
     {
         PlayerSubScribe();

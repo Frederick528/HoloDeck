@@ -85,9 +85,9 @@ public class MapManager : MonoBehaviour
         currStage.TreasureBox(changed);
     }
 
-    public void ChangedUseItem(ItemData itemData, int curCharge)
+    public void ChangedUseItem(ItemData itemData, int idx)
     {
-        currStage.ChangedUseItem(itemData, curCharge);
+        currStage.ChangedUseItem(itemData, idx);
     }
 
     public void ShowAllMap()

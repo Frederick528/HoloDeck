@@ -27,6 +27,7 @@ public class ButtonManager : MonoBehaviour
 
     private void Start()
     {
+        if (UIManager.Instance == null) { return; }
         _turnEndButton = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.Battle), "TurnEndButton").GetComponent<Button>();
         DiscardButton = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.SelectedCard), "DiscardButton").GetComponent<Button>();
         DiscardCancelButton = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.SelectedCard), "CancelButton").GetComponent<Button>();

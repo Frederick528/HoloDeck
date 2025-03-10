@@ -9,7 +9,13 @@ EditorBuildSettings:
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 1
+    path: Assets/1. Scenes/0. Title.unity
+    guid: 28cd5d6170d6bb048b37bf0737bb4036
+  - enabled: 1
     path: Assets/1. Scenes/15. Scripts&Map.unity
     guid: 0eca73f92791ad1488c14bb1ba0c642f
+  - enabled: 1
+    path: Assets/1. Scenes/16. Scripts&Map Copy.unity
+    guid: 39a7789f0660a5d4095f9d02d8876d1f
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 77dd1639f23d301449d15f0751ad0444, type: 2}
