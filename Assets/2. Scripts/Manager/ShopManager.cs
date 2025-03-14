@@ -14,7 +14,10 @@ public class ShopManager : MonoBehaviour
     TMP_Text[] _shopCardPrices;
 
     int _shopCardIdx;
-    void Awake() { Instance = this; }
+    void Awake()
+    {
+        Instance = Instance != null ? Instance : this;
+    }
 
     private void Start()
     {

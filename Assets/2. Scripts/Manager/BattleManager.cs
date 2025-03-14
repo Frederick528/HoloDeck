@@ -1,17 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BattleManager : MonoBehaviour
 {
     public static BattleManager Instance;
 
-    public Arrow ArrowCursor;
+    public Arrow ArrowCursor = null;
 
-    private void Awake() => Instance = this;
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            ArrowCursor = FindObjectOfType<Arrow>(true);
+            DontDestroyOnLoad(ArrowCursor);
+        }
+    }
     private void Start()
     {
         ArrowCursor = FindObjectOfType<Arrow>(true);
+        DontDestroyOnLoad(ArrowCursor);
         //UIManager.Instance.SetupGameUi(true);
         //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     }
@@ -37,5 +48,5 @@ public class BattleManager : MonoBehaviour
         ArrowCursor.SetStartArrow();
         ArrowCursor.gameObject.SetActive(isOn);
         Cursor.visible = !isOn;
-    }
+    }       
 }

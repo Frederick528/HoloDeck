@@ -23,7 +23,10 @@ public class ButtonManager : MonoBehaviour
 
     int _nowCardState;
 
-    private void Awake() => Instance = this;
+    private void Awake()
+    {
+        Instance = Instance != null ? Instance : this;
+    }
 
     private void Start()
     {

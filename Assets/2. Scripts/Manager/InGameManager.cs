@@ -38,17 +38,20 @@ public class InGameManager : MonoBehaviour
 
     bool _isESCPause = false;
 
+    GameObject[] _camera;
+
     void Awake()
     {
+        _camera = GameObject.FindGameObjectsWithTag("MainCamera");
         if (Instance == null)
         {
             Instance = this;
-            transform.SetParent(null);
-            DontDestroyOnLoad(gameObject);
+            //transform.SetParent(null);
+            DontDestroyOnLoad(_camera[0]);
         }
         else
         {
-            Destroy(gameObject);
+            Destroy(_camera[1]);
         }
 
         Screen.SetResolution(1920, 1080, true);
@@ -390,7 +393,7 @@ public class InGameManager : MonoBehaviour
             while (!EnemyManager.Instance.SpawnEnemy(100, i))
             {
                 i++;
-                if (i > EnemyManager.Instance.EnemySpawnPosition.Count - 1)
+                if (i > EnemyManager.Instance.EnemySpawnPosition.Length - 1)
                     break; 
             }
         }

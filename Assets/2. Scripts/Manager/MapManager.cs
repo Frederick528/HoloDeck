@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MapManager : MonoBehaviour
 {
@@ -21,10 +22,33 @@ public class MapManager : MonoBehaviour
     [SerializeField] GameObject[] _mapPrefab;
     [SerializeField] GameObject _markPrefab;
 
-    void Awake() { Instance = this; }
+    void Awake()
+    {
+        Instance = Instance != null ? Instance : this;
+    }
 
     private void Start()
     {
+        _settingMap.Start();
+        ShowAllMap();
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        for (int i = _settingMap.MapTr.childCount - 1; i >= 0; --i)
+        {
+            Destroy(_settingMap.MapTr.GetChild(i).gameObject);
+        }
         _settingMap.Start();
         ShowAllMap();
     }

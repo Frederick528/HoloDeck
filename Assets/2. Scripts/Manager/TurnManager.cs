@@ -10,7 +10,10 @@ using UnityEngine.UI;
 public class TurnManager : MonoBehaviour
 {
     public static TurnManager Instance {get; private set;}
-    void Awake() => Instance = this;
+    void Awake()
+    {
+        Instance = Instance != null ? Instance : this;
+    }
 
     public bool InBattle { get; private set; }
 

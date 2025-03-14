@@ -11,13 +11,13 @@ public enum Sound
 }
 public class SoundManager : MonoBehaviour
 {
-    public static SoundManager instance;
+    public static SoundManager Instance;
     AudioSource[] _audioSources = new AudioSource[(int)Sound.MaxCount];
     Dictionary<string, AudioClip> _audioClips = new Dictionary<string, AudioClip>();
 
     private void Awake()
     {
-        instance ??= this;
+        Instance = Instance != null ? Instance : this;
         Init();
     }
     public void Init()

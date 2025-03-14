@@ -46,7 +46,7 @@ public class SettingMap
     //[SerializeField] GameObject _markPrefab;
     GameObject _mark;
     Vector3 _markDefaultPos;
-    //[SerializeField] Transform mapTr;
+    public Transform MapTr;
     //[SerializeField] GameObject cardRewardCanvas;
     //[SerializeField] GameObject enlargePanel;
 
@@ -57,6 +57,7 @@ public class SettingMap
     //[SerializeField] GameObject shopPanel;
     public void Start()
     {
+        MapTr = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.Map), "Map");
         _createMapCnt = MapManager.Instance.CreateMapCnt;
         _maxDistance = MapManager.Instance.MaxDistance;
         _createMapCnt = (int)Mathf.Clamp(_createMapCnt, 1, Mathf.Pow(_maxDistance * 2 + 1, 2));
@@ -69,6 +70,7 @@ public class SettingMap
         //posArr = (MapInfo[,])ResizeArray(posArr, new int[] { _maxDistance * 2 + 1, _maxDistance * 2 + 1 });
         posArr = new MapInfo[_maxDistance * 2 + 1, _maxDistance * 2 + 1];
 
+        Maps.Clear();
         validMapList.Clear();
         availableMapList.Clear();
         //RealaseMap();  // 초기화
@@ -436,8 +438,6 @@ public class SettingMap
         //}
         //validMapCount = validMapList.Count;
 
-        Transform mapTr = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.Map), "Map");
-
         int treasureIdx = Random.Range(1, validMapList.Count-1);
         int shopIdx = Random.Range(1, validMapList.Count-1);
         while (treasureIdx == shopIdx)
@@ -465,8 +465,8 @@ public class SettingMap
                     mapIdx = 4; // Enemy
             }
             MapInfo validMap = validMapList[i];
-            GameObject mapObject = MapManager.Instance.MapInstantiate(mapIdx, mapTr);
-            //GameObject mapObject = Instantiate(_mapPrefab[mapIdx], mapTr);/*PoolManager.Instance.MapPool.Get();*/
+            GameObject mapObject = MapManager.Instance.MapInstantiate(mapIdx, MapTr);
+            //GameObject mapObject = Instantiate(_mapPrefab[mapIdx], MapTr);/*PoolManager.Instance.MapPool.Get();*/
             Map map = mapObject.GetComponent<Map>();
             //mapObject.transform.GetComponentInChildren<TextMeshProUGUI>().text = validMap.distance.ToString();
             mapObject.transform.localPosition = validMap.transform_Position;
@@ -515,7 +515,7 @@ public class SettingMap
         }
         //if (_markPrefab != null)
         //{
-        _mark = MapManager.Instance.MarkInstantiate(mapTr);
+        _mark = MapManager.Instance.MarkInstantiate(MapTr);
         if (_mark)
             _markDefaultPos = _mark.transform.localPosition;
         //}

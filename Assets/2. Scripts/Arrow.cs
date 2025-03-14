@@ -64,6 +64,10 @@ public class Arrow : MonoBehaviour
 
     private void Awake()
     {
+        if (BattleManager.Instance != null)
+        {
+            Destroy(gameObject);
+        }
         this.origin = this.GetComponent<Transform>();
 
         for (int i = 0; i < this.ArrowNodeNum; ++i)

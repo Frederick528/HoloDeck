@@ -77,8 +77,23 @@ public class UIManager : MonoBehaviour
 
     private void Awake()
     {
-        _canvas = GameObject.Find("Canvas").GetComponent<Transform>();
+        _canvas = GameObject.Find("Canvases").GetComponent<Transform>();
         Player = GameObject.Find("Player").GetComponent<Transform>();
+
+        if (Instance == null)
+        {
+            Instance = this;
+            //transform.SetParent(null);
+            _canvas.gameObject.name = "CanvasesDontDestroy";
+            DontDestroyOnLoad(_canvas.gameObject);
+            DontDestroyOnLoad(transform.root.gameObject);
+        }
+        else
+        {
+            Destroy(_canvas.gameObject);
+            Destroy(transform.root.gameObject);
+            return;
+        }
 
         for (int i = 0; i < /*CanvasList.Count*/_canvas.childCount; ++i)
         {
@@ -129,19 +144,6 @@ public class UIManager : MonoBehaviour
             _uiItems[i] = _itemRewardContent.GetChild(i).GetComponent<UIItem>();
         }
 
-        if (Instance == null)
-        {
-            Instance = this;
-            transform.SetParent(null);
-            DontDestroyOnLoad(gameObject);
-            //Canvas(CanvasName.InGame).SetParent(null);                    // 캔버스 자체를 DontDestroy 해야할 수도
-            //DontDestroyOnLoad(Canvas(CanvasName.InGame).gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-            //Destroy(Canvas(CanvasName.InGame).gameObject);
-        }
     }
 
     private void Start()
@@ -172,62 +174,6 @@ public class UIManager : MonoBehaviour
         //}
 
         SetActiveCanvas(CanvasName.Map, true);
-    }
-
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        print("A");
-        _canvas = GameObject.Find("Canvas").GetComponent<Transform>();
-        Player = GameObject.Find("Player").GetComponent<Transform>();
-
-        for (int i = 1; i < /*CanvasList.Count*/_canvas.childCount; ++i)
-        {
-            //_canvasRaycaster.Add(CanvasList[i].GetComponent<GraphicRaycaster>());
-            //CanvasDict.Add(i, CanvasList[i]);
-            _canvasRaycaster[i] = (_canvas.GetChild(i).GetComponent<GraphicRaycaster>());
-            CanvasDict[i] = _canvas.GetChild(i);
-        }
-
-        _cardEnlargePanel = Canvas(CanvasName.CardReward).Find("CardEnlargePanel");
-        _cardRewardContent = ContinueFindChildByName(Canvas(CanvasName.CardReward), "Content");
-        _itemEnlargePanel = Canvas(CanvasName.ItemReward).Find("ItemEnlargePanel");
-        _itemRewardContent = ContinueFindChildByName(Canvas(CanvasName.ItemReward), "Content");
-
-        _viewDeckContent = ContinueFindChildByName(Canvas(CanvasName.ViewDeck), "Content");
-        //for (int i = 0; i < ViewDeckContent.childCount; ++i)
-        //{
-        //    _deckUICards.Add(ViewDeckContent.GetChild(i).GetComponent<UICard>());
-        //}
-
-        PassiveTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "PassiveItem");
-        ActiveTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "ActiveItemButton");
-        PotionTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "PotionItem");
-
-        _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel");
-        _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel");
-
-        _topHealthText = ContinueFindChildByName(Canvas(CanvasName.InGame), "HealthText").GetComponent<TMP_Text>();
-        _topCoinText = ContinueFindChildByName(Canvas(CanvasName.InGame), "CoinText").GetComponent<TMP_Text>();
-
-        _holoValue = ContinueFindChildByName(Canvas(CanvasName.Battle), "HoloValueText").GetComponent<TMP_Text>();
-        _turnEndButtonText = ContinueFindChildByName(Canvas(CanvasName.Battle), "TurnText").GetComponent<TMP_Text>();
-        _drawCount = ContinueFindChildByName(Canvas(CanvasName.Battle), "DrawCountText").GetComponent<TMP_Text>();
-        _dummyCount = ContinueFindChildByName(Canvas(CanvasName.Battle), "DummyCountText").GetComponent<TMP_Text>();
-
-        Transform rewardBoxCanvas = Canvas(CanvasName.RewardBox);
-        _rewardBoxes = new Transform[rewardBoxCanvas.childCount];
-        for (int i = 0; i < _rewardBoxes.Length; ++i)
-        {
-            _rewardBoxes[i] = rewardBoxCanvas.GetChild(i);
-        }
-        for (int i = 0; i < _uiCards.Length; ++i)
-        {
-            _uiCards[i] = _cardRewardContent.GetChild(i).GetComponent<UICard>();
-        }
-        for (int i = 0; i < _uiItems.Length; ++i)
-        {
-            _uiItems[i] = _itemRewardContent.GetChild(i).GetComponent<UIItem>();
-        }
     }
 
     public Transform ContinueFindChildByName(Transform parent, string name)
