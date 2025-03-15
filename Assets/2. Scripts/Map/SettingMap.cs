@@ -46,7 +46,7 @@ public class SettingMap
     //[SerializeField] GameObject _markPrefab;
     GameObject _mark;
     Vector3 _markDefaultPos;
-    public Transform MapTr;
+    public Transform MapTr = null;
     //[SerializeField] GameObject cardRewardCanvas;
     //[SerializeField] GameObject enlargePanel;
 
@@ -57,7 +57,8 @@ public class SettingMap
     //[SerializeField] GameObject shopPanel;
     public void Start()
     {
-        MapTr = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.Map), "Map");
+        if (MapTr == null)
+            MapTr = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.Map), "Map");
         _createMapCnt = MapManager.Instance.CreateMapCnt;
         _maxDistance = MapManager.Instance.MaxDistance;
         _createMapCnt = (int)Mathf.Clamp(_createMapCnt, 1, Mathf.Pow(_maxDistance * 2 + 1, 2));
