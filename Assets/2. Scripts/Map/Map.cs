@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UI;
@@ -23,26 +24,74 @@ public class Map : MonoBehaviour
 
     //public IObjectPool<GameObject> MapPool { get; set; }
     public Button btn;
+    public TMP_Text TMP_Text;       // 나중에 맵 이미지 생기면, 삭제할 예정.
     public Image img;
     public Vector3Int array_Position;
     public List<Map> aroundStage = new();
 
     public IStage stage;
+    public IStage[] Stages = new IStage[6];
     public enum StageState
     {
         Start,
-        Boss,
         Treasure,
         Shop,
+        Event,
         Enemy,
-        Event
+        Boss
     }
 
     public StageState State;
 
     public StageContext stageContext;
 
-
+    private void Awake()
+    {
+        TMP_Text = GetComponentInChildren<TMP_Text>();
+        Stages[0] = GetComponent<StartStage>();
+        Stages[1] = GetComponent<TreasureStage>();
+        Stages[2] = GetComponent<ShopStage>();
+        Stages[3] = GetComponent<EventStage>();
+        Stages[4] = GetComponent<EnemyStage>();
+        Stages[5] = GetComponent<BossStage>();
+    }
+    public void SettingMap(int idx)
+    {
+        TMP_Text.text = MapManager.Instance.MapString[idx];
+        btn.interactable = false;
+        stage = Stages[idx];
+        switch (idx)
+        {
+            case 0:
+                State = StageState.Start;
+                break;
+            case 1:
+                State = StageState.Treasure;
+                break;
+            case 2:
+                State = StageState.Shop;
+                break;
+            case 3:
+                State = StageState.Event;
+                break;
+            case 4:
+                State = StageState.Enemy;
+                break;
+            case 5:
+                State = StageState.Boss;
+                break;
+        }
+    }
+    public void ResetMap()
+    {
+        visited = false;
+        cleared = false;
+        rewarded = false;
+        ChangedItem = false;
+        rewardBox = -1;
+        img.color = Color.white;
+        aroundStage.Clear();
+    }
     public void LookingStage(List<Vector3Int> direction4, List<Map> maps)
     {
         foreach (Vector3Int direction in direction4)

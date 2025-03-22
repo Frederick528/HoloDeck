@@ -71,7 +71,7 @@ public class SettingMap
         //posArr = (MapInfo[,])ResizeArray(posArr, new int[] { _maxDistance * 2 + 1, _maxDistance * 2 + 1 });
         posArr = new MapInfo[_maxDistance * 2 + 1, _maxDistance * 2 + 1];
 
-        Maps.Clear();
+        //Maps.Clear();
         validMapList.Clear();
         availableMapList.Clear();
         //RealaseMap();  // 초기화
@@ -466,57 +466,74 @@ public class SettingMap
                     mapIdx = 4; // Enemy
             }
             MapInfo validMap = validMapList[i];
-            GameObject mapObject = MapManager.Instance.MapInstantiate(mapIdx, MapTr);
-            //GameObject mapObject = Instantiate(_mapPrefab[mapIdx], MapTr);/*PoolManager.Instance.MapPool.Get();*/
-            Map map = mapObject.GetComponent<Map>();
-            //mapObject.transform.GetComponentInChildren<TextMeshProUGUI>().text = validMap.distance.ToString();
+            GameObject mapObject;
+            Map map;
+            Debug.Log(Maps.Count);
+            if (Maps.Count > i)
+            {
+                map = Maps[i];
+                map.ResetMap();
+                mapObject = map.gameObject;
+            }
+            else
+            {
+                mapObject = MapManager.Instance.MapInstantiate(/*mapIdx, */MapTr);
+                //GameObject mapObject = Instantiate(_mapPrefab[mapIdx], MapTr);/*PoolManager.Instance.MapPool.Get();*/
+                map = mapObject.GetComponent<Map>();
+                //mapObject.transform.GetComponentInChildren<TextMeshProUGUI>().text = validMap.distance.ToString();
+                SetClickStage(map);
+                Maps.Add(map);
+            }
+            
             mapObject.transform.localPosition = validMap.transform_Position;
+            map.SettingMap(mapIdx);
 
-            //map.img.color = Color.black;
-            map.btn.interactable = false;
+            //map.TMP_Text.text = MapManager.Instance.MapString[mapIdx];
+            
+            //map.btn.interactable = false;
             map.array_Position = validMap.array_Position;
 
-            SetClickStage(map);
+            //map.stage = map.Stages[mapIdx];
 
-            switch (mapIdx)
-            {
-                case 0:
-                    map.stage = map.GetComponent<StartStage>();
-                    //map.GetComponentInChildren<TMP_Text>().text = "Start";
-                    //map.GetComponentInChildren<TMP_Text>().color = Color.gray;
-                    break;
-                case 1:
-                    map.stage = map.GetComponent<TreasureStage>();
-                    //map.GetComponentInChildren<TMP_Text>().text = "Treasure";
-                    //map.GetComponentInChildren<TMP_Text>().color = Color.yellow;
-                    break;
-                case 2:
-                    map.stage = map.GetComponent<ShopStage>();
-                    //map.GetComponentInChildren<TMP_Text>().text = "Shop";
-                    //map.GetComponentInChildren<TMP_Text>().color = Color.blue;
-                    break;
-                case 3:
-                    map.stage = map.GetComponent<EventStage>();
-                    //map.GetComponentInChildren<TMP_Text>().text = "Event";
-                    //map.GetComponentInChildren<TMP_Text>().color = Color.cyan;
-                    break;
-                case 4:
-                    map.stage = map.GetComponent<EnemyStage>();
-                    //map.GetComponentInChildren<TMP_Text>().text = "Enemy";
-                    break;
-                case 5:
-                    map.stage = map.GetComponent<BossStage>();
-                    //map.GetComponentInChildren<TMP_Text>().text = "Boss";
-                    //map.GetComponentInChildren<TMP_Text>().color = Color.red;
-                    break;
-            }
+            //switch (mapIdx)
+            //{
+            //    case 0:
+            //        map.stage = map.GetComponent<StartStage>();
+            //        //map.GetComponentInChildren<TMP_Text>().text = "Start";
+            //        //map.GetComponentInChildren<TMP_Text>().color = Color.gray;
+            //        break;
+            //    case 1:
+            //        map.stage = map.GetComponent<TreasureStage>();
+            //        //map.GetComponentInChildren<TMP_Text>().text = "Treasure";
+            //        //map.GetComponentInChildren<TMP_Text>().color = Color.yellow;
+            //        break;
+            //    case 2:
+            //        map.stage = map.GetComponent<ShopStage>();
+            //        //map.GetComponentInChildren<TMP_Text>().text = "Shop";
+            //        //map.GetComponentInChildren<TMP_Text>().color = Color.blue;
+            //        break;
+            //    case 3:
+            //        map.stage = map.GetComponent<EventStage>();
+            //        //map.GetComponentInChildren<TMP_Text>().text = "Event";
+            //        //map.GetComponentInChildren<TMP_Text>().color = Color.cyan;
+            //        break;
+            //    case 4:
+            //        map.stage = map.GetComponent<EnemyStage>();
+            //        //map.GetComponentInChildren<TMP_Text>().text = "Enemy";
+            //        break;
+            //    case 5:
+            //        map.stage = map.GetComponent<BossStage>();
+            //        //map.GetComponentInChildren<TMP_Text>().text = "Boss";
+            //        //map.GetComponentInChildren<TMP_Text>().color = Color.red;
+            //        break;
+            //}
 
-            Maps.Add(map);
             mapObject.gameObject.SetActive(false);
         }
         //if (_markPrefab != null)
         //{
-        _mark = MapManager.Instance.MarkInstantiate(MapTr);
+        if (_mark == null)
+            _mark = MapManager.Instance.MarkInstantiate(MapTr);
         if (_mark)
             _markDefaultPos = _mark.transform.localPosition;
         //}

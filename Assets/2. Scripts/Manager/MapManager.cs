@@ -17,9 +17,11 @@ public class MapManager : MonoBehaviour
 
     public bool canMove;
 
+    public string[] MapString = new string[6] { "Start", "Treasure", "Shop", "Event", "Enemy", "Boss"};
+
     SettingMap _settingMap = new();
 
-    [SerializeField] GameObject[] _mapPrefab;
+    [SerializeField] GameObject _mapPrefab;
     [SerializeField] GameObject _markPrefab;
 
     void Awake()
@@ -45,10 +47,10 @@ public class MapManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        for (int i = _settingMap.MapTr.childCount - 1; i >= 0; --i)
-        {
-            Destroy(_settingMap.MapTr.GetChild(i).gameObject);
-        }
+        //for (int i = _settingMap.MapTr.childCount - 1; i >= 0; --i)
+        //{
+        //    Destroy(_settingMap.MapTr.GetChild(i).gameObject);
+        //}
         _settingMap.Start();
         ShowAllMap();
     }
@@ -123,10 +125,14 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    public GameObject MapInstantiate(int idx, Transform parent)
+    public GameObject MapInstantiate(Transform parent)
     {
-        return Instantiate(_mapPrefab[idx], parent);
+        return Instantiate(_mapPrefab, parent);
     }
+    //public GameObject MapInstantiate(int idx, Transform parent)
+    //{
+    //    return Instantiate(_mapPrefab[idx], parent);
+    //}
     public GameObject MarkInstantiate(Transform parent)
     {
         return Instantiate(_markPrefab, parent);

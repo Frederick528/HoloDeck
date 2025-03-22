@@ -5831,13 +5831,14 @@ MonoBehaviour:
   MaxDistance: 3
   currStage: {fileID: 0}
   canMove: 0
-  _mapPrefab:
-  - {fileID: 4736686227007241525, guid: 32980ef199675084b9cf31f128c8e773, type: 3}
-  - {fileID: 4736686227007241525, guid: 2522259b319e6a24dbc96190321cd9d2, type: 3}
-  - {fileID: 4736686227007241525, guid: 00d0f3847c52d2c4ba493e27b6bded82, type: 3}
-  - {fileID: 4736686227007241525, guid: cc610bd36e80e6b419780ff5d14e72a3, type: 3}
-  - {fileID: 4736686227007241525, guid: dfd010ddbdcda7b4688d63e43ab07b6a, type: 3}
-  - {fileID: 4736686227007241525, guid: d99acbc11a3ef00419c0c43ae963882b, type: 3}
+  MapString:
+  - Start
+  - Treasure
+  - Shop
+  - Event
+  - Enemy
+  - Boss
+  _mapPrefab: {fileID: 8038856734214612220, guid: c22443bd9853fe946a7c5d2b01fc8829, type: 3}
   _markPrefab: {fileID: 8688223864113708633, guid: 9e8aa145d5ebc374f8c5c50e57cbb775, type: 3}
 --- !u!1 &720858997
 GameObject:
@@ -15530,7 +15531,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 1
   m_TargetDisplay: 0
@@ -16714,7 +16715,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1867868789
 RectTransform:
   m_ObjectHideFlags: 0
