@@ -85,8 +85,10 @@ public class UIManager : MonoBehaviour
             Instance = this;
             //transform.SetParent(null);
             _canvas.gameObject.name = "CanvasesDontDestroy";
-            DontDestroyOnLoad(_canvas.gameObject);
-            DontDestroyOnLoad(transform.root.gameObject);
+            GameManager.Instance.AddDontDestroy(_canvas.gameObject);
+            GameManager.Instance.AddDontDestroy(transform.root.gameObject);
+            //DontDestroyOnLoad(_canvas.gameObject);
+            //DontDestroyOnLoad(transform.root.gameObject);
         }
         else
         {

@@ -26,7 +26,7 @@ public class SoundManager : MonoBehaviour
         if (root == null)
         {
             root = new GameObject { name = "@Sound" };
-            Object.DontDestroyOnLoad(root);
+            DontDestroyOnLoad(root);
 
             string[] soundNames = System.Enum.GetNames(typeof(Sound)); // "Bgm", "Bear", "Effect"
             for (int i = 0; i < soundNames.Length - 1; i++)

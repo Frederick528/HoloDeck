@@ -24,6 +24,8 @@ public class MapManager : MonoBehaviour
     [SerializeField] GameObject _mapPrefab;
     [SerializeField] GameObject _markPrefab;
 
+    bool _onLoaded;
+
     void Awake()
     {
         Instance = Instance != null ? Instance : this;
@@ -31,6 +33,7 @@ public class MapManager : MonoBehaviour
 
     private void Start()
     {
+        if (_onLoaded) return;
         _settingMap.Start();
         ShowAllMap();
     }
@@ -47,6 +50,7 @@ public class MapManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        _onLoaded = true;
         //for (int i = _settingMap.MapTr.childCount - 1; i >= 0; --i)
         //{
         //    Destroy(_settingMap.MapTr.GetChild(i).gameObject);

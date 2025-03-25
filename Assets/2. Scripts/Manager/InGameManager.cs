@@ -47,7 +47,8 @@ public class InGameManager : MonoBehaviour
         {
             Instance = this;
             //transform.SetParent(null);
-            DontDestroyOnLoad(_camera[0]);
+            //DontDestroyOnLoad(_camera[0]);
+            GameManager.Instance.AddDontDestroy(_camera[0]);
         }
         else
         {

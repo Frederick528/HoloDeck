@@ -283,6 +283,7 @@ MonoBehaviour:
   rewarded: 0
   ChangedItem: 0
   btn: {fileID: 9013932901003095216}
+  TMP_Text: {fileID: 2193016728064917824}
   img: {fileID: 8477702034075680347}
   array_Position: {x: 0, y: 0, z: 0}
   aroundStage: []

@@ -16,16 +16,17 @@ public class BattleManager : MonoBehaviour
         {
             Instance = this;
             ArrowCursor = FindObjectOfType<Arrow>(true);
-            DontDestroyOnLoad(ArrowCursor);
+            GameManager.Instance.AddDontDestroy(ArrowCursor.gameObject);
+            //DontDestroyOnLoad(ArrowCursor);
         }
     }
-    private void Start()
-    {
-        ArrowCursor = FindObjectOfType<Arrow>(true);
-        DontDestroyOnLoad(ArrowCursor);
-        //UIManager.Instance.SetupGameUi(true);
-        //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
-    }
+    //private void Start()
+    //{
+    //    ArrowCursor = FindObjectOfType<Arrow>(true);
+    //    DontDestroyOnLoad(ArrowCursor);
+    //    //UIManager.Instance.SetupGameUi(true);
+    //    //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
+    //}
     /// <summary>
     /// Arrow커서의 활성화 여부와 위치를 설정합니다.
     /// </summary>

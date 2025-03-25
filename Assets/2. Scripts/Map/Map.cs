@@ -47,7 +47,6 @@ public class Map : MonoBehaviour
 
     private void Awake()
     {
-        TMP_Text = GetComponentInChildren<TMP_Text>();
         Stages[0] = GetComponent<StartStage>();
         Stages[1] = GetComponent<TreasureStage>();
         Stages[2] = GetComponent<ShopStage>();

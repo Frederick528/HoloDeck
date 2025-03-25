@@ -118,8 +118,18 @@ public class ButtonManager : MonoBehaviour
     {
         UIManager.Instance.LookMap();
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="idx">
+    /// 0 = Title
+    /// </param>
     public void ChangeScene(int idx)
     {
         SceneManager.LoadScene(idx);
+        if (idx == 0)
+        {
+            GameManager.Instance.DestroyAllDontDestroyObjects();
+        }
     }
 }

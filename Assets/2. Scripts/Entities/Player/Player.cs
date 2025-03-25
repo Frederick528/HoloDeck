@@ -27,7 +27,8 @@ public class Player : Entity
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(transform.root.gameObject);
+            GameManager.Instance.AddDontDestroy(transform.root.gameObject);
+            //DontDestroyOnLoad(transform.root.gameObject);
         }
         else
         {
