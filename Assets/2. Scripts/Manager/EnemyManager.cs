@@ -38,7 +38,12 @@ public class EnemyManager : MonoBehaviour
     private void Start()
     {
         _enemySpawn = new bool[EnemySpawnPosition.Length];
-        Array.Fill(_enemySpawn, true);
+        CanEnemySpawn(true);
+    }
+
+    public void CanEnemySpawn(bool canSpawn)
+    {
+        Array.Fill(_enemySpawn, canSpawn);
     }
 
     public bool SpawnEnemy(int enemyId, int spawnPosIndex)       // 체력 설정이 아니라 ID를 통해 몬스터 종류와 체력, 공격력을 가져오는 형식으로 변경함.

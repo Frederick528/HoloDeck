@@ -131,5 +131,9 @@ public class ButtonManager : MonoBehaviour
         {
             GameManager.Instance.DestroyAllDontDestroyObjects();
         }
+        else if (idx > 1)
+        {
+            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, false, MapManager.Instance.currStage.rewardBox);
+        }
     }
 }

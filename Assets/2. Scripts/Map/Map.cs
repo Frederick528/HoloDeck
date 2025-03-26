@@ -18,6 +18,8 @@ public class Map : MonoBehaviour
 
     public bool ChangedItem = false;
 
+    public int RandEnemyPattern = -1;
+
     public int rewardBox { get; private set; } = -1;
     public CardData[] CardReward { get; private set; } = new CardData[4];
     public ItemData[] ItemReward { get; private set; } = new ItemData[4];
@@ -45,17 +47,17 @@ public class Map : MonoBehaviour
 
     public StageContext stageContext;
 
-    private void Awake()
-    {
-        Stages[0] = GetComponent<StartStage>();
-        Stages[1] = GetComponent<TreasureStage>();
-        Stages[2] = GetComponent<ShopStage>();
-        Stages[3] = GetComponent<EventStage>();
-        Stages[4] = GetComponent<EnemyStage>();
-        Stages[5] = GetComponent<BossStage>();
-    }
     public void SettingMap(int idx)
     {
+        if (Stages[0] == null)
+        {
+            Stages[0] = GetComponent<StartStage>();
+            Stages[1] = GetComponent<TreasureStage>();
+            Stages[2] = GetComponent<ShopStage>();
+            Stages[3] = GetComponent<EventStage>();
+            Stages[4] = GetComponent<EnemyStage>();
+            Stages[5] = GetComponent<BossStage>();
+        }
         TMP_Text.text = MapManager.Instance.MapString[idx];
         btn.interactable = false;
         stage = Stages[idx];
@@ -81,12 +83,13 @@ public class Map : MonoBehaviour
                 break;
         }
     }
-    public void ResetMap()
+    public void ResetMap(int idx)
     {
         visited = false;
         cleared = false;
         rewarded = false;
         ChangedItem = false;
+        RandEnemyPattern = -1;
         rewardBox = -1;
         img.color = Color.white;
         aroundStage.Clear();

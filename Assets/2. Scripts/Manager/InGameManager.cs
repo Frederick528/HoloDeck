@@ -457,7 +457,7 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha8))
         {
-            TurnManager.Instance.EndBattle().Forget();
+            MapManager.Instance.MovePrevStage().Forget();
         }
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {

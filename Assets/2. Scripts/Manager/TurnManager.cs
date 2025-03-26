@@ -184,6 +184,12 @@ public class TurnManager : MonoBehaviour
         {
             CardManager.Instance.ClearCard();
             InGameManager.Instance.player.ShieldReset();
+            foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
+            {
+                Destroy(enemy.gameObject);
+            }
+            EnemyManager.Instance.EnemyList.Clear();
+            EnemyManager.Instance.CanEnemySpawn(true);
             return;
         }
 

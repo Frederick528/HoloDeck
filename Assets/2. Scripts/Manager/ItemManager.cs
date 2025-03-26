@@ -57,6 +57,7 @@ public class ItemManager : MonoBehaviour
 
         ButtonManager.Instance.ActiveItemButton.onClick.AddListener(() =>
         {
+            if (_activeItem.Data == null) return;
             if (_activeItem.Data.ItemCanUse == ItemCanUse.Anytime)
             {
                 if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)

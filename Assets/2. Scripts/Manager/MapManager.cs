@@ -13,13 +13,14 @@ public class MapManager : MonoBehaviour
     public int CreateMapCnt;
     public int MaxDistance;
 
+    public Map PrevStage;
     public Map currStage;
 
     public bool canMove;
 
     public string[] MapString = new string[6] { "Start", "Treasure", "Shop", "Event", "Enemy", "Boss"};
 
-    SettingMap _settingMap = new();
+    SettingMap _settingMap;
 
     [SerializeField] GameObject _mapPrefab;
     [SerializeField] GameObject _markPrefab;
@@ -29,6 +30,7 @@ public class MapManager : MonoBehaviour
     void Awake()
     {
         Instance = Instance != null ? Instance : this;
+        _settingMap = new(this);
     }
 
     private void Start()
@@ -77,6 +79,17 @@ public class MapManager : MonoBehaviour
         }
         stage.ClearMap();
         canMove = true;
+    }
+
+    public async UniTaskVoid MovePrevStage()
+    {
+        if (PrevStage == null) return;
+
+        await TurnManager.Instance.EndBattle();
+        _settingMap.MoveStage(PrevStage);
+
+        if (currStage.cleared)
+            canMove = true;
     }
 
     public void SetupStart(List<Vector3Int> direction4, List<Map> maps)

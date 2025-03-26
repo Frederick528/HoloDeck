@@ -13,7 +13,16 @@ public class EnemyStage : MonoBehaviour, IStage
         if (!map.cleared)
         {
             TurnManager.Instance.StartBattle();
-            EnemySpawn(0);
+            if (_map.RandEnemyPattern == -1)
+            {
+                Debug.Log("SS");
+                EnemySpawn(0);
+            }
+            else
+            {
+                Debug.Log("AA");
+                EnemySpawnPattern(_map.RandEnemyPattern);
+            }
         }
             print("Enemy");
     }
@@ -37,6 +46,7 @@ public class EnemyStage : MonoBehaviour, IStage
 
     public void EnemySpawnPattern(int rand)
     {
+        _map.RandEnemyPattern = rand;
         switch (rand)
         {
             case 0:
