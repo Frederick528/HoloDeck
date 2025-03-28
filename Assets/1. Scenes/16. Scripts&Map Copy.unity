@@ -4783,7 +4783,7 @@ GameObject:
   - component: {fileID: 593273568}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5828,7 +5828,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CreateMapCnt: 15
-  MaxDistance: 3
+  MapScale: 1
+  PrevStage: {fileID: 0}
   currStage: {fileID: 0}
   canMove: 0
   MapString:
@@ -15737,11 +15738,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2606e6dbfbd9714a88d20f35c91a26e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 0}
   _uiCard: {fileID: 8050772954400068717, guid: ee0a7fa36e737f0488bb04b744274eda, type: 3}
   PassiveTransform: {fileID: 0}
   ActiveTransform: {fileID: 0}
   PotionTransform: {fileID: 0}
+  StatusWindow: {fileID: 0}
 --- !u!1001 &1721370207
 PrefabInstance:
   m_ObjectHideFlags: 0

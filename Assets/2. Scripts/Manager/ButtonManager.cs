@@ -114,6 +114,19 @@ public class ButtonManager : MonoBehaviour
         }
     }
 
+    public void ControlStatusWindow()
+    {
+        Transform statusWindow = UIManager.Instance.StatusWindow;
+        if (statusWindow.localPosition.x == -985)
+        {
+            statusWindow.localPosition = new Vector3(-1460, 0, 0);
+        }
+        else if (statusWindow.localPosition.x == -1460)
+        {
+            statusWindow.localPosition = new Vector3(-985, 0, 0);
+        }
+    }
+
     public void LookMap()
     {
         UIManager.Instance.LookMap();
@@ -127,13 +140,22 @@ public class ButtonManager : MonoBehaviour
     public void ChangeScene(int idx)
     {
         SceneManager.LoadScene(idx);
-        if (idx == 0)
+        switch (idx)
         {
-            GameManager.Instance.DestroyAllDontDestroyObjects();
-        }
-        else if (idx > 1)
-        {
-            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, false, MapManager.Instance.currStage.rewardBox);
+            case 0:
+                GameManager.Instance.DestroyAllDontDestroyObjects();
+                break;
+            case 1:
+                MapManager.Instance.CreateMapCnt = 15;
+                MapManager.Instance.MaxDistance = (3, 3);
+                MapManager.Instance.MapScale = 1;
+                break;
+            case 2:
+                MapManager.Instance.CreateMapCnt = 30;
+                MapManager.Instance.MaxDistance = (4, 3);
+                MapManager.Instance.MapScale = 0.95f;
+                UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, false, MapManager.Instance.currStage.rewardBox);
+                break;
         }
     }
 }

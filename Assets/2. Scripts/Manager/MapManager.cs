@@ -11,7 +11,9 @@ public class MapManager : MonoBehaviour
     //public Transform rewardCanvas;
 
     public int CreateMapCnt;
-    public int MaxDistance;
+    public (int, int) MaxDistance = (3,3);      // y, x로 되어있음.
+
+    public float MapScale = 1;
 
     public Map PrevStage;
     public Map currStage;
@@ -53,6 +55,7 @@ public class MapManager : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         _onLoaded = true;
+        PrevStage = null;
         //for (int i = _settingMap.MapTr.childCount - 1; i >= 0; --i)
         //{
         //    Destroy(_settingMap.MapTr.GetChild(i).gameObject);

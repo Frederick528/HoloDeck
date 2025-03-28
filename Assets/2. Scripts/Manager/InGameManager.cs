@@ -39,20 +39,24 @@ public class InGameManager : MonoBehaviour
     bool _isESCPause = false;
 
     GameObject[] _camera;
+    GameObject[] _player;
 
     void Awake()
     {
         _camera = GameObject.FindGameObjectsWithTag("MainCamera");
+        _player = GameObject.FindGameObjectsWithTag("Player");
         if (Instance == null)
         {
             Instance = this;
             //transform.SetParent(null);
             //DontDestroyOnLoad(_camera[0]);
             GameManager.Instance.AddDontDestroy(_camera[0]);
+            GameManager.Instance.AddDontDestroy(_player[0]);
         }
         else
         {
             Destroy(_camera[1]);
+            Destroy(_player[1]);
         }
 
         Screen.SetResolution(1920, 1080, true);

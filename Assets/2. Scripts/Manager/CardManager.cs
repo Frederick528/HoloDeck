@@ -89,10 +89,10 @@ public class CardManager : MonoBehaviour
 
     private void Start()
     {
-        CardSpawnPoint = UIManager.Instance.Player.Find("CardSpawnPoint");
-        CardDummyTr = UIManager.Instance.Player.Find("CardDummy");
-        myCardLeft = UIManager.Instance.Player.Find("MyCardLeft");
-        myCardRight = UIManager.Instance.Player.Find("MyCardRight");
+        CardSpawnPoint = InGameManager.Instance.player.transform.root.Find("CardSpawnPoint");
+        CardDummyTr = InGameManager.Instance.player.transform.root.Find("CardDummy");
+        myCardLeft = InGameManager.Instance.player.transform.root.Find("MyCardLeft");
+        myCardRight = InGameManager.Instance.player.transform.root.Find("MyCardRight");
         isUseCard.Subscribe((canUse) =>
         {
             _selectCard?.TurnOnOutline(canUse);

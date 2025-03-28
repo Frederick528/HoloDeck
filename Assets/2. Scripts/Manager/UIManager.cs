@@ -28,8 +28,6 @@ public class UIManager : MonoBehaviour
     public Dictionary<int, Transform> CanvasDict = new();
 
     Transform _canvas;
-    [HideInInspector]
-    public Transform Player;
 
 
 
@@ -53,6 +51,9 @@ public class UIManager : MonoBehaviour
     public Transform ActiveTransform;
     [HideInInspector]
     public Transform PotionTransform;
+
+    [HideInInspector]
+    public Transform StatusWindow;
 
     Transform _cardRewardContent;
     Transform _itemRewardContent;
@@ -78,7 +79,6 @@ public class UIManager : MonoBehaviour
     private void Awake()
     {
         _canvas = GameObject.Find("Canvases").GetComponent<Transform>();
-        Player = GameObject.Find("Player").GetComponent<Transform>();
 
         if (Instance == null)
         {
@@ -119,6 +119,8 @@ public class UIManager : MonoBehaviour
         PassiveTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "PassiveItem");
         ActiveTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "ActiveItemButton");
         PotionTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "PotionItem");
+
+        StatusWindow = ContinueFindChildByName(Canvas(CanvasName.InGame), "Status");
 
         _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel");
         _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel");

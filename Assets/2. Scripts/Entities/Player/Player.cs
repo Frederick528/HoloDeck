@@ -7,13 +7,15 @@ using UniRx;
 
 public class Player : Entity
 {
-    public static Player Instance { get; private set; }
+    //public static Player Instance { get; private set; }
     public int MaxHolo { get; private set; }
     public int CurHolo { get; private set; }
 
     public ReactiveProperty<int> Coin { get; private set; } = new();
     public ReactiveProperty<int> AttackPower { get; private set; } = new();
     public ReactiveProperty<int> DefencePower { get; private set; } = new();
+    public ReactiveProperty<int> CritcalChance { get; private set; } = new();
+    public ReactiveProperty<float> CritcalDamage { get; private set; } = new();
 
     readonly int _battleAnimBool = Animator.StringToHash("Battle");
 
@@ -22,19 +24,19 @@ public class Player : Entity
     //[SerializeField] TMP_Text holoValue;
     // Start is called before the first frame update
 
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            GameManager.Instance.AddDontDestroy(transform.root.gameObject);
-            //DontDestroyOnLoad(transform.root.gameObject);
-        }
-        else
-        {
-            Destroy(transform.root.gameObject);
-        }
-    }
+    //private void Awake()
+    //{
+    //    if (Instance == null)
+    //    {
+    //        Instance = this;
+    //        GameManager.Instance.AddDontDestroy(transform.root.gameObject);
+    //        //DontDestroyOnLoad(transform.root.gameObject);
+    //    }
+    //    else
+    //    {
+    //        Destroy(transform.root.gameObject);
+    //    }
+    //}
     void Start()
     {
         PlayerSubScribe();

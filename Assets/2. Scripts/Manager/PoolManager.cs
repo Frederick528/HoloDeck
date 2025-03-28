@@ -38,7 +38,7 @@ public class PoolManager : MonoBehaviour
 
     private void Init()
     {
-        _deck = UIManager.Instance.Player.Find("Deck");
+        _deck = InGameManager.Instance.player.transform.root.Find("Deck");
         _textParent = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(CanvasName.InGame), "TextEffect");
         //ViewDeckContent = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.ViewDeck), "Content");
 

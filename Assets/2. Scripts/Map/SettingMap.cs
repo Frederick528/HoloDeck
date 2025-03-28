@@ -33,7 +33,7 @@ public class SettingMap
     int _createMapCnt;                       // 생성할 방 갯수
     //public int maxMapCnt;                       // 최대 방 갯수
     //public int currMapCnt;                        // 현재 방 갯수
-    int _maxDistance;                        // 최대 거리 제한
+    (int, int) _maxDistance;                        // 최대 거리 제한
 
     //public int validMapCount;
 
@@ -67,7 +67,8 @@ public class SettingMap
             MapTr = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.Map), "Map");
         _createMapCnt = _mapManager.CreateMapCnt;
         _maxDistance = _mapManager.MaxDistance;
-        _createMapCnt = (int)Mathf.Clamp(_createMapCnt, 1, Mathf.Pow(_maxDistance * 2 + 1, 2));
+        _createMapCnt = (int)Mathf.Clamp(_createMapCnt, 1, (_maxDistance.Item1 * 2 + 1) * (_maxDistance.Item2 * 2 + 1)/*Mathf.Pow(_maxDistance * 2 + 1, 2)*/);
+        mapDistance = (int)(100 * _mapManager.MapScale);
         CreatedMap();
     }
 
@@ -75,14 +76,14 @@ public class SettingMap
     {
         //// 배열 ReSize
         //posArr = (MapInfo[,])ResizeArray(posArr, new int[] { _maxDistance * 2 + 1, _maxDistance * 2 + 1 });
-        posArr = new MapInfo[_maxDistance * 2 + 1, _maxDistance * 2 + 1];
+        posArr = new MapInfo[_maxDistance.Item1 * 2 + 1, _maxDistance.Item2 * 2 + 1];
 
         //Maps.Clear();
         validMapList.Clear();
         availableMapList.Clear();
         //RealaseMap();  // 초기화
 
-        startMapPosition = new Vector3Int(_maxDistance, _maxDistance, 0);                        // 시작 좌표
+        startMapPosition = new Vector3Int(_maxDistance.Item1, _maxDistance.Item2, 0);                        // 시작 좌표
 
         posArr[startMapPosition.x, startMapPosition.y] = AddSingleMap(new MapInfo(), startMapPosition, "Single");
         //posArr[startMapPosition.x, startMapPosition.y].distance = 0;
@@ -382,8 +383,8 @@ public class SettingMap
 
     public bool PossibleArr(Vector3Int pos)
     {
-        if ((0 <= (pos).x && (pos).x < (_maxDistance * 2 + 1))
-            && (0 <= (pos).y && (pos).y < (_maxDistance * 2 + 1)))
+        if ((0 <= (pos).x && (pos).x < (_maxDistance.Item1 * 2 + 1))
+            && (0 <= (pos).y && (pos).y < (_maxDistance.Item2 * 2 + 1)))
         {
             return true;
         }
@@ -531,7 +532,7 @@ public class SettingMap
                 SetClickStage(map);
                 Maps.Add(map);
             }
-            
+            mapObject.transform.localScale = Vector3.one * _mapManager.MapScale;
             mapObject.transform.localPosition = validMap.transform_Position;
             map.SettingMap(mapIdx);
 
@@ -584,7 +585,9 @@ public class SettingMap
             _mark = _mapManager.MarkInstantiate(MapTr);
             _markDefaultPos = _mark.transform.localPosition;
         }
+        _mark.transform.localScale = Vector3.one * _mapManager.MapScale;
         _mark.transform.localPosition = _markDefaultPos;        // 새로운 맵 생성 시, 현 위치표시 마커를 시작 지점으로 지정해주는 코드
+        _mark.transform.SetAsLastSibling();
         //}
         //foreach (Map map in Maps)
         //{
