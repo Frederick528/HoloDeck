@@ -16,7 +16,8 @@ public class ItemManager : MonoBehaviour
     RectTransform _passiveTransform;
 
     ActiveItem _activeItem;
-    TMP_Text _activeItemCharge;
+    Image _activeItemChargeImgae;
+    TMP_Text _activeItemChargeText;
     public bool HaveActiveItem;
 
     PotionItem[] _potionItem = new PotionItem[4];
@@ -42,10 +43,18 @@ public class ItemManager : MonoBehaviour
     private void Start()
     {
         _passiveTransform = (RectTransform)UIManager.Instance.ContinueFindChildByName(UIManager.Instance.PassiveTransform, "PassiveContent");
-        _activeItemCharge = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.ActiveTransform, "Skill(NIY)").GetComponent<TMP_Text>();      // 이미지로 변경해야 함.
+        _activeItemChargeImgae = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.ActiveTransform, "ChargeBar").GetComponent<Image>();
+        _activeItemChargeText = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.ActiveTransform, "ChargeText").GetComponent<TMP_Text>();
 
         _activeItem = UIManager.Instance.ActiveTransform.GetComponent<ActiveItem>();
         _potionItem = UIManager.Instance.PotionTransform.GetComponentsInChildren<PotionItem>();
+
+        _activeItem.ResetItem();
+
+        if (_activeItem.Data == null)
+        {
+            _activeItemChargeImgae.gameObject.SetActive(false);
+        }
         ButtonManager.Instance.TurnPassiveButton[0].onClick.AddListener(() =>
         {
             _passiveTransform.offsetMin = new Vector2(_passiveTransform.offsetMin.x + 1600 > 0 ? 0 : _passiveTransform.offsetMin.x + 1600, _passiveTransform.offsetMin.y);
@@ -321,10 +330,12 @@ public class ItemManager : MonoBehaviour
         }
         else
         {
+            _activeItemChargeImgae.gameObject.SetActive(true);
             _activeItem.Setup(itemData, value);
         }
         //ButtonManager.Instance.ActiveItemButton.onClick.RemoveAllListeners();
-        _activeItemCharge.text = _activeItem.CurCharge.ToString();
+        _activeItemChargeImgae.fillAmount = (float)_activeItem.CurCharge / _activeItem.Data.MaxCharge;
+        _activeItemChargeText.text = $"{_activeItem.CurCharge} / {_activeItem.Data.MaxCharge}";
         HaveActiveItem = true;
         //ButtonManager.Instance.ActiveItemButton.onClick.AddListener(() =>
         //{
@@ -423,7 +434,9 @@ public class ItemManager : MonoBehaviour
 
         _activeItem.CurCharge = Mathf.Clamp(_activeItem.CurCharge + value, 0, _activeItem.Data.MaxCharge);
 
-        _activeItemCharge.text = _activeItem.CurCharge.ToString();
+        _activeItemChargeImgae.fillAmount = (float)_activeItem.CurCharge / _activeItem.Data.MaxCharge;
+        _activeItemChargeText.text = $"{_activeItem.CurCharge} / {_activeItem.Data.MaxCharge}";
+        //_activeItemChargeText.text = _activeItem.CurCharge.ToString();
     }
 
     //public void SettingSingleTarget(bool arrow, int value = 0)

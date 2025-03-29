@@ -36,7 +36,7 @@ public class ItemData
     public string Name;
     public int ID;
     public int MaxCharge;
-    public int CurCharge;
+    public int CurCharge;       // bool 타입으로 변경해도 될 듯.
 
     public int Damage;
     public int Shield;

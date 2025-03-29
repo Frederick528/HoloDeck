@@ -52,6 +52,7 @@ public class UIItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 _itemBtn.onClick.AddListener(() =>
                 {
                     (ItemData, int)? changeditem = ItemManager.Instance.GetItem(_itemData, _curCharge);
+                    InGameManager.Instance.ReturnRandomItem(MapManager.Instance.currStage.ItemReward);
                     if (changeditem != null)
                     {
                         MapManager.Instance.ChangedUseItem(changeditem.Value.Item1, idx);       // 여기 SetUp 들어가 있음.
@@ -63,7 +64,6 @@ public class UIItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                         _curCharge = -1;
                         MapManager.Instance.GetReward(false);
                     }
-                    InGameManager.Instance.ReturnRandomItem();
                     if (_curCharge == -1)
                     {
                         UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.ItemReward, false);

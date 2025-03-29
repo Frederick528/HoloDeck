@@ -14,7 +14,7 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     protected ItemData _defaultData = null;
     protected string _defaultDesc = null;
-    public ItemData Data { get; protected set; }
+    public ItemData Data { get; protected set; } = null;
     public string Desc;
     protected ItemAbility _itemAbility = new();
 
@@ -147,6 +147,11 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         //            _rararityBG[i].sprite = CardManager.Instance.LegendarySprites[i];
         //        break;
         //}
+    }
+
+    public void ResetItem()
+    {
+        Data = null;
     }
 
     //public void CheckEnemyDead()

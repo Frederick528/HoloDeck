@@ -85,6 +85,16 @@ public class Map : MonoBehaviour
     }
     public void ResetMap(int idx)
     {
+        if (ItemReward[0] != null)
+        {
+            print("S");
+            if (!rewarded)
+            {
+                print("AAS");
+                InGameManager.Instance.ReturnRandomItem(ItemReward);
+            }
+            ItemReward = new ItemData[4];
+        }
         visited = false;
         cleared = false;
         rewarded = false;
@@ -171,7 +181,7 @@ public class Map : MonoBehaviour
             CardReward[1] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;
             CardReward[2] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;
             CardReward[3] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;     // 유물 효과로 카드 선택지 +1
-            InGameManager.Instance.ReturnRandomCard();
+            InGameManager.Instance.ReturnRandomCard(CardReward);
             UIManager.Instance.ShowRewardCard(CardReward);
 
         }

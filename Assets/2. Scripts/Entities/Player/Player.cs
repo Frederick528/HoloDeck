@@ -13,14 +13,14 @@ public class Player : Entity
 
     public ReactiveProperty<int> Coin { get; private set; } = new();
     public ReactiveProperty<int> AttackPower { get; private set; } = new();
-    public ReactiveProperty<int> DefencePower { get; private set; } = new();
+    public ReactiveProperty<int> DefensePower { get; private set; } = new();
     public ReactiveProperty<int> CritcalChance { get; private set; } = new();
     public ReactiveProperty<float> CritcalDamage { get; private set; } = new();
 
     readonly int _battleAnimBool = Animator.StringToHash("Battle");
 
     int _attackPower;
-    int _defencePower;
+    int _defensePower;
     //[SerializeField] TMP_Text holoValue;
     // Start is called before the first frame update
 
@@ -59,7 +59,7 @@ public class Player : Entity
             CardManager.Instance.ChangeTotalCardDesc();
         });
 
-        DefencePower.Subscribe(defencePower =>
+        DefensePower.Subscribe(defensePower =>
         {
             CardManager.Instance.ChangeTotalCardDesc();
         });
@@ -108,7 +108,7 @@ public class Player : Entity
     }
     public void AddDefencePower(int value)
     {
-        DefencePower.Value += value;
+        DefensePower.Value += value;
     }
 
     public void StartOrEndBattle(bool isBattleStart)

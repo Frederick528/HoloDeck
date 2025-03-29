@@ -13,7 +13,7 @@ public class InGameManager : MonoBehaviour
     public Vector2Int[] EnhancedCardRarityID { get; private set; }
 
     List<CardData>[] _randomCardList = new List<CardData>[4];
-    List<CardData> _popRandomCardList = new();
+    //List<CardData> _popRandomCardList = new();
 
 
     public Dictionary<int, ItemData> ItemDatas { get; private set; } = new Dictionary<int, ItemData>();     // 나중에 ItemManager로 이동
@@ -21,7 +21,7 @@ public class InGameManager : MonoBehaviour
     public Vector2Int ActiveID { get; private set; }
     public Vector2Int PotionID { get; private set; }
     List<ItemData>[] _randomItemList = new List<ItemData>[3];
-    List<ItemData> _popRandomItemList = new();
+    //List<ItemData> _popRandomItemList = new();
 
     public EventQueue AbilityEventQueue = new();                // 나중에 BattleManager로 이동
 
@@ -119,13 +119,13 @@ public class InGameManager : MonoBehaviour
         {
             (_randomCardList[listIdx][randomIdx], _randomCardList[listIdx][^1]) = (_randomCardList[listIdx][^1], _randomCardList[listIdx][randomIdx]);
             randomCard = _randomCardList[listIdx][^1];
-            _popRandomCardList.Add(randomCard);
+            //_popRandomCardList.Add(randomCard);
             _randomCardList[listIdx].RemoveAt(_randomCardList[listIdx].Count - 1);
         }
         else if (_randomCardList[listIdx].Count == 1)       // 카드풀이 늘어나면 if문은 빼도 됨. 에픽이랑 레전더리 개수가 부족해서 카드 시각화 안 되는 오류 때문에 조건문 걸어놓은 거임.
         {
             randomCard = _randomCardList[listIdx][0];
-            _popRandomCardList.Add(randomCard);
+            //_popRandomCardList.Add(randomCard);
             _randomCardList[listIdx].RemoveAt(0);
         }
         else
@@ -187,10 +187,12 @@ public class InGameManager : MonoBehaviour
                 return null;
         }
     }
-    public void ReturnRandomCard()
+    public void ReturnRandomCard(CardData[] cardDatas)
     {
-        foreach (CardData cardData in _popRandomCardList)
+        foreach (CardData cardData in cardDatas/*_popRandomCardList*/)           // _popRandomCardList로 했으나, 굳이 이렇게 해야하나? 싶어서 그냥 Map에서 받아오도록 변경함.
         {
+            if (cardData == null) return;       // 카드 개수가 부족해서 null 뜰 때가 있음. 그냥 리턴해서 없애도록 함.
+
             if (cardData.CardRarity == CardRarity.Legendary)
             {
                 _randomCardList[3].Add(cardData);
@@ -208,7 +210,7 @@ public class InGameManager : MonoBehaviour
                 _randomCardList[0].Add(cardData);
             }
         }
-        _popRandomCardList.Clear();
+        //_popRandomCardList.Clear();
     }
     public ItemData ItemSwapAndPop(int listIdx, int randomIdx)
     {
@@ -217,13 +219,13 @@ public class InGameManager : MonoBehaviour
         {
             (_randomItemList[listIdx][randomIdx], _randomItemList[listIdx][^1]) = (_randomItemList[listIdx][^1], _randomItemList[listIdx][randomIdx]);
             randomItem = _randomItemList[listIdx][^1];
-            _popRandomItemList.Add(randomItem);
+            //_popRandomItemList.Add(randomItem);
             _randomItemList[listIdx].RemoveAt(_randomItemList[listIdx].Count - 1);
         }
-        else if (_randomItemList[listIdx].Count == 1)       // 카드풀이 늘어나면 if문은 빼도 됨. 에픽이랑 레전더리 개수가 부족해서 카드 시각화 안 되는 오류 때문에 조건문 걸어놓은 거임.
+        else if (_randomItemList[listIdx].Count == 1)       // 아이템풀이 늘어나면 if문은 빼도 됨. 개수가 부족해서 시각화 안 되는 오류 때문에 조건문 걸어놓은 거임.
         {
             randomItem = _randomItemList[listIdx][0];
-            _popRandomItemList.Add(randomItem);
+            //_popRandomItemList.Add(randomItem);
             _randomItemList[listIdx].RemoveAt(0);
         }
         else
@@ -235,20 +237,38 @@ public class InGameManager : MonoBehaviour
     public ItemData RandomItem()     // Potion은 따로 만들 것.
     {
         int probability = Random.Range(1, 3);
+        ItemData randomItem;
         if (probability == 1)
         {
-            return ItemSwapAndPop(0, Random.Range(0, _randomItemList[0].Count));
+            randomItem = ItemSwapAndPop(0, Random.Range(0, _randomItemList[0].Count));
+            if (randomItem != null)
+            {
+                return randomItem;
+            }
+            else
+            {
+                return ItemSwapAndPop(1, Random.Range(0, _randomItemList[1].Count));
+            }
         }
         else
         {
-            return ItemSwapAndPop(1, Random.Range(0, _randomItemList[1].Count));
+            randomItem = ItemSwapAndPop(1, Random.Range(0, _randomItemList[1].Count));
+            if (randomItem != null)
+            {
+                return randomItem;
+            }
+            else
+            {
+                return ItemSwapAndPop(0, Random.Range(0, _randomItemList[0].Count));
+            }
         }
         
     }
-    public void ReturnRandomItem()
+    public void ReturnRandomItem(ItemData[] itemDatas)
     {
-        foreach (ItemData itemData in _popRandomItemList)
+        foreach (ItemData itemData in itemDatas/*_popRandomItemList*/)       // _popRandomItemList로 했으나, 카드와 다르게 아이템은 안 먹은 경우에는 다른 방에서 뜨면 안 되고, 2가지 이상의 방에서 아이템이 떴는데, 한 곳에서 먹으면, ReturnRandomItem()을 실행하기 때문에 그냥 현재 방에 있는 Item들을 리턴하는 코드로 변경.
         {
+            if (itemData == null) return;
             if (ItemManager.Instance.itemDict.ContainsKey(itemData.ID) && ItemManager.Instance.itemDict[itemData.ID]) continue;
             if (itemData.ItemTag == ItemTag.Potion)
             {
@@ -263,7 +283,7 @@ public class InGameManager : MonoBehaviour
                 _randomItemList[0].Add(itemData);
             }
         }
-        _popRandomItemList.Clear();
+        //_popRandomItemList.Clear();
     }
     public CardData FindCardData(int id)   // ID 값으로 카드데이터 가져오기
     {

@@ -15,12 +15,10 @@ public class EnemyStage : MonoBehaviour, IStage
             TurnManager.Instance.StartBattle();
             if (_map.RandEnemyPattern == -1)
             {
-                Debug.Log("SS");
                 EnemySpawn(0);
             }
             else
             {
-                Debug.Log("AA");
                 EnemySpawnPattern(_map.RandEnemyPattern);
             }
         }

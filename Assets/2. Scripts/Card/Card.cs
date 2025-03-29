@@ -201,7 +201,7 @@ public class Card : MonoBehaviour
         }
         if (_defaultData.Shield != 0)
         {
-            Data.Shield = _defaultData.Shield + InGameManager.Instance.player.DefencePower.Value;
+            Data.Shield = _defaultData.Shield + InGameManager.Instance.player.DefensePower.Value;
             if (Data.Shield < 0) { Data.Shield = 0; }
         }
         Data.Count = _defaultData.Count + 0;

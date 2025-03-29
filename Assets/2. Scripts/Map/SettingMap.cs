@@ -263,7 +263,7 @@ public class SettingMap
 
         if (_mark != null)
         {
-            _mark.transform.position = stage.transform.position + _markDefaultPos;
+            _mark.transform.localPosition = stage.transform.localPosition + _markDefaultPos;
         }
 
         // 방 입장 코드 추가

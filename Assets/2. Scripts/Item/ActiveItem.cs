@@ -13,7 +13,7 @@ public class ActiveItem : UseItem
         if (Data.ItemTag == ItemTag.Active)
         {
             Data.Damage = _defaultData.Damage + InGameManager.Instance.player.AttackPower.Value;
-            Data.Shield = _defaultData.Shield + InGameManager.Instance.player.DefencePower.Value;
+            Data.Shield = _defaultData.Shield + InGameManager.Instance.player.DefensePower.Value;
             if (Data.Damage < 0) { Data.Damage = 0; }
             if (Data.Shield < 0) { Data.Shield = 0; }
             Data.Draw = _defaultData.Draw;
@@ -42,7 +42,7 @@ public class ActiveItem : UseItem
         else if (Data.CurCharge == -1) { CurCharge = 0; }
 
         int damage = _defaultData.Damage + InGameManager.Instance.player.AttackPower.Value;
-        int shield = _defaultData.Shield + InGameManager.Instance.player.DefencePower.Value;
+        int shield = _defaultData.Shield + InGameManager.Instance.player.DefensePower.Value;
         if (damage < 0) { damage = 0; }
         if (shield < 0) { shield = 0; }
         sb.Replace("{Damage}", damage.ToString());
