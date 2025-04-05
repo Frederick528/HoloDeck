@@ -16,104 +16,106 @@ MonoBehaviour:
   Items:
   - Name: Passive1
     ID: 1
+    ItemTag: 0
+    ItemRarity: 0
+    StartCharge: 0
     MaxCharge: 0
-    CurCharge: 0
     Damage: 0
     Shield: 0
     Draw: 0
     Heal: 0
     Duration: 0
     Price: 5
-    Descript: 
+    Descript: "passive1\r"
     Sprite: {fileID: 0}
-    ItemTag: 0
-    ItemRarity: 0
     AttackType: 0
     ItemCanUse: 0
   - Name: Passive2
     ID: 2
+    ItemTag: 0
+    ItemRarity: 0
+    StartCharge: 0
     MaxCharge: 0
-    CurCharge: 0
     Damage: 0
     Shield: 0
     Draw: 0
     Heal: 0
     Duration: 0
     Price: 10
-    Descript: 
+    Descript: "passive2\r"
     Sprite: {fileID: 0}
-    ItemTag: 0
-    ItemRarity: 0
     AttackType: 0
     ItemCanUse: 0
   - Name: Passive3
     ID: 3
+    ItemTag: 0
+    ItemRarity: 1
+    StartCharge: 0
     MaxCharge: 0
-    CurCharge: 0
     Damage: 0
     Shield: 0
     Draw: 0
     Heal: 0
     Duration: 0
     Price: 20
-    Descript: 
+    Descript: "passive3\r"
     Sprite: {fileID: 0}
-    ItemTag: 0
-    ItemRarity: 1
     AttackType: 0
     ItemCanUse: 0
   - Name: Passive4
     ID: 4
+    ItemTag: 0
+    ItemRarity: 0
+    StartCharge: 0
     MaxCharge: 0
-    CurCharge: 0
     Damage: 0
     Shield: 0
     Draw: 0
     Heal: 0
     Duration: 0
     Price: 20
-    Descript: 
+    Descript: "passive4\r"
     Sprite: {fileID: 0}
-    ItemTag: 0
-    ItemRarity: 0
     AttackType: 0
     ItemCanUse: 0
   - Name: Passive5
     ID: 5
+    ItemTag: 0
+    ItemRarity: 0
+    StartCharge: 0
     MaxCharge: 0
-    CurCharge: 0
     Damage: 0
     Shield: 0
     Draw: 0
     Heal: 0
     Duration: 0
     Price: 15
-    Descript: 
+    Descript: "passive5\r"
     Sprite: {fileID: 0}
-    ItemTag: 0
-    ItemRarity: 0
     AttackType: 0
     ItemCanUse: 0
   - Name: Passive6
     ID: 6
+    ItemTag: 0
+    ItemRarity: 0
+    StartCharge: 0
     MaxCharge: 0
-    CurCharge: 0
     Damage: 0
     Shield: 0
     Draw: 0
     Heal: 0
     Duration: 0
     Price: 5
-    Descript: 
+    Descript: passive6
     Sprite: {fileID: 0}
-    ItemTag: 0
-    ItemRarity: 0
     AttackType: 0
     ItemCanUse: 0
   - Name: Active1
     ID: 501
+    ItemTag: 1
+    ItemRarity: 0
+    StartCharge: 1
     MaxCharge: 6
-    CurCharge: 0
     Damage: 6
     Shield: 0
     Draw: 1
@@ -124,14 +126,14 @@ MonoBehaviour:
 
       {Draw} Draw'
     Sprite: {fileID: 0}
-    ItemTag: 1
-    ItemRarity: 0
     AttackType: 1
     ItemCanUse: 1
   - Name: Active2
     ID: 502
+    ItemTag: 1
+    ItemRarity: 0
+    StartCharge: 1
     MaxCharge: 3
-    CurCharge: 0
     Damage: 0
     Shield: 6
     Draw: 0
@@ -140,14 +142,14 @@ MonoBehaviour:
     Price: 50
     Descript: '{Shield} Shield'
     Sprite: {fileID: 0}
-    ItemTag: 1
-    ItemRarity: 0
     AttackType: 0
     ItemCanUse: 1
   - Name: Active3
     ID: 503
+    ItemTag: 1
+    ItemRarity: 0
+    StartCharge: 0
     MaxCharge: 5
-    CurCharge: -1
     Damage: 0
     Shield: 0
     Draw: 0
@@ -156,24 +158,22 @@ MonoBehaviour:
     Price: 50
     Descript: '{Heal} Heal'
     Sprite: {fileID: 0}
-    ItemTag: 1
-    ItemRarity: 0
     AttackType: 0
     ItemCanUse: 2
   - Name: Potion1
     ID: 1001
+    ItemTag: 2
+    ItemRarity: 0
+    StartCharge: 0
     MaxCharge: 0
-    CurCharge: 0
     Damage: 10
     Shield: 0
     Draw: 0
     Heal: 0
     Duration: 0
     Price: 30
-    Descript: dessadas
+    Descript: 
     Sprite: {fileID: 0}
-    ItemTag: 2
-    ItemRarity: 0
     AttackType: 1
     ItemCanUse: 1
   PassiveID: {x: 1, y: 6}

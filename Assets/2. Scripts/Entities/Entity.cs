@@ -10,14 +10,16 @@ public abstract class Entity : MonoBehaviour
 {
     //[SerializeField] protected SpriteRenderer entitySprite;
     //[SerializeField] protected Slider slider;   // 나중에 이미지로 변경
-    [SerializeField] protected Image hpBar;
-    [SerializeField] protected GameObject shieldObj;
-    [SerializeField] protected TMP_Text hpText;
-    [SerializeField] protected TMP_Text shieldText;
-    [SerializeField] protected BoxCollider2D col2d;
-    [SerializeField] protected Transform canvas;
+    protected Image hpBar;
+    protected Image _criticalBar;
+    protected GameObject shieldObj;
+    protected TMP_Text hpText;
+    protected TMP_Text _criticalText;
+    protected TMP_Text shieldText;
+    protected BoxCollider2D col2d;
+    protected Transform canvas;
 
-    SendAnimEvent _AnimEvent;
+    SendAnimEvent _animEvent;
 
     bool _isAtk;
     bool _isDied;
@@ -26,6 +28,11 @@ public abstract class Entity : MonoBehaviour
     protected ReactiveProperty<int> maxHp = new();
     protected ReactiveProperty<int> curHp = new();
     protected ReactiveProperty<int> shield = new();
+
+    protected ReactiveProperty<int> _useCritical { get; private set; } = new(100);
+    protected ReactiveProperty<int> _curCritical { get; private set; } = new();
+    protected ReactiveProperty<int> _criticalChance { get; private set; } = new();
+    protected ReactiveProperty<float> _criticalDamage { get; private set; } = new(1.25f);
 
     float _hpRatio;
 
@@ -41,11 +48,12 @@ public abstract class Entity : MonoBehaviour
     //        hpText.text = hp.ToString();
     //    });
     //}
-    public void SetupEntity(int hp)
+    public void SetupEntity(int hp, int criticalChance = 10)
     {
         //col2d = GetComponent<BoxCollider2D>();
         maxHp.Value = hp;
         curHp.Value = maxHp.Value;
+        _criticalChance.Value = criticalChance;
         //slider.value = maxHp.Value;
         //hpText.text = maxHp.ToString();
     }
@@ -131,6 +139,26 @@ public abstract class Entity : MonoBehaviour
         await UniTask.WaitForSeconds(0.1f);
     }
 
+    public int CheckCritical(int damage)
+    {
+        if (_curCritical.Value >= _useCritical.Value)
+        {
+            int criticalDamage = Mathf.RoundToInt(damage * _criticalDamage.Value);
+            Critical(-_useCritical.Value);
+            return criticalDamage;
+        }
+        else
+        {
+            Critical(_criticalChance.Value);        // 크리티컬이 안 터질 때만 찬스가 올라감.
+            return damage;
+        }
+    }
+
+    public void Critical(int amount)
+    {
+        _curCritical.Value += amount;
+    }
+
     public virtual void ShieldReset()
     {
         shield.Value = 0;
@@ -168,20 +196,33 @@ public abstract class Entity : MonoBehaviour
                 shieldText.text = shield.ToString();
             }
         });
+        _useCritical.Subscribe(critical =>
+        {
+            if (critical <= 0) return;
+            _criticalBar.fillAmount = _curCritical.Value / (float)critical;
+        });
+        _curCritical.Subscribe(critical =>
+        {
+            if (_useCritical.Value <= 0) return;
+            _criticalBar.fillAmount = (float)critical / _useCritical.Value;
+            _criticalText.text = _curCritical.ToString();
+        });
     }
 
     protected void StartEntity()
     {
         animator = transform.GetChild(0).GetComponent<Animator>();      // 위치로 찾는 거 약간 불편함.
-        _AnimEvent = transform.GetChild(0).GetComponent<SendAnimEvent>();
-        _AnimEvent.ParentEntity = this;
+        _animEvent = transform.GetChild(0).GetComponent<SendAnimEvent>();
+        _animEvent.ParentEntity = this;
 
         //entitySprite = GetComponent<SpriteRenderer>();
         canvas = transform.Find("EntityCanvas");
         hpBar = canvas.Find("HPBar").GetComponent<Image>();
+        _criticalBar = canvas.Find("CriticalBar").GetComponent<Image>();
         shieldObj = canvas.Find("Shield").gameObject;
         //slider = GetComponentInChildren<Slider>();
         hpText = hpBar.transform.Find("HPText").GetComponent<TMP_Text>();
+        _criticalText = _criticalBar.transform.Find("CriticalText").GetComponent<TMP_Text>();
         shieldText = shieldObj.transform.Find("ShieldText").GetComponent<TMP_Text>();
         col2d = GetComponent<BoxCollider2D>();
     }

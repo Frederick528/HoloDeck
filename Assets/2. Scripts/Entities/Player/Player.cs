@@ -14,8 +14,6 @@ public class Player : Entity
     public ReactiveProperty<int> Coin { get; private set; } = new();
     public ReactiveProperty<int> AttackPower { get; private set; } = new();
     public ReactiveProperty<int> DefensePower { get; private set; } = new();
-    public ReactiveProperty<int> CritcalChance { get; private set; } = new();
-    public ReactiveProperty<float> CritcalDamage { get; private set; } = new();
 
     readonly int _battleAnimBool = Animator.StringToHash("Battle");
 
@@ -40,7 +38,7 @@ public class Player : Entity
     void Start()
     {
         PlayerSubScribe();
-        SetupPlayer(80, 3);
+        SetupPlayer(80);
     }
 
     void PlayerSubScribe()
@@ -65,10 +63,10 @@ public class Player : Entity
         });
     }
 
-    void SetupPlayer(int hp, int startHoloValue)
+    void SetupPlayer(int hp)
     {
         SetupEntity(hp);
-        MaxHolo = startHoloValue;
+        MaxHolo = 3;
         CurHolo = MaxHolo;
         UIManager.Instance.SetHolo(CurHolo, MaxHolo);
     }

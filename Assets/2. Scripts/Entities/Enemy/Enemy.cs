@@ -69,7 +69,7 @@ public abstract class Enemy : Entity
     public void SetupEnemy(EnemyData eD, int pos)     // 데이터를 받는 형식으로 변경함.
     {
         enemyData = eD;
-        SetupEntity(enemyData.HP);
+        SetupEntity(enemyData.HP, enemyData.CriticalChance);
         spawnPosIdx = pos;
         player = InGameManager.Instance.player;
     }
@@ -169,7 +169,11 @@ public abstract class Enemy : Entity
     protected async UniTask Attack(int damage)
     {
         await AttackAnimation();
-        player.TakeDamagePlayer(damage).Forget();
+        int criticalDamage = CheckCritical(damage);
+
+        player.TakeDamagePlayer(criticalDamage).Forget();
+
+        //Critical(_criticalChance.Value);
     }
 
     protected virtual async UniTask BeforeTakeDamage()

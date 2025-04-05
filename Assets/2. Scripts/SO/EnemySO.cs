@@ -15,6 +15,7 @@ public class EnemyData
     public int ID;
     public int Level;
     public int Damage;
+    public int CriticalChance;
     public int HP;
     public int DropCoin;
     [TextArea(1, 5)]

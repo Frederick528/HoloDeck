@@ -22,6 +22,7 @@ MonoBehaviour:
     ID: 100
     Level: 0
     Damage: 7
+    CriticalChance: 10
     HP: 10
     DropCoin: 10
     Descript: Slime
@@ -32,6 +33,7 @@ MonoBehaviour:
     ID: 101
     Level: 0
     Damage: 10
+    CriticalChance: 25
     HP: 7
     DropCoin: 17
     Descript: Dog
@@ -42,6 +44,7 @@ MonoBehaviour:
     ID: 102
     Level: 0
     Damage: 3
+    CriticalChance: 10
     HP: 5
     DropCoin: 5
     Descript: Healer
@@ -52,6 +55,7 @@ MonoBehaviour:
     ID: 103
     Level: 0
     Damage: 20
+    CriticalChance: 10
     HP: 30
     DropCoin: 85
     Descript: E
@@ -62,6 +66,7 @@ MonoBehaviour:
     ID: 104
     Level: 0
     Damage: 15
+    CriticalChance: 10
     HP: 80
     DropCoin: 160
     Descript: B

@@ -96,7 +96,7 @@ public class ReadSpreadSheet : MonoBehaviour
     {
         Debug.Log("Enemy Load Start");
         using UnityWebRequest wwwE =
-            UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1ReoyeaeB220v3EhNHWEefLY9KB2ScyttVtCqg6Rj6IA/export?format=tsv&range=A3:G&gid=0");
+            UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1ReoyeaeB220v3EhNHWEefLY9KB2ScyttVtCqg6Rj6IA/export?format=tsv&range=A3:H&gid=0");
         await wwwE.SendWebRequest();
         _dataEnemyGS = wwwE.downloadHandler.text;
 
@@ -359,9 +359,10 @@ public class ReadSpreadSheet : MonoBehaviour
                 Name = LineBreakStr(cells[1]),
                 HP = ConvertInt32(cells[2]),
                 Damage = ConvertInt32(cells[3]),
-                DropCoin = ConvertInt32(cells[4]),
-                Descript = LineBreakStr(cells[5]),
-                EnemyTag = (EnemyTag)Enum.Parse(typeof(EnemyTag), cells[6])
+                CriticalChance = ConvertInt32(cells[4]),
+                DropCoin = ConvertInt32(cells[5]),
+                Descript = LineBreakStr(cells[6]),
+                EnemyTag = (EnemyTag)Enum.Parse(typeof(EnemyTag), cells[7])
             };
             try
             {
@@ -408,17 +409,17 @@ public class ReadSpreadSheet : MonoBehaviour
             {
                 ID = ConvertInt32(cells[0]),
                 Name = LineBreakStr(cells[1]),
-                MaxCharge = ConvertInt32(cells[2]),
-                CurCharge = ConvertInt32(cells[3]),
-                Damage = ConvertInt32(cells[4]),
-                Shield = ConvertInt32(cells[5]),
-                Draw = ConvertInt32(cells[6]),
-                Heal = ConvertInt32(cells[7]),
-                Duration = ConvertInt32(cells[8]),
-                Price = ConvertInt32(cells[9]),
-                Descript = LineBreakStr(cells[10]),
-                ItemTag = (ItemTag)Enum.Parse(typeof(ItemTag), cells[11]),
-                ItemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), cells[12])
+                ItemTag = (ItemTag)Enum.Parse(typeof(ItemTag), cells[2]),
+                ItemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), cells[3])
+                //MaxCharge = ConvertInt32(cells[2]),
+                //CurCharge = ConvertInt32(cells[3]),
+                //Damage = ConvertInt32(cells[4]),
+                //Shield = ConvertInt32(cells[5]),
+                //Draw = ConvertInt32(cells[6]),
+                //Heal = ConvertInt32(cells[7]),
+                //Duration = ConvertInt32(cells[8]),
+                //Price = ConvertInt32(cells[9]),
+                //Descript = LineBreakStr(cells[10]),
             };
             switch (data.ItemTag)
             {
@@ -428,6 +429,10 @@ public class ReadSpreadSheet : MonoBehaviour
                         ItemSO.PassiveID.x = data.ID;
                     }
                     ItemSO.PassiveID.y = data.ID;
+
+                    data.Price = ConvertInt32(cells[4]);
+                    data.Descript = LineBreakStr(cells[5]);
+
                     break;
                 case ItemTag.Active:
                     if (ItemSO.ActiveID.x == -1)
@@ -435,8 +440,19 @@ public class ReadSpreadSheet : MonoBehaviour
                         ItemSO.ActiveID.x = data.ID;
                     }
                     ItemSO.ActiveID.y = data.ID;
+
+                    data.StartCharge = NullTrueBool(cells[4]);
+                    data.MaxCharge = ConvertInt32(cells[5]);
+                    data.Damage = ConvertInt32(cells[6]);
+                    data.Shield = ConvertInt32(cells[7]);
+                    data.Draw = ConvertInt32(cells[8]);
+                    data.Heal = ConvertInt32(cells[9]);
+                    data.Duration = ConvertInt32(cells[10]);
+                    data.Price = ConvertInt32(cells[11]);
+                    data.Descript = LineBreakStr(cells[12]);
                     data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[13]));
                     data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[14]));
+
                     break;
                 case ItemTag.Potion:
                     if (ItemSO.PotionID.x == -1)
@@ -444,8 +460,17 @@ public class ReadSpreadSheet : MonoBehaviour
                         ItemSO.PotionID.x = data.ID;
                     }
                     ItemSO.PotionID.y = data.ID;
-                    data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[13]));
-                    data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[14]));
+
+                    data.Damage = ConvertInt32(cells[4]);
+                    data.Shield = ConvertInt32(cells[5]);
+                    data.Draw = ConvertInt32(cells[6]);
+                    data.Heal = ConvertInt32(cells[7]);
+                    data.Duration = ConvertInt32(cells[8]);
+                    data.Price = ConvertInt32(cells[9]);
+                    data.Descript = LineBreakStr(cells[10]);
+                    data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[11]));
+                    data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[12]));
+
                     break;
             }
             //if (data.ItemTag != ItemTag.Passive)

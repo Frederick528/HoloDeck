@@ -35,8 +35,11 @@ public class ItemData
 {
     public string Name;
     public int ID;
+    public ItemTag ItemTag;
+    public ItemRarity ItemRarity;
+
+    public bool StartCharge;       // bool 타입으로 변경해도 될 듯.
     public int MaxCharge;
-    public int CurCharge;       // bool 타입으로 변경해도 될 듯.
 
     public int Damage;
     public int Shield;
@@ -49,8 +52,6 @@ public class ItemData
     [TextArea(1, 5)]
     public string Descript;
     public Sprite Sprite;
-    public ItemTag ItemTag;
-    public ItemRarity ItemRarity;
     public AttackType AttackType;
     public ItemCanUse ItemCanUse;
 }

@@ -38,8 +38,8 @@ public class ActiveItem : UseItem
         StringBuilder sb = new StringBuilder(_defaultData.Descript);
 
         if (value != -1) { CurCharge = value; } 
-        else if (Data.CurCharge == 0) { CurCharge = Data.MaxCharge; }
-        else if (Data.CurCharge == -1) { CurCharge = 0; }
+        else if (Data.StartCharge) { CurCharge = Data.MaxCharge; }
+        else if (!Data.StartCharge) { CurCharge = 0; }
 
         int damage = _defaultData.Damage + InGameManager.Instance.player.AttackPower.Value;
         int shield = _defaultData.Shield + InGameManager.Instance.player.DefensePower.Value;

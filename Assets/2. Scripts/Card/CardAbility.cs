@@ -520,12 +520,13 @@ public class CardAbility
     }
     async UniTask SingleAttackAB(Card card, float delay = 0.3f)             // 컨티뉴 single이랑 그냥 single 합침.
     {
-        if (!await card.TargetEnemy.TakeDamageEnemy(card.Data.Damage) && card.Data.Count > 1)
+        int damage = InGameManager.Instance.player.CheckCritical(card.Data.Damage);
+        if (!await card.TargetEnemy.TakeDamageEnemy(damage) && card.Data.Count > 1)
         {
             for (int i = 1; i < card.Data.Count; ++i)
             {
                 await DelayTask(delay);
-                if (await card.TargetEnemy.TakeDamageEnemy(card.Data.Damage))
+                if (await card.TargetEnemy.TakeDamageEnemy(damage))
                     break;
             }
         }
@@ -533,9 +534,10 @@ public class CardAbility
     }
     async UniTask MultiAttackAB(Card card, float delay = 0.3f)              // 컨티뉴 multi랑 그냥 multi 합침.
     {
+        int damage = InGameManager.Instance.player.CheckCritical(card.Data.Damage);
         int enemyCount1 = EnemyManager.Instance.EnemyList.Count;            // 무조건 한 번은 실행되게 함. 이러면 카운트 1를 따로 작성해주지 않아도 상관없음.
         await UniTask.WhenAll(Enumerable.Range(0, enemyCount1).
-            Select(j => EnemyManager.Instance.EnemyList[(enemyCount1 - 1) - j].TakeDamageEnemy(card.Data.Damage)));
+            Select(j => EnemyManager.Instance.EnemyList[(enemyCount1 - 1) - j].TakeDamageEnemy(damage)));
         for (int i = /*0*/1; i < card.Data.Count; ++i)
         {
             //if (i != 0)
@@ -545,7 +547,7 @@ public class CardAbility
             await DelayTask(delay);
             int enemyCount2 = EnemyManager.Instance.EnemyList.Count;
             await UniTask.WhenAll(Enumerable.Range(0, enemyCount2).
-                Select(j => EnemyManager.Instance.EnemyList[(enemyCount2 - 1) - j].TakeDamageEnemy(card.Data.Damage)));
+                Select(j => EnemyManager.Instance.EnemyList[(enemyCount2 - 1) - j].TakeDamageEnemy(damage)));
         }
     }
     async UniTask ShieldAB(Card card, float delay = 0.3f)
