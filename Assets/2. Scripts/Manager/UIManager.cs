@@ -5,6 +5,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System;
+using Unity.Mathematics;
 
 public class UIManager : MonoBehaviour
 {
@@ -52,8 +54,9 @@ public class UIManager : MonoBehaviour
     [HideInInspector]
     public Transform PotionTransform;
 
-    [HideInInspector]
-    public Transform StatusWindow;
+    Transform _statusWindow;
+    Image[] _statusImg = new Image[3];
+    TMP_Text[] _statusText = new TMP_Text[7];
 
     Transform _cardRewardContent;
     Transform _itemRewardContent;
@@ -120,7 +123,21 @@ public class UIManager : MonoBehaviour
         ActiveTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "ActiveItemButton");
         PotionTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "PotionItem");
 
-        StatusWindow = ContinueFindChildByName(Canvas(CanvasName.InGame), "Status");
+        _statusWindow = ContinueFindChildByName(Canvas(CanvasName.InGame), "Status");
+        _statusImg[0] = _statusWindow.Find("HPCircle").GetComponent<Image>();
+        _statusText[0] = _statusWindow.Find("HP").GetComponent<TMP_Text>();
+
+        _statusText[1] = _statusWindow.Find("ATK").GetComponent<TMP_Text>();
+        _statusText[2] = _statusWindow.Find("DEF").GetComponent<TMP_Text>();
+        _statusText[3] = _statusWindow.Find("HEAL").GetComponent<TMP_Text>();
+
+
+        _statusImg[1] = _statusWindow.Find("CriticalBar").GetComponent<Image>();
+        _statusText[4] = _statusWindow.Find("CriticalChance").GetComponent<TMP_Text>();
+        _statusText[5] = _statusWindow.Find("CriticalDamage").GetComponent<TMP_Text>();
+        _statusText[6] = _statusWindow.Find("Critical").GetComponent<TMP_Text>();
+
+        _statusImg[2] = ContinueFindChildByName(_statusImg[0].transform, "PlayerImage").GetComponent<Image>();
 
         _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel");
         _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel");
@@ -259,6 +276,51 @@ public class UIManager : MonoBehaviour
         _canvasRaycaster[(int)canvasName].enabled = isOn;
     }
 
+    public void ShowStatus()
+    {
+        if (_statusWindow.localPosition.x == -985)
+        {
+            _statusWindow.localPosition = new Vector3(-1460, 0, 0);
+        }
+        else if (_statusWindow.localPosition.x == -1460)
+        {
+            _statusWindow.localPosition = new Vector3(-985, 0, 0);
+        }
+    }
+
+    public void ChangeStatus(int statusIdx, int amount, float refAmount = -1)
+    {
+        switch (statusIdx)
+        {
+            case 0:
+                if (refAmount == -1) return;
+                _statusImg[0].fillAmount = amount / refAmount;
+                _topHealthText.text = $"{amount} / {refAmount}";
+                _statusText[statusIdx].text = $"HP: {amount}<size={_statusText[0].fontSize * 0.8f}>\nMax HP: {refAmount}</size>";
+                break;
+            case 1:
+                _statusText[statusIdx].text = "ATK: " + amount.ToString();
+                break;
+            case 2:
+                _statusText[statusIdx].text = "DEF: " + amount.ToString();
+                break;
+            case 3:
+                _statusText[statusIdx].text = "HEAL: " + amount.ToString();
+                break;
+            case 4:
+                _statusText[statusIdx].text = "CriticalChance: " + amount.ToString() + "%";
+                break;
+            case 5:
+                _statusText[statusIdx].text = "CriticalDamage: " + amount.ToString() + "%";
+                break;
+            case 6:
+                if (refAmount == -1) return;
+                _statusImg[1].fillAmount = amount / refAmount;
+                _statusText[statusIdx].text = $"{amount} / {refAmount}";
+                break;
+        }
+    }
+
     public void MoveMap()
     {
         SetActiveCanvas(CanvasName.CardReward, false);
@@ -389,10 +451,10 @@ public class UIManager : MonoBehaviour
         _holoValue.text = $"{curHolo} / {maxHolo}";
     }
 
-    public void SetHealth(int curHp, int maxHp)
-    {
-        _topHealthText.text = $"{curHp} / {maxHp}";
-    }
+    //public void SetHealth(int _curHP, int _maxHP)
+    //{
+    //    _topHealthText.text = $"{_curHP} / {_maxHP}";
+    //}
 
     public void SetCoin(int coin)
     {

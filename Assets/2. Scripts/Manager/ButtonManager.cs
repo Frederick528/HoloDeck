@@ -116,15 +116,7 @@ public class ButtonManager : MonoBehaviour
 
     public void ControlStatusWindow()
     {
-        Transform statusWindow = UIManager.Instance.StatusWindow;
-        if (statusWindow.localPosition.x == -985)
-        {
-            statusWindow.localPosition = new Vector3(-1460, 0, 0);
-        }
-        else if (statusWindow.localPosition.x == -1460)
-        {
-            statusWindow.localPosition = new Vector3(-985, 0, 0);
-        }
+        UIManager.Instance.ShowStatus();
     }
 
     public void LookMap()

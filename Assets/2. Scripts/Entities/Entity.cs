@@ -25,24 +25,24 @@ public abstract class Entity : MonoBehaviour
     bool _isDied;
 
     protected Animator animator;
-    protected ReactiveProperty<int> maxHp = new();
-    protected ReactiveProperty<int> curHp = new();
-    protected ReactiveProperty<int> shield = new();
+    protected ReactiveProperty<int> _maxHP = new();
+    protected ReactiveProperty<int> _curHP = new();
+    protected ReactiveProperty<int> _shield = new();
 
     protected ReactiveProperty<int> _useCritical { get; private set; } = new(100);
     protected ReactiveProperty<int> _curCritical { get; private set; } = new();
     protected ReactiveProperty<int> _criticalChance { get; private set; } = new();
-    protected ReactiveProperty<float> _criticalDamage { get; private set; } = new(1.25f);
+    protected ReactiveProperty<int> _criticalDamage { get; private set; } = new(125);
 
     float _hpRatio;
 
     //private void Awake()    // start로 할 경우, Subscribe가 실행되지 않음. Awake로 하면 위험할 것 같아서 일단 함수로 빼고 자식 오브젝트에서 Start로 호출
     //{
-    //    maxHp.Subscribe(hp =>
+    //    _maxHP.Subscribe(hp =>
     //    {
     //        slider.maxValue = hp;
     //    });
-    //    curHp.Subscribe(hp =>
+    //    _curHP.Subscribe(hp =>
     //    {
     //        slider.value = hp;
     //        hpText.text = hp.ToString();
@@ -51,27 +51,27 @@ public abstract class Entity : MonoBehaviour
     public void SetupEntity(int hp, int criticalChance = 10)
     {
         //col2d = GetComponent<BoxCollider2D>();
-        maxHp.Value = hp;
-        curHp.Value = maxHp.Value;
+        _maxHP.Value = hp;
+        _curHP.Value = _maxHP.Value;
         _criticalChance.Value = criticalChance;
-        //slider.value = maxHp.Value;
-        //hpText.text = maxHp.ToString();
+        //slider.value = _maxHP.Value;
+        //hpText.text = _maxHP.ToString();
     }
     public virtual bool TakeDamage(int dmg)
     {
         TextEffect(-dmg).Forget();
-        if (shield.Value >= dmg)
+        if (_shield.Value >= dmg)
         {
-            shield.Value -= dmg;
+            _shield.Value -= dmg;
         }
         else
         {
-            dmg -= shield.Value;
-            shield.Value = 0;
-            curHp.Value -= dmg;
+            dmg -= _shield.Value;
+            _shield.Value = 0;
+            _curHP.Value -= dmg;
         }
         animator.Play("Hit", -1, 0);  // 타격 당하는 애니메이션 실행
-        if (curHp.Value > 0)
+        if (_curHP.Value > 0)
             return false;
         //col2d.enabled = false;
         //slider.gameObject.SetActive(false);
@@ -128,14 +128,14 @@ public abstract class Entity : MonoBehaviour
     }
     public virtual async UniTask Heal(int amount)
     {
-        curHp.Value = Mathf.Clamp(curHp.Value + amount, 0, maxHp.Value);
+        _curHP.Value = Mathf.Clamp(_curHP.Value + amount, 0, _maxHP.Value);
         TextEffect(amount).Forget();        // 텍스트 뜨는 건 1초 고정으로 하고 패턴 넘어가는 건 밑에서 적당히 정해줘야 보기 편할 듯
         await UniTask.WaitForSeconds(0.1f);
     }
 
     public virtual async UniTask Shield(int amount)
     {
-        shield.Value += amount;
+        _shield.Value += amount;
         await UniTask.WaitForSeconds(0.1f);
     }
 
@@ -143,7 +143,7 @@ public abstract class Entity : MonoBehaviour
     {
         if (_curCritical.Value >= _useCritical.Value)
         {
-            int criticalDamage = Mathf.RoundToInt(damage * _criticalDamage.Value);
+            int criticalDamage = Mathf.RoundToInt(damage * _criticalDamage.Value * 0.01f);
             Critical(-_useCritical.Value);
             return criticalDamage;
         }
@@ -161,30 +161,30 @@ public abstract class Entity : MonoBehaviour
 
     public virtual void ShieldReset()
     {
-        shield.Value = 0;
+        _shield.Value = 0;
     }
 
     protected void EntitySubScribe()
     {
         StartEntity();
-        maxHp.Subscribe(hp =>
+        _maxHP.Subscribe(hp =>
         {
             //slider.maxValue = hp;
             if (hp > 0)
             {
-                hpBar.fillAmount = curHp.Value / (float)hp;
+                hpBar.fillAmount = _curHP.Value / (float)hp;
             }
         });
-        curHp.Subscribe(hp =>
+        _curHP.Subscribe(hp =>
         {
             //slider.value = hp;
-            if (maxHp.Value > 0)
+            if (_maxHP.Value > 0)
             {
-                hpBar.fillAmount = (float)hp / maxHp.Value;
+                hpBar.fillAmount = (float)hp / _maxHP.Value;
                 hpText.text = hp.ToString();
             }
         });
-        shield.Subscribe(shield =>
+        _shield.Subscribe(shield =>
         {
             if (shield <= 0)
             {
@@ -211,8 +211,8 @@ public abstract class Entity : MonoBehaviour
 
     protected void StartEntity()
     {
-        animator = transform.GetChild(0).GetComponent<Animator>();      // 위치로 찾는 거 약간 불편함.
-        _animEvent = transform.GetChild(0).GetComponent<SendAnimEvent>();
+        animator = transform.GetComponentInChildren<Animator>();
+        _animEvent = transform.GetComponentInChildren<SendAnimEvent>();
         _animEvent.ParentEntity = this;
 
         //entitySprite = GetComponent<SpriteRenderer>();

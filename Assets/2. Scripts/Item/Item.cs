@@ -107,11 +107,11 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         //        else if (Data.CurCharge == -1) { CurCharge = 0; }
 
         //        int damage = _defaultData.Damage + InGameManager.Instance.player.AttackPower.Value;
-        //        int shield = _defaultData.Shield + InGameManager.Instance.player.DefencePower.Value;
+        //        int _shield = _defaultData.Shield + InGameManager.Instance.player.DefencePower.Value;
         //        if (damage < 0) { damage = 0; }
-        //        if (shield < 0) { shield = 0; }
+        //        if (_shield < 0) { _shield = 0; }
         //        sb.Replace("{Damage}", damage.ToString());
-        //        sb.Replace("{Shield}", shield.ToString());
+        //        sb.Replace("{Shield}", _shield.ToString());
         //        sb.Replace("{Draw}", (_defaultData.Draw).ToString());
         //        sb.Replace("{Heal}", (_defaultData.Heal).ToString());
         //        sb.Replace("{Duration}", (_defaultData.Duration).ToString());

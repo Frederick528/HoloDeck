@@ -44,23 +44,34 @@ public class Player : Entity
     void PlayerSubScribe()
     {
         EntitySubScribe();
-        maxHp.Subscribe(hp => UIManager.Instance.SetHealth(curHp.Value, maxHp.Value));
-        curHp.Subscribe(hp => UIManager.Instance.SetHealth(curHp.Value, maxHp.Value));
+        _maxHP.Subscribe(maxHP => UIManager.Instance.ChangeStatus(0, _curHP.Value, maxHP));
+        _curHP.Subscribe(curHP => UIManager.Instance.ChangeStatus(0, curHP, _maxHP.Value));
 
         Coin.Subscribe(coin =>
         {
             UIManager.Instance.SetCoin(coin);
         });
 
-        AttackPower.Subscribe(attackPower =>
+        AttackPower.Subscribe(atk =>
         {
+            UIManager.Instance.ChangeStatus(1, atk);
             CardManager.Instance.ChangeTotalCardDesc();
         });
 
-        DefensePower.Subscribe(defensePower =>
+        DefensePower.Subscribe(def =>
         {
+            UIManager.Instance.ChangeStatus(2, def);
             CardManager.Instance.ChangeTotalCardDesc();
         });
+
+        _criticalChance.Subscribe(criChance => UIManager.Instance.ChangeStatus(4, criChance));
+
+        _criticalDamage.Subscribe(criDamage => UIManager.Instance.ChangeStatus(5, criDamage));
+
+        _useCritical.Subscribe(useCri => UIManager.Instance.ChangeStatus(6, _curCritical.Value, useCri));
+
+        _curCritical.Subscribe(curCri => UIManager.Instance.ChangeStatus(6, curCri, _useCritical.Value));
+
     }
 
     void SetupPlayer(int hp)
@@ -89,7 +100,7 @@ public class Player : Entity
 
     public void AddMaxHealth(int value)
     {
-        maxHp.Value += value;
+        _maxHP.Value += value;
         Heal(value).Forget();
     }
 

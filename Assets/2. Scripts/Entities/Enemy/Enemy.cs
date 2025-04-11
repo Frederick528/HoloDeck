@@ -115,7 +115,7 @@ public abstract class Enemy : Entity
     public virtual void CheckIfDead(int damage, int count)
     {
         //int resistDamage = ResistDamage(damage);
-        if (((curHp.Value + shield.Value) - (/*resistDamage*/damage * count)) <= 0)
+        if (((_curHP.Value + _shield.Value) - (/*resistDamage*/damage * count)) <= 0)
         {
             col2d.enabled = false;
             CanClear = true;

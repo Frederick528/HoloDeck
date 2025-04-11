@@ -30,7 +30,7 @@ public class Healer : Enemy
     //    int resistDamage;
     //    if (damage > _resistance)
     //    {
-    //        resistDamage = damage - _resistance;      // BeforeTakeDamage로 얻을 shield 양만큼 빼서 계산.
+    //        resistDamage = damage - _resistance;      // BeforeTakeDamage로 얻을 _shield 양만큼 빼서 계산.
     //        print(resistDamage);
     //    }
     //    else
@@ -45,7 +45,7 @@ public class Healer : Enemy
         int resistDamage;
         if (damage > _resistance)
         {
-            resistDamage = damage - _resistance;      // BeforeTakeDamage로 얻을 shield 양만큼 빼서 계산.
+            resistDamage = damage - _resistance;      // BeforeTakeDamage로 얻을 _shield 양만큼 빼서 계산.
         }
         else
         {
