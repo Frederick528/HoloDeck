@@ -12,7 +12,7 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
 
-    public enum CanvasName
+    public enum CanvasName      // 순서가 Canvas 순서랑 일치해야 함.
     {
         InGame,
         GameOver,
@@ -23,7 +23,8 @@ public class UIManager : MonoBehaviour
         ItemReward,
         Shop,
         SelectedCard,
-        ViewDeck
+        ViewDeck,
+        Event
     }
     //public List<GameObject> CanvasList;
     List<GraphicRaycaster> _canvasRaycaster = new();
@@ -194,7 +195,7 @@ public class UIManager : MonoBehaviour
         //    _uiCards[i] = _cardRewardContent.GetChild(i).GetComponent<UICard>();
         //}
 
-        SetActiveCanvas(CanvasName.Map, true);
+        //SetActiveCanvas(CanvasName.Map, true);
     }
 
     public Transform ContinueFindChildByName(Transform parent, string name)
@@ -219,7 +220,7 @@ public class UIManager : MonoBehaviour
 
     public void SetActiveCanvas(CanvasName canvasName, bool state, int idx = -1)
     {
-        if (!state)
+        if (!state)     // 꺼질 때
         {
             switch (canvasName)
             {
@@ -237,6 +238,9 @@ public class UIManager : MonoBehaviour
                     _shopPanel.gameObject.SetActive(false);
                     _shopEnlargePanel.gameObject.SetActive(false);
                     break;
+                case CanvasName.ViewDeck:
+                    InGameManager.Instance.Pause(false);
+                    break;
             }
 
             CanvasDict[(int)canvasName].gameObject.SetActive(false);
@@ -248,18 +252,20 @@ public class UIManager : MonoBehaviour
             switch (canvasName)
             {
                 case CanvasName.RewardBox:
+                    if (idx == -1) break;
                     _rewardBoxes[idx].gameObject.SetActive(true);
                     break;
                 case CanvasName.Map:
-                    if (Canvas(CanvasName.ViewDeck).gameObject.activeSelf)
-                    {
-                        SetActiveCanvas(CanvasName.ViewDeck, false);
+                    //if (Canvas(CanvasName.ViewDeck).gameObject.activeSelf)
+                    //{
+                    //    SetActiveCanvas(CanvasName.ViewDeck, false);
                         //InGameManager.Instance.Pause(false);      // UI가 막아서 뷰덱 중에는 맵 화면 클릭 불가(그렇게 되도록 배치한 거라서 문제인 건 아니고, 그냥 나중을 위한 코멘트임.)
-                    }
+                    //}
                     break;
                 case CanvasName.ViewDeck:
                     if (Canvas(CanvasName.Map).gameObject.activeSelf)
                         SetActiveCanvas(CanvasName.Map, false);
+                    InGameManager.Instance.Pause(true);
                     break;
             }
         }
@@ -357,12 +363,12 @@ public class UIManager : MonoBehaviour
     }
     public void ChangeRewardCardCount(bool isOn)
     {
-        _cardRewardContent.GetChild(3).gameObject.SetActive(isOn);
+        _cardRewardContent.GetChild(_cardRewardContent.childCount - 1).gameObject.SetActive(isOn);
     }
     public void ChangeRewardItemCount(bool isOn)
     {
         _addRewardItemCount = isOn;
-        _itemRewardContent.GetChild(3).gameObject.SetActive(isOn);
+        _itemRewardContent.GetChild(_itemRewardContent.childCount - 1).gameObject.SetActive(isOn);
     }
 
     public void SetViewDeck(List<Card> deck)                // 풀링이지만, Release 개념이 아닌, 활성화 비활성화로 진행됨. Release는 인덱스로 넣는데, Get은 Release된 것 중에서 마지막에 넣었던 것을 꺼내오기 때문에 생긴 문제
@@ -414,7 +420,6 @@ public class UIManager : MonoBehaviour
         }
         _lastViewDeckCount = deck.Count;
         SetActiveCanvas(CanvasName.ViewDeck, true);
-        InGameManager.Instance.Pause(true);
     }
 
     //public void SetupGameUi(bool state)

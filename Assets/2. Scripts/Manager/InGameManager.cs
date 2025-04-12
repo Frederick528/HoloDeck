@@ -36,6 +36,8 @@ public class InGameManager : MonoBehaviour
 
     public int PauseInt;
 
+    public int NowChapterLV = 1;
+
     bool _isESCPause = false;
 
     GameObject[] _camera;
@@ -71,6 +73,7 @@ public class InGameManager : MonoBehaviour
 
     private void Start()
     {
+        //Random.InitState(255);
         CardRarityID = _cardSO.ClassifyCardRarityID;
         EnhancedCardRarityID = _cardSO.ClassifyEnhancedCardRarityID;
 
@@ -432,7 +435,7 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
-            if (MapManager.Instance.currStage.State == Map.StageState.Enemy)
+            if (MapManager.Instance.currStage.State == Map.StageState.Enemy || MapManager.Instance.currStage.State == Map.StageState.Boss)
             {
                 for (int i = EnemyManager.Instance.EnemyList.Count - 1; i >= 0; --i)
                 {

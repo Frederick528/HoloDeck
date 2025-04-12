@@ -32,7 +32,7 @@ public abstract class Entity : MonoBehaviour
     protected ReactiveProperty<int> _useCritical { get; private set; } = new(100);
     protected ReactiveProperty<int> _curCritical { get; private set; } = new();
     protected ReactiveProperty<int> _criticalChance { get; private set; } = new();
-    protected ReactiveProperty<int> _criticalDamage { get; private set; } = new(125);
+    protected ReactiveProperty<int> _criticalDamage { get; private set; } = new(150);
 
     float _hpRatio;
 

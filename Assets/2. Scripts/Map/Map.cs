@@ -18,7 +18,7 @@ public class Map : MonoBehaviour
 
     public bool ChangedItem = false;
 
-    public int RandEnemyPattern = -1;
+    public int RandomPattern = -1;
 
     public int rewardBox { get; private set; } = -1;
     public CardData[] CardReward { get; private set; } = new CardData[4];
@@ -99,7 +99,7 @@ public class Map : MonoBehaviour
         cleared = false;
         rewarded = false;
         ChangedItem = false;
-        RandEnemyPattern = -1;
+        RandomPattern = -1;
         rewardBox = -1;
         img.color = Color.white;
         aroundStage.Clear();

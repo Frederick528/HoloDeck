@@ -49,6 +49,16 @@ public class ButtonManager : MonoBehaviour
 
         PotionButtons = UIManager.Instance.PotionTransform.GetComponentsInChildren<Button>();
     }
+    [VisibleEnum(typeof(UIManager.CanvasName))]
+    public void OnCanvas(int canvasNameIdx)
+    {
+        UIManager.Instance.SetActiveCanvas((UIManager.CanvasName)canvasNameIdx, true);
+    }
+    [VisibleEnum(typeof(UIManager.CanvasName))]
+    public void OffCanvas(int canvasNameIdx)
+    {
+        UIManager.Instance.SetActiveCanvas((UIManager.CanvasName)canvasNameIdx, false);
+    }
     public void TurnEndBtn()
     {
         TurnManager.Instance.EndTurn().Forget();
@@ -149,5 +159,10 @@ public class ButtonManager : MonoBehaviour
                 UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, false, MapManager.Instance.currStage.rewardBox);
                 break;
         }
+    }
+
+    public void NextChapter()
+    {
+        ChangeScene(++InGameManager.Instance.NowChapterLV);
     }
 }

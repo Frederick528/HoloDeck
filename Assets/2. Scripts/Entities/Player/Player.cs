@@ -38,7 +38,8 @@ public class Player : Entity
     void Start()
     {
         PlayerSubScribe();
-        SetupPlayer(80);
+        SetupPlayer(80, 30);
+        UIManager.Instance.ChangeStatus(5, _criticalDamage.Value);      // 값이 변해야 UI에 적용되는데, 치뎀은 처음에 기본값을 그대로 사용하기 때문에 값이 변하지 않아 UI에 적용이 되지 않음. 따라서 따로 적용
     }
 
     void PlayerSubScribe()
@@ -74,9 +75,9 @@ public class Player : Entity
 
     }
 
-    void SetupPlayer(int hp)
+    void SetupPlayer(int hp, int criticalChance = 10)
     {
-        SetupEntity(hp);
+        SetupEntity(hp, criticalChance);
         MaxHolo = 3;
         CurHolo = MaxHolo;
         UIManager.Instance.SetHolo(CurHolo, MaxHolo);

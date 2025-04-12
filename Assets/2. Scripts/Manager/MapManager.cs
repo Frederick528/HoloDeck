@@ -66,9 +66,19 @@ public class MapManager : MonoBehaviour
 
     public async UniTaskVoid ClearStage()
     {
-        if (currStage.State == Map.StageState.Enemy || currStage.State == Map.StageState.Boss)
+        _settingMap.ShowMapBtn.SetActive(true);
+        if (currStage.State == Map.StageState.Enemy)
         {
             await TurnManager.Instance.EndBattle();
+        }
+        else if (currStage.State == Map.StageState.Boss)
+        {
+            _settingMap.NextChapterBtn.SetActive(true);
+            await TurnManager.Instance.EndBattle();
+        }
+        else if (currStage.State == Map.StageState.Start)
+        {
+            _settingMap.NextChapterBtn.SetActive(false);
         }
         currStage.ClearMap();
         canMove = true;

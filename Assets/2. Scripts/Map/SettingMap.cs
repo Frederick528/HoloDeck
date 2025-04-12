@@ -53,6 +53,9 @@ public class SettingMap
     GameObject _mark;
     Vector3 _markDefaultPos;
     public Transform MapTr = null;
+
+    public GameObject ShowMapBtn;
+    public GameObject NextChapterBtn;
     //[SerializeField] GameObject cardRewardCanvas;
     //[SerializeField] GameObject enlargePanel;
 
@@ -64,7 +67,13 @@ public class SettingMap
     public void Start()
     {
         if (MapTr == null)
-            MapTr = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.Map), "Map");
+        {
+            MapTr = UIManager.Instance.Canvas(UIManager.CanvasName.Map).Find("Map");
+            _mark = _mapManager.MarkInstantiate(MapTr);
+            _markDefaultPos = _mark.transform.localPosition;
+            ShowMapBtn = UIManager.Instance.Canvas(UIManager.CanvasName.InGame).Find("ShowMap").gameObject;
+            NextChapterBtn = UIManager.Instance.Canvas(UIManager.CanvasName.InGame).Find("NextChapter").gameObject;
+        }
         _createMapCnt = _mapManager.CreateMapCnt;
         _maxDistance = _mapManager.MaxDistance;
         _createMapCnt = (int)Mathf.Clamp(_createMapCnt, 1, (_maxDistance.Item1 * 2 + 1) * (_maxDistance.Item2 * 2 + 1)/*Mathf.Pow(_maxDistance * 2 + 1, 2)*/);
@@ -193,7 +202,8 @@ public class SettingMap
         {
             if (!_mapManager.canMove)
                 return;
-            else if (!stage.cleared)
+            
+            if (!stage.cleared)
             {
                 stage.LookingStage(direction4, Maps);
                 if (stage.State == Map.StageState.Treasure || stage.State == Map.StageState.Shop)
@@ -203,7 +213,21 @@ public class SettingMap
                 else
                 {
                     _mapManager.canMove = false;
+                    ShowMapBtn.SetActive(false);
                 }
+                NextChapterBtn.SetActive(false);
+            }
+            else
+            {
+                if (stage.State == Map.StageState.Boss && InGameManager.Instance.NowChapterLV <= 2)
+                {
+                    NextChapterBtn.SetActive(true);
+                }
+                else
+                {
+                    NextChapterBtn.SetActive(false);
+                }
+                ShowMapBtn.SetActive(true);
             }
 
             MoveStage(stage);
@@ -580,11 +604,11 @@ public class SettingMap
         }
         //if (_markPrefab != null)
         //{
-        if (_mark == null)
-        {
-            _mark = _mapManager.MarkInstantiate(MapTr);
-            _markDefaultPos = _mark.transform.localPosition;
-        }
+        //if (_mark == null)
+        //{
+        //    _mark = _mapManager.MarkInstantiate(MapTr);
+        //    _markDefaultPos = _mark.transform.localPosition;
+        //}
         _mark.transform.localScale = Vector3.one * _mapManager.MapScale;
         _mark.transform.localPosition = _markDefaultPos;        // 새로운 맵 생성 시, 현 위치표시 마커를 시작 지점으로 지정해주는 코드
         _mark.transform.SetAsLastSibling();

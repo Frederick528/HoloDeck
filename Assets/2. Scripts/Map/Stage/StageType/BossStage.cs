@@ -13,8 +13,50 @@ public class BossStage : MonoBehaviour, IStage
         if (!map.cleared)
         {
             TurnManager.Instance.StartBattle();
-            //EnemySpawn(0);
+            if (_map.RandomPattern == -1)
+            {
+                BossSpawn();
+            }
+            else
+            {
+                BossSpawnPattern(_map.RandomPattern);
+            }
         }
         print("Boss");
+    }
+
+    public void BossSpawn()
+    {
+        switch (InGameManager.Instance.NowChapterLV)
+        {
+            case 1:
+            case 2:
+                BossSpawnPattern(Random.Range(0, 3));
+                break;
+            case 3:
+                BossSpawnPattern(Random.Range(100, 110));
+                break;
+            case 4:
+                BossSpawnPattern(Random.Range(200, 210));
+                break;
+        }
+
+    }
+
+    public void BossSpawnPattern(int rand)
+    {
+        _map.RandomPattern = rand;
+        switch (rand)
+        {
+            case 0:
+                EnemyManager.Instance.SpawnBoss(100, 1);
+                break;
+            case 1:
+                EnemyManager.Instance.SpawnBoss(101, 1);
+                break;
+            case 2:
+                EnemyManager.Instance.SpawnBoss(102, 1);
+                break;
+        }
     }
 }
