@@ -60,7 +60,7 @@ public class CardManager : MonoBehaviour
     public Sprite[] LegendarySprites;
 
 
-    List<Card> _selectedCards = new();           // 배틀 중 버리기, 강화, 교환 등에서 선택한 카드 리스트
+    List<Card> _selectedCards = new();           // 배틀 중 버리기, 강화, 교환 등에 의해 카드 위치 조정이 되면 안 되는 카드들
 
     Card _playedCard;                            // 큐에서 실행한 카드
     Card _usedCard;                              // 사용되고 있는 카드(버리기 효과나 다른 효과가 진행되고 있는 카드)
@@ -126,7 +126,7 @@ public class CardManager : MonoBehaviour
         for (int i = 0; i < _startDeck; i++)
             AddDeck(100 + i, EAddDeck.Main);
     }
-    public void AddDeck(CardData cardData, EAddDeck eAddDeck)       // 덱에 카드를 추가할 때 사용, 핸드로 카드를 가져올 때는 DrawCard 함수 사용. (주로 데이터 자체가 이동할 때 사용)
+    public void AddDeck(CardData cardData, EAddDeck eAddDeck)       // 덱에 카드를 추가할 때 사용, 핸드로 카드를 가져올 때는 AddCard 함수 사용. (주로 데이터 자체가 이동할 때 사용) => 해결함 이제 그냥 써도 됨.
     {
         Card setCard = PoolManager.Instance.GetCard(/*out Card setCard*/);
         GameObject cardObject = setCard.gameObject;
@@ -155,12 +155,14 @@ public class CardManager : MonoBehaviour
                 UIManager.Instance.SetDummyCount();
                 break;
 
-            case EAddDeck.Hand:                 // 핸드로 가져오는 건 카드 정렬 때문에 DrawCard 함수를 이용해서만 접근할 것.
+            case EAddDeck.Hand:
                 if (HandCard.Count < 10)
                 {
                     setCard.WaitUnblock(CardUtils.CardAlignmentDelay).Forget();
                     cardObject.transform.position = Vector3.zero;
                     HandCard.Add(setCard);
+                    SetOriginOrder();
+                    CardAlignment();
                 }
                 else
                 {
@@ -172,7 +174,7 @@ public class CardManager : MonoBehaviour
         }
         TotalDeck.Add(setCard);
     }
-    public void AddDeck(int id, EAddDeck eAddDeck)     // 덱에 카드를 아이디로 추가할 때 사용, 핸드로 카드를 가져올 때는 DrawCard 함수 사용.
+    public void AddDeck(int id, EAddDeck eAddDeck)
     {
         CardData cardData = InGameManager.Instance.FindCardData(id);
 
@@ -253,22 +255,21 @@ public class CardManager : MonoBehaviour
     async UniTask CheckCanUseingCard(Card card/*, bool singleAtk = false*/)
     {
         //if (card.Used) return;
-        card.Used = true;
-        card.CardOrder.SetOriginOrder(-10);
+        //card.Used = true;
+        //card.CardOrder.SetOriginOrder(-10);
 
-        HandCard.Remove(card);
+        _usedCard = card;       // 다른 카드가 사용 중이면 사용 못 하게 막을지 고민 중
         SetOriginOrder();
         CardAlignment();
-        _usedCard = card;       // 다른 카드가 사용 중이면 사용 못 하게 막을지 고민 중
         //if (singleAtk)
         //    card.Target(EnemyManager.Instance.targetEnemy);
         if (!await card.BeforeUsingCard())
         {
-            card.Used = false;
-            HandCard.Add(card);
+            //card.Used = false;
+            //HandCard.Add(card);
+            _usedCard = null;
             SetOriginOrder();
             CardAlignment();
-            _usedCard = null;
             PutDownCard(card).Forget();
 
             return;
@@ -278,6 +279,10 @@ public class CardManager : MonoBehaviour
         InGameManager.Instance.AbilityEventQueue.Enqueue(card);
         //_eventQueue.Enqueue(card);
         _usedCard = null;
+
+        HandCard.Remove(card);
+        //SetOriginOrder();
+        //CardAlignment();
     }
 
     public void ChangeTotalCardDesc()
@@ -485,21 +490,21 @@ public class CardManager : MonoBehaviour
 
     }
 
-    public void AddCard(CardData cardData)  // 카드 생성
-    {
-        AddDeck(cardData, EAddDeck.Hand);
+    //public void AddCard(CardData cardData)  // 카드 생성
+    //{
+    //    AddDeck(cardData, EAddDeck.Hand);
 
-        SetOriginOrder();
-        CardAlignment();
-    }
+    //    SetOriginOrder();
+    //    CardAlignment();
+    //}
 
-    public void AddCard(int id)  // 카드 생성
-    {
-        AddDeck(id, EAddDeck.Hand);
+    //public void AddCard(int id)  // 카드 생성
+    //{
+    //    AddDeck(id, EAddDeck.Hand);
 
-        SetOriginOrder();
-        CardAlignment();
-    }
+    //    SetOriginOrder();
+    //    CardAlignment();
+    //}
 
     public void ResetSetting()
     {
@@ -520,7 +525,7 @@ public class CardManager : MonoBehaviour
         foreach (Card selectedCard in _selectedCards)
         {
             selectedCard.Selected = false;
-            HandCard.Add(selectedCard);
+            //HandCard.Add(selectedCard);
         }
         //SetOriginOrder();             // 리턴 카드를 할 경우, 사용하고 있던 카드를 다시 내 손패로 돌려보냄. 이때, 전체 카드 정렬을 하기 때문에 여기서 따로 할 필요 없음.
         //CardAlignment();
@@ -528,13 +533,13 @@ public class CardManager : MonoBehaviour
     }
     void SelectedCards(Card card)
     {
-        if (_selectedCards.Contains(card))
+        if (card.Selected)
         {
             card.Selected = false;
             _selectedCards.Remove(card);
             SetSelectedCardsOrder(_selectedCards);
             SelectedCardsAlignment(_selectedCards);
-            HandCard.Add(card);
+            //HandCard.Add(card);
             SetOriginOrder();
             CardAlignment();
 
@@ -545,7 +550,7 @@ public class CardManager : MonoBehaviour
             _selectedCards.Add(card);
             SetSelectedCardsOrder(_selectedCards);
             SelectedCardsAlignment(_selectedCards);
-            HandCard.Remove(card);
+            //HandCard.Remove(card);
             SetOriginOrder();
             CardAlignment();
         }
@@ -664,6 +669,7 @@ public class CardManager : MonoBehaviour
             targetCard.BlockCard();
             targetCard.Selected = false;
             targetCard.MoveTransform(new PRS(CardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.ThrowAwayCardDelay);
+            HandCard.Remove(targetCard);
         }
         await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay);
         foreach (Card targetCard in _selectedCards)
@@ -672,7 +678,7 @@ public class CardManager : MonoBehaviour
             targetCard.UnblockCard();
         }
         UIManager.Instance.SetDummyCount();
-        _selectedCards.Clear();
+        _selectedCards.Clear();         // 정렬에 있는 카드들을 버리는 시간동안 selectedCards의 값이 있기 때문에 정렬에 문제가 생김.
     }
 
     public async UniTask ThrowAwayCard()        // 모든 카드를 카드 더미로
@@ -714,10 +720,10 @@ public class CardManager : MonoBehaviour
         }
         _playedCard = playedCard;       // 마지막으로 시전한 카드 정보를 받아와야 할 수도 있기 때문에 일단 초기화는 안 함.
 
-        HandCard.Remove(playedCard);
+        //HandCard.Remove(playedCard);
 
-        SetOriginOrder();
-        CardAlignment();
+        //SetOriginOrder();
+        //CardAlignment();
 
         bool endBattle = await playedCard.UseTask().SuppressCancellationThrow();
         //if (endBattle)
@@ -786,26 +792,42 @@ public class CardManager : MonoBehaviour
 
     void SetOriginOrder()       // 카드가 보이는 순서 설정
     {
+        int alignmentIdx = 0;
         for (int i = 0; i < HandCard.Count; i++)
         {
             Card targetCard = HandCard[i];
             if (targetCard == _selectCard)
                 continue;
-            targetCard.CardOrder.SetOriginOrder(i);
+            if (targetCard == _usedCard || targetCard.Selected)
+            {
+                ++alignmentIdx;
+                continue;
+            }
+            targetCard.CardOrder.SetOriginOrder(i - alignmentIdx);
         }
     }
 
     void CardAlignment()
     {
         List<PRS> originCardPRSs;
-        originCardPRSs = RoundAlignment(myCardLeft, myCardRight, HandCard.Count, CardUtils.CardScale);
+        originCardPRSs = RoundAlignment(myCardLeft, myCardRight, HandCard.Count - _selectedCards.Count - (_usedCard ? 1 : 0), CardUtils.CardScale);
+        int alignmentIdx = 0;
         for (int i = 0; i < HandCard.Count; i++)
         {
             Card targetCard = HandCard[i];
 
-            targetCard.OriginPRS = originCardPRSs[i];
             if (targetCard == _selectCard)
+            {
+                targetCard.OriginPRS = originCardPRSs[i - alignmentIdx];
                 continue;
+            }
+            if (targetCard == _usedCard || targetCard.Selected)
+            {
+                ++alignmentIdx;
+                continue;
+            }
+            //print($"{HandCard.Count} / {HandCard.Count - _selectedCards.Count - (_usedCard ? 1 : 0)} / {i - alignmentIdx}");
+            targetCard.OriginPRS = originCardPRSs[i - alignmentIdx];
             targetCard.MoveTransform(targetCard.OriginPRS, true, CardUtils.CardAlignmentDelay);
         }
     }
@@ -902,14 +924,17 @@ public class CardManager : MonoBehaviour
         int cardIndex = HandCard.IndexOf(card);
         if (cardIndex == -1)
             return;
-
         for (int i = 1; i < cardIndex + 1; ++i)
         {
+            if (HandCard[cardIndex - i] == _usedCard || HandCard[cardIndex - i].Selected)
+                continue;
             HandCard[cardIndex - i].transform.DOMoveX(HandCard[cardIndex - i].OriginPRS.pos.x - 0.5f / i, CardUtils.CardAlignmentDelay).SetUpdate(true);        // .SetUpdate(true) 추가함.
         }
 
         for (int i = 1; i < HandCard.Count - cardIndex; ++i)
         {
+            if (HandCard[cardIndex + i] == _usedCard || HandCard[cardIndex + i].Selected)
+                continue;
             HandCard[cardIndex + i].transform.DOMoveX(HandCard[cardIndex + i].OriginPRS.pos.x + 0.5f / i, CardUtils.CardAlignmentDelay).SetUpdate(true);        // .SetUpdate(true) 추가함.
         }
 
@@ -921,8 +946,10 @@ public class CardManager : MonoBehaviour
         canPush = true;
         foreach (Card card in HandCard)
         {
+            if (card == _usedCard || card.Selected)
+                continue;
             card.transform.DOKill();            // 정렬 하는 코드 삭제
-            card.MoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay * 0.5f);
+            card.MoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay * 0.9f);
         }
 
     }

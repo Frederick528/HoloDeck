@@ -393,6 +393,9 @@ public class Card : MonoBehaviour
 
         InGameManager.Instance.player.AddCurHolo(-Data.Cost);
 
+        Used = true;
+        CardOrder.SetOriginOrder(-10);
+
         //CheckEnemyDead();
 
         return true;

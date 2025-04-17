@@ -476,7 +476,7 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha4))       // 카드 생성
         {
-            CardManager.Instance.AddCard(FindCardData(100));
+            CardManager.Instance.AddDeck(FindCardData(100), EAddDeck.Hand);
         }
         if (Input.GetKeyDown(KeyCode.Alpha7))
         {
