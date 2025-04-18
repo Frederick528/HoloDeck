@@ -68,11 +68,11 @@ public class SettingMap
     {
         if (MapTr == null)
         {
-            MapTr = UIManager.Instance.Canvas(UIManager.CanvasName.Map).Find("Map");
+            MapTr = InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.Map).Find("Map");
             _mark = _mapManager.MarkInstantiate(MapTr);
             _markDefaultPos = _mark.transform.localPosition;
-            ShowMapBtn = UIManager.Instance.Canvas(UIManager.CanvasName.InGame).Find("ShowMap").gameObject;
-            NextChapterBtn = UIManager.Instance.Canvas(UIManager.CanvasName.InGame).Find("NextChapter").gameObject;
+            ShowMapBtn = InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.InGame).Find("ShowMap").gameObject;
+            NextChapterBtn = InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.InGame).Find("NextChapter").gameObject;
         }
         _createMapCnt = _mapManager.CreateMapCnt;
         _maxDistance = _mapManager.MaxDistance;
@@ -113,6 +113,8 @@ public class SettingMap
         SettingStage();
 
         _mapManager.SetupStart(direction4, Maps);
+
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, 5);     // 방 생성 후, 몇몇 UI 비활성화 (보스 보상)
 
         //SettingStage();
 
@@ -219,7 +221,7 @@ public class SettingMap
             }
             else
             {
-                if (stage.State == Map.StageState.Boss && InGameManager.Instance.NowChapterLV <= 2)
+                if (stage.State == Map.StageState.Boss && GameManager.Instance.NowChapterLV <= 2)
                 {
                     NextChapterBtn.SetActive(true);
                 }
@@ -236,11 +238,11 @@ public class SettingMap
             //if (_mapManager.currStage.rewardBox != -1 && (_mapManager.currStage.ChangedItem || !_mapManager.currStage.rewarded))
             //{
             //    //_mapManager.rewardCanvas.GetChild(_mapManager.currStage.rewardBox).gameObject.SetActive(false);
-            //    UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, false, _mapManager.currStage.rewardBox);
+            //    InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, _mapManager.currStage.rewardBox);
             //}
 
             //// 보상과 상관없이 EnlargePanel와 RewardCanvas는 새로운 방에 들어갈 때마다 숨김 처리.
-            //UIManager.Instance.MoveMap();
+            //InGameUIManager.Instance.MoveMap();
 
             //_mapManager.PrevStage = _mapManager.currStage;
             //_mapManager.currStage = stage;
@@ -256,17 +258,17 @@ public class SettingMap
             //if (stage.rewardBox != -1 && (stage.ChangedItem || !stage.rewarded))
             //{
             //    //_mapManager.rewardCanvas.GetChild(stage.rewardBox).gameObject.SetActive(true);
-            //    UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, true, stage.rewardBox);
+            //    InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, stage.rewardBox);
             //    if (stage.rewardBox != 0)       // 보물은 한 스테이지에 한 개이기 때문에 UI를 변경할 필요 없음.
             //    {
-            //        UIManager.Instance.ShowRewardCard(stage.CardReward);
+            //        InGameUIManager.Instance.ShowRewardCard(stage.CardReward);
             //    }
             //}
 
 
             //// 이동 모션 코드 추가
 
-            //UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.Map, false);
+            //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
         });
     }
 
@@ -276,11 +278,14 @@ public class SettingMap
         if (_mapManager.currStage.rewardBox != -1 && (_mapManager.currStage.ChangedItem || !_mapManager.currStage.rewarded))
         {
             //_mapManager.rewardCanvas.GetChild(_mapManager.currStage.rewardBox).gameObject.SetActive(false);
-            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, false, _mapManager.currStage.rewardBox);
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, _mapManager.currStage.rewardBox);
         }
-
-        // 보상과 상관없이 EnlargePanel와 RewardCanvas는 새로운 방에 들어갈 때마다 숨김 처리.
-        UIManager.Instance.MoveMap();
+        if (_mapManager.currStage.State == Map.StageState.Shop)
+        {
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);
+        }
+        //// 보상과 상관없이 EnlargePanel와 RewardCanvas는 새로운 방에 들어갈 때마다 숨김 처리.
+        //InGameUIManager.Instance.MoveMap();
 
         _mapManager.PrevStage = _mapManager.currStage;
         _mapManager.currStage = stage;
@@ -296,17 +301,17 @@ public class SettingMap
         if (stage.rewardBox != -1 && (stage.ChangedItem || !stage.rewarded))
         {
             //_mapManager.rewardCanvas.GetChild(stage.rewardBox).gameObject.SetActive(true);
-            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, true, stage.rewardBox);
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, stage.rewardBox);
             if (stage.rewardBox != 0)       // 보물은 한 스테이지에 한 개이기 때문에 UI를 변경할 필요 없음.
             {
-                UIManager.Instance.ShowRewardCard(stage.CardReward);
+                InGameUIManager.Instance.ShowRewardCard(stage.CardReward);
             }
         }
 
 
         // 이동 모션 코드 추가
 
-        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.Map, false);
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
     }
 
     public MapInfo AddSingleMap(MapInfo map, Vector3Int pos, string name)
@@ -622,7 +627,7 @@ public class SettingMap
         //        else if (map.cleared)
         //        {
         //            currStage = map;
-        //            UIManager.Instance.LookMap();
+        //            InGameUIManager.Instance.LookMap();
         //            return;
         //        }
         //        canMove = false;
@@ -633,7 +638,7 @@ public class SettingMap
         //        // 이동 모션 코드 추가
         //        // 방 입장 코드 추가
 
-        //        UIManager.Instance.LookMap();
+        //        InGameUIManager.Instance.LookMap();
         //    });
         //}
 

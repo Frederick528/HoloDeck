@@ -30,12 +30,12 @@ public class ButtonManager : MonoBehaviour
 
     private void Start()
     {
-        if (UIManager.Instance == null) { return; }
-        _turnEndButton = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.Battle), "TurnEndButton").GetComponent<Button>();
-        DiscardButton = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.SelectedCard), "DiscardButton").GetComponent<Button>();
-        DiscardCancelButton = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.SelectedCard), "CancelButton").GetComponent<Button>();
+        if (InGameUIManager.Instance == null) { return; }
+        _turnEndButton = InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.Battle), "TurnEndButton").GetComponent<Button>();
+        DiscardButton = InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard), "DiscardButton").GetComponent<Button>();
+        DiscardCancelButton = InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard), "CancelButton").GetComponent<Button>();
 
-        TurnPassiveButton = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.PassiveTransform, "TurnButton").GetComponentsInChildren<Button>(true);
+        TurnPassiveButton = InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.PassiveTransform, "TurnButton").GetComponentsInChildren<Button>(true);
         //TurnPassiveButton[0].onClick.AddListener(() =>
         //{
         //    ItemManager.Instance.TurnPassiveItemPage(0);
@@ -45,19 +45,19 @@ public class ButtonManager : MonoBehaviour
         //    ItemManager.Instance.TurnPassiveItemPage(1);
         //});
 
-        ActiveItemButton = UIManager.Instance.ActiveTransform.GetComponent<Button>();
+        ActiveItemButton = InGameUIManager.Instance.ActiveTransform.GetComponent<Button>();
 
-        PotionButtons = UIManager.Instance.PotionTransform.GetComponentsInChildren<Button>();
+        PotionButtons = InGameUIManager.Instance.PotionTransform.GetComponentsInChildren<Button>();
     }
-    [VisibleEnum(typeof(UIManager.CanvasName))]
+    [VisibleEnum(typeof(InGameUIManager.CanvasName))]
     public void OnCanvas(int canvasNameIdx)
     {
-        UIManager.Instance.SetActiveCanvas((UIManager.CanvasName)canvasNameIdx, true);
+        InGameUIManager.Instance.SetActiveCanvas((InGameUIManager.CanvasName)canvasNameIdx, true);
     }
-    [VisibleEnum(typeof(UIManager.CanvasName))]
+    [VisibleEnum(typeof(InGameUIManager.CanvasName))]
     public void OffCanvas(int canvasNameIdx)
     {
-        UIManager.Instance.SetActiveCanvas((UIManager.CanvasName)canvasNameIdx, false);
+        InGameUIManager.Instance.SetActiveCanvas((InGameUIManager.CanvasName)canvasNameIdx, false);
     }
     public void TurnEndBtn()
     {
@@ -113,31 +113,31 @@ public class ButtonManager : MonoBehaviour
         switch (deckIdx)
         {
             case 0:
-                UIManager.Instance.SetViewDeck(CardManager.Instance.TotalDeck);
+                InGameUIManager.Instance.SetViewDeck(CardManager.Instance.TotalDeck);
                 break;
             case 1:
-                UIManager.Instance.SetViewDeck(CardManager.Instance.DrawDeck);
+                InGameUIManager.Instance.SetViewDeck(CardManager.Instance.DrawDeck);
                 break;
             case 2:
-                UIManager.Instance.SetViewDeck(CardManager.Instance.CardDummy);
+                InGameUIManager.Instance.SetViewDeck(CardManager.Instance.CardDummy);
                 break;
         }
     }
 
     public void ControlStatusWindow()
     {
-        UIManager.Instance.ShowStatus();
+        InGameUIManager.Instance.ShowStatus();
     }
 
     public void EventReward(bool agree)
     {
-        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.Event, false);
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Event, false);
         MapManager.Instance.ClearStage().Forget();
     }
 
     public void LookMap()
     {
-        UIManager.Instance.LookMap();
+        InGameUIManager.Instance.LookMap();
     }
     /// <summary>
     /// 
@@ -148,27 +148,30 @@ public class ButtonManager : MonoBehaviour
     public void ChangeScene(int idx)
     {
         SceneManager.LoadScene(idx);
-        switch (idx)
-        {
-            case 0:
-                GameManager.Instance.DestroyAllInGameDontDestroyObjects();
-                break;
-            case 1:
-                MapManager.Instance.CreateMapCnt = 15;
-                MapManager.Instance.MaxDistance = (3, 3);
-                MapManager.Instance.MapScale = 1;
-                break;
-            case 2:
-                MapManager.Instance.CreateMapCnt = 30;
-                MapManager.Instance.MaxDistance = (4, 3);
-                MapManager.Instance.MapScale = 0.95f;
-                UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, false, MapManager.Instance.currStage.rewardBox);
-                break;
-        }
+        GameManager.Instance.ChangeScene(idx);
+        //switch (idx)
+        //{
+        //    case 0:
+        //        GameManager.Instance.DestroyAllInGameDontDestroyObjects();
+        //        break;
+        //    case 1:
+        //        InGameManager.Instance.NowChapterLV = 1;
+        //        MapManager.Instance.CreateMapCnt = 15;
+        //        MapManager.Instance.MaxDistance = (3, 3);
+        //        MapManager.Instance.MapScale = 1;
+        //        break;
+        //    case 2:
+        //        InGameManager.Instance.NowChapterLV = 2;
+        //        MapManager.Instance.CreateMapCnt = 30;
+        //        MapManager.Instance.MaxDistance = (4, 3);
+        //        MapManager.Instance.MapScale = 0.95f;
+        //        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, MapManager.Instance.currStage.rewardBox);
+        //        break;
+        //}
     }
 
     public void NextChapter()
     {
-        ChangeScene(++InGameManager.Instance.NowChapterLV);
+        ChangeScene(++GameManager.Instance.NowChapterLV);
     }
 }

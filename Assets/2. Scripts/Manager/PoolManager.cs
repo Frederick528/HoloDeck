@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
-using static UIManager;
+using static InGameUIManager;
 
 public class PoolManager : MonoBehaviour
 {
@@ -39,8 +39,8 @@ public class PoolManager : MonoBehaviour
     private void Init()
     {
         _deck = InGameManager.Instance.player.transform.root.Find("Deck");
-        _textParent = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(CanvasName.InGame), "TextEffect");
-        //ViewDeckContent = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.Canvas(UIManager.CanvasName.ViewDeck), "Content");
+        _textParent = InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.Canvas(CanvasName.InGame), "TextEffect");
+        //ViewDeckContent = InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.ViewDeck), "Content");
 
         CardPool = new ObjectPool<Card>(CreateCardPooled, OnTakeFromPoolCard, OnReturnedToPoolCard, OnDestroyPoolCard, true, defaultCapacity);
 
@@ -125,7 +125,7 @@ public class PoolManager : MonoBehaviour
     //UICard CreateUICardPooled()
     //{
     //    ++_setActiveUICard;
-    //    return Instantiate(UICardPrefab, UIManager.Instance.ViewDeckContent);
+    //    return Instantiate(UICardPrefab, InGameUIManager.Instance.ViewDeckContent);
     //}
     //private void OnTakeFromPoolUICard(UICard uiCard)
     //{

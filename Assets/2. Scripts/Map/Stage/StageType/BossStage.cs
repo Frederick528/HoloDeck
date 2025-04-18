@@ -27,7 +27,7 @@ public class BossStage : MonoBehaviour, IStage
 
     public void BossSpawn()
     {
-        switch (InGameManager.Instance.NowChapterLV)
+        switch (GameManager.Instance.NowChapterLV)
         {
             case 1:
             case 2:

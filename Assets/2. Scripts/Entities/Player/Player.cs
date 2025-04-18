@@ -48,39 +48,39 @@ public class Player : Entity
     void PlayerSubScribe()
     {
         EntitySubScribe();
-        _maxHP.Subscribe(maxHP => UIManager.Instance.ChangeStatus(0, _curHP.Value, maxHP));
-        _curHP.Subscribe(curHP => UIManager.Instance.ChangeStatus(0, curHP, _maxHP.Value));
+        _maxHP.Subscribe(maxHP => InGameUIManager.Instance.ChangeStatus(0, _curHP.Value, maxHP));
+        _curHP.Subscribe(curHP => InGameUIManager.Instance.ChangeStatus(0, curHP, _maxHP.Value));
 
         Coin.Subscribe(coin =>
         {
-            UIManager.Instance.SetCoin(coin);
+            InGameUIManager.Instance.SetCoin(coin);
         });
 
         AttackPower.Subscribe(atk =>
         {
-            UIManager.Instance.ChangeStatus(1, atk);
+            InGameUIManager.Instance.ChangeStatus(1, atk);
             CardManager.Instance.ChangeTotalCardDesc();
         });
 
         DefensePower.Subscribe(def =>
         {
-            UIManager.Instance.ChangeStatus(2, def);
+            InGameUIManager.Instance.ChangeStatus(2, def);
             CardManager.Instance.ChangeTotalCardDesc();
         });
 
         HealPower.Subscribe(heal =>
         {
-            UIManager.Instance.ChangeStatus(3, heal);
+            InGameUIManager.Instance.ChangeStatus(3, heal);
             CardManager.Instance.ChangeTotalCardDesc();
         });
 
-        _criticalChance.Subscribe(criChance => UIManager.Instance.ChangeStatus(4, criChance));
+        _criticalChance.Subscribe(criChance => InGameUIManager.Instance.ChangeStatus(4, criChance));
 
-        _criticalDamage.Subscribe(criDamage => UIManager.Instance.ChangeStatus(5, criDamage));
+        _criticalDamage.Subscribe(criDamage => InGameUIManager.Instance.ChangeStatus(5, criDamage));
 
-        _useCritical.Subscribe(useCri => UIManager.Instance.ChangeStatus(6, _curCritical.Value, useCri));
+        _useCritical.Subscribe(useCri => InGameUIManager.Instance.ChangeStatus(6, _curCritical.Value, useCri));
 
-        _curCritical.Subscribe(curCri => UIManager.Instance.ChangeStatus(6, curCri, _useCritical.Value));
+        _curCritical.Subscribe(curCri => InGameUIManager.Instance.ChangeStatus(6, curCri, _useCritical.Value));
 
     }
 
@@ -89,7 +89,7 @@ public class Player : Entity
         SetupEntity(hp + GameManager.Instance.AddMaxHP, criticalChance + GameManager.Instance.AddCriticalChance, criticalDamage + GameManager.Instance.AddCriticalDamage);
         MaxHolo = 3;
         CurHolo = MaxHolo;
-        UIManager.Instance.SetHolo(CurHolo, MaxHolo);
+        InGameUIManager.Instance.SetHolo(CurHolo, MaxHolo);
 
         AddAttackPower(GameManager.Instance.AddAttackPower);
         AddDefencePower(GameManager.Instance.AddDefensePower);
@@ -109,14 +109,14 @@ public class Player : Entity
         TurnManager.Instance.EndBattle().Forget();
         await base.DieAnimation();
         print("플레이어가 죽었습니다.");
-        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.GameOver, true);
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.GameOver, true);
         //return true;
     }
 
     public void AddCurHolo(int chargeOrUse)
     {
         CurHolo = Mathf.Clamp(CurHolo + chargeOrUse, 0, MaxHolo);
-        UIManager.Instance.SetHolo(CurHolo, MaxHolo);
+        InGameUIManager.Instance.SetHolo(CurHolo, MaxHolo);
     }
 
     public void AddMaxHealth(int value)
@@ -130,7 +130,7 @@ public class Player : Entity
         MaxHolo += value;
         if (MaxHolo < 0)
             MaxHolo = 0;
-        //UIManager.Instance.SetHolo(CurHolo, MaxHolo);
+        //InGameUIManager.Instance.SetHolo(CurHolo, MaxHolo);
     }
     public void AddAttackPower(int value)
     {

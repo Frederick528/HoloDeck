@@ -26,7 +26,7 @@ public class EventStage : MonoBehaviour, IStage
 
     public void Event()
     {
-        switch (InGameManager.Instance.NowChapterLV)
+        switch (GameManager.Instance.NowChapterLV)
         {
             case 1:
             case 2:
@@ -50,7 +50,7 @@ public class EventStage : MonoBehaviour, IStage
             case 0:
             case 1:
             case 2:
-                UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.Event, true);
+                InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Event, true);
                 break;
         }
     }

@@ -32,7 +32,7 @@ public class UIItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     //        {
     //            ItemManager.Instance.GetItem(_itemData);
     //            InGameManager.Instance.ReturnRandomItem();
-    //            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.ItemReward, false);
+    //            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.ItemReward, false);
     //        });
 
     //    }
@@ -66,8 +66,8 @@ public class UIItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                     }
                     if (_curCharge == -1)
                     {
-                        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.ItemReward, false);
-                        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.Map, true);
+                        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.ItemReward, false);
+                        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, true);
                     }
                 });
 

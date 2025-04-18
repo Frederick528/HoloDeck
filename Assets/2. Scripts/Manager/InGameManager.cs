@@ -36,7 +36,7 @@ public class InGameManager : MonoBehaviour
 
     public int PauseInt;
 
-    public int NowChapterLV = 1;
+    //public int NowChapterLV = 1;
 
     bool _isESCPause = false;
 
@@ -83,7 +83,7 @@ public class InGameManager : MonoBehaviour
         SettingRandomCardList();
         SettingRandomItemList();
 
-        //UIManager.Instance.SetupGameUi(true);
+        //InGameUIManager.Instance.SetupGameUi(true);
         //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     }
     void SettingRandomCardList()
@@ -186,6 +186,8 @@ public class InGameManager : MonoBehaviour
                     return CardSwapAndPop(3, Random.Range(0, _randomCardList[3].Count));
                 }
             case 4:
+                return CardSwapAndPop(3, Random.Range(0, _randomCardList[3].Count));
+            case 5:     // 보스 (일단 할 거 없어서 그냥 레전더리 카드 주는 걸로 함.)
                 return CardSwapAndPop(3, Random.Range(0, _randomCardList[3].Count));
             default:
                 return null;
@@ -331,14 +333,14 @@ public class InGameManager : MonoBehaviour
     //{
     //    if (isOn)
     //    {
-    //        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.Map, false);
-    //        UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.InGame, false);
-    //        UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.Battle, false);
+    //        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
+    //        InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.InGame, false);
+    //        InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, false);
     //    }
     //    else
     //    {
-    //        UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.InGame, true);
-    //        UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.Battle, true);
+    //        InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.InGame, true);
+    //        InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, true);
     //    }
     //    ArrowCursor.ArrowIndex = arrowIdx;
     //    ArrowCursor.SetStartArrow();
@@ -418,7 +420,7 @@ public class InGameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.S))
         {
-            UIManager.Instance.ShowStatus();
+            InGameUIManager.Instance.ShowStatus();
             //int i = 0;
             //while (!EnemyManager.Instance.SpawnEnemy(100, i))
             //{
@@ -433,7 +435,7 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.M))
         {
-            UIManager.Instance.LookMap();
+            InGameUIManager.Instance.LookMap();
         }
         if (Input.GetKeyDown(KeyCode.C))
         {

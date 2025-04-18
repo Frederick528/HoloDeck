@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -19,6 +20,12 @@ public class GameManager : MonoBehaviour
     public int AddCriticalDamage { get; private set; }
 
     public ReactiveProperty<int> Goods { get; private set; } = new();
+
+    public int PauseInt;
+
+    public int NowChapterLV = 1;
+
+    bool _isESCPause = false;
     // Start is called before the first frame update
     void Awake()
     {
@@ -39,7 +46,7 @@ public class GameManager : MonoBehaviour
         Goods.Subscribe(goods =>
         {
             if (InGame)
-                UIManager.Instance.ChangeStatus(7, goods);
+                InGameUIManager.Instance.ChangeStatus(7, goods);
         });
     }
 
@@ -62,5 +69,30 @@ public class GameManager : MonoBehaviour
     public void AddGoods(int value)
     {
         Goods.Value += value;
+    }
+
+    public void ChangeScene(int idx)
+    {
+        SceneManager.LoadScene(idx);
+        switch (idx)
+        {
+            case 0:
+                DestroyAllInGameDontDestroyObjects();
+                NowChapterLV = 0;       // ·Îºñ
+                break;
+            case 1:
+                NowChapterLV = 1;
+                //MapManager.Instance.CreateMapCnt = 15;
+                //MapManager.Instance.MaxDistance = (3, 3);
+                //MapManager.Instance.MapScale = 1;
+                break;
+            case 2:
+                NowChapterLV = 2;
+                //MapManager.Instance.CreateMapCnt = 30;
+                //MapManager.Instance.MaxDistance = (4, 3);
+                //MapManager.Instance.MapScale = 0.95f;
+                //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, MapManager.Instance.currStage.rewardBox);
+                break;
+        }
     }
 }

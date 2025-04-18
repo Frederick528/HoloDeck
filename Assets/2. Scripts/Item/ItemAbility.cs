@@ -22,7 +22,7 @@ public class ItemAbility
                 InGameManager.Instance.player.AddMaxHolo(1);
                 break;
             case 4:
-                UIManager.Instance.ChangeRewardCardCount(true);
+                InGameUIManager.Instance.ChangeRewardCardCount(true);
                 break;
             //case 501:
             //    item.ItemTask = () => UniTask.Create(async () =>

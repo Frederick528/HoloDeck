@@ -42,12 +42,12 @@ public class ItemManager : MonoBehaviour
 
     private void Start()
     {
-        _passiveTransform = (RectTransform)UIManager.Instance.ContinueFindChildByName(UIManager.Instance.PassiveTransform, "PassiveContent");
-        _activeItemChargeImgae = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.ActiveTransform, "ChargeBar").GetComponent<Image>();
-        _activeItemChargeText = UIManager.Instance.ContinueFindChildByName(UIManager.Instance.ActiveTransform, "ChargeText").GetComponent<TMP_Text>();
+        _passiveTransform = (RectTransform)InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.PassiveTransform, "PassiveContent");
+        _activeItemChargeImgae = InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.ActiveTransform, "ChargeBar").GetComponent<Image>();
+        _activeItemChargeText = InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.ActiveTransform, "ChargeText").GetComponent<TMP_Text>();
 
-        _activeItem = UIManager.Instance.ActiveTransform.GetComponent<ActiveItem>();
-        _potionItem = UIManager.Instance.PotionTransform.GetComponentsInChildren<PotionItem>();
+        _activeItem = InGameUIManager.Instance.ActiveTransform.GetComponent<ActiveItem>();
+        _potionItem = InGameUIManager.Instance.PotionTransform.GetComponentsInChildren<PotionItem>();
 
         _activeItem.ResetItem();
 
@@ -137,7 +137,7 @@ public class ItemManager : MonoBehaviour
 
     //public void SettingItem(ItemData[] reward)
     //{
-    //    UIManager.Instance.ShowRewardItem(reward);
+    //    InGameUIManager.Instance.ShowRewardItem(reward);
     //    //for (int i = 0; i < reward.Length; ++i)
     //    //{
     //    //    int itemIdx = i;      // 값을 미리 저장하지 않으면 에러가 뜸.
@@ -218,7 +218,7 @@ public class ItemManager : MonoBehaviour
     //            InGameManager.Instance.player.AddMaxHolo(1);
     //            break;
     //        case 3:
-    //            UIManager.Instance.ChangeRewardCardCount(true);
+    //            InGameUIManager.Instance.ChangeRewardCardCount(true);
     //            break;
     //        case 4:
     //            //_activeItem = 나중에 itemSO에서 가져올 것. 그럼 밑에 코드도 필요없음.
@@ -278,7 +278,7 @@ public class ItemManager : MonoBehaviour
     //            InGameManager.Instance.player.AddMaxHolo(-1);
     //            break;
     //        case 3:
-    //            UIManager.Instance.ChangeRewardCardCount(false);
+    //            InGameUIManager.Instance.ChangeRewardCardCount(false);
     //            break;
     //        default:
     //            break;

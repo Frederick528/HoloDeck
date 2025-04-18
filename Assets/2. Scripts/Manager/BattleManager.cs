@@ -24,7 +24,7 @@ public class BattleManager : MonoBehaviour
     //{
     //    ArrowCursor = FindObjectOfType<Arrow>(true);
     //    DontDestroyOnLoad(ArrowCursor);
-    //    //UIManager.Instance.SetupGameUi(true);
+    //    //InGameUIManager.Instance.SetupGameUi(true);
     //    //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     //}
     /// <summary>
@@ -36,14 +36,14 @@ public class BattleManager : MonoBehaviour
     {
         if (isOn)
         {
-            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.Map, false);
-            UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.InGame, false);
-            UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.Battle, false);
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
+            InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.InGame, false);
+            InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, false);
         }
         else
         {
-            UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.InGame, true);
-            UIManager.Instance.SetCanvasRaycast(UIManager.CanvasName.Battle, true);
+            InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.InGame, true);
+            InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, true);
         }
         ArrowCursor.ArrowIndex = arrowIdx;
         ArrowCursor.SetStartArrow();

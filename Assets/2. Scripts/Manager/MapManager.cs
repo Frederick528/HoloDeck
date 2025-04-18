@@ -38,8 +38,26 @@ public class MapManager : MonoBehaviour
     private void Start()
     {
         if (_onLoaded) return;
+        SetMapSize();
         _settingMap.Start();
         ShowAllMap();
+    }
+
+    void SetMapSize()
+    {
+        switch (GameManager.Instance.NowChapterLV)
+        {
+            case 1:
+                CreateMapCnt = 5;
+                MaxDistance = (3, 3);
+                MapScale = 1;
+                break;
+            case 2:
+                CreateMapCnt = 30;
+                MaxDistance = (4, 3);
+                MapScale = 0.95f;
+                break;
+        }
     }
 
     void OnEnable()
@@ -60,6 +78,7 @@ public class MapManager : MonoBehaviour
         //{
         //    Destroy(_settingMap.MapTr.GetChild(i).gameObject);
         //}
+        SetMapSize();
         _settingMap.Start();
         ShowAllMap();
     }
@@ -119,7 +138,10 @@ public class MapManager : MonoBehaviour
     // Enemy와 Boss에서 사용되며, 사용시 방 보상 획득 가능
     public void RewardStage()
     {
-        currStage.RewardBox();
+        if (currStage.State == Map.StageState.Enemy)
+            currStage.RewardBox();
+        else if (currStage.State == Map.StageState.Boss)
+            currStage.BossBox();
     }
     public void GetReward(bool changed = false)
     {

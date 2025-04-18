@@ -408,7 +408,7 @@ public class Card : MonoBehaviour
         if (!endBattle)
         {
             CardManager.Instance.CardDummy.Add(this);
-            UIManager.Instance.SetDummyCount();
+            InGameUIManager.Instance.SetDummyCount();
         }
         Block = false;
         Used = false;

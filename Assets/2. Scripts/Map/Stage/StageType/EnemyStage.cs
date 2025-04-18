@@ -27,7 +27,7 @@ public class EnemyStage : MonoBehaviour, IStage
 
     public void EnemySpawn()
     {
-        switch (InGameManager.Instance.NowChapterLV)
+        switch (GameManager.Instance.NowChapterLV)
         {
             case 1:
             case 2:

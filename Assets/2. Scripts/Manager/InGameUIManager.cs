@@ -6,9 +6,9 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+public class InGameUIManager : MonoBehaviour
 {
-    public static UIManager Instance { get; private set; }
+    public static InGameUIManager Instance { get; private set; }
 
     public enum CanvasName      // 순서가 Canvas 순서랑 일치해야 함.
     {
@@ -153,6 +153,8 @@ public class UIManager : MonoBehaviour
 
         _statusImg[2] = ContinueFindChildByName(_statusImg[0].transform, "PlayerImage").GetComponent<Image>();
 
+        ChangeStatus(7, GameManager.Instance.Goods.Value);
+
         _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel");
         _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel");
 
@@ -240,6 +242,15 @@ public class UIManager : MonoBehaviour
                 case CanvasName.RewardBox:
                     if (idx == -1) break;
                     _rewardBoxes[idx].gameObject.SetActive(false);
+                    print("PPP");
+                    if (idx == 0)
+                    {
+                        SetActiveCanvas(CanvasName.ItemReward, false);
+                    }
+                    else
+                    {
+                        SetActiveCanvas(CanvasName.CardReward, false);
+                    }
                     break;
                 case CanvasName.CardReward:
                     _cardEnlargePanel.gameObject.SetActive(false);
@@ -343,12 +354,12 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void MoveMap()
-    {
-        SetActiveCanvas(CanvasName.CardReward, false);
-        SetActiveCanvas(CanvasName.ItemReward, false);
-        SetActiveCanvas(CanvasName.Shop, false);
-    }
+    //public void MoveMap()
+    //{
+    //    SetActiveCanvas(CanvasName.CardReward, false);
+    //    SetActiveCanvas(CanvasName.ItemReward, false);
+    //    SetActiveCanvas(CanvasName.Shop, false);
+    //}
     public void ShowRewardCard(CardData[] reward)        // 해당 부분들 맵, 상점으로 다 이동시켜야 함.
     {
         for (int i = 0; i < reward.Length; ++i)

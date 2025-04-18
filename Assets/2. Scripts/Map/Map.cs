@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -129,6 +130,30 @@ public class Map : MonoBehaviour
         }
     }
 
+    public void BossBox()
+    {
+        if (rewardBox == -1)
+        {
+            //int probability = Random.Range(1, 101);
+            rewardBox = 5;
+
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, rewardBox);
+            // 캐릭터별로 보상이 바뀌는 코드 넣어야 함.
+
+            CardReward[0] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;     // 나중에 중복은 제외하는 코드로 변경해야 함.
+            CardReward[1] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;
+            CardReward[2] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;
+            CardReward[3] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;     // 유물 효과로 카드 선택지 +1
+            InGameManager.Instance.ReturnRandomCard(CardReward);
+            InGameUIManager.Instance.ShowRewardCard(CardReward);
+
+        }
+
+        else if (rewarded)
+            //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(false);
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, rewardBox);
+    }
+
     public void RewardBox()
     {
         if (rewardBox == -1)
@@ -152,7 +177,7 @@ public class Map : MonoBehaviour
             }
             //rewardBox = Random.Range(1, 5);
             //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(true);
-            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, true, rewardBox);
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, rewardBox);
             // 캐릭터별로 보상이 바뀌는 코드 넣어야 함.
             //int rangeMin = -1;
             //int rangeMax = -1;
@@ -182,13 +207,13 @@ public class Map : MonoBehaviour
             CardReward[2] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;
             CardReward[3] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;     // 유물 효과로 카드 선택지 +1
             InGameManager.Instance.ReturnRandomCard(CardReward);
-            UIManager.Instance.ShowRewardCard(CardReward);
+            InGameUIManager.Instance.ShowRewardCard(CardReward);
 
         }
 
         else if (rewarded)
             //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(false);
-            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, false, rewardBox);
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, rewardBox);
     }
 
     public void TreasureBox(bool changed)
@@ -198,7 +223,7 @@ public class Map : MonoBehaviour
             int probability = Random.Range(1, 101);     // 아이템도 등급이 생길 경우, 확률 개념 도입해야 함.
             rewardBox = 0;
             //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(true);
-            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, true, rewardBox);
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, rewardBox);
             // 캐릭터별로 보상이 바뀌는 코드 넣어야 함.
             ItemReward[0] = InGameManager.Instance.RandomItem()/*Random.Range(0, 6)*/;     // 나중에 중복은 제외하는 코드로 변경해야 함.
             ItemReward[1] = InGameManager.Instance.RandomItem()/*Random.Range(0, 6)*/;
@@ -206,19 +231,19 @@ public class Map : MonoBehaviour
             ItemReward[3] = InGameManager.Instance.RandomItem()/*Random.Range(0, 6)*/;     // 유물 효과로 아이템 선택지 +1
             //InGameManager.Instance.ReturnRandomItem();            // 카드와 다르게, 아이템은 먹을 경우, 더 이상 뜨지 않도록 바꿔야 함.
             //ItemManager.Instance.SettingItem(ItemReward);
-            UIManager.Instance.ShowRewardItem(ItemReward);
+            InGameUIManager.Instance.ShowRewardItem(ItemReward);
 
         }
         else if (changed)
         {
             ChangedItem = true;
-            UIManager.Instance.ShowRewardItem(ItemReward);      // 앞에서 ChangedUseItem 진행돼야 함.
+            InGameUIManager.Instance.ShowRewardItem(ItemReward);      // 앞에서 ChangedUseItem 진행돼야 함.
         }
         else if (rewarded)
         {
             ChangedItem = false;
             //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(false);
-            UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.RewardBox, false, rewardBox);
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, rewardBox);
         }
     }
 

@@ -22,8 +22,8 @@ public class ShopManager : MonoBehaviour
     private void Start()
     {
 
-        //_shopCard = UIManager.Instance.FindChildByName(UIManager.CanvasName.Shop, "Card");
-        //_shopCardPrice = UIManager.Instance.FindChildByName(UIManager.CanvasName.Shop, "Price");
+        //_shopCard = InGameUIManager.Instance.FindChildByName(InGameUIManager.CanvasName.Shop, "Card");
+        //_shopCardPrice = InGameUIManager.Instance.FindChildByName(InGameUIManager.CanvasName.Shop, "Price");
         SettingCardShop();
     }
 
