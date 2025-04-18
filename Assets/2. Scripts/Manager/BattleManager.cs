@@ -16,7 +16,7 @@ public class BattleManager : MonoBehaviour
         {
             Instance = this;
             ArrowCursor = FindObjectOfType<Arrow>(true);
-            GameManager.Instance.AddDontDestroy(ArrowCursor.gameObject);
+            GameManager.Instance.AddInGameDontDestroy(ArrowCursor.gameObject);
             //DontDestroyOnLoad(ArrowCursor);
         }
     }

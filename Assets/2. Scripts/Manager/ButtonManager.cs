@@ -129,6 +129,12 @@ public class ButtonManager : MonoBehaviour
         UIManager.Instance.ShowStatus();
     }
 
+    public void EventReward(bool agree)
+    {
+        UIManager.Instance.SetActiveCanvas(UIManager.CanvasName.Event, false);
+        MapManager.Instance.ClearStage().Forget();
+    }
+
     public void LookMap()
     {
         UIManager.Instance.LookMap();
@@ -145,7 +151,7 @@ public class ButtonManager : MonoBehaviour
         switch (idx)
         {
             case 0:
-                GameManager.Instance.DestroyAllDontDestroyObjects();
+                GameManager.Instance.DestroyAllInGameDontDestroyObjects();
                 break;
             case 1:
                 MapManager.Instance.CreateMapCnt = 15;

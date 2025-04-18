@@ -69,7 +69,7 @@ public abstract class Enemy : Entity
     public void SetupEnemy(EnemyData eD, int pos)     // 데이터를 받는 형식으로 변경함.
     {
         enemyData = eD;
-        SetupEntity(enemyData.HP, enemyData.CriticalChance);
+        SetupEntity(enemyData.HP, enemyData.CriticalChance/*, enemyData.CriticalDamage*/);      // 일단 크리티컬 데미지를 시트에 안 넣었음으로 그냥 잠시 주석 처리
         spawnPosIdx = pos;
         player = InGameManager.Instance.player;
     }
@@ -85,7 +85,7 @@ public abstract class Enemy : Entity
         //int spawn = 0;
         //EnemyManager.Instance.enemies.Remove(this);
         //EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);
-
+        canvas.gameObject.SetActive(false);
         KillEnemy().Forget();
         return true;
 
@@ -143,6 +143,7 @@ public abstract class Enemy : Entity
         
         //EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);      // 에너미 자리로 클리어 확인을 하기 때문에 적 죽는 모션 기다린 후, 자리 삭제  // 자리는 나중에 배열로 만들고 코드상으로만 확인하도록 변경
         InGameManager.Instance.ChangeCoinValue(enemyData.DropCoin);
+        GameManager.Instance.AddGoods((int)(enemyData.DropCoin * 0.5f));
         if (clear)
         {
             ClearCheck();

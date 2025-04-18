@@ -14,11 +14,15 @@ public class Player : Entity
     public ReactiveProperty<int> Coin { get; private set; } = new();
     public ReactiveProperty<int> AttackPower { get; private set; } = new();
     public ReactiveProperty<int> DefensePower { get; private set; } = new();
+    public ReactiveProperty<int> HealPower { get; private set; } = new();
 
     readonly int _battleAnimBool = Animator.StringToHash("Battle");
 
-    int _attackPower;
-    int _defensePower;
+    bool _resurrection = false;
+    //public int _attackPower;
+    //public int _defensePower;
+    //public int _healPower;
+
     //[SerializeField] TMP_Text holoValue;
     // Start is called before the first frame update
 
@@ -27,7 +31,7 @@ public class Player : Entity
     //    if (Instance == null)
     //    {
     //        Instance = this;
-    //        GameManager.Instance.AddDontDestroy(transform.root.gameObject);
+    //        GameManager.Instance.AddInGameDontDestroy(transform.root.gameObject);
     //        //DontDestroyOnLoad(transform.root.gameObject);
     //    }
     //    else
@@ -38,8 +42,7 @@ public class Player : Entity
     void Start()
     {
         PlayerSubScribe();
-        SetupPlayer(80, 30);
-        UIManager.Instance.ChangeStatus(5, _criticalDamage.Value);      // 값이 변해야 UI에 적용되는데, 치뎀은 처음에 기본값을 그대로 사용하기 때문에 값이 변하지 않아 UI에 적용이 되지 않음. 따라서 따로 적용
+        SetupPlayer(10, 10, 150);
     }
 
     void PlayerSubScribe()
@@ -65,6 +68,12 @@ public class Player : Entity
             CardManager.Instance.ChangeTotalCardDesc();
         });
 
+        HealPower.Subscribe(heal =>
+        {
+            UIManager.Instance.ChangeStatus(3, heal);
+            CardManager.Instance.ChangeTotalCardDesc();
+        });
+
         _criticalChance.Subscribe(criChance => UIManager.Instance.ChangeStatus(4, criChance));
 
         _criticalDamage.Subscribe(criDamage => UIManager.Instance.ChangeStatus(5, criDamage));
@@ -75,17 +84,28 @@ public class Player : Entity
 
     }
 
-    void SetupPlayer(int hp, int criticalChance = 10)
+    void SetupPlayer(int hp, int criticalChance = 10, int criticalDamage = 150)
     {
-        SetupEntity(hp, criticalChance);
+        SetupEntity(hp + GameManager.Instance.AddMaxHP, criticalChance + GameManager.Instance.AddCriticalChance, criticalDamage + GameManager.Instance.AddCriticalDamage);
         MaxHolo = 3;
         CurHolo = MaxHolo;
         UIManager.Instance.SetHolo(CurHolo, MaxHolo);
+
+        AddAttackPower(GameManager.Instance.AddAttackPower);
+        AddDefencePower(GameManager.Instance.AddDefensePower);
+        AddHealPower(GameManager.Instance.AddHealPower);
     }
     public async UniTaskVoid TakeDamagePlayer(int dmg)
     {
         if (!TakeDamage(dmg))
             return;
+        if (GameManager.Instance.Resurrection && !_resurrection)
+        {
+            _curHP.Value = (int)(_maxHP.Value * 0.5f);
+            _resurrection = true;
+            return;
+        }
+        canvas.gameObject.SetActive(false);
         TurnManager.Instance.EndBattle().Forget();
         await base.DieAnimation();
         print("플레이어가 죽었습니다.");
@@ -119,6 +139,10 @@ public class Player : Entity
     public void AddDefencePower(int value)
     {
         DefensePower.Value += value;
+    }
+    public void AddHealPower(int value)
+    {
+        HealPower.Value += value;
     }
 
     public void StartOrEndBattle(bool isBattleStart)

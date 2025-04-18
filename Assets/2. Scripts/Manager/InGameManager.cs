@@ -52,8 +52,9 @@ public class InGameManager : MonoBehaviour
             Instance = this;
             //transform.SetParent(null);
             //DontDestroyOnLoad(_camera[0]);
-            GameManager.Instance.AddDontDestroy(_camera[0]);
-            GameManager.Instance.AddDontDestroy(_player[0]);
+            GameManager.Instance.AddInGameDontDestroy(_camera[0]);
+            GameManager.Instance.AddInGameDontDestroy(_player[0]);
+            GameManager.Instance.InGame = true;
         }
         else
         {
@@ -417,13 +418,14 @@ public class InGameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.S))
         {
-            int i = 0;
-            while (!EnemyManager.Instance.SpawnEnemy(100, i))
-            {
-                i++;
-                if (i > EnemyManager.Instance.EnemySpawnPosition.Length - 1)
-                    break; 
-            }
+            UIManager.Instance.ShowStatus();
+            //int i = 0;
+            //while (!EnemyManager.Instance.SpawnEnemy(100, i))
+            //{
+            //    i++;
+            //    if (i > EnemyManager.Instance.EnemySpawnPosition.Length - 1)
+            //        break; 
+            //}
         }
         if (Input.GetKeyDown(KeyCode.F))
         {

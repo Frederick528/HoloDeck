@@ -16,7 +16,11 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: c81c0ab54cdcdd944abec45594749f94
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: ee0a7fa36e737f0488bb04b744274eda
+    m_Address: Assets/4. Prefabs/Card/UICardImg.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 8ddab990de4121140909e54570afce17, type: 2}
   m_SchemaSet:

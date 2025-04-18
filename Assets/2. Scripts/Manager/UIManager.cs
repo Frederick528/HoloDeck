@@ -1,12 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using System;
-using Unity.Mathematics;
 
 public class UIManager : MonoBehaviour
 {
@@ -34,10 +32,10 @@ public class UIManager : MonoBehaviour
 
 
 
-    [Header("UICardPrefab")]
-    [SerializeField] UICard _uiCard;
+    //[Header("UICardPrefab")]
+    UICard _uiCard;
 
-    [Header("Panel")]
+    //[Header("Panel")]
     Transform _cardEnlargePanel;
     Transform _itemEnlargePanel;
 
@@ -45,7 +43,7 @@ public class UIManager : MonoBehaviour
     Transform _shopPanel;
     Transform _shopEnlargePanel;
 
-    [Header("Box")]
+    //[Header("Box")]
     Transform[] _rewardBoxes;
 
     [HideInInspector]
@@ -57,7 +55,7 @@ public class UIManager : MonoBehaviour
 
     Transform _statusWindow;
     Image[] _statusImg = new Image[3];
-    TMP_Text[] _statusText = new TMP_Text[7];
+    TMP_Text[] _statusText = new TMP_Text[8];
 
     Transform _cardRewardContent;
     Transform _itemRewardContent;
@@ -89,8 +87,8 @@ public class UIManager : MonoBehaviour
             Instance = this;
             //transform.SetParent(null);
             _canvas.gameObject.name = "CanvasesDontDestroy";
-            GameManager.Instance.AddDontDestroy(_canvas.gameObject);
-            GameManager.Instance.AddDontDestroy(transform.root.gameObject);
+            GameManager.Instance.AddInGameDontDestroy(_canvas.gameObject);
+            GameManager.Instance.AddInGameDontDestroy(transform.root.gameObject);
             //DontDestroyOnLoad(_canvas.gameObject);
             //DontDestroyOnLoad(transform.root.gameObject);
         }
@@ -108,6 +106,20 @@ public class UIManager : MonoBehaviour
             _canvasRaycaster.Add(_canvas.GetChild(i).GetComponent<GraphicRaycaster>());
             CanvasDict.Add(i, _canvas.GetChild(i));
         }
+
+        Addressables.LoadAssetAsync<GameObject>("UICardImg.prefab").Completed += (op) =>
+        {
+            if (op.Status != AsyncOperationStatus.Succeeded)
+            {
+                Debug.LogError("UICardImg null");
+            }
+            else
+            {
+                _uiCard = op.Result.GetComponent<UICard>();
+            }
+            Addressables.Release(op);
+
+        };
 
         _cardEnlargePanel = Canvas(CanvasName.CardReward).Find("CardEnlargePanel");
         _cardRewardContent = ContinueFindChildByName(Canvas(CanvasName.CardReward), "Content");
@@ -137,6 +149,7 @@ public class UIManager : MonoBehaviour
         _statusText[4] = _statusWindow.Find("CriticalChance").GetComponent<TMP_Text>();
         _statusText[5] = _statusWindow.Find("CriticalDamage").GetComponent<TMP_Text>();
         _statusText[6] = _statusWindow.Find("Critical").GetComponent<TMP_Text>();
+        _statusText[7] = _statusWindow.Find("Goods").GetComponent<TMP_Text>();
 
         _statusImg[2] = ContinueFindChildByName(_statusImg[0].transform, "PlayerImage").GetComponent<Image>();
 
@@ -323,6 +336,9 @@ public class UIManager : MonoBehaviour
                 if (refAmount == -1) return;
                 _statusImg[1].fillAmount = amount / refAmount;
                 _statusText[statusIdx].text = $"{amount} / {refAmount}";
+                break;
+            case 7:
+                _statusText[statusIdx].text = "Goods: " + amount.ToString();
                 break;
         }
     }

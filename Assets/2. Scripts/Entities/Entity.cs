@@ -32,7 +32,7 @@ public abstract class Entity : MonoBehaviour
     protected ReactiveProperty<int> _useCritical { get; private set; } = new(100);
     protected ReactiveProperty<int> _curCritical { get; private set; } = new();
     protected ReactiveProperty<int> _criticalChance { get; private set; } = new();
-    protected ReactiveProperty<int> _criticalDamage { get; private set; } = new(150);
+    protected ReactiveProperty<int> _criticalDamage { get; private set; } = new();
 
     float _hpRatio;
 
@@ -48,12 +48,13 @@ public abstract class Entity : MonoBehaviour
     //        hpText.text = hp.ToString();
     //    });
     //}
-    public void SetupEntity(int hp, int criticalChance = 10)
+    public void SetupEntity(int hp, int criticalChance = 10, int criticalDamage = 150)
     {
         //col2d = GetComponent<BoxCollider2D>();
         _maxHP.Value = hp;
         _curHP.Value = _maxHP.Value;
         _criticalChance.Value = criticalChance;
+        _criticalDamage.Value = criticalDamage;
         //slider.value = _maxHP.Value;
         //hpText.text = _maxHP.ToString();
     }
@@ -75,7 +76,7 @@ public abstract class Entity : MonoBehaviour
             return false;
         //col2d.enabled = false;
         //slider.gameObject.SetActive(false);
-        canvas.gameObject.SetActive(false);
+        //canvas.gameObject.SetActive(false);
         return true;
     }
 
