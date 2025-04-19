@@ -5,11 +5,13 @@ using UnityEngine;
 public class Order : MonoBehaviour
 {
     [SerializeField]
+    Renderer _outLineRenderer;
+    [SerializeField]
     Renderer[] _backRenderers;
     [SerializeField]
     Renderer[] _middleRenderers;
     [SerializeField]
-    Renderer _frameRenderers;
+    Renderer _frameRenderer;
     [SerializeField]
     Renderer[] _frontRenderers;
     [SerializeField]
@@ -33,6 +35,7 @@ public class Order : MonoBehaviour
     public void SetOrder(int order)
     {
         int mulOrder = order * 5;
+        _outLineRenderer.sortingOrder = mulOrder - 2;
         foreach (var renderer in _backRenderers)
         {
             //renderer.sortingLayerName = sortingLayerName;
@@ -43,7 +46,7 @@ public class Order : MonoBehaviour
             //renderer.sortingLayerName = sortingLayerName;
             renderer.sortingOrder = mulOrder;
         }
-        _frameRenderers.sortingOrder = mulOrder + 1;
+        _frameRenderer.sortingOrder = mulOrder + 1;
         foreach (var renderer in _frontRenderers)
         {
             //renderer.sortingLayerName = sortingLayerName;

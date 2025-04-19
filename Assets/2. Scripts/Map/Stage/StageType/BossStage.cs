@@ -31,7 +31,7 @@ public class BossStage : MonoBehaviour, IStage
         {
             case 1:
             case 2:
-                BossSpawnPattern(Random.Range(0, 3));
+                BossSpawnPattern(Random.Range(0, 1));
                 break;
             case 3:
                 BossSpawnPattern(Random.Range(100, 110));
@@ -49,7 +49,9 @@ public class BossStage : MonoBehaviour, IStage
         switch (rand)
         {
             case 0:
-                EnemyManager.Instance.SpawnBoss(100, 1);
+                EnemyManager.Instance.SpawnBoss(100, 0);
+                EnemyManager.Instance.SpawnBoss(101, 1);
+                EnemyManager.Instance.SpawnBoss(102, 2);
                 break;
             case 1:
                 EnemyManager.Instance.SpawnBoss(101, 1);

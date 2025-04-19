@@ -96,6 +96,10 @@ public class CardManager : MonoBehaviour
         isUseCard.Subscribe((canUse) =>
         {
             _selectCard?.TurnOnOutline(canUse);
+            if (canUse)
+            {
+                InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
+            }
             if (canUse && _selectCard.Data.CardTag == CardTag.SingleAttack && !isSingleTarget)
             {
                 BattleManager.Instance.SetActiveArrowCursor(true, 0);
@@ -518,6 +522,7 @@ public class CardManager : MonoBehaviour
 
         canPush = true;         // PullCard랑 중복 호출이긴 함.
 
+        InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.InGame, true);
         InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, true);
     }
     public void ReturnSelectedCard()
@@ -973,6 +978,7 @@ public class CardManager : MonoBehaviour
         if (CardState != ECardState.CanMouseDrag)
             return;
 
+        InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.InGame, false);
         InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, false);
 
         _selectCard = card;

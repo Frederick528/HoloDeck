@@ -47,12 +47,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff83ab2518d1ed44f8a91051020b26db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hpBar: {fileID: 0}
-  shieldObj: {fileID: 0}
-  hpText: {fileID: 0}
-  shieldText: {fileID: 0}
-  col2d: {fileID: 0}
-  canvas: {fileID: 0}
   spawnPosIdx: 0
   CanClear: 0
 --- !u!61 &5423766591507928312
@@ -242,7 +236,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3212883658074943697, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.5
+      value: -0.2
       objectReference: {fileID: 0}
     - target: {fileID: 3212883658074943697, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

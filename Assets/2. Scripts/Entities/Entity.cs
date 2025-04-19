@@ -174,6 +174,7 @@ public abstract class Entity : MonoBehaviour
             if (hp > 0)
             {
                 hpBar.fillAmount = _curHP.Value / (float)hp;
+                hpText.text = $"{_curHP.Value}/{hp}";
             }
         });
         _curHP.Subscribe(hp =>
@@ -182,7 +183,7 @@ public abstract class Entity : MonoBehaviour
             if (_maxHP.Value > 0)
             {
                 hpBar.fillAmount = (float)hp / _maxHP.Value;
-                hpText.text = hp.ToString();
+                hpText.text = $"{hp}/{_maxHP.Value}";
             }
         });
         _shield.Subscribe(shield =>
@@ -201,12 +202,13 @@ public abstract class Entity : MonoBehaviour
         {
             if (critical <= 0) return;
             _criticalBar.fillAmount = _curCritical.Value / (float)critical;
+            _criticalText.text = $"{_curCritical.Value}/{critical}";
         });
         _curCritical.Subscribe(critical =>
         {
             if (_useCritical.Value <= 0) return;
             _criticalBar.fillAmount = (float)critical / _useCritical.Value;
-            _criticalText.text = _curCritical.ToString();
+            _criticalText.text = $"{critical}/{_useCritical.Value}";
         });
     }
 
