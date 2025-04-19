@@ -31,8 +31,11 @@ public class MapManager : MonoBehaviour
 
     void Awake()
     {
-        Instance = Instance != null ? Instance : this;
-        _settingMap = new(this);
+        if (Instance == null)
+        {
+            Instance = this;
+            _settingMap = new(this);
+        }
     }
 
     private void Start()

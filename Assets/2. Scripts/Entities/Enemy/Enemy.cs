@@ -142,8 +142,8 @@ public abstract class Enemy : Entity
         bool clear = await EnemyManager.Instance.KillEnemyCheck(this, base.DieAnimation());
         
         //EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);      // 에너미 자리로 클리어 확인을 하기 때문에 적 죽는 모션 기다린 후, 자리 삭제  // 자리는 나중에 배열로 만들고 코드상으로만 확인하도록 변경
-        InGameManager.Instance.ChangeCoinValue(enemyData.DropCoin);
-        GameManager.Instance.AddGoods((int)(enemyData.DropCoin * 0.5f));
+        InGameManager.Instance.ChangeCoinValue((int)(enemyData.DropCoin * (1f + GameManager.Instance.AddCoinGained)));
+        GameManager.Instance.AddGoods((int)(enemyData.DropCoin * (1f + GameManager.Instance.AddCoinGained) * 0.5f));
         if (clear)
         {
             ClearCheck();

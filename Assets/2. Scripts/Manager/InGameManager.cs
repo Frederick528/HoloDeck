@@ -64,8 +64,6 @@ public class InGameManager : MonoBehaviour
             Destroy(transform.root.gameObject);
         }
 
-        Screen.SetResolution(1920, 1080, true);
-
         //StartCoroutine(ReadSpreadSheet.LoadData("https://docs.google.com/spreadsheets/d/1CqNR2Rh_OIVe8n0CG8vC7YVpbNUn_-0rXeBab72gXvs", "A3:D14", 0));
 
         //if (!CardDataDeserializer.TryGetData(1015, out CardData row))

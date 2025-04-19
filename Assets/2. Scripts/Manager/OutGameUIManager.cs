@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,11 +10,8 @@ public class OutGameUIManager : MonoBehaviour
 {
     public static OutGameUIManager Instance;
 
-    public enum CanvasName      // 순서가 Canvas 순서랑 일치해야 함.
+    public enum CanvasName
     {
-        Main,
-        PowerUP,
-        Character,
         Option,
         Sound
     }
@@ -22,37 +20,35 @@ public class OutGameUIManager : MonoBehaviour
 
     Transform _canvas;
 
-    [Header("Lobby")]
-    TMP_Text _goodsText;
 
     void Awake()
     {
         _canvas = GameObject.Find("OutGameCanvases").GetComponent<Transform>();
-
+        
         if (Instance != null)
         {
-            Destroy(gameObject);
+            Destroy(_canvas.gameObject);
+            return;
         }
-        print('S');
-        Instance = Instance != null ? Instance : this;
-
-        for (int i = 0; i < /*CanvasList.Count*/_canvas.childCount; ++i)
+        //Instance = Instance != null ? Instance : this;
+        Instance = this;
+        
+        _canvas.gameObject.name = "OutGameCanvasesDontDestroy";
+        for (int i = 0; i < _canvas.childCount; ++i)
         {
-            //_canvasRaycaster.Add(_canvas.GetChild(i).GetComponent<GraphicRaycaster>());
             _canvasDict.Add(i, _canvas.GetChild(i));
         }
-        Canvas(CanvasName.Option).SetParent(null);
-        DontDestroyOnLoad(Canvas(CanvasName.Option));
-        Canvas(CanvasName.Sound).SetParent(null);
-        DontDestroyOnLoad(Canvas(CanvasName.Sound));
+        DontDestroyOnLoad(_canvas);
+
     }
+
     public void SetActiveCanvas(CanvasName canvasName, bool state, int idx = -1)
     {
         if (!state)     // 꺼질 때
         {
             switch (canvasName)
             {
-                case CanvasName.Main:
+                case CanvasName.Option:
                     break;
             }
 
@@ -64,14 +60,14 @@ public class OutGameUIManager : MonoBehaviour
 
             switch (canvasName)
             {
-                case CanvasName.Main:
+                case CanvasName.Option:
                     break;
             }
         }
 
     }
 
-    public Transform Canvas(CanvasName canvasName)
+    public Transform OutGameCanvas(CanvasName canvasName)
     {
         return _canvasDict[(int)canvasName];
     }
@@ -88,16 +84,6 @@ public class OutGameUIManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (GameManager.Instance.NowChapterLV == 0)
-        {
-            _canvasDict.Clear();
-            _canvas = GameObject.Find("OutGameCanvases").GetComponent<Transform>();
-            for (int i = 0; i < /*CanvasList.Count*/_canvas.childCount; ++i)
-            {
-                //_canvasRaycaster.Add(_canvas.GetChild(i).GetComponent<GraphicRaycaster>());
-                _canvasDict.Add(i, _canvas.GetChild(i));
-            }
-            _goodsText.text = GameManager.Instance.Goods.Value.ToString();
-        }
+
     }
 }

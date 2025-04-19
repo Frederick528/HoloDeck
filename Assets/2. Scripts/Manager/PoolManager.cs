@@ -31,9 +31,11 @@ public class PoolManager : MonoBehaviour
 
     private void Awake()
     {
-        Instance = Instance != null ? Instance : this;
-
-        Init();
+        if (Instance == null)
+        {
+            Instance = this;
+            Init();
+        }
     }
 
     private void Init()

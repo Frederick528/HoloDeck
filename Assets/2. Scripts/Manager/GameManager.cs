@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public int AddHealPower { get; private set; }
     public int AddCriticalChance { get; private set; }
     public int AddCriticalDamage { get; private set; }
+    public float AddCoinGained { get; private set; }
 
     public ReactiveProperty<int> Goods { get; private set; } = new();
 
@@ -42,6 +43,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        Screen.SetResolution(1920, 1080, true);
         Goods.Subscribe(goods =>
         {
             if (InGame)

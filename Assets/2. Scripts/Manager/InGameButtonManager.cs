@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class InGameButtonManager : MonoBehaviour
@@ -147,7 +146,6 @@ public class InGameButtonManager : MonoBehaviour
     /// </param>
     public void ChangeScene(int idx)
     {
-        SceneManager.LoadScene(idx);
         GameManager.Instance.ChangeScene(idx);
         //switch (idx)
         //{
