@@ -564,26 +564,26 @@ public class CardManager : MonoBehaviour
             {
                 if (_selectedCards.Count == _usedCard.Data.Discard)
                 {
-                    ButtonManager.Instance.DiscardBtnInvert(true);
+                    InGameButtonManager.Instance.DiscardBtnInvert(true);
                 }
                 else
                 {
-                    ButtonManager.Instance.DiscardBtnInvert(false);
+                    InGameButtonManager.Instance.DiscardBtnInvert(false);
                 }
             }
             else if (_usedCard.Data.Discard == 0)
             {
-                ButtonManager.Instance.DiscardBtnInvert(true);
+                InGameButtonManager.Instance.DiscardBtnInvert(true);
             }
             else
             {
                 if (_selectedCards.Count >= -_usedCard.Data.Discard)
                 {
-                    ButtonManager.Instance.DiscardBtnInvert(true);
+                    InGameButtonManager.Instance.DiscardBtnInvert(true);
                 }
                 else
                 {
-                    ButtonManager.Instance.DiscardBtnInvert(false);
+                    InGameButtonManager.Instance.DiscardBtnInvert(false);
                 }
             }
         }
@@ -593,26 +593,26 @@ public class CardManager : MonoBehaviour
             {
                 if (_selectedCards.Count == _playedCard.Data.Discard)
                 {
-                    ButtonManager.Instance.DiscardBtnInvert(true);
+                    InGameButtonManager.Instance.DiscardBtnInvert(true);
                 }
                 else
                 {
-                    ButtonManager.Instance.DiscardBtnInvert(false);
+                    InGameButtonManager.Instance.DiscardBtnInvert(false);
                 }
             }
             else if (_playedCard.Data.Discard == 0)
             {
-                ButtonManager.Instance.DiscardBtnInvert(true);
+                InGameButtonManager.Instance.DiscardBtnInvert(true);
             }
             else
             {
                 if (_selectedCards.Count >= -_playedCard.Data.Discard)
                 {
-                    ButtonManager.Instance.DiscardBtnInvert(true);
+                    InGameButtonManager.Instance.DiscardBtnInvert(true);
                 }
                 else
                 {
-                    ButtonManager.Instance.DiscardBtnInvert(false);
+                    InGameButtonManager.Instance.DiscardBtnInvert(false);
                 }
             }
         }
@@ -626,13 +626,13 @@ public class CardManager : MonoBehaviour
         {
             SetCardState(3);   // Click
             InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, false);
-            ButtonManager.Instance.ActItemBtnInvert(false);
+            InGameButtonManager.Instance.ActItemBtnInvert(false);
         }
         else
         {
             SetCardState(2);    // Drag
             InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, true);
-            ButtonManager.Instance.ActItemBtnInvert(true);
+            InGameButtonManager.Instance.ActItemBtnInvert(true);
         }
     }
     public void ChangeRemove(bool remove)
@@ -643,13 +643,13 @@ public class CardManager : MonoBehaviour
         {
             SetCardState(3);   // Click
             InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, false);
-            ButtonManager.Instance.ActItemBtnInvert(false);
+            InGameButtonManager.Instance.ActItemBtnInvert(false);
         }
         else
         {
             SetCardState(2);    // Drag
             InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, true);
-            ButtonManager.Instance.ActItemBtnInvert(true);
+            InGameButtonManager.Instance.ActItemBtnInvert(true);
         }
     }
     void DiscardCard(Card card)      // 카드 선택해서 버리기

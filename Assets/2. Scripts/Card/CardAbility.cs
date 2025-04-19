@@ -723,32 +723,32 @@ public class CardAbility
 
     async UniTask ConfirmedDiscardAB()
     {
-        ButtonManager.Instance.DiscardBtnInvert(false);
-        ButtonManager.Instance.SetActiveDiscardCancelBtn(false);
+        InGameButtonManager.Instance.DiscardBtnInvert(false);
+        InGameButtonManager.Instance.SetActiveDiscardCancelBtn(false);
         CardManager.Instance.ChangeDiscard(true);
         await UniTask.Create(async () =>
         {
-            await ButtonManager.Instance.DiscardButton.OnClickAsync();
+            await InGameButtonManager.Instance.DiscardButton.OnClickAsync();
             CardManager.Instance.ThrowAwaySelectedCard().Forget();
         });
-        ButtonManager.Instance.SetActiveDiscardCancelBtn(true);
+        InGameButtonManager.Instance.SetActiveDiscardCancelBtn(true);
         CardManager.Instance.ChangeDiscard(false);
     }
     async UniTask<bool> ConditionDiscardAB()
     {
         bool discarded = false;
-        ButtonManager.Instance.DiscardBtnInvert(false);
+        InGameButtonManager.Instance.DiscardBtnInvert(false);
         CardManager.Instance.ChangeDiscard(true);
         _cts = new();
         var task1 = UniTask.Create(async () =>
         {
-            await ButtonManager.Instance.DiscardButton.OnClickAsync(_cts.Token);
+            await InGameButtonManager.Instance.DiscardButton.OnClickAsync(_cts.Token);
             CardManager.Instance.ThrowAwaySelectedCard().Forget();
             discarded = true;
         });
         var task2 = UniTask.Create(async () =>
         {
-            await ButtonManager.Instance.DiscardCancelButton.OnClickAsync(_cts.Token);
+            await InGameButtonManager.Instance.DiscardCancelButton.OnClickAsync(_cts.Token);
             CardManager.Instance.ReturnSelectedCard();
             discarded = false;
         });
@@ -778,32 +778,32 @@ public class CardAbility
 
     async UniTask ConfirmedRemoveAB()
     {
-        ButtonManager.Instance.DiscardBtnInvert(false);
-        ButtonManager.Instance.SetActiveDiscardCancelBtn(false);
+        InGameButtonManager.Instance.DiscardBtnInvert(false);
+        InGameButtonManager.Instance.SetActiveDiscardCancelBtn(false);
         CardManager.Instance.ChangeRemove(true);
         await UniTask.Create(async () =>
         {
-            await ButtonManager.Instance.DiscardButton.OnClickAsync();
+            await InGameButtonManager.Instance.DiscardButton.OnClickAsync();
             CardManager.Instance.ThrowAwaySelectedCard().Forget();
         });
-        ButtonManager.Instance.SetActiveDiscardCancelBtn(true);
+        InGameButtonManager.Instance.SetActiveDiscardCancelBtn(true);
         CardManager.Instance.ChangeDiscard(false);
     }
     async UniTask<bool> ConditionRemoveAB()
     {
         bool removed = false;
-        ButtonManager.Instance.DiscardBtnInvert(false);
+        InGameButtonManager.Instance.DiscardBtnInvert(false);
         CardManager.Instance.ChangeRemove(true);
         _cts = new();
         var task1 = UniTask.Create(async () =>
         {
-            await ButtonManager.Instance.DiscardButton.OnClickAsync(_cts.Token);
+            await InGameButtonManager.Instance.DiscardButton.OnClickAsync(_cts.Token);
             //CardManager.Instance.ThrowAwaySelectedCard().Forget();        // 제거하는 코드로 변경
             removed = true;
         });
         var task2 = UniTask.Create(async () =>
         {
-            await ButtonManager.Instance.DiscardCancelButton.OnClickAsync(_cts.Token);
+            await InGameButtonManager.Instance.DiscardCancelButton.OnClickAsync(_cts.Token);
             CardManager.Instance.ReturnSelectedCard();
             removed = false;
         });

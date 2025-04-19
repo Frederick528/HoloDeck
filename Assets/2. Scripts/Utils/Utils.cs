@@ -33,3 +33,20 @@ public enum EAddDeck
     //MainNDrawNDummy, MainNDrawNHand, DrawNDummyNHand,
     //MainNDrawNDummyNHand
 }
+
+public class FindTransform
+{
+    public static Transform ContinueFindChildByName(Transform parent, string name)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.name == name)
+                return child;
+
+            Transform found = ContinueFindChildByName(child, name);
+            if (found != null)
+                return found;
+        }
+        return null;
+    }
+}

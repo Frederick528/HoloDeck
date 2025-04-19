@@ -74,7 +74,7 @@ public class TurnManager : MonoBehaviour
     public void SetLoading(bool isOn)
     {
         IsLoading = isOn;
-        ButtonManager.Instance.TurnEndBtnInvert(!isOn);
+        InGameButtonManager.Instance.TurnEndBtnInvert(!isOn);
         ChangeCardState().Forget();
     }
 
@@ -176,7 +176,7 @@ public class TurnManager : MonoBehaviour
         if (InGameManager.Instance.PauseInt != 0) return;     // Pause 상태면 턴종 불가능
         if (!_canEndTurn && !endBattle) return;             // 턴종 가능한지 확인, 단, 배틀 종료 상태에서는 턴종 가능한가와 상관없이 진행
         MyTurn = false;
-        ButtonManager.Instance.TurnEndBtnInvert(MyTurn);
+        InGameButtonManager.Instance.TurnEndBtnInvert(MyTurn);
         InGameUIManager.Instance.ChangeTurnButtonText(MyTurn);
         SetLoading(true);
         await CardManager.Instance.ThrowAwayCard();

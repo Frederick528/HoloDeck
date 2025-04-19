@@ -42,9 +42,9 @@ public class ItemManager : MonoBehaviour
 
     private void Start()
     {
-        _passiveTransform = (RectTransform)InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.PassiveTransform, "PassiveContent");
-        _activeItemChargeImgae = InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.ActiveTransform, "ChargeBar").GetComponent<Image>();
-        _activeItemChargeText = InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.ActiveTransform, "ChargeText").GetComponent<TMP_Text>();
+        _passiveTransform = (RectTransform)FindTransform.ContinueFindChildByName(InGameUIManager.Instance.PassiveTransform, "PassiveContent");
+        _activeItemChargeImgae = FindTransform.ContinueFindChildByName(InGameUIManager.Instance.ActiveTransform, "ChargeBar").GetComponent<Image>();
+        _activeItemChargeText = FindTransform.ContinueFindChildByName(InGameUIManager.Instance.ActiveTransform, "ChargeText").GetComponent<TMP_Text>();
 
         _activeItem = InGameUIManager.Instance.ActiveTransform.GetComponent<ActiveItem>();
         _potionItem = InGameUIManager.Instance.PotionTransform.GetComponentsInChildren<PotionItem>();
@@ -55,16 +55,16 @@ public class ItemManager : MonoBehaviour
         {
             _activeItemChargeImgae.gameObject.SetActive(false);
         }
-        ButtonManager.Instance.TurnPassiveButton[0].onClick.AddListener(() =>
+        InGameButtonManager.Instance.TurnPassiveButton[0].onClick.AddListener(() =>
         {
             _passiveTransform.offsetMin = new Vector2(_passiveTransform.offsetMin.x + 1600 > 0 ? 0 : _passiveTransform.offsetMin.x + 1600, _passiveTransform.offsetMin.y);
         });
-        ButtonManager.Instance.TurnPassiveButton[1].onClick.AddListener(() =>
+        InGameButtonManager.Instance.TurnPassiveButton[1].onClick.AddListener(() =>
         {
             _passiveTransform.offsetMin = new Vector2(_passiveTransform.offsetMin.x - 1600 < -1600 * (int)(_passiveItem.Count * 0.05f) ? -1600 * (int)(_passiveItem.Count * 0.05f) : _passiveTransform.offsetMin.x - 1600, _passiveTransform.offsetMin.y);
         });
 
-        ButtonManager.Instance.ActiveItemButton.onClick.AddListener(() =>
+        InGameButtonManager.Instance.ActiveItemButton.onClick.AddListener(() =>
         {
             if (_activeItem.Data == null) return;
             if (_activeItem.Data.ItemCanUse == ItemCanUse.Anytime)
@@ -105,7 +105,7 @@ public class ItemManager : MonoBehaviour
         for (int idx = 0; idx < HavePotionItem.Length; ++idx)
         {
             int i = idx;
-            ButtonManager.Instance.PotionButtons[i].onClick.AddListener(() =>
+            InGameButtonManager.Instance.PotionButtons[i].onClick.AddListener(() =>
             {
                 _clickedPotionIdx = i;
                 if (!HavePotionItem[_clickedPotionIdx]) { return; }
@@ -290,9 +290,9 @@ public class ItemManager : MonoBehaviour
         switch (idx)
         {
             case 1:
-                return new Vector2(ButtonManager.Instance.ActiveItemButton.transform.position.x, ButtonManager.Instance.ActiveItemButton.transform.position.y - 0.4f);
+                return new Vector2(InGameButtonManager.Instance.ActiveItemButton.transform.position.x, InGameButtonManager.Instance.ActiveItemButton.transform.position.y - 0.4f);
             case 2:
-                return new Vector2(ButtonManager.Instance.PotionButtons[_clickedPotionIdx].transform.position.x, ButtonManager.Instance.PotionButtons[_clickedPotionIdx].transform.position.y - 0.4f);
+                return new Vector2(InGameButtonManager.Instance.PotionButtons[_clickedPotionIdx].transform.position.x, InGameButtonManager.Instance.PotionButtons[_clickedPotionIdx].transform.position.y - 0.4f);
         }
         return Vector2.zero;
     }
@@ -313,9 +313,9 @@ public class ItemManager : MonoBehaviour
         Item passiveItem = Instantiate(_passiveItemPrefab, _passiveTransform);
         passiveItem.Setup(itemData);
         _passiveItem.Add(passiveItem);
-        if (_passiveItem.Count > 20 && !ButtonManager.Instance.TurnPassiveButton[0].gameObject.activeSelf)
+        if (_passiveItem.Count > 20 && !InGameButtonManager.Instance.TurnPassiveButton[0].gameObject.activeSelf)
         {
-            ButtonManager.Instance.SetActiveTurnPassiveBtn(true);
+            InGameButtonManager.Instance.SetActiveTurnPassiveBtn(true);
         }
     }
     public (ItemData, int)? ChanageActiveItem(ItemData itemData, int value)       // 아이템 체인지하는 코드 추가해야 함.

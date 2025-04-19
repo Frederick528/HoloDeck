@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
 
     public int PauseInt;
 
-    public int NowChapterLV = 1;
+    public int NowChapterLV;
 
     bool _isESCPause = false;
     // Start is called before the first frame update
@@ -32,12 +32,11 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            transform.SetParent(null);
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(transform.root.gameObject);
         }
         else
         {
-            Destroy(gameObject);
+            Destroy(transform.root.gameObject);
         }
     }
 
@@ -48,6 +47,7 @@ public class GameManager : MonoBehaviour
             if (InGame)
                 InGameUIManager.Instance.ChangeStatus(7, goods);
         });
+        NowChapterLV = SceneManager.GetActiveScene().buildIndex;
     }
 
     public void AddInGameDontDestroy(GameObject gameObject)

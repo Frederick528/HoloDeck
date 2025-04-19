@@ -54,12 +54,14 @@ public class InGameManager : MonoBehaviour
             //DontDestroyOnLoad(_camera[0]);
             GameManager.Instance.AddInGameDontDestroy(_camera[0]);
             GameManager.Instance.AddInGameDontDestroy(_player[0]);
+            GameManager.Instance.AddInGameDontDestroy(transform.root.gameObject);
             GameManager.Instance.InGame = true;
         }
         else
         {
             Destroy(_camera[1]);
             Destroy(_player[1]);
+            Destroy(transform.root.gameObject);
         }
 
         Screen.SetResolution(1920, 1080, true);

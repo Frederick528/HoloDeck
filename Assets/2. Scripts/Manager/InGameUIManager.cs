@@ -26,7 +26,7 @@ public class InGameUIManager : MonoBehaviour
     }
     //public List<GameObject> CanvasList;
     List<GraphicRaycaster> _canvasRaycaster = new();
-    public Dictionary<int, Transform> CanvasDict = new();
+    public Dictionary<int, Transform> _canvasDict = new();
 
     Transform _canvas;
 
@@ -80,31 +80,41 @@ public class InGameUIManager : MonoBehaviour
 
     private void Awake()
     {
-        _canvas = GameObject.Find("Canvases").GetComponent<Transform>();
-
-        if (Instance == null)
-        {
-            Instance = this;
-            //transform.SetParent(null);
-            _canvas.gameObject.name = "CanvasesDontDestroy";
-            GameManager.Instance.AddInGameDontDestroy(_canvas.gameObject);
-            GameManager.Instance.AddInGameDontDestroy(transform.root.gameObject);
-            //DontDestroyOnLoad(_canvas.gameObject);
-            //DontDestroyOnLoad(transform.root.gameObject);
-        }
-        else
+        _canvas = GameObject.Find("InGameCanvases").GetComponent<Transform>();
+        if (Instance != null)
         {
             Destroy(_canvas.gameObject);
-            Destroy(transform.root.gameObject);
+            //Destroy(transform.root.gameObject);
             return;
         }
+        //if (Instance == null)
+        //{
+        //    Instance = this;
+        //    //transform.SetParent(null);
+        //    _canvas.gameObject.name = "InGameCanvasesDontDestroy";
+        //    GameManager.Instance.AddInGameDontDestroy(_canvas.gameObject);
+        //    GameManager.Instance.AddInGameDontDestroy(transform.root.gameObject);
+        //    //DontDestroyOnLoad(_canvas.gameObject);
+        //    //DontDestroyOnLoad(transform.root.gameObject);
+        //}
+        //else
+        //{
+        //    Destroy(_canvas.gameObject);
+        //    Destroy(transform.root.gameObject);
+        //    return;
+        //}
+
+        Instance = this;
+        _canvas.gameObject.name = "InGameCanvasesDontDestroy";
+        GameManager.Instance.AddInGameDontDestroy(_canvas.gameObject);
+        //GameManager.Instance.AddInGameDontDestroy(transform.root.gameObject);
 
         for (int i = 0; i < /*CanvasList.Count*/_canvas.childCount; ++i)
         {
             //_canvasRaycaster.Add(CanvasList[i].GetComponent<GraphicRaycaster>());
             //CanvasDict.Add(i, CanvasList[i]);
             _canvasRaycaster.Add(_canvas.GetChild(i).GetComponent<GraphicRaycaster>());
-            CanvasDict.Add(i, _canvas.GetChild(i));
+            _canvasDict.Add(i, _canvas.GetChild(i));
         }
 
         Addressables.LoadAssetAsync<GameObject>("UICardImg.prefab").Completed += (op) =>
@@ -122,21 +132,21 @@ public class InGameUIManager : MonoBehaviour
         };
 
         _cardEnlargePanel = Canvas(CanvasName.CardReward).Find("CardEnlargePanel");
-        _cardRewardContent = ContinueFindChildByName(Canvas(CanvasName.CardReward), "Content");
+        _cardRewardContent = FindTransform.ContinueFindChildByName(Canvas(CanvasName.CardReward), "Content");
         _itemEnlargePanel = Canvas(CanvasName.ItemReward).Find("ItemEnlargePanel");
-        _itemRewardContent = ContinueFindChildByName(Canvas(CanvasName.ItemReward), "Content");
+        _itemRewardContent = FindTransform.ContinueFindChildByName(Canvas(CanvasName.ItemReward), "Content");
 
-        _viewDeckContent = ContinueFindChildByName(Canvas(CanvasName.ViewDeck), "Content");
+        _viewDeckContent = FindTransform.ContinueFindChildByName(Canvas(CanvasName.ViewDeck), "Content");
         //for (int i = 0; i < ViewDeckContent.childCount; ++i)
         //{
         //    _deckUICards.Add(ViewDeckContent.GetChild(i).GetComponent<UICard>());
         //}
 
-        PassiveTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "PassiveItem");
-        ActiveTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "ActiveItemButton");
-        PotionTransform = ContinueFindChildByName(Canvas(CanvasName.InGame), "PotionItem");
+        PassiveTransform = FindTransform.ContinueFindChildByName(Canvas(CanvasName.InGame), "PassiveItem");
+        ActiveTransform = FindTransform.ContinueFindChildByName(Canvas(CanvasName.InGame), "ActiveItemButton");
+        PotionTransform = FindTransform.ContinueFindChildByName(Canvas(CanvasName.InGame), "PotionItem");
 
-        _statusWindow = ContinueFindChildByName(Canvas(CanvasName.InGame), "Status");
+        _statusWindow = FindTransform.ContinueFindChildByName(Canvas(CanvasName.InGame), "Status");
         _statusImg[0] = _statusWindow.Find("HPCircle").GetComponent<Image>();
         _statusText[0] = _statusWindow.Find("HP").GetComponent<TMP_Text>();
 
@@ -151,20 +161,20 @@ public class InGameUIManager : MonoBehaviour
         _statusText[6] = _statusWindow.Find("Critical").GetComponent<TMP_Text>();
         _statusText[7] = _statusWindow.Find("Goods").GetComponent<TMP_Text>();
 
-        _statusImg[2] = ContinueFindChildByName(_statusImg[0].transform, "PlayerImage").GetComponent<Image>();
+        _statusImg[2] = FindTransform.ContinueFindChildByName(_statusImg[0].transform, "PlayerImage").GetComponent<Image>();
 
         ChangeStatus(7, GameManager.Instance.Goods.Value);
 
         _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel");
         _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel");
 
-        _topHealthText = ContinueFindChildByName(Canvas(CanvasName.InGame), "HealthText").GetComponent<TMP_Text>();
-        _topCoinText = ContinueFindChildByName(Canvas(CanvasName.InGame), "CoinText").GetComponent<TMP_Text>();
+        _topHealthText = FindTransform.ContinueFindChildByName(Canvas(CanvasName.InGame), "HealthText").GetComponent<TMP_Text>();
+        _topCoinText = FindTransform.ContinueFindChildByName(Canvas(CanvasName.InGame), "CoinText").GetComponent<TMP_Text>();
 
-        _holoValue = ContinueFindChildByName(Canvas(CanvasName.Battle), "HoloValueText").GetComponent<TMP_Text>();
-        _turnEndButtonText = ContinueFindChildByName(Canvas(CanvasName.Battle), "TurnText").GetComponent<TMP_Text>();
-        _drawCount = ContinueFindChildByName(Canvas(CanvasName.Battle), "DrawCountText").GetComponent<TMP_Text>();
-        _dummyCount = ContinueFindChildByName(Canvas(CanvasName.Battle), "DummyCountText").GetComponent<TMP_Text>();
+        _holoValue = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Battle), "HoloValueText").GetComponent<TMP_Text>();
+        _turnEndButtonText = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Battle), "TurnText").GetComponent<TMP_Text>();
+        _drawCount = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Battle), "DrawCountText").GetComponent<TMP_Text>();
+        _dummyCount = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Battle), "DummyCountText").GetComponent<TMP_Text>();
 
         Transform rewardBoxCanvas = Canvas(CanvasName.RewardBox);
         _rewardBoxes = new Transform[rewardBoxCanvas.childCount];
@@ -213,19 +223,19 @@ public class InGameUIManager : MonoBehaviour
         //SetActiveCanvas(CanvasName.Map, true);
     }
 
-    public Transform ContinueFindChildByName(Transform parent, string name)
-    {
-        foreach (Transform child in parent)
-        {
-            if (child.name == name)
-                return child;
+    //public Transform ContinueFindChildByName(Transform parent, string name)
+    //{
+    //    foreach (Transform child in parent)
+    //    {
+    //        if (child.name == name)
+    //            return child;
 
-            Transform found = ContinueFindChildByName(child, name);
-            if (found != null)
-                return found;
-        }
-        return null;
-    }
+    //        Transform found = ContinueFindChildByName(child, name);
+    //        if (found != null)
+    //            return found;
+    //    }
+    //    return null;
+    //}
 
     //public Transform FindChildByName(CanvasName canvasName, string name)
     //{
@@ -267,11 +277,11 @@ public class InGameUIManager : MonoBehaviour
                     break;
             }
 
-            CanvasDict[(int)canvasName].gameObject.SetActive(false);
+            _canvasDict[(int)canvasName].gameObject.SetActive(false);
         }
         else
         {
-            CanvasDict[(int)canvasName].gameObject.SetActive(true);
+            _canvasDict[(int)canvasName].gameObject.SetActive(true);
 
             switch (canvasName)
             {
@@ -298,7 +308,7 @@ public class InGameUIManager : MonoBehaviour
 
     public Transform Canvas(CanvasName canvasName)
     {
-        return CanvasDict[(int)canvasName];
+        return _canvasDict[(int)canvasName];
     }
 
     public void SetCanvasRaycast(CanvasName canvasName, bool isOn)

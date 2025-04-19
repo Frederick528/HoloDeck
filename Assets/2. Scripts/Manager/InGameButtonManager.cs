@@ -5,9 +5,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class ButtonManager : MonoBehaviour
+public class InGameButtonManager : MonoBehaviour
 {
-    public static ButtonManager Instance { get; private set; }
+    public static InGameButtonManager Instance { get; private set; }
 
     Button _turnEndButton;
     [HideInInspector]
@@ -31,11 +31,11 @@ public class ButtonManager : MonoBehaviour
     private void Start()
     {
         if (InGameUIManager.Instance == null) { return; }
-        _turnEndButton = InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.Battle), "TurnEndButton").GetComponent<Button>();
-        DiscardButton = InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard), "DiscardButton").GetComponent<Button>();
-        DiscardCancelButton = InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard), "CancelButton").GetComponent<Button>();
+        _turnEndButton = FindTransform.ContinueFindChildByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.Battle), "TurnEndButton").GetComponent<Button>();
+        DiscardButton = FindTransform.ContinueFindChildByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard), "DiscardButton").GetComponent<Button>();
+        DiscardCancelButton = FindTransform.ContinueFindChildByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard), "CancelButton").GetComponent<Button>();
 
-        TurnPassiveButton = InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.PassiveTransform, "TurnButton").GetComponentsInChildren<Button>(true);
+        TurnPassiveButton = FindTransform.ContinueFindChildByName(InGameUIManager.Instance.PassiveTransform, "TurnButton").GetComponentsInChildren<Button>(true);
         //TurnPassiveButton[0].onClick.AddListener(() =>
         //{
         //    ItemManager.Instance.TurnPassiveItemPage(0);

@@ -58,14 +58,14 @@ public class EventQueue
         {
             _isPending = false;
             if (!EnemyManager.Instance.MapClear)
-                ButtonManager.Instance.TurnEndBtnInvert(!_isPending);
+                InGameButtonManager.Instance.TurnEndBtnInvert(!_isPending);
             //if (InGameManager.Instance.player.CurHolo == 0)           // 강제 턴종은 포션이나 스킬 효과를 못 쓰게 만드므로 그냥 제거
             //    TurnManager.Instance.EndTurn().Forget();
             return;
         }
 
         _isPending = true;      // 턴매니저에 있는 로딩과는 느낌이 다름.
-        ButtonManager.Instance.TurnEndBtnInvert(!_isPending);
+        InGameButtonManager.Instance.TurnEndBtnInvert(!_isPending);
         if (_queue.Peek() is Card cardEvent)
         {
             _queue.Dequeue();
