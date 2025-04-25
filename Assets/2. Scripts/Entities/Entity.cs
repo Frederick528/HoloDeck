@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UniRx;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public abstract class Entity : MonoBehaviour
@@ -17,7 +18,13 @@ public abstract class Entity : MonoBehaviour
     protected TMP_Text _criticalText;
     protected TMP_Text shieldText;
     protected BoxCollider2D col2d;
-    protected Transform canvas;
+    protected Canvas canvas;
+
+    public TMP_Text[] StatusEffectAmount;
+
+    Transform _statusDescWindow;
+    public List<TMP_Text> StatusEffectDesc;
+    public List<TMP_Text> StatusEffectDuration;
 
     SendAnimEvent _animEvent;
 
@@ -35,6 +42,10 @@ public abstract class Entity : MonoBehaviour
     protected ReactiveProperty<int> _criticalDamage { get; private set; } = new();
 
     float _hpRatio;
+
+    public Dictionary<StatusEffect, (int, int)> CurStatusEffect = new();
+
+    int _numberOfStatusEffects = 0;
 
     //private void Awake()    // start로 할 경우, Subscribe가 실행되지 않음. Awake로 하면 위험할 것 같아서 일단 함수로 빼고 자식 오브젝트에서 Start로 호출
     //{
@@ -131,13 +142,13 @@ public abstract class Entity : MonoBehaviour
     {
         _curHP.Value = Mathf.Clamp(_curHP.Value + amount, 0, _maxHP.Value);
         TextEffect(amount).Forget();        // 텍스트 뜨는 건 1초 고정으로 하고 패턴 넘어가는 건 밑에서 적당히 정해줘야 보기 편할 듯
-        await UniTask.WaitForSeconds(0.1f);
+        await UniTask.WaitForSeconds(0.2f);
     }
 
     public virtual async UniTask Shield(int amount)
     {
         _shield.Value += amount;
-        await UniTask.WaitForSeconds(0.1f);
+        await UniTask.WaitForSeconds(0.2f);
     }
 
     public int CheckCritical(int damage)
@@ -219,15 +230,182 @@ public abstract class Entity : MonoBehaviour
         _animEvent.ParentEntity = this;
 
         //entitySprite = GetComponent<SpriteRenderer>();
-        canvas = transform.Find("EntityCanvas");
-        hpBar = canvas.Find("HPBar").GetComponent<Image>();
-        _criticalBar = canvas.Find("CriticalBar").GetComponent<Image>();
-        shieldObj = canvas.Find("Shield").gameObject;
+        canvas = transform.Find("EntityCanvas").GetComponent<Canvas>();
+        hpBar = canvas.transform.Find("HPBar").GetComponent<Image>();
+        _criticalBar = canvas.transform.Find("CriticalBar").GetComponent<Image>();
+        shieldObj = canvas.transform.Find("Shield").gameObject;
         //slider = GetComponentInChildren<Slider>();
         hpText = hpBar.transform.Find("HPText").GetComponent<TMP_Text>();
         _criticalText = _criticalBar.transform.Find("CriticalText").GetComponent<TMP_Text>();
         shieldText = shieldObj.transform.Find("ShieldText").GetComponent<TMP_Text>();
         col2d = GetComponent<BoxCollider2D>();
+
+        StatusEffectAmount = canvas.transform.Find("StatusEffect").GetComponentsInChildren<TMP_Text>(true);
+        _statusDescWindow = canvas.transform.Find("StatusEffectDesc");
+        _statusDescWindow.GetComponent<ChildMouseHandler>().ParentEntity = this;
+
+        TMP_Text[] statusDesc = _statusDescWindow.GetComponentsInChildren<TMP_Text>(true);
+        int i = 0;
+        foreach (TMP_Text status in statusDesc)
+        {
+            if (i++ % 2 == 0)
+            {
+                StatusEffectDuration.Add(status);
+            }
+            else
+            {
+                StatusEffectDesc.Add(status);
+            }
+        }
     }
 
+    private void OnMouseEnter()
+    {
+        if (_numberOfStatusEffects == 0) return;
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+        if (CardManager.Instance.SelectCard != null) return;
+        StatusEffectDuration[0].transform.parent.parent.localPosition = Vector3.zero;
+        canvas.sortingOrder = 1;        // 이거 없으면 체력 UI에 가려짐
+        _statusDescWindow.gameObject.SetActive(true);
+    }
+
+    public void OnChildMouseExit()
+    {
+        canvas.sortingOrder = 0;
+        _statusDescWindow.gameObject.SetActive(false);
+    }
+
+    public void GetStatusEffect(StatusEffect statusEffect, int amount, int duration = -1)
+    {
+        if (CurStatusEffect.ContainsKey(statusEffect))
+        {
+            if (CurStatusEffect[statusEffect].Item2 == 0)               // 상태효과 지속시간이 0일 경우
+            {
+                CurStatusEffect[statusEffect] = (amount, duration);
+
+                ChangeStatusEffectDesc(statusEffect, amount, duration);
+
+                ActivateStatusEffect(statusEffect, true);
+                return;
+            }
+            else if (CurStatusEffect[statusEffect].Item2 == -1)     // 상태효과 지속시간이 없는 경우(계속 유지), amount 값에 따라 변화
+            {
+                if (CurStatusEffect[statusEffect].Item1 == 0)
+                {
+                    CurStatusEffect[statusEffect] = (amount, duration);
+
+                    ChangeStatusEffectDesc(statusEffect, amount, duration);
+
+                    ActivateStatusEffect(statusEffect, true);
+                    return;
+                }
+                else if (CurStatusEffect[statusEffect].Item1 < amount)
+                {
+                    CurStatusEffect[statusEffect] = (amount, duration);
+
+                    ChangeStatusEffectDesc(statusEffect, amount, duration);
+                    return;
+                }
+            }
+
+
+
+            if (CurStatusEffect[statusEffect].Item1 < amount)       // 상태효과 값에 따라 변화(값이 우선, 값이 같을 경우에는 지속시간이 더 긴 것.)
+            {
+                CurStatusEffect[statusEffect] = (amount, duration);
+
+                ChangeStatusEffectDesc(statusEffect, amount, duration);
+                return;
+            }
+            else if (CurStatusEffect[statusEffect].Item1 == amount)
+            {
+                if (CurStatusEffect[statusEffect].Item2 < duration)
+                {
+                    CurStatusEffect[statusEffect] = (amount, duration);
+
+                    ChangeStatusEffectDesc(statusEffect, amount, duration);
+                    return;
+                }
+            }
+        }
+        else
+        {
+            CurStatusEffect.Add(statusEffect, (amount, duration));
+
+            ChangeStatusEffectDesc(statusEffect, amount, duration);
+
+            ActivateStatusEffect(statusEffect, true);
+
+            return;
+        }
+    }
+
+    void ChangeStatusEffectDesc(StatusEffect statusEffect, int amount, int duration)
+    {
+        StatusEffectAmount[(int)statusEffect].text = amount.ToString();
+
+        if (duration != -1)
+        {
+            StatusEffectDuration[(int)statusEffect].text = $"지속시간: {duration}";
+        }
+        else
+        {
+            StatusEffectDuration[(int)statusEffect].text = "지속시간: ∞";
+        }
+
+        StatusEffectDesc[(int)statusEffect].text = InGameManager.Instance.SESO.SEDatas[(int)statusEffect].Descript.Replace("{n}", amount.ToString());
+    }
+
+    void ActivateStatusEffect(StatusEffect statusEffect, bool isOn)
+    {
+        StatusEffectAmount[(int)statusEffect].transform.parent.gameObject.SetActive(isOn);
+        StatusEffectDesc[(int)statusEffect].transform.parent.gameObject.SetActive(isOn);
+        if (isOn)
+            ++_numberOfStatusEffects;
+        else
+            --_numberOfStatusEffects;
+    }
+
+    void LoseStatusEffect(StatusEffect statusEffect)
+    {
+        if (CurStatusEffect.ContainsKey(statusEffect))
+        {
+            if (CurStatusEffect[statusEffect].Item2 == -1)
+            {
+                CurStatusEffect[statusEffect] = (0, -1);
+                // 삭제하는 코드
+                ActivateStatusEffect(statusEffect, false);
+            }
+            else
+            {
+                CurStatusEffect[statusEffect] = (0, 0);
+                // 삭제하는 코드
+                ActivateStatusEffect(statusEffect, false);
+            }
+        }
+    }
+
+    public int ApplyStatusEffect(StatusEffect statusEffect, out int amount)
+    {
+        if (CurStatusEffect.ContainsKey(statusEffect))
+        {
+            amount = CurStatusEffect[statusEffect].Item1;
+        }
+        else
+        {
+            amount = 0;
+        }
+        return amount;
+
+        //return CurStatusEffect[statusEffect].Item1;
+        //if (CurStatusEffect[statusEffect].Item1 == 0)
+        //{
+        //    return null;
+        //}
+        //else
+        //{
+        //    return CurStatusEffect[statusEffect].Item1;
+        //}
+    }
 }

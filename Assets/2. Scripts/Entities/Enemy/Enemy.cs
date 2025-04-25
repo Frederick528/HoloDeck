@@ -114,8 +114,20 @@ public abstract class Enemy : Entity
 
     public virtual void CheckIfDead(int damage, int count)
     {
+        int resistDamage = damage;
+        if (ApplyStatusEffect(StatusEffect.Protect, out int amount) != 0)
+        {
+            if (damage > amount)
+            {
+                resistDamage = damage - amount;      // BeforeTakeDamage로 얻을 _shield 양만큼 빼서 계산.
+            }
+            else
+            {
+                resistDamage = 0;
+            }
+        }
         //int resistDamage = ResistDamage(damage);
-        if (((_curHP.Value + _shield.Value) - (/*resistDamage*/damage * count)) <= 0)
+        if (((_curHP.Value + _shield.Value) - (resistDamage * count)) <= 0)
         {
             col2d.enabled = false;
             CanClear = true;
@@ -179,12 +191,26 @@ public abstract class Enemy : Entity
 
     protected virtual async UniTask BeforeTakeDamage()
     {
-        await UniTask.CompletedTask;
+        if (ApplyStatusEffect(StatusEffect.Protect, out int amount) != 0)
+        {
+            await Shield(amount);
+        }
+        else
+        {
+            await UniTask.CompletedTask;
+        }
     }
 
     protected virtual async UniTask AfterTakeDamage()
     {
-        await UniTask.CompletedTask;
+        if (ApplyStatusEffect(StatusEffect.Reflection, out int amount) != 0)
+        {
+            player.TakeDamagePlayer(amount).Forget();
+        }
+        else
+        {
+            await UniTask.CompletedTask;
+        }
     }
 
     public virtual async UniTask Pattern()

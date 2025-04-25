@@ -64,7 +64,7 @@ public class CardManager : MonoBehaviour
 
     Card _playedCard;                            // 큐에서 실행한 카드
     Card _usedCard;                              // 사용되고 있는 카드(버리기 효과나 다른 효과가 진행되고 있는 카드)
-    Card _selectCard;                            // 들고 있는 카드(drag 중인 카드)
+    public Card SelectCard;                            // 들고 있는 카드(drag 중인 카드)
     bool draggable;
     ReactiveProperty<bool> isUseCard = new();     // 카드 사용존에 카드가 올라왔을 경우(카드를 놓으면 카드가 사용되는 위치)
 
@@ -95,17 +95,17 @@ public class CardManager : MonoBehaviour
         myCardRight = InGameManager.Instance.player.transform.root.Find("MyCardRight");
         isUseCard.Subscribe((canUse) =>
         {
-            _selectCard?.TurnOnOutline(canUse);
+            SelectCard?.TurnOnOutline(canUse);
             if (canUse)
             {
                 InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
             }
-            if (canUse && _selectCard.Data.CardTag == CardTag.SingleAttack && !isSingleTarget)
+            if (canUse && SelectCard.Data.CardTag == CardTag.SingleAttack && !isSingleTarget)
             {
                 BattleManager.Instance.SetActiveArrowCursor(true, 0);
                 //PullCard();
-                _selectCard.transform.DOKill();        // 마우스 커서가 카드를 나갈 때 카드 크기가 원래대로 돌아가는 코드를 멈춰주는 함수.
-                _selectCard.transform.position = new Vector2(0, CardUtils.LargeCardPosY);
+                SelectCard.transform.DOKill();        // 마우스 커서가 카드를 나갈 때 카드 크기가 원래대로 돌아가는 코드를 멈춰주는 함수.
+                SelectCard.transform.position = new Vector2(0, CardUtils.LargeCardPosY);
                 isSingleTarget = true;
             }
             else if (!canUse && isSingleTarget)
@@ -437,6 +437,8 @@ public class CardManager : MonoBehaviour
             return;
         HandCard.Add(drawCard);
 
+        drawCard.WaitUnblock(CardUtils.CardAlignmentDelay).Forget();
+
         SetOriginOrder();
         CardAlignment();
         await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
@@ -451,9 +453,14 @@ public class CardManager : MonoBehaviour
 
             HandCard.Add(drawCard);
 
+            drawCard.WaitUnblock(CardUtils.CardAlignmentDelay).Forget();
+            //drawCard.BlockCard();
+
             SetOriginOrder();
             CardAlignment();
             await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+
+            //drawCard.UnblockCard();
         }
     }
 
@@ -489,6 +496,8 @@ public class CardManager : MonoBehaviour
 
         HandCard.Add(drawCard);
 
+        drawCard.WaitUnblock(CardUtils.CardAlignmentDelay).Forget();
+
         SetOriginOrder();
         CardAlignment();
 
@@ -518,7 +527,7 @@ public class CardManager : MonoBehaviour
         BattleManager.Instance.SetActiveArrowCursor(false, 0);
         isUseCard.Value = false;
 
-        _selectCard = null;      // isUseCard와 순서 중요! selectCard가 밑에 있어야 함.
+        SelectCard = null;      // isUseCard와 순서 중요! selectCard가 밑에 있어야 함.
 
         canPush = true;         // PullCard랑 중복 호출이긴 함.
 
@@ -801,7 +810,7 @@ public class CardManager : MonoBehaviour
         for (int i = 0; i < HandCard.Count; i++)
         {
             Card targetCard = HandCard[i];
-            if (targetCard == _selectCard)
+            if (targetCard == SelectCard)
                 continue;
             if (targetCard == _usedCard || targetCard.Selected)
             {
@@ -821,7 +830,7 @@ public class CardManager : MonoBehaviour
         {
             Card targetCard = HandCard[i];
 
-            if (targetCard == _selectCard)
+            if (targetCard == SelectCard)
             {
                 targetCard.OriginPRS = originCardPRSs[i - alignmentIdx];
                 continue;
@@ -981,7 +990,7 @@ public class CardManager : MonoBehaviour
         InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.InGame, false);
         InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, false);
 
-        _selectCard = card;
+        SelectCard = card;
         draggable = true;
         card.BlockCard();
     }

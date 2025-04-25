@@ -3380,7 +3380,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4439548786378751044}
-  - {fileID: 8420521988486689413}
+  - {fileID: 9158509063345393738}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3396,6 +3396,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9dbe01f98b814c4db41c046fb87c429, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  StatusEffect: []
+  StatusDesc: []
+  StatusDuration: []
 --- !u!61 &3567756569159866137
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -10468,7 +10471,7 @@ Transform:
   m_Father: {fileID: 2250134237102225839}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &6362953540556259924
+--- !u!1001 &6021308107132706971
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -10513,7 +10516,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3212883658074943697, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3212883658074943697, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10569,8 +10572,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}
---- !u!224 &8420521988486689413 stripped
+--- !u!224 &9158509063345393738 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3212883658074943697, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}
-  m_PrefabInstance: {fileID: 6362953540556259924}
+  m_PrefabInstance: {fileID: 6021308107132706971}
   m_PrefabAsset: {fileID: 0}

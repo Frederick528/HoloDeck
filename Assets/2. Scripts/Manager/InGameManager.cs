@@ -8,6 +8,7 @@ public class InGameManager : MonoBehaviour
 {
     public static InGameManager Instance { get; private set; }
 
+
     public Dictionary<int, CardData> CardDatas { get; private set; } = new Dictionary<int, CardData>();     // 나중에 CardManager로 이동
     public Vector2Int[] CardRarityID { get; private set; }
     public Vector2Int[] EnhancedCardRarityID { get; private set; }
@@ -27,6 +28,7 @@ public class InGameManager : MonoBehaviour
 
     [SerializeField] bool fastMode;
 
+    public StatusEffectSO SESO;
     [SerializeField] CardSO _cardSO;
     [SerializeField] ItemSO _itemSO;
 
@@ -54,6 +56,7 @@ public class InGameManager : MonoBehaviour
             //DontDestroyOnLoad(_camera[0]);
             GameManager.Instance.AddInGameDontDestroy(_camera[0]);
             GameManager.Instance.AddInGameDontDestroy(_player[0]);
+            player = _player[0].GetComponentInChildren<Player>();
             GameManager.Instance.AddInGameDontDestroy(transform.root.gameObject);
             GameManager.Instance.InGame = true;
         }
@@ -514,6 +517,10 @@ public class InGameManager : MonoBehaviour
         {
             print(FindItemData(100));
 
+        }
+        if (Input.GetKeyDown(KeyCode.Slash))
+        {
+            player.GetStatusEffect(StatusEffect.ATKUp, 1, 1);
         }
 #endif
     }

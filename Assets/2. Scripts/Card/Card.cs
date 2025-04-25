@@ -46,7 +46,7 @@ public class Card : MonoBehaviour
 
     public bool Used;
 
-    public bool Selected;       // _selectCard = 내가 지금 들고있는 카드 (카드 사용 용), selectedCard = 내가 선택한 카드 (선택해서 버리기 용)
+    public bool Selected;       // SelectCard = 내가 지금 들고있는 카드 (카드 사용 용), selectedCard = 내가 선택한 카드 (선택해서 버리기 용)
 
     public CardAbility CardAbility = new();
 

@@ -34,6 +34,11 @@ public enum EAddDeck
     //MainNDrawNDummyNHand
 }
 
+public enum StatusEffect
+{
+    Attack, Defense, Heal, ATKUp, DEFUp, HealUp, Vulnerable, Weaking, Reflection, Protect
+}
+
 public class FindTransform
 {
     public static Transform ContinueFindChildByName(Transform parent, string name)
