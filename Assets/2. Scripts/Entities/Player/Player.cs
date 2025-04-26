@@ -12,9 +12,9 @@ public class Player : Entity
     public int CurHolo { get; private set; }
 
     public ReactiveProperty<int> Coin { get; private set; } = new();
-    public ReactiveProperty<int> AttackPower { get; private set; } = new();
-    public ReactiveProperty<int> DefensePower { get; private set; } = new();
-    public ReactiveProperty<int> HealPower { get; private set; } = new();
+    //public ReactiveProperty<int> AttackPower { get; private set; } = new();
+    //public ReactiveProperty<int> DefensePower { get; private set; } = new();
+    //public ReactiveProperty<int> HealPower { get; private set; } = new();
 
     readonly int _battleAnimBool = Animator.StringToHash("Battle");
 
@@ -94,9 +94,9 @@ public class Player : Entity
         CurHolo = MaxHolo;
         InGameUIManager.Instance.SetHolo(CurHolo, MaxHolo);
 
-        AddAttackPower(GameManager.Instance.AddAttackPower);
-        AddDefencePower(GameManager.Instance.AddDefensePower);
-        AddHealPower(GameManager.Instance.AddHealPower);
+        //AddAttackPower(GameManager.Instance.AddAttackPower);
+        //AddDefencePower(GameManager.Instance.AddDefensePower);
+        //AddHealPower(GameManager.Instance.AddHealPower);
     }
 
     public async override UniTask<bool> TakeDamage(int dmg, bool isHit = true)
@@ -150,18 +150,18 @@ public class Player : Entity
             MaxHolo = 0;
         //InGameUIManager.Instance.SetHolo(CurHolo, MaxHolo);
     }
-    public void AddAttackPower(int value)
-    {
-        AttackPower.Value += value;
-    }
-    public void AddDefencePower(int value)
-    {
-        DefensePower.Value += value;
-    }
-    public void AddHealPower(int value)
-    {
-        HealPower.Value += value;
-    }
+    //public void AddAttackPower(int value)
+    //{
+    //    AttackPower.Value += value;
+    //}
+    //public void AddDefencePower(int value)
+    //{
+    //    DefensePower.Value += value;
+    //}
+    //public void AddHealPower(int value)
+    //{
+    //    HealPower.Value += value;
+    //}
 
     public void StartOrEndBattle(bool isBattleStart)
     {

@@ -411,15 +411,15 @@ public class InGameManager : MonoBehaviour
             TurnManager.Instance.StartTurnTask().Forget();
         }
 
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            player.AddAttackPower(-1);
-        }
+        //if (Input.GetKeyDown(KeyCode.A))
+        //{
+        //    player.AddAttackPower(-1);
+        //}
 
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            player.AddDefencePower(1);
-        }
+        //if (Input.GetKeyDown(KeyCode.D))
+        //{
+        //    player.AddDefencePower(1);
+        //}
 
         if (Input.GetKeyDown(KeyCode.S))
         {
@@ -520,7 +520,7 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Slash))
         {
-            player.GetStatusEffect(StatusEffect.Reflection, 1, 1);
+            player.GetAndApplyStatusEffect(StatusEffect.ATKUp, 1, 1);
         }
 #endif
     }

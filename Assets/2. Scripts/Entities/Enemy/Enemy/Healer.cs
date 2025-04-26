@@ -10,7 +10,7 @@ public class Healer : Enemy
 
     void Start()
     {
-        EntitySubScribe();
+        EnemySubScribe();
         GetStatusEffect(StatusEffect.Reflection, 3);
         GetStatusEffect(StatusEffect.Protect, 1);
     }

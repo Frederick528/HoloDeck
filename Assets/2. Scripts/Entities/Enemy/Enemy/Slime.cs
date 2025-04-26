@@ -9,7 +9,7 @@ public class Slime : Enemy
 
     void Start()
     {
-        EntitySubScribe();
+        EnemySubScribe();
     }
 
 

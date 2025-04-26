@@ -36,6 +36,10 @@ public abstract class Entity : MonoBehaviour
     protected ReactiveProperty<int> _curHP = new();
     protected ReactiveProperty<int> _shield = new();
 
+    public ReactiveProperty<int> AttackPower { get; private set; } = new();
+    public ReactiveProperty<int> DefensePower { get; private set; } = new();
+    public ReactiveProperty<int> HealPower { get; private set; } = new();
+
     protected ReactiveProperty<int> _useCritical { get; private set; } = new(100);
     protected ReactiveProperty<int> _curCritical { get; private set; } = new();
     protected ReactiveProperty<int> _criticalChance { get; private set; } = new();
@@ -332,6 +336,17 @@ public abstract class Entity : MonoBehaviour
     {
         canvas.sortingOrder = 0;
         _statusDescWindow.gameObject.SetActive(false);
+    }
+
+    public void GetAndApplyStatusEffect(StatusEffect statusEffect, int amount, int duration = -1)
+    {
+        switch (statusEffect)
+        {
+            case StatusEffect.ATKUp:
+                AttackPower.Value = amount;
+                break;
+        }
+        GetStatusEffect(statusEffect, amount, duration);
     }
 
     public void GetStatusEffect(StatusEffect statusEffect, int amount, int duration = -1)

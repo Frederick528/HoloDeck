@@ -24,6 +24,25 @@ public class EnemyData
     public Sprite Sprite;
     public EnemyTag EnemyTag;
     public GameObject EnemyPrefab;
+    
+    public EnemyData Clone()
+    {
+        return new EnemyData
+        {
+            Name = Name,
+            ID = ID,
+            Level = Level,
+            Damage = Damage,
+            CriticalChance = CriticalChance,
+            CriticalDamage = CriticalDamage,
+            HP = HP,
+            DropCoin = DropCoin,
+            Descript = Descript,
+            Sprite = Sprite,
+            EnemyTag = EnemyTag,
+            EnemyPrefab = EnemyPrefab
+        };
+    }
 }
 
 

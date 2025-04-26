@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UniRx;
 
 public abstract class Enemy : Entity
 {
     public int spawnPosIdx;
+    protected EnemyData _defaultEnemyData;
     protected EnemyData enemyData;
     public bool CanClear = false;
     protected Player player;
@@ -68,7 +70,8 @@ public abstract class Enemy : Entity
 
     public void SetupEnemy(EnemyData eD, int pos)     // 데이터를 받는 형식으로 변경함.
     {
-        enemyData = eD;
+        _defaultEnemyData = eD;
+        enemyData = _defaultEnemyData.Clone();
         SetupEntity(enemyData.HP, enemyData.CriticalChance/*, enemyData.CriticalDamage*/);      // 일단 크리티컬 데미지를 시트에 안 넣었음으로 그냥 잠시 주석 처리
         spawnPosIdx = pos;
         player = InGameManager.Instance.player;
@@ -251,7 +254,14 @@ public abstract class Enemy : Entity
     //}
 
     // Start is called before the first frame update
-
+    protected void EnemySubScribe()
+    {
+        EntitySubScribe();
+        AttackPower.Subscribe(atk =>
+        {
+            enemyData.Damage = _defaultEnemyData.Damage + atk;
+        });
+    }
     //void Start()      // 모든 상위 코드에 적용시켜야 함.
     //{
     //    EntitySubScribe();

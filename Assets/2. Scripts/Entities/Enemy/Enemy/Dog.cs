@@ -9,7 +9,7 @@ public class Dog : Enemy
 
     void Start()
     {
-        EntitySubScribe();
+        EnemySubScribe();
     }
 
 
