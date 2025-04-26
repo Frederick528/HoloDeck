@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -178,14 +178,14 @@ public class ItemAbility
 
     async UniTask SingleAttackAB(UseItem item)
     {
-        await item.TargetEnemy.TakeDamageEnemy(item.Data.Damage);        // ÀÌ Àü ´Ü°è¿¡¼­ null °Ë»ç¸¦ ÇÏ±â ¶§¹®¿¡ ?. ÇÒ ÇÊ¿ä ¾øÀ½.
-        item.Target(null);                                         // missing Ã¼Å©¸¦ À§ÇÑ °Å¿´À¸³ª.. ¾È µÇ³ª..??
+        await item.TargetEnemy.TakeDamage(item.Data.Damage);        // ì´ ì „ ë‹¨ê³„ì—ì„œ null ê²€ì‚¬ë¥¼ í•˜ê¸° ë•Œë¬¸ì— ?. í•  í•„ìš” ì—†ìŒ.
+        item.Target(null);                                         // missing ì²´í¬ë¥¼ ìœ„í•œ ê±°ì˜€ìœ¼ë‚˜.. ì•ˆ ë˜ë‚˜..??
     }
     async UniTask MultiAttackAB(UseItem item)
     {
         int enemyCount = EnemyManager.Instance.EnemyList.Count;
         await UniTask.WhenAll(Enumerable.Range(0, enemyCount).
-            Select(i => EnemyManager.Instance.EnemyList[(enemyCount - 1) - i].TakeDamageEnemy(item.Data.Damage)));
+            Select(i => EnemyManager.Instance.EnemyList[(enemyCount - 1) - i].TakeDamage(item.Data.Damage)));
     }
     //async UniTask ContinuousSinglettackAB(Card card, float delay)
     //{
@@ -210,10 +210,10 @@ public class ItemAbility
     //}
     async UniTask DrawAB()
     {
-        await CardManager.Instance.DrawCard();       // ÃÖÇÏÀ§ UniTask¿¡¼­ Cancel¸¦ È®ÀÎÇÏ´Âµ¥... È¤½Ã ¹®Á¦°¡ ¹ß»ıÇÒ ¼öµµ ÀÖ³ª..?
+        await CardManager.Instance.DrawCard();       // ìµœí•˜ìœ„ UniTaskì—ì„œ Cancelë¥¼ í™•ì¸í•˜ëŠ”ë°... í˜¹ì‹œ ë¬¸ì œê°€ ë°œìƒí•  ìˆ˜ë„ ìˆë‚˜..?
     }
 
-    async UniTask ContinuousDrawAB(UseItem item)     // µå·Î¿ì °°Àº °æ¿ì, µ¦¿¡ ³²¾ÆÀÖ´Â Ä«µå¸¦ È®ÀÎÇÏ±â À§ÇØ Data.Count °ªÀÌ ¾Æ´Ñ Data.Draw °ªÀ¸·Î ¾ó¸¶³ª »ÌÀ»Áö Á¤ÇÔ.
+    async UniTask ContinuousDrawAB(UseItem item)     // ë“œë¡œìš° ê°™ì€ ê²½ìš°, ë±ì— ë‚¨ì•„ìˆëŠ” ì¹´ë“œë¥¼ í™•ì¸í•˜ê¸° ìœ„í•´ Data.Count ê°’ì´ ì•„ë‹Œ Data.Draw ê°’ìœ¼ë¡œ ì–¼ë§ˆë‚˜ ë½‘ì„ì§€ ì •í•¨.
     {
         await CardManager.Instance.DrawCard(item.Data.Draw);
     }

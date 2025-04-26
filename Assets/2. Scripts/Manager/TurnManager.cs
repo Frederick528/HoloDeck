@@ -10,6 +10,8 @@ using UnityEngine.UI;
 public class TurnManager : MonoBehaviour
 {
     public static TurnManager Instance {get; private set;}
+    public enum TurnType { Player, Enemy, Nobody }
+
     void Awake()
     {
         Instance = Instance != null ? Instance : this;
@@ -17,18 +19,17 @@ public class TurnManager : MonoBehaviour
 
     public bool InBattle { get; private set; }
 
-    [SerializeField] TurnType turnType;
+    public TurnType CurTurnType;
 
     int startCardCount = 5;
 
     //public static Action OnAddCard;
 
     public bool IsLoading;
-    public bool MyTurn;
+    //public bool MyTurn;
 
     bool _canEndTurn;
 
-    enum TurnType { My, Enemy }
 
     public CancellationTokenSource CancelSource = new CancellationTokenSource();
 
@@ -51,7 +52,7 @@ public class TurnManager : MonoBehaviour
     }
     async UniTask ChangeCardState()
     {
-        if (IsLoading && !MyTurn)       // 로딩 상태에서 내 턴이 아닌 경우
+        if (IsLoading && CurTurnType != TurnType.Player)       // 로딩 상태에서 내 턴이 아닌 경우
         {
             CardManager.Instance.SetCardState(0);       // Nothing
             await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, false, PlayerLoopTiming.Update, CancelSource.Token); // 종료 다음에 버리는 시간동안은 확대 안 되게
@@ -59,7 +60,7 @@ public class TurnManager : MonoBehaviour
         }
         else if (IsLoading)             // 그냥 로딩 상태(내 턴인 상황에서)
             CardManager.Instance.SetCardState(0);       // Nothing
-        else if (MyTurn)
+        else if (CurTurnType == TurnType.Player)
             CardManager.Instance.SetCardState(2);       // Drag
         //if (IsLoading)
         //    CardManager.Instance.CardState = CardManager.ECardState.Nothing;
@@ -75,6 +76,7 @@ public class TurnManager : MonoBehaviour
     {
         IsLoading = isOn;
         InGameButtonManager.Instance.TurnEndBtnInvert(!isOn);
+        InGameUIManager.Instance.ChangeTurnButtonText(!isOn);
         ChangeCardState().Forget();
     }
 
@@ -88,12 +90,14 @@ public class TurnManager : MonoBehaviour
     public async UniTask StartTurnTask()        // 시작 뽑기 (수정 필요: OnAddCard가 액션이라 Invoke 사용시, await가 작용하지 않아 카드덱이 0개일 경우, 0.5초 뒤에 뽑는 것이 적용되지 않음.)
     {
         //GameSetup();
-        MyTurn = true;
+        CurTurnType = TurnType.Player;
+        BattleManager.Instance.HitEntity.Item1 = null;
+        //MyTurn = true;
 
         InGameManager.Instance.player.AddCurHolo(InGameManager.Instance.player.MaxHolo);
         InGameManager.Instance.player.ShieldReset();
 
-        InGameUIManager.Instance.ChangeTurnButtonText(MyTurn);
+        //InGameUIManager.Instance.ChangeTurnButtonText(true);
 
         SetLoading(true);
         //await CardManager.Instance.DrawCards(startCardCount);      // DrawCard(int count)로 대체 가능
@@ -175,9 +179,11 @@ public class TurnManager : MonoBehaviour
     {
         if (InGameManager.Instance.PauseInt != 0) return;     // Pause 상태면 턴종 불가능
         if (!_canEndTurn && !endBattle) return;             // 턴종 가능한지 확인, 단, 배틀 종료 상태에서는 턴종 가능한가와 상관없이 진행
-        MyTurn = false;
-        InGameButtonManager.Instance.TurnEndBtnInvert(MyTurn);
-        InGameUIManager.Instance.ChangeTurnButtonText(MyTurn);
+
+        CurTurnType = TurnType.Nobody;
+        //MyTurn = false;
+        //InGameButtonManager.Instance.TurnEndBtnInvert(false);
+        //InGameUIManager.Instance.ChangeTurnButtonText(false);
         SetLoading(true);
         await CardManager.Instance.ThrowAwayCard();
         if (endBattle)
@@ -207,6 +213,8 @@ public class TurnManager : MonoBehaviour
     //}
     public async UniTask EnemyTurnTask()
     {
+        CurTurnType = TurnType.Enemy;
+        BattleManager.Instance.HitEntity.Item2 = null;
         await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, false, PlayerLoopTiming.Update, CancelSource.Token);  // 카드 다 버린 이후 적 행동 시작
         for (int i = 0; i < EnemyManager.Instance.EnemyList.Count; ++i)
         {
@@ -240,6 +248,7 @@ public class TurnManager : MonoBehaviour
     public async UniTask EndBattle()         // 리팩토링 필요해보임.
     {
         InBattle = false;
+        BattleManager.Instance.HitEntity = (null, null);
         InGameManager.Instance.player.StartOrEndBattle(InBattle);
         CancelSource.Cancel();
         InGameManager.Instance.AbilityEventQueue.QueueClear();

@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
 
 public class ItemManager : MonoBehaviour
@@ -11,7 +13,7 @@ public class ItemManager : MonoBehaviour
     public static ItemManager Instance { get; private set; }
     public Dictionary<int, bool> itemDict = new();      // 리스트로 하고, 중복 제거하는 형식으로도 가능할 듯
 
-    [SerializeField] Item _passiveItemPrefab;
+    Item _passiveItemPrefab;
     List<Item> _passiveItem = new();
     RectTransform _passiveTransform;
 
@@ -28,7 +30,7 @@ public class ItemManager : MonoBehaviour
     int _arrowIdx;
 
     //public bool arrowOn;   // 게임매니저에서 한 번에 처리하고 싶었으나, Card 사용 코드 때문에 그냥 각각의 코드에서 실행하는 방법 사용. => 성공함.
-    public string ItemDesc;
+    //public string ItemDesc;
 
     //[SerializeField]
     //Transform itemRewardContent;
@@ -74,7 +76,7 @@ public class ItemManager : MonoBehaviour
                     UseActiveItem();
                 }
             }
-            else if (_activeItem.Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.MyTurn)      // Arrow Cursor 쓰는 것들을 의미함.
+            else if (_activeItem.Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player)      // Arrow Cursor 쓰는 것들을 의미함.
             {
                 if (_activeItem.Data.AttackType == AttackType.None)
                 {
@@ -113,7 +115,7 @@ public class ItemManager : MonoBehaviour
                 {
                     UsePotionItem();
                 }
-                else if (_potionItem[i].Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.MyTurn)      // Arrow Cursor가 쓰이거나 전투 관련을 의미함.
+                else if (_potionItem[i].Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player)      // Arrow Cursor가 쓰이거나 전투 관련을 의미함.
                 {
                     if (_potionItem[i].Data.AttackType == AttackType.Single)
                     {
@@ -129,6 +131,20 @@ public class ItemManager : MonoBehaviour
                 //ButtonManager.Instance.PotionButtons[i].onClick.RemoveAllListeners();
             });
         }
+
+        Addressables.LoadAssetAsync<GameObject>("PassiveItem.prefab").Completed += (op) =>
+        {
+            if (op.Status != AsyncOperationStatus.Succeeded)
+            {
+                Debug.LogError("PassiveItem null");
+            }
+            else
+            {
+                _passiveItemPrefab = op.Result.GetComponent<Item>();
+            }
+            Addressables.Release(op);
+
+        };
 
         //print(_potionItem[0].Data == null);
     }
@@ -437,6 +453,12 @@ public class ItemManager : MonoBehaviour
         _activeItemChargeImgae.fillAmount = (float)_activeItem.CurCharge / _activeItem.Data.MaxCharge;
         _activeItemChargeText.text = $"{_activeItem.CurCharge} / {_activeItem.Data.MaxCharge}";
         //_activeItemChargeText.text = _activeItem.CurCharge.ToString();
+    }
+
+    public void ActiveItemDataReset()
+    {
+        if (!HaveActiveItem) return;
+        _activeItem.ActiveItemDataReset();
     }
 
     //public void SettingSingleTarget(bool arrow, int value = 0)

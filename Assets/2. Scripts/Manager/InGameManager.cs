@@ -303,7 +303,7 @@ public class InGameManager : MonoBehaviour
         }
         else
         {
-            cardData = (CardData)Array.Find(_cardSO.Cards, x => x.ID == id).Clone();
+            cardData = Array.Find(_cardSO.Cards, x => x.ID == id).Clone();
             CardDatas.Add(id, cardData);
             return cardData;
         }
@@ -413,7 +413,7 @@ public class InGameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.A))
         {
-            player.AddAttackPower(1);
+            player.AddAttackPower(-1);
         }
 
         if (Input.GetKeyDown(KeyCode.D))
@@ -447,7 +447,7 @@ public class InGameManager : MonoBehaviour
                 for (int i = EnemyManager.Instance.EnemyList.Count - 1; i >= 0; --i)
                 {
                     EnemyManager.Instance.EnemyList[i].CheckIfDead(9999, 1);
-                    EnemyManager.Instance.EnemyList[i].TakeDamageEnemy(9999).Forget();
+                    EnemyManager.Instance.EnemyList[i].TakeDamage(9999, false).Forget();
                     //EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
                 }
             }
@@ -520,7 +520,7 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Slash))
         {
-            player.GetStatusEffect(StatusEffect.ATKUp, 1, 1);
+            player.GetStatusEffect(StatusEffect.Reflection, 1, 1);
         }
 #endif
     }

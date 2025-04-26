@@ -31,7 +31,7 @@ public enum CardRarity
 //    public string CraftEffect; // "조합한 아이템 사용 효과";
 //}
 [System.Serializable]
-public class CardData : ICloneable
+public class CardData
 {
     public string Name;
     public int ID;
@@ -59,7 +59,7 @@ public class CardData : ICloneable
     public CardTag CardTag;
     public CardRarity CardRarity;
 
-    public object Clone()
+    public CardData Clone()
     {
         return new CardData
         {

@@ -79,7 +79,7 @@ public class Card : MonoBehaviour
         //_boxCollider2 = GetComponent<BoxCollider2D>();
 
         _defaultData = data;
-        Data = (CardData)_defaultData.Clone();
+        Data = _defaultData.Clone();
         
         //StringBuilder sb = new StringBuilder(_defaultData.Descript);
         //sb.Replace("{Damage}", (_defaultData.Damage + InGameManager.Instance.player.AttackPower.Value).ToString());

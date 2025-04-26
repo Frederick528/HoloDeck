@@ -69,8 +69,51 @@ public abstract class Entity : MonoBehaviour
         //slider.value = _maxHP.Value;
         //hpText.text = _maxHP.ToString();
     }
-    public virtual bool TakeDamage(int dmg)
+    protected virtual async UniTask BeforeTakeDamage(bool isHit)
     {
+        if (!isHit) { return; }
+        if (ApplyStatusEffect(StatusEffect.Protect, out int amount))
+        {
+            await Shield(amount);
+        }
+        else
+        {
+            await UniTask.CompletedTask;
+        }
+    }
+    protected virtual async UniTask AfterTakeDamage(bool isHit)
+    {
+        if (!isHit) { return; }
+        if (ApplyStatusEffect(StatusEffect.Reflection, out int amount))
+        {
+            if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player && BattleManager.Instance.HitEntity.Item1 != null)
+            {
+                BattleManager.Instance.HitEntity.Item1.TakeDamage(amount, false).Forget();
+            }
+            else if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Enemy && BattleManager.Instance.HitEntity.Item2 != null)
+            {
+                BattleManager.Instance.HitEntity.Item2.TakeDamage(amount, false).Forget();
+            }
+        }
+        else
+        {
+            await UniTask.CompletedTask;
+        }
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="dmg">
+    /// 데미지 값
+    /// </param>
+    /// <param name="isHit">
+    /// 상대가 직접 타격한 것인지 아닌지 확인.
+    /// </param>
+    /// <returns></returns>
+    public async virtual UniTask<bool> TakeDamage(int dmg, bool isHit)
+    {
+        await BeforeTakeDamage(isHit);
+
         TextEffect(-dmg).Forget();
         if (_shield.Value >= dmg)
         {
@@ -82,12 +125,27 @@ public abstract class Entity : MonoBehaviour
             _shield.Value = 0;
             _curHP.Value -= dmg;
         }
-        animator.Play("Hit", -1, 0);  // 타격 당하는 애니메이션 실행
+        //AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        //if (stateInfo.IsName("Attack"))
+        animator.Play("Hit", -1, 0);  // 타격 당하는 애니메이션 실행        => 공격 중에는 딜레이를 주거나 무시하는 코드가 필요할 듯.
         if (_curHP.Value > 0)
+        {
+            await AfterTakeDamage(isHit);
             return false;
+        }
+
+        if (ApplyStatusEffect(StatusEffect.Resurrection, out _))
+        {
+            _curHP.Value = (int)(_maxHP.Value * 0.5f);
+            // 부활 수치 감소 코드 추가
+            //_resurrection = true;
+            return false;
+        }
+
         //col2d.enabled = false;
         //slider.gameObject.SetActive(false);
         //canvas.gameObject.SetActive(false);
+        canvas.gameObject.SetActive(false);
         return true;
     }
 
@@ -264,7 +322,7 @@ public abstract class Entity : MonoBehaviour
         if (_numberOfStatusEffects == 0) return;
         if (EventSystem.current.IsPointerOverGameObject())
             return;
-        if (CardManager.Instance.SelectCard != null) return;
+        if (BattleManager.Instance.ArrowCursor.gameObject.activeSelf) return;
         StatusEffectDuration[0].transform.parent.parent.localPosition = Vector3.zero;
         canvas.sortingOrder = 1;        // 이거 없으면 체력 UI에 가려짐
         _statusDescWindow.gameObject.SetActive(true);
@@ -386,17 +444,19 @@ public abstract class Entity : MonoBehaviour
         }
     }
 
-    public int ApplyStatusEffect(StatusEffect statusEffect, out int amount)
+    public bool ApplyStatusEffect(StatusEffect statusEffect, out int amount)
     {
-        if (CurStatusEffect.ContainsKey(statusEffect))
+        if (CurStatusEffect.ContainsKey(statusEffect) && CurStatusEffect[statusEffect].Item1 != 0 && CurStatusEffect[statusEffect].Item2 != 0)
         {
             amount = CurStatusEffect[statusEffect].Item1;
+            return true;
         }
         else
         {
             amount = 0;
+            return false;
         }
-        return amount;
+        //return false;
 
         //return CurStatusEffect[statusEffect].Item1;
         //if (CurStatusEffect[statusEffect].Item1 == 0)

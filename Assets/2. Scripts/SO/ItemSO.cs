@@ -31,7 +31,7 @@ public enum ItemCanUse
 }
 
 [Serializable]
-public class ItemData
+public class    ItemData/* : ICloneable*/
 {
     public string Name;
     public int ID;
@@ -54,6 +54,29 @@ public class ItemData
     public Sprite Sprite;
     public AttackType AttackType;
     public ItemCanUse ItemCanUse;
+
+    public ItemData Clone()
+    {
+        return new ItemData
+        {
+            Name = Name,
+            ID = ID,
+            ItemTag = ItemTag,
+            ItemRarity = ItemRarity,
+            StartCharge = StartCharge,
+            MaxCharge = MaxCharge,
+            Damage = Damage,
+            Shield = Shield,
+            Draw = Draw,
+            Heal = Heal,
+            Duration = Duration,
+            Price = Price,
+            Descript = Descript,
+            Sprite = Sprite,
+            AttackType = AttackType,
+            ItemCanUse = ItemCanUse
+        };
+    }
 }
 
 [CreateAssetMenu(fileName = "ItemSO", menuName = "Scriptable Object/ItemSO")]

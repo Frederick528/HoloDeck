@@ -18,7 +18,7 @@ public class Player : Entity
 
     readonly int _battleAnimBool = Animator.StringToHash("Battle");
 
-    bool _resurrection = false;
+    //bool _resurrection = false;
     //public int _attackPower;
     //public int _defensePower;
     //public int _healPower;
@@ -42,7 +42,7 @@ public class Player : Entity
     void Start()
     {
         PlayerSubScribe();
-        SetupPlayer(10, 10, 150);
+        SetupPlayer(30, 10, 150);
     }
 
     void PlayerSubScribe()
@@ -60,18 +60,21 @@ public class Player : Entity
         {
             InGameUIManager.Instance.ChangeStatus(1, atk);
             CardManager.Instance.ChangeTotalCardDesc();
+            ItemManager.Instance.ActiveItemDataReset();
         });
 
         DefensePower.Subscribe(def =>
         {
             InGameUIManager.Instance.ChangeStatus(2, def);
             CardManager.Instance.ChangeTotalCardDesc();
+            ItemManager.Instance.ActiveItemDataReset();
         });
 
         HealPower.Subscribe(heal =>
         {
             InGameUIManager.Instance.ChangeStatus(3, heal);
             CardManager.Instance.ChangeTotalCardDesc();
+            ItemManager.Instance.ActiveItemDataReset();
         });
 
         _criticalChance.Subscribe(criChance => InGameUIManager.Instance.ChangeStatus(4, criChance));
@@ -95,23 +98,38 @@ public class Player : Entity
         AddDefencePower(GameManager.Instance.AddDefensePower);
         AddHealPower(GameManager.Instance.AddHealPower);
     }
-    public async UniTaskVoid TakeDamagePlayer(int dmg)
+
+    public async override UniTask<bool> TakeDamage(int dmg, bool isHit = true)
     {
-        if (!TakeDamage(dmg))
-            return;
-        if (GameManager.Instance.Resurrection && !_resurrection)
+        if (!await base.TakeDamage(dmg, isHit))
         {
-            _curHP.Value = (int)(_maxHP.Value * 0.5f);
-            _resurrection = true;
-            return;
+            return false;
         }
-        canvas.gameObject.SetActive(false);
         TurnManager.Instance.EndBattle().Forget();
         await base.DieAnimation();
         print("플레이어가 죽었습니다.");
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.GameOver, true);
-        //return true;
+        return true;
+
     }
+
+    //public async UniTaskVoid TakeDamagePlayer(int dmg)
+    //{
+    //    if (!TakeDamage(dmg))
+    //        return;
+    //    if (GameManager.Instance.Resurrection/* && !_resurrection*/)
+    //    {
+    //        _curHP.Value = (int)(_maxHP.Value * 0.5f);
+    //        //_resurrection = true;
+    //        return;
+    //    }
+    //    canvas.gameObject.SetActive(false);
+    //    TurnManager.Instance.EndBattle().Forget();
+    //    await base.DieAnimation();
+    //    print("플레이어가 죽었습니다.");
+    //    InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.GameOver, true);
+    //    //return true;
+    //}
 
     public void AddCurHolo(int chargeOrUse)
     {

@@ -113,7 +113,7 @@ public class Arrow : MonoBehaviour
         this.controlPoints[1] = this.controlPoints[0] + (this.controlPoints[3] - this.controlPoints[0]) * this.controlPointFactors[ArrowIndex][0];
         this.controlPoints[2] = this.controlPoints[0] + (this.controlPoints[3] - this.controlPoints[0]) * this.controlPointFactors[ArrowIndex][1];
 
-        if (MapManager.Instance.currStage.State == Map.StageState.Boss)
+        if (MapManager.Instance.currStage.State == Map.StageState.Boss && ArrowIndex == 0)
         {
             this.controlPoints[1] = new Vector2(this.controlPoints[3].x - 3 * this.controlPoints[1].x, 0.75f * this.controlPoints[1].y);        // Boss용 Card 베지어 곡선
             this.controlPoints[2] = new Vector2(this.controlPoints[3].x + 3 * this.controlPoints[2].x, 0.75f * this.controlPoints[2].y);        // Boss용 Card 베지어 곡선

@@ -13,7 +13,7 @@ using UnityEngine.UI;
 public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     protected ItemData _defaultData = null;
-    protected string _defaultDesc = null;
+    //protected string _defaultDesc = null;
     public ItemData Data { get; protected set; } = null;
     public string Desc;
     protected ItemAbility _itemAbility = new();
@@ -44,14 +44,15 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void AdjustBackgroundSize()
     {
-        _text.text = Desc;
-        _backgroundImage.gameObject.SetActive(true);        // 껐따 켜야 텍스트가 정렬되고, 길이와 높이값을 정확히 가져올 수 있음.
-        _backgroundImage.gameObject.SetActive(false);
         if (Desc == "")
         {
             _bgRect.sizeDelta = Vector2.zero;
             return;
         }
+        _text.text = Desc;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_text.rectTransform);
+        //_backgroundImage.gameObject.SetActive(true);        // 껐따 켜야 텍스트가 정렬되고, 길이와 높이값을 정확히 가져올 수 있음.
+        //_backgroundImage.gameObject.SetActive(false);
         // 텍스트의 크기를 가져와서 배경 이미지 크기 설정 (_textRectWidth = 처음 정해준 width 길이, _text.preferredHeight 줄바꿈 되는만큼의 길이)
         float width;
         float height;
@@ -84,7 +85,7 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public virtual void Setup(ItemData data)
     {
         _defaultData = data;
-        Data = _defaultData;
+        Data = _defaultData.Clone();
 
         //StringBuilder sb = new StringBuilder(_defaultData.Descript);
 
@@ -121,12 +122,12 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         //_defaultDesc = sb.ToString();
         //Desc = sb.ToString();
 
-        _defaultDesc = _defaultData.Descript;
-        Desc = _defaultDesc;
+        //_defaultDesc = _defaultData.Descript;
+        //Desc = _defaultDesc;
 
-        _itemAbility.SetPassiveItemAbility(this);
+        //_itemAbility.SetPassiveItemAbility(this);
 
-        AdjustBackgroundSize();
+        //AdjustBackgroundSize();
 
         //switch (Data.CardRarity)
         //{

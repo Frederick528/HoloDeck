@@ -10,8 +10,9 @@ public class PotionItem : UseItem
     public int BtnIdx = -1;
     public override void Setup(ItemData data)
     {
-        _defaultData = data;
-        Data = _defaultData;
+        //_defaultData = data;
+        //Data = _defaultData;
+        base.Setup(data);
 
         StringBuilder sb = new StringBuilder(_defaultData.Descript);
 
@@ -21,7 +22,7 @@ public class PotionItem : UseItem
         sb.Replace("{Heal}", (_defaultData.Heal).ToString());
         sb.Replace("{Duration}", (_defaultData.Duration).ToString());
 
-        _defaultDesc = sb.ToString();
+        //_defaultDesc = sb.ToString();
         Desc = sb.ToString();
 
         _itemAbility.SetPotionItemAbility(this);

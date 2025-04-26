@@ -73,39 +73,51 @@ public abstract class Enemy : Entity
         spawnPosIdx = pos;
         player = InGameManager.Instance.player;
     }
-
-    public async UniTask<bool> TakeDamageEnemy(int dmg)
+    public override async UniTask<bool> TakeDamage(int dmg, bool isHit = true)
     {
-        await BeforeTakeDamage();
-        if (!TakeDamage(dmg))
+        if (isHit)
         {
-            await AfterTakeDamage();
+            BattleManager.Instance.HitEntity.Item1 = player;
+        }
+        if (!await base.TakeDamage(dmg, isHit))
+        {
             return false;
         }
-        //int spawn = 0;
-        //EnemyManager.Instance.enemies.Remove(this);
-        //EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);
-        canvas.gameObject.SetActive(false);
         KillEnemy().Forget();
         return true;
 
-        //await base.DieAnimation();  // 죽는 애니매이션 이후 클리어 확인(만약 죽는 애니메이션이 0초라면, 오류가 날 수 있음.)
-        //InGameManager.Instance.ChangeCoinValue(enemyData.dropCoin);
-        //for (int i = 0; i < EnemyManager.Instance.enemySpawnPosition.Count; ++i)
-        //{
-        //    if (!EnemyManager.Instance.enemySpawnPosition[i].gameObject.activeSelf)     // 몬스터가 다 죽어있으면 게임이 클리어되고, 한 마리라도 살아있으면 리턴되어 그냥 몬스터만 죽고 끝.
-        //        return true;
-        //    //spawn++;
-        //}
-        ////if (spawn == EnemyManager.Instance.enemySpawnPosition.Count)
-        //MapManager.Instance.ClearStage();
-        //MapManager.Instance.RewardStage();
-
-        //return true;
-        ////await DieAnimation();
-        ////Destroy(gameObject);
-
     }
+
+    //public async UniTask<bool> TakeDamageEnemy(int dmg)
+    //{
+    //    await BeforeTakeDamage();
+    //    if (!await base.TakeDamage(dmg))
+    //    {
+    //        await base.AfterTakeDamage();
+    //        return false;
+    //    }
+    //    //int spawn = 0;
+    //    //EnemyManager.Instance.enemies.Remove(this);
+    //    //EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);
+    //    canvas.gameObject.SetActive(false);
+    //    KillEnemy().Forget();
+    //    return true;
+
+    //    //await base.DieAnimation();  // 죽는 애니매이션 이후 클리어 확인(만약 죽는 애니메이션이 0초라면, 오류가 날 수 있음.)
+    //    //InGameManager.Instance.ChangeCoinValue(enemyData.dropCoin);
+    //    //for (int i = 0; i < EnemyManager.Instance.enemySpawnPosition.Count; ++i)
+    //    //{
+    //    //    if (!EnemyManager.Instance.enemySpawnPosition[i].gameObject.activeSelf)     // 몬스터가 다 죽어있으면 게임이 클리어되고, 한 마리라도 살아있으면 리턴되어 그냥 몬스터만 죽고 끝.
+    //    //        return true;
+    //    //    //spawn++;
+    //    //}
+    //    ////if (spawn == EnemyManager.Instance.enemySpawnPosition.Count)
+    //    //MapManager.Instance.ClearStage();
+    //    //MapManager.Instance.RewardStage();
+
+    //    //return true;
+    //    ////await DieAnimation();
+    //    ////Destroy(gameObject);
 
     //protected virtual int ResistDamage(int damage)
     //{
@@ -115,7 +127,7 @@ public abstract class Enemy : Entity
     public virtual void CheckIfDead(int damage, int count)
     {
         int resistDamage = damage;
-        if (ApplyStatusEffect(StatusEffect.Protect, out int amount) != 0)
+        if (ApplyStatusEffect(StatusEffect.Protect, out int amount))
         {
             if (damage > amount)
             {
@@ -182,36 +194,37 @@ public abstract class Enemy : Entity
     protected async UniTask Attack(int damage)
     {
         await AttackAnimation();
+        BattleManager.Instance.HitEntity.Item2 = this;
         int criticalDamage = CheckCritical(damage);
 
-        player.TakeDamagePlayer(criticalDamage).Forget();
+        player.TakeDamage(criticalDamage).Forget();
 
         //Critical(_criticalChance.Value);
     }
 
-    protected virtual async UniTask BeforeTakeDamage()
-    {
-        if (ApplyStatusEffect(StatusEffect.Protect, out int amount) != 0)
-        {
-            await Shield(amount);
-        }
-        else
-        {
-            await UniTask.CompletedTask;
-        }
-    }
+    //protected virtual async UniTask BeforeTakeDamage()
+    //{
+    //    if (ApplyStatusEffect(StatusEffect.Protect, out int amount) != 0)
+    //    {
+    //        await Shield(amount);
+    //    }
+    //    else
+    //    {
+    //        await UniTask.CompletedTask;
+    //    }
+    //}
 
-    protected virtual async UniTask AfterTakeDamage()
-    {
-        if (ApplyStatusEffect(StatusEffect.Reflection, out int amount) != 0)
-        {
-            player.TakeDamagePlayer(amount).Forget();
-        }
-        else
-        {
-            await UniTask.CompletedTask;
-        }
-    }
+    //protected virtual async UniTask AfterTakeDamage()
+    //{
+    //    if (ApplyStatusEffect(StatusEffect.Reflection, out int amount) != 0)
+    //    {
+    //        player.TakeDamagePlayer(amount).Forget();
+    //    }
+    //    else
+    //    {
+    //        await UniTask.CompletedTask;
+    //    }
+    //}
 
     public virtual async UniTask Pattern()
     {

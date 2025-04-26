@@ -36,7 +36,7 @@ public enum EAddDeck
 
 public enum StatusEffect
 {
-    Attack, Defense, Heal, ATKUp, DEFUp, HealUp, Vulnerable, Weaking, Reflection, Protect
+    Attack, Defense, Heal, ATKUp, DEFUp, HealUp, Vulnerable, Weaking, Reflection, Protect, Resurrection
 }
 
 public class FindTransform
