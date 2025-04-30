@@ -11,8 +11,8 @@ public class Healer : Enemy
     void Start()
     {
         EnemySubScribe();
-        GetStatusEffect(StatusEffect.Reflection, 3);
-        GetStatusEffect(StatusEffect.Protect, 1);
+        AddStatusEffect((StatusEffect.Reflection, StatusEffectType.InfiniteDuration), 3);
+        AddStatusEffect((StatusEffect.Protect, StatusEffectType.InfiniteDuration), 1);
     }
 
     //protected override async UniTask BeforeTakeDamage()

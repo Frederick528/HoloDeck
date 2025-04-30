@@ -17,6 +17,8 @@ public class StatusEffectSO : ScriptableObject
 public class SEData
 {
     public StatusEffect SE;
+    public StatusEffectType SET;
+
     [TextArea(1, 5)]
     public string Descript;
     public Sprite Sprite;

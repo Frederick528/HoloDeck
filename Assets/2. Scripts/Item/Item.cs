@@ -50,9 +50,12 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             return;
         }
         _text.text = Desc;
-        LayoutRebuilder.ForceRebuildLayoutImmediate(_text.rectTransform);
-        //_backgroundImage.gameObject.SetActive(true);        // 껐따 켜야 텍스트가 정렬되고, 길이와 높이값을 정확히 가져올 수 있음.
-        //_backgroundImage.gameObject.SetActive(false);
+        //LayoutRebuilder.ForceRebuildLayoutImmediate(_text.rectTransform);
+        if (!_backgroundImage.gameObject.activeSelf)
+        {
+            _backgroundImage.gameObject.SetActive(true);        // 켰다가 꺼야 텍스트가 정렬되고, 길이와 높이값을 정확히 가져올 수 있음.
+            _backgroundImage.gameObject.SetActive(false);
+        }
         // 텍스트의 크기를 가져와서 배경 이미지 크기 설정 (_textRectWidth = 처음 정해준 width 길이, _text.preferredHeight 줄바꿈 되는만큼의 길이)
         float width;
         float height;

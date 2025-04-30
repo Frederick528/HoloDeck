@@ -520,7 +520,13 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Slash))
         {
-            player.GetAndApplyStatusEffect(StatusEffect.ATKUp, 1, 1);
+            player.AddAndApplyStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), 1, 1);
+            player.AddAndApplyStatusEffect((StatusEffect.Defense, StatusEffectType.TurnDuration), 1, 1);
+            player.AddAndApplyStatusEffect((StatusEffect.Heal, StatusEffectType.TurnDuration), 1, 1);
+            player.AddAndApplyStatusEffect((StatusEffect.HealUp, StatusEffectType.TurnDuration), 1, 1);
+            player.AddAndApplyStatusEffect((StatusEffect.DEFUp, StatusEffectType.TurnDuration), 1, 1);
+            player.AddAndApplyStatusEffect((StatusEffect.Reflection, StatusEffectType.TurnDuration), 1, 1);
+            player.AddAndApplyStatusEffect((StatusEffect.Vulnerable, StatusEffectType.TurnDuration), 1, 1);
         }
 #endif
     }

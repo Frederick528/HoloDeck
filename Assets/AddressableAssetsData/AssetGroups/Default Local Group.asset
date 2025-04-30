@@ -25,6 +25,14 @@ MonoBehaviour:
     m_Address: PassiveItem.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: bb5a26906c488f943b80eccd2cefda09
+    m_Address: StatusEffect.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 18d5fc56490cd554896424e65b4ea2cd
+    m_Address: StatusEffectDesc.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 8ddab990de4121140909e54570afce17, type: 2}
   m_SchemaSet:

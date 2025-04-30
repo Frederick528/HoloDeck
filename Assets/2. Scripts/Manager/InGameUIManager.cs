@@ -36,6 +36,9 @@ public class InGameUIManager : MonoBehaviour
     //[Header("UICardPrefab")]
     UICard _uiCard;
 
+    public GameObject StatusEffectPrefab;
+    public GameObject StatusEffectDescPrefab;
+
     //[Header("Panel")]
     Transform _cardEnlargePanel;
     Transform _itemEnlargePanel;
@@ -127,6 +130,32 @@ public class InGameUIManager : MonoBehaviour
             else
             {
                 _uiCard = op.Result.GetComponent<UICard>();
+            }
+            Addressables.Release(op);
+
+        };
+        Addressables.LoadAssetAsync<GameObject>("StatusEffect.prefab").Completed += (op) =>
+        {
+            if (op.Status != AsyncOperationStatus.Succeeded)
+            {
+                Debug.LogError("StatusEffect null");
+            }
+            else
+            {
+                StatusEffectPrefab = op.Result;
+            }
+            Addressables.Release(op);
+
+        };
+        Addressables.LoadAssetAsync<GameObject>("StatusEffectDesc.prefab").Completed += (op) =>
+        {
+            if (op.Status != AsyncOperationStatus.Succeeded)
+            {
+                Debug.LogError("StatusEffectDesc null");
+            }
+            else
+            {
+                StatusEffectDescPrefab = op.Result;
             }
             Addressables.Release(op);
 

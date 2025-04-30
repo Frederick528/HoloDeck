@@ -39,6 +39,15 @@ public enum StatusEffect
     Attack, Defense, Heal, ATKUp, DEFUp, HealUp, Vulnerable, Weaking, Reflection, Protect, Resurrection
 }
 
+public enum StatusEffectType
+{
+    InfiniteDuration,                   // 무한 지속 (duration = -1), 버프 제거로만 삭제 가능
+    TurnDuration,                       // 턴마다 지속시간 1 감소
+    AmountIsDuration,                   // 턴마다 값이 감소되며, 이는 지속시간과 동일
+    UseAmountInfiniteDuration,          // Amount 값이 사용되며, 값이 0이 되지 않는 한, 무한 지속
+    UseAmountTurnDuration,              // Amount 값이 사용되며, 턴마다 지속시간 1 감소
+}
+
 public class FindTransform
 {
     public static Transform ContinueFindChildByName(Transform parent, string name)
