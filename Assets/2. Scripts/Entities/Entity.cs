@@ -100,6 +100,7 @@ public abstract class Entity : MonoBehaviour
             }
             else if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Enemy && BattleManager.Instance.HitEntity.Item2 != null)
             {
+                BattleManager.Instance.HitEntity.Item2.CheckIfDead(amount, 1, false);
                 BattleManager.Instance.HitEntity.Item2.TakeDamage(amount, false).Forget();
             }
         }
@@ -337,6 +338,7 @@ public abstract class Entity : MonoBehaviour
         if (EventSystem.current.IsPointerOverGameObject())
             return;
         if (BattleManager.Instance.ArrowCursor.gameObject.activeSelf) return;
+        if (InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf) return;
         _statusEffectDescContent.localPosition = Vector3.zero;
         canvas.sortingOrder = 1;        // 이거 없으면 체력 UI에 가려짐
         _statusDescWindow.gameObject.SetActive(true);

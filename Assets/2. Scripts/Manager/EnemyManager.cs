@@ -138,9 +138,10 @@ public class EnemyManager : MonoBehaviour
     {
         EnemyList.Remove(enemy);
         EnemyDict.Remove(enemy.gameObject.GetInstanceID());
+        bool noEnemy = EnemyList.Count == 0;
         await task;
         _enemySpawn[enemy.spawnPosIdx] = true;
-        return EnemyList.Count == 0;
+        return noEnemy;
     }
 
     public EnemyData FindEnemyData(int id)   // ID 값으로 적 데이터 가져오기

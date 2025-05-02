@@ -127,10 +127,10 @@ public abstract class Enemy : Entity
     //    return damage;
     //}
 
-    public virtual void CheckIfDead(int damage, int count)
+    public virtual void CheckIfDead(int damage, int count, bool isHit = true)
     {
         int resistDamage = damage;
-        if (ApplyStatusEffect(StatusEffect.Protect, out int amount))
+        if (isHit && ApplyStatusEffect(StatusEffect.Protect, out int amount))
         {
             if (damage > amount)
             {
