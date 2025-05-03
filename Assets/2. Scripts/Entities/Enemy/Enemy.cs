@@ -78,10 +78,10 @@ public abstract class Enemy : Entity
     }
     public override async UniTask<bool> TakeDamage(int dmg, bool isHit = true)
     {
-        if (isHit)
-        {
-            BattleManager.Instance.HitEntity.Item1 = player;
-        }
+        //if (isHit)
+        //{
+        //    BattleManager.Instance.HitEntity.Item1 = player;
+        //}
         if (!await base.TakeDamage(dmg, isHit))
         {
             return false;
@@ -197,7 +197,8 @@ public abstract class Enemy : Entity
     protected async UniTask Attack(int damage)
     {
         await AttackAnimation();
-        BattleManager.Instance.HitEntity.Item2 = this;
+        //BattleManager.Instance.HitEntity.Item2 = this;
+        EnemyManager.Instance.HitEnemy = this;
         int criticalDamage = CheckCritical(damage);
 
         player.TakeDamage(criticalDamage).Forget();

@@ -94,14 +94,16 @@ public abstract class Entity : MonoBehaviour
         if (!isHit) { return; }
         if (ApplyStatusEffect(StatusEffect.Reflection, out int amount))
         {
-            if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player && BattleManager.Instance.HitEntity.Item1 != null)
+            if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player/* && BattleManager.Instance.HitEntity.Item1 != null*/)
             {
-                BattleManager.Instance.HitEntity.Item1.TakeDamage(amount, false).Forget();
+                InGameManager.Instance.player.TakeDamage(amount, false).Forget();
             }
-            else if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Enemy && BattleManager.Instance.HitEntity.Item2 != null)
+            else if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Enemy/* && BattleManager.Instance.HitEntity.Item2 != null*/)
             {
-                BattleManager.Instance.HitEntity.Item2.CheckIfDead(amount, 1, false);
-                BattleManager.Instance.HitEntity.Item2.TakeDamage(amount, false).Forget();
+                EnemyManager.Instance.HitEnemy.CheckIfDead(amount, 1, false);
+                EnemyManager.Instance.HitEnemy.TakeDamage(amount, false).Forget();
+                //BattleManager.Instance.HitEntity.Item2.CheckIfDead(amount, 1, false);
+                //BattleManager.Instance.HitEntity.Item2.TakeDamage(amount, false).Forget();
             }
         }
         else
@@ -122,7 +124,8 @@ public abstract class Entity : MonoBehaviour
     public async virtual UniTask<bool> TakeDamage(int dmg, bool isHit)
     {
         await BeforeTakeDamage(isHit);
-
+        if (dmg == 0)       // 데미지가 0일 경우, 맞기 전 효과 발동, 맞은 후 효과는 발동 X
+            return false;
         TextEffect(-dmg).Forget();
         if (_shield.Value >= dmg)
         {
@@ -350,22 +353,82 @@ public abstract class Entity : MonoBehaviour
         _statusDescWindow.gameObject.SetActive(false);
     }
 
-    public void AddAndApplyStatusEffect((StatusEffect, StatusEffectType) statusEffect, int amount, int duration = -1)
+    public void AddAndApplyStatusEffect((StatusEffect, StatusEffectType) statusEffect, int amount, int duration = 1)
     {
         AddStatusEffect(statusEffect, amount, duration);
-        if (ApplyStatusEffect(statusEffect.Item1, out int StatusEffectAmount))    // 사실 위에서 Get하고 적용하는 거라 항상 true 값이긴 함. (조건문 없이 그냥 진행해도 괜찮다는 뜻)
+        ApplyStatusEffect(statusEffect.Item1, out int _);
+        //if (ApplyStatusEffect(statusEffect.Item1, out int StatusEffectAmount))    // 사실 위에서 Get하고 적용하는 거라 항상 true 값이긴 함. (조건문 없이 그냥 진행해도 괜찮다는 뜻)
+        //{
+        //    switch (statusEffect.Item1)
+        //    {
+        //        case StatusEffect.ATKUp:
+        //            AttackPower.Value = StatusEffectAmount;
+        //            break;
+        //    }
+        //}
+    }
+    //public void ReduceStatusEffect(Dictionary<StatusEffectType, (int,int)> statusEffectTypeDict, int amount, int duration = -1)
+    //{
+    //    if (statusEffectTypeDict. == StatusEffectType.InfiniteDuration || statusEffect.Item2 == StatusEffectType.UseAmountInfiniteDuration)
+    //        return;
+    //}
+    public void ReduceStatusEffect((StatusEffect, StatusEffectType) statusEffect, int amount = 0, int duration = 1)        // 턴 감소를 디폴트로 만듦.
+    {
+        (int, int) info = CurStatusEffect[statusEffect.Item1][statusEffect.Item2];
+        if (info.Item2 - duration > 0 && info.Item1 - amount > 0)
         {
-            switch (statusEffect.Item1)
+            CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (info.Item1 - amount, info.Item2 - duration);
+
+            ChangeStatusEffectDesc(statusEffect);
+        }
+        else
+        {
+            if (statusEffect.Item2 == StatusEffectType.InfiniteDuration || statusEffect.Item2 == StatusEffectType.UseAmountInfiniteDuration)
             {
-                case StatusEffect.ATKUp:
-                    AttackPower.Value = StatusEffectAmount;
-                    break;
+                if (info.Item1 - amount > 0)
+                {
+                    CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (info.Item1 - amount, -1);
+
+                    ChangeStatusEffectDesc(statusEffect);
+                }
+                else
+                {
+                    amount = info.Item1;
+
+                    CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (0, -1);
+
+                    ActivateStatusEffect(statusEffect, false);
+                }
             }
+            else
+            {
+                amount = info.Item1;
+
+                CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (0, 0);
+
+                ActivateStatusEffect(statusEffect, false);
+            }
+        }
+
+        switch (statusEffect.Item1)
+        {
+            case StatusEffect.ATKUp:
+                AttackPower.Value -= amount;
+                break;
         }
     }
 
-    public void AddStatusEffect((StatusEffect, StatusEffectType) statusEffect, int amount, int duration = -1)
+    public void AddStatusEffect((StatusEffect, StatusEffectType) statusEffect, int amount, int duration = 1)
     {
+        if (statusEffect.Item2 == StatusEffectType.DurationIsAmount)
+        {
+            amount = duration;
+        }
+        else if (statusEffect.Item2 == StatusEffectType.InfiniteDuration || statusEffect.Item2 == StatusEffectType.UseAmountInfiniteDuration)
+        {
+            duration = -1;
+        }
+
         if (!CurStatusEffect.ContainsKey(statusEffect.Item1))
         {
             CurStatusEffect.Add(statusEffect.Item1,
@@ -395,6 +458,21 @@ public abstract class Entity : MonoBehaviour
 
         if (info.Item2 == 0)               // 상태효과 지속시간이 0일 경우
         {
+            //if (duration > 0 && amount > 0)
+            //{
+            //    CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (amount, duration);
+
+            //    ActivateStatusEffect(statusEffect, true);
+
+            //    ChangeStatusEffectDesc(statusEffect);
+            //    return;
+            //}
+            //else
+            //{
+            //    CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (0, 0);
+            //    ActivateStatusEffect(statusEffect, false);
+            //    return;
+            //}
             CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (amount, duration);
 
             ActivateStatusEffect(statusEffect, true);
@@ -402,11 +480,20 @@ public abstract class Entity : MonoBehaviour
             ChangeStatusEffectDesc(statusEffect);
             return;
         }
-        else if (info.Item2 == -1)     // 상태효과 지속시간이 없는 경우(계속 유지)
+        else if (statusEffect.Item2 == StatusEffectType.InfiniteDuration || statusEffect.Item2 == StatusEffectType.UseAmountInfiniteDuration)     // 상태효과 지속시간이 없는 경우(계속 유지)
         {
             if (info.Item1 == 0)
             {
-                CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (amount, -1);
+                //if (amount > 0)
+                //{
+                //    CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (amount, -1);
+
+                //    ActivateStatusEffect(statusEffect, true);
+
+                //    ChangeStatusEffectDesc(statusEffect);
+                //    return;
+                //}
+                CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (amount, duration);
 
                 ActivateStatusEffect(statusEffect, true);
 
@@ -415,18 +502,21 @@ public abstract class Entity : MonoBehaviour
             }
             else
             {
-                if (info.Item1 + amount > 0)
-                {
-                    CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (info.Item1 + amount, -1);
-                    ChangeStatusEffectDesc(statusEffect);
-                    return;
-                }
-                else
-                {
-                    CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (0, -1);
-                    ActivateStatusEffect(statusEffect, false);
-                    return;
-                }
+                CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (info.Item1 + amount, duration);
+                ChangeStatusEffectDesc(statusEffect);
+                return;
+                //if (info.Item1 + amount > 0)
+                //{
+                //    CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (info.Item1 + amount, -1);
+                //    ChangeStatusEffectDesc(statusEffect);
+                //    return;
+                //}
+                //else
+                //{
+                //    CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (0, -1);
+                //    ActivateStatusEffect(statusEffect, false);
+                //    return;
+                //}
             }
             //else if (CurStatusEffect[statusEffect].Item1 < amount)
             //{
@@ -438,21 +528,58 @@ public abstract class Entity : MonoBehaviour
         }
         else
         {
-            if (info.Item1 + amount > 0)
+            if (statusEffect.Item2 == StatusEffectType.DurationIsAmount)
             {
-                CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (
-                        info.Item1 + amount,
-                        info.Item2 > duration ? info.Item2 : duration
-                        );
+                CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (info.Item1 + amount, info.Item2 + duration);
                 ChangeStatusEffectDesc(statusEffect);
                 return;
             }
             else
             {
-                CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (0, 0);
-                ActivateStatusEffect(statusEffect, false);
+                CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (
+                                info.Item1 + amount,
+                                info.Item2 > duration ? info.Item2 : duration
+                                );
+                ChangeStatusEffectDesc(statusEffect);
                 return;
+
             }
+            //if (info.Item1 + amount > 0)
+            //{
+            //    CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (
+            //                info.Item1 + amount,
+            //                info.Item2 > duration ? info.Item2 : duration
+            //                );
+            //    ChangeStatusEffectDesc(statusEffect);
+            //    return;
+            //    //if (duration >= 0)      // 지속시간 값이 양수이면, 원래 값과 비교해서 더 큰 값으로 적용
+            //    //{
+            //    //    CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (
+            //    //            info.Item1 + amount,
+            //    //            info.Item2 > duration ? info.Item2 : duration
+            //    //            );
+            //    //    ChangeStatusEffectDesc(statusEffect);
+            //    //    return;
+            //    //}
+            //    //else if (info.Item2 + duration > 0)     // 지속시간 값이 음수인데, 원래 있던 값 + 지속시간 값(원래있던 값 - |지속시간 값|)이 양수이면, 지속시간 감소
+            //    //{
+            //    //    CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (info.Item1 + amount, info.Item2 - duration);
+            //    //    ChangeStatusEffectDesc(statusEffect);
+            //    //    return;
+            //    //}
+            //    //else                    // 지속시간 값이 음수인데, 결과값도 음수라면 UI 끄기
+            //    //{
+            //    //    CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (0, 0);
+            //    //    ActivateStatusEffect(statusEffect, false);
+            //    //    return;
+            //    //}
+            //}
+            //else
+            //{
+            //    CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (0, 0);
+            //    ActivateStatusEffect(statusEffect, false);
+            //    return;
+            //}
         }
 
 
@@ -482,17 +609,38 @@ public abstract class Entity : MonoBehaviour
 
         StatusEffectAmountText[StatusEffectTextIdx[statusEffect]].text = info.Item1.ToString();
 
-        if (info.Item2 != -1)
+        if (statusEffect.Item2 == StatusEffectType.InfiniteDuration || statusEffect.Item2 == StatusEffectType.UseAmountInfiniteDuration)
         {
-            StatusEffectDurationText[StatusEffectTextIdx[statusEffect]].text = $"지속시간: {info.Item2}";
+            StatusEffectDurationText[StatusEffectTextIdx[statusEffect]].text = "지속시간: <color=yellow>∞</color>";
         }
         else
         {
-            StatusEffectDurationText[StatusEffectTextIdx[statusEffect]].text = "지속시간: ∞";
+            string color;
+            if (info.Item2 > 5)
+            {
+                color = "green";
+            }
+            else if (info.Item2 > 2)
+            {
+                color = "orange";
+            }
+            else
+            {
+                color = "red";
+            }
+            StatusEffectDurationText[StatusEffectTextIdx[statusEffect]].text = $"지속시간: <color={color}>{info.Item2}</color>";
         }
         float descHeight = StatusEffectDescText[StatusEffectTextIdx[statusEffect]].preferredHeight;
 
-        StatusEffectDescText[StatusEffectTextIdx[statusEffect]].text = InGameManager.Instance.SESO.SEDatas[(int)statusEffect.Item1].Descript.Replace("{n}", info.Item1.ToString());
+        StatusEffectDescText[StatusEffectTextIdx[statusEffect]].text = InGameManager.Instance.SESO.SEDatas[(int)statusEffect.Item1].Descript.Replace("{n}", $"<color=green>{info.Item1}</color>");
+        if (statusEffect.Item2 == StatusEffectType.UseAmountTurnDuration || statusEffect.Item2 == StatusEffectType.UseAmountInfiniteDuration)
+        {
+            StatusEffectDescText[StatusEffectTextIdx[statusEffect]].text += " <size=10><color=yellow>(능력 발동 시, 값이 감소합니다.)</color></size>";
+        }
+        else if (statusEffect.Item2 == StatusEffectType.DurationIsAmount)
+        {
+            StatusEffectDescText[StatusEffectTextIdx[statusEffect]].text += " <size=10><color=yellow>(내 턴마다 값이 감소합니다.)</color></size>";
+        }
 
         if (!_statusDescWindow.gameObject.activeSelf)
         {
@@ -547,23 +695,101 @@ public abstract class Entity : MonoBehaviour
     //    }
     //}
 
+    public void TurnStatusEffect()
+    {
+        //foreach (var dict in CurStatusEffect.Values)
+        //{
+        //    (int, int) info;
+        //    if (dict.TryGetValue(StatusEffectType.TurnDuration, out info))
+        //    {
+        //        if (info.Item1 != 0 && info.Item2 != 0)
+        //        {
+        //            dict[StatusEffectType.TurnDuration] = (info.Item1, --info.Item2);       // 해당 타입은 무한 지속시간일 수가 없으므로, 그냥 -1 진행. 그러나, -2를 하게되는 경우에는 예외처리가 필요함.
+        //        }
+        //    }
+        //    else if (dict.TryGetValue(StatusEffectType.AmountIsDuration, out info))
+        //    {
+        //        if (info.Item1 != 0 && info.Item2 != 0)
+        //        {
+        //            dict[StatusEffectType.AmountIsDuration] = (--info.Item1, --info.Item2);
+        //        }
+        //    }
+        //    else if (dict.TryGetValue(StatusEffectType.UseAmountTurnDuration, out info))
+        //    {
+        //        if (info.Item1 != 0 && info.Item2 != 0)
+        //        {
+        //            dict[StatusEffectType.UseAmountTurnDuration] = (info.Item1, --info.Item2);
+        //        }
+        //    }
+        //}
+        foreach (var dict in CurStatusEffect)
+        {
+            (int, int) info;
+            if (dict.Value.TryGetValue(StatusEffectType.TurnDuration, out info))
+            {
+                if (info.Item1 != 0 && info.Item2 != 0)
+                {
+                    ReduceStatusEffect((dict.Key, StatusEffectType.TurnDuration));
+                }
+            }
+            else if (dict.Value.TryGetValue(StatusEffectType.DurationIsAmount, out info))
+            {
+                if (info.Item1 != 0 && info.Item2 != 0)
+                {
+                    ReduceStatusEffect((dict.Key, StatusEffectType.DurationIsAmount), 1);
+                }
+            }
+            else if (dict.Value.TryGetValue(StatusEffectType.UseAmountTurnDuration, out info))
+            {
+                if (info.Item1 != 0 && info.Item2 != 0)
+                {
+                    ReduceStatusEffect((dict.Key, StatusEffectType.UseAmountTurnDuration));
+                }
+            }
+        }
+    }
+
     public bool ApplyStatusEffect(StatusEffect statusEffect, out int amount)
     {
         //if (CurStatusEffect.ContainsKey(statusEffect.Item1) && CurStatusEffect[statusEffect.Item1].ContainsKey(statusEffect.Item2)
         //    && CurStatusEffect[statusEffect.Item1][statusEffect.Item2].Item1 != 0 && CurStatusEffect[statusEffect.Item1][statusEffect.Item2].Item2 != 0)
         if (CurStatusEffect.ContainsKey(statusEffect))
         {
+            (int, int) info;
             amount = 0;
-            foreach (var dict in CurStatusEffect[statusEffect])
+            foreach (var typeDictValue in CurStatusEffect[statusEffect].Values)
             {
-                if (dict.Value.Item1 != 0 && dict.Value.Item2 != 0)
-                    amount += dict.Value.Item1;
-                switch (dict.Key)
+                if (typeDictValue.Item1 == 0 || typeDictValue.Item2 == 0)
+                    continue;
+                amount += typeDictValue.Item1;
+                //switch (typeDict.Key)                 // foreach문 내에서 Dict 변경 안돼서 그냥 밖으로 뺌.
+                //{
+                //    case StatusEffectType.UseAmountInfiniteDuration:
+                //    case StatusEffectType.UseAmountTurnDuration:
+                //        CurStatusEffect[statusEffect][typeDict.Key] = (typeDict.Value.Item1 - 1, typeDict.Value.Item2);
+                //        break;
+                //}
+            }
+            switch (statusEffect)       // 능력치는 UI에 띄우기 때문에 바로바로 적용되어야 함.
+            {
+                case StatusEffect.ATKUp:
+                    AttackPower.Value = amount;
+                    break;
+            }
+            if (CurStatusEffect[statusEffect].TryGetValue(StatusEffectType.UseAmountInfiniteDuration, out info))
+            {
+                if (info.Item1 != 0 && info.Item2 != 0)
                 {
-                    case StatusEffectType.UseAmountInfiniteDuration:
-                    case StatusEffectType.UseAmountTurnDuration:
-                        CurStatusEffect[statusEffect][dict.Key] = (dict.Value.Item1 - 1, dict.Value.Item2);
-                        break;
+                    ReduceStatusEffect((statusEffect, StatusEffectType.UseAmountInfiniteDuration), 1, 0);
+                    //CurStatusEffect[statusEffect][StatusEffectType.UseAmountInfiniteDuration] = (--info.Item1, info.Item2);       // 해당 타입은 무한 지속시간일 수가 없으므로, 그냥 -1 진행. 그러나, -2를 하게되는 경우에는 예외처리가 필요함.
+                }
+            }
+            else if (CurStatusEffect[statusEffect].TryGetValue(StatusEffectType.UseAmountTurnDuration, out info))
+            {
+                if (info.Item1 != 0 && info.Item2 != 0)
+                {
+                    ReduceStatusEffect((statusEffect, StatusEffectType.UseAmountTurnDuration), 1, 0);
+                    //CurStatusEffect[statusEffect][StatusEffectType.UseAmountTurnDuration] = (--info.Item1, info.Item2);
                 }
             }
             //amount = CurStatusEffect[statusEffect.Item1][statusEffect.Item2].Item1;

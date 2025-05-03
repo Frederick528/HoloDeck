@@ -61,6 +61,7 @@ public class CardManager : MonoBehaviour
 
 
     List<Card> _selectedCards = new();           // 배틀 중 버리기, 강화, 교환 등에 의해 카드 위치 조정이 되면 안 되는 카드들
+    List<Card> _tempThrowAwayCards = new();      // 카드 버리기를 위한 공용 리스트로, 버릴 카드들을 추가하고, await 다음에 전부 버림.
 
     Card _playedCard;                            // 큐에서 실행한 카드
     Card _usedCard;                              // 사용되고 있는 카드(버리기 효과나 다른 효과가 진행되고 있는 카드)
@@ -684,15 +685,18 @@ public class CardManager : MonoBehaviour
             targetCard.Selected = false;
             targetCard.MoveTransform(new PRS(CardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.ThrowAwayCardDelay);
             HandCard.Remove(targetCard);
+            _tempThrowAwayCards.Add(targetCard);
         }
+        _selectedCards.Clear();
         await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay);
-        foreach (Card targetCard in _selectedCards)
+        foreach (Card targetCard in _tempThrowAwayCards)
         {
             CardDummy.Add(targetCard);
             targetCard.UnblockCard();
         }
         InGameUIManager.Instance.SetDummyCount();
-        _selectedCards.Clear();         // 정렬에 있는 카드들을 버리는 시간동안 selectedCards의 값이 있기 때문에 정렬에 문제가 생김.
+        //_selectedCards.Clear();         // 정렬에 있는 카드들을 버리는 시간동안 selectedCards의 값이 있기 때문에 정렬에 문제가 생김. => _temp에 추가하고, await 전에 클리어하는 걸로 일단 해결
+        _tempThrowAwayCards.Clear();
     }
 
     public async UniTask ThrowAwayCard()        // 모든 카드를 카드 더미로
@@ -702,15 +706,17 @@ public class CardManager : MonoBehaviour
         {
             targetCard.BlockCard();
             targetCard.MoveTransform(new PRS(CardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.ThrowAwayCardDelay);
+            _tempThrowAwayCards.Add(targetCard);
         }
+        HandCard.Clear();
         await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay);
-        foreach (Card targetCard in HandCard)
+        foreach (Card targetCard in _tempThrowAwayCards)
         {
             CardDummy.Add(targetCard);
             targetCard.UnblockCard();
         }
         InGameUIManager.Instance.SetDummyCount();
-        HandCard.Clear();
+        _tempThrowAwayCards.Clear();
     }
     public async UniTask ThrowAwayCard(Card throwCard)
     {

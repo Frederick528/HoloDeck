@@ -9,7 +9,7 @@ public class BattleManager : MonoBehaviour
     public static BattleManager Instance;
 
     public Arrow ArrowCursor = null;
-    public (Player, Enemy) HitEntity = (null, null);       // item1 = player. item2 = enemy
+    //public (Player, Enemy) HitEntity = (null, null);       // item1 = player. item2 = enemy
 
     private void Awake()
     {

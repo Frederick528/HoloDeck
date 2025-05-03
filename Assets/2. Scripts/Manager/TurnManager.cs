@@ -91,11 +91,12 @@ public class TurnManager : MonoBehaviour
     {
         //GameSetup();
         CurTurnType = TurnType.Player;
-        BattleManager.Instance.HitEntity.Item1 = null;
+        //BattleManager.Instance.HitEntity.Item1 = null;
         //MyTurn = true;
 
         InGameManager.Instance.player.AddCurHolo(InGameManager.Instance.player.MaxHolo);
         InGameManager.Instance.player.ShieldReset();
+        InGameManager.Instance.player.TurnStatusEffect();
 
         //InGameUIManager.Instance.ChangeTurnButtonText(true);
 
@@ -214,7 +215,15 @@ public class TurnManager : MonoBehaviour
     public async UniTask EnemyTurnTask()
     {
         CurTurnType = TurnType.Enemy;
-        BattleManager.Instance.HitEntity.Item2 = null;
+        //BattleManager.Instance.HitEntity.Item2 = null;
+        EnemyManager.Instance.HitEnemy = null;
+
+        foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
+        {
+            enemy.ShieldReset();
+            enemy.TurnStatusEffect();
+        }
+
         await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, false, PlayerLoopTiming.Update, CancelSource.Token);  // 카드 다 버린 이후 적 행동 시작
         int enemyCount = EnemyManager.Instance.EnemyList.Count;
         for (int i = 0; i < enemyCount; ++i)
@@ -249,7 +258,7 @@ public class TurnManager : MonoBehaviour
     public async UniTask EndBattle()         // 리팩토링 필요해보임.
     {
         InBattle = false;
-        BattleManager.Instance.HitEntity = (null, null);
+        EnemyManager.Instance.HitEnemy = null;
         InGameManager.Instance.player.StartOrEndBattle(InBattle);
         CancelSource.Cancel();
         InGameManager.Instance.AbilityEventQueue.QueueClear();

@@ -15,6 +15,8 @@ public class EnemyManager : MonoBehaviour
     bool[] _enemySpawn;
     bool[] _bossSpawn;
     public Enemy TargetEnemy;
+
+    public Enemy HitEnemy;
     //public Arrow ArrowCursor;
 
     public bool MapClear = false;
