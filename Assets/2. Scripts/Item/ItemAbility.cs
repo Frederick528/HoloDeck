@@ -16,10 +16,10 @@ public class ItemAbility
                 TurnManager.Instance.AddStartCardCount(1);
                 break;
             case 2:
-                InGameManager.Instance.player.AddMaxHealth(25);
+                InGameManager.Instance.Player.AddMaxHealth(25);
                 break;
             case 3:
-                InGameManager.Instance.player.AddMaxHolo(1);
+                InGameManager.Instance.Player.AddMaxHolo(1);
                 break;
             case 4:
                 InGameUIManager.Instance.ChangeRewardCardCount(true);
@@ -219,12 +219,12 @@ public class ItemAbility
     }
     async UniTask ShieldAB(UseItem item)
     {
-        await InGameManager.Instance.player.Shield(item.Data.Shield);
+        await InGameManager.Instance.Player.Shield(item.Data.Shield);
     }
 
     async UniTask HealAB(UseItem item)
     {
-        await InGameManager.Instance.player.Heal(item.Data.Heal);
+        await InGameManager.Instance.Player.Heal(item.Data.Heal);
     }
 
     //async UniTask<bool> ConditionDiscardAB(int discardCnt)

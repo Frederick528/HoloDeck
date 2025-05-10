@@ -89,7 +89,17 @@ public class Player : Entity
 
     void SetupPlayer(int hp, int criticalChance = 10, int criticalDamage = 150)
     {
-        SetupEntity(hp + GameManager.Instance.AddMaxHP, criticalChance + GameManager.Instance.AddCriticalChance, criticalDamage + GameManager.Instance.AddCriticalDamage);
+        //SetupEntity(hp + GameManager.Instance.AddMaxHP, criticalChance + GameManager.Instance.AddCriticalChance, criticalDamage + GameManager.Instance.AddCriticalDamage);
+        _maxHP.Value = hp + GameManager.Instance.AddMaxHP;
+        _curHP.Value = _maxHP.Value;
+        _criticalChance.Value = criticalChance + GameManager.Instance.AddCriticalChance;
+        _criticalDamage.Value = criticalDamage + GameManager.Instance.AddCriticalDamage;
+        AttackPower.Value = GameManager.Instance.AddAttackPower;
+        DefensePower.Value = GameManager.Instance.AddDefensePower;
+        HealPower.Value = GameManager.Instance.AddHealPower;
+
+        AddStatusEffect((StatusEffect.Resurrection, StatusEffectType.InfiniteDuration), GameManager.Instance.Resurrection);
+
         MaxHolo = 3;
         CurHolo = MaxHolo;
         InGameUIManager.Instance.SetHolo(CurHolo, MaxHolo);

@@ -2,6 +2,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using Random = UnityEngine.Random;
 
 public class InGameManager : MonoBehaviour
@@ -34,7 +37,8 @@ public class InGameManager : MonoBehaviour
 
     //public Arrow ArrowCursor;
 
-    public Player player;
+    public Transform PlayerTr;
+    public Player Player;
 
     public int PauseInt;
 
@@ -42,28 +46,36 @@ public class InGameManager : MonoBehaviour
 
     bool _isESCPause = false;
 
-    GameObject[] _camera;
-    GameObject[] _player;
+    //GameObject[] _camera;
+    //GameObject[] _player;
 
     void Awake()
     {
-        _camera = GameObject.FindGameObjectsWithTag("MainCamera");
-        _player = GameObject.FindGameObjectsWithTag("Player");
+        GameObject[] player = GameObject.FindGameObjectsWithTag("Player");
         if (Instance == null)
         {
             Instance = this;
             //transform.SetParent(null);
             //DontDestroyOnLoad(_camera[0]);
-            GameManager.Instance.AddInGameDontDestroy(_camera[0]);
-            GameManager.Instance.AddInGameDontDestroy(_player[0]);
-            player = _player[0].GetComponentInChildren<Player>();
+            GameManager.Instance.AddInGameDontDestroy(Camera.main.gameObject);
+            GameManager.Instance.AddInGameDontDestroy(player[0]);
+            PlayerTr = player[0].transform;
+            //Player = player[0].GetComponentInChildren<Player>(true);
             GameManager.Instance.AddInGameDontDestroy(transform.root.gameObject);
             GameManager.Instance.InGame = true;
+            SpawnPlayer(0);
         }
         else
         {
-            Destroy(_camera[1]);
-            Destroy(_player[1]);
+            Camera[] mainCamera = Camera.allCameras;
+            for (int i = mainCamera.Length - 1; i >= 0; --i)
+            {
+                if (i == 0) break;
+                Destroy(mainCamera[i].gameObject);
+            }
+
+            //Destroy(mainCamera[1]);
+            Destroy(player[1]);
             Destroy(transform.root.gameObject);
         }
 
@@ -86,8 +98,35 @@ public class InGameManager : MonoBehaviour
         SettingRandomCardList();
         SettingRandomItemList();
 
+        //SpawnPlayer(0);
+
         //InGameUIManager.Instance.SetupGameUi(true);
         //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
+    }
+
+    public void SpawnPlayer(int idx)
+    {
+        string playerName = "playerName";
+        switch (idx)
+        {
+            case 0:
+                playerName = "PicoChan.prefab";
+                break;
+        }
+        Addressables.LoadAssetAsync<GameObject>(playerName).Completed += (op) =>
+        {
+            if (op.Status != AsyncOperationStatus.Succeeded)
+            {
+                Debug.LogError("Player null");
+            }
+            else
+            {
+                Player = Instantiate(op.Result, PlayerTr).GetComponentInChildren<Player>(); ;
+                CardManager.Instance.SetupStartCardDeck();
+            }
+            Addressables.Release(op);
+
+        };
     }
     void SettingRandomCardList()
     {
@@ -353,7 +392,7 @@ public class InGameManager : MonoBehaviour
 
     public void ChangeCoinValue(int coin)
     {
-        player.Coin.Value += coin;
+        Player.Coin.Value += coin;
     }
 
     public void Pause(bool pause)
@@ -520,12 +559,12 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Slash))
         {
-            player.AddAndApplyStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), 1);
-            player.AddAndApplyStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), 3, 10);
+            Player.AddAndApplyStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), 1);
+            Player.AddAndApplyStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), 3, 10);
             //player.AddAndApplyStatusEffect((StatusEffect.HealUp, StatusEffectType.InfiniteDuration), 1);
             //player.AddAndApplyStatusEffect((StatusEffect.DEFUp, StatusEffectType.InfiniteDuration), 1);
-            player.AddStatusEffect((StatusEffect.Reflection, StatusEffectType.UseAmountTurnDuration), 5, 3);
-            player.AddStatusEffect((StatusEffect.Protect, StatusEffectType.DurationIsAmount), 0, 3);
+            Player.AddStatusEffect((StatusEffect.Reflection, StatusEffectType.UseAmountTurnDuration), 5, 3);
+            Player.AddStatusEffect((StatusEffect.Protect, StatusEffectType.DurationIsAmount), 0, 3);
             //player.AddAndApplyStatusEffect((StatusEffect.Resurrection, StatusEffectType.InfiniteDuration), 1);
         }
 #endif

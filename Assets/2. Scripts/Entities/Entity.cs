@@ -67,16 +67,16 @@ public abstract class Entity : MonoBehaviour
     //        hpText.text = hp.ToString();
     //    });
     //}
-    public void SetupEntity(int hp, int criticalChance = 10, int criticalDamage = 150)
-    {
-        //col2d = GetComponent<BoxCollider2D>();
-        _maxHP.Value = hp;
-        _curHP.Value = _maxHP.Value;
-        _criticalChance.Value = criticalChance;
-        _criticalDamage.Value = criticalDamage;
-        //slider.value = _maxHP.Value;
-        //hpText.text = _maxHP.ToString();
-    }
+    //public void SetupEntity(int hp, int criticalChance = 10, int criticalDamage = 150)
+    //{
+    //    //col2d = GetComponent<BoxCollider2D>();
+    //    _maxHP.Value = hp;
+    //    _curHP.Value = _maxHP.Value;
+    //    _criticalChance.Value = criticalChance;
+    //    _criticalDamage.Value = criticalDamage;
+    //    //slider.value = _maxHP.Value;
+    //    //hpText.text = _maxHP.ToString();
+    //}
     protected virtual async UniTask BeforeTakeDamage(bool isHit)
     {
         if (!isHit) { return; }
@@ -96,7 +96,7 @@ public abstract class Entity : MonoBehaviour
         {
             if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player/* && BattleManager.Instance.HitEntity.Item1 != null*/)
             {
-                InGameManager.Instance.player.TakeDamage(amount, false).Forget();
+                InGameManager.Instance.Player.TakeDamage(amount, false).Forget();
             }
             else if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Enemy/* && BattleManager.Instance.HitEntity.Item2 != null*/)
             {
@@ -334,7 +334,6 @@ public abstract class Entity : MonoBehaviour
         //    }
         //}
     }
-
     private void OnMouseEnter()
     {
         if (_numberOfStatusEffects == 0) return;
@@ -431,6 +430,7 @@ public abstract class Entity : MonoBehaviour
 
         if (!CurStatusEffect.ContainsKey(statusEffect.Item1))
         {
+            if (amount == 0) return;
             CurStatusEffect.Add(statusEffect.Item1,
                 new Dictionary<StatusEffectType, (int, int)>
                 {
@@ -641,7 +641,6 @@ public abstract class Entity : MonoBehaviour
         {
             StatusEffectDescText[StatusEffectTextIdx[statusEffect]].text += " <size=10><color=yellow>(내 턴마다 값이 감소합니다.)</color></size>";
         }
-
         if (!_statusDescWindow.gameObject.activeSelf)
         {
             _statusDescWindow.gameObject.SetActive(true);           // 켰다가 꺼야 텍스트 크기 가져올 수 있음.. 나중에 좀 고치고 싶음.
@@ -755,6 +754,14 @@ public abstract class Entity : MonoBehaviour
         //    && CurStatusEffect[statusEffect.Item1][statusEffect.Item2].Item1 != 0 && CurStatusEffect[statusEffect.Item1][statusEffect.Item2].Item2 != 0)
         if (CurStatusEffect.ContainsKey(statusEffect))
         {
+            //switch (statusEffect)
+            //{
+            //    case StatusEffect.Resurrection:
+            //        if (CurStatusEffect[statusEffect].TryGetValue(StatusEffectType.UseAmountTurnDuration))
+            //        ReduceStatusEffect((statusEffect, StatusEffectType.UseAmountTurnDuration), 1, 0);
+            //        amount = 1;
+            //        return true;
+            //}
             (int, int) info;
             amount = 0;
             foreach (var typeDictValue in CurStatusEffect[statusEffect].Values)

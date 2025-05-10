@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UniRx;
@@ -11,16 +12,18 @@ public class GameManager : MonoBehaviour
 
     public bool InGame = false;
 
-    public bool Resurrection { get; private set; }
     public int AddMaxHP { get; private set; }
     public int AddAttackPower { get; private set; }
     public int AddDefensePower { get; private set; }
     public int AddHealPower { get; private set; }
     public int AddCriticalChance { get; private set; }
     public int AddCriticalDamage { get; private set; }
-    public float AddCoinGained { get; private set; }
+    public int Resurrection { get; private set; }
+    public int AddCoinGained { get; private set; }
 
     public ReactiveProperty<int> Goods { get; private set; } = new();
+
+    public Upgrade[] Upgrades { get; private set; } = null;
 
     public int PauseInt;
 
@@ -68,9 +71,43 @@ public class GameManager : MonoBehaviour
 
         InGame = false;
     }
-    public void AddGoods(int value)
+    public void AddGoods(int amount)
     {
-        Goods.Value += value;
+        Goods.Value += amount;
+    }
+    public void ChangeUpgrade(Upgrade[] upgrades)
+    {
+        Upgrades = upgrades;
+    }
+    public void ChangeUpgrade(int idx, int amount)
+    {
+        switch (idx)
+        {
+            case 0:
+                AddMaxHP = amount;
+                break;
+            case 1:
+                AddAttackPower = amount;
+                break;
+            case 2:
+                AddDefensePower = amount;
+                break;
+            case 3:
+                AddHealPower = amount;
+                break;
+            case 4:
+                AddCriticalChance = amount;
+                break;
+            case 5:
+                AddCriticalDamage = amount;
+                break;
+            case 6:
+                Resurrection = amount;
+                break;
+            case 7:
+                AddCoinGained = amount;
+                break;
+        }
     }
 
     public void ChangeScene(int idx)

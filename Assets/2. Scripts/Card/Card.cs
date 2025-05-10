@@ -196,12 +196,12 @@ public class Card : MonoBehaviour
         //{
         if (_defaultData.Damage != 0)
         {
-            Data.Damage = _defaultData.Damage + InGameManager.Instance.player.AttackPower.Value;
+            Data.Damage = _defaultData.Damage + InGameManager.Instance.Player.AttackPower.Value;
             if (Data.Damage < 0) { Data.Damage = 0; }
         }
         if (_defaultData.Shield != 0)
         {
-            Data.Shield = _defaultData.Shield + InGameManager.Instance.player.DefensePower.Value;
+            Data.Shield = _defaultData.Shield + InGameManager.Instance.Player.DefensePower.Value;
             if (Data.Shield < 0) { Data.Shield = 0; }
         }
         Data.Count = _defaultData.Count + 0;
@@ -379,7 +379,7 @@ public class Card : MonoBehaviour
 
     public async UniTask<bool> BeforeUsingCard()
     {
-        if (InGameManager.Instance.player.CurHolo < Data.Cost)
+        if (InGameManager.Instance.Player.CurHolo < Data.Cost)
         {
             Target(null);
             return false;
@@ -391,7 +391,7 @@ public class Card : MonoBehaviour
             return false;
         }
 
-        InGameManager.Instance.player.AddCurHolo(-Data.Cost);
+        InGameManager.Instance.Player.AddCurHolo(-Data.Cost);
 
         Used = true;
         CardOrder.SetOriginOrder(-10);

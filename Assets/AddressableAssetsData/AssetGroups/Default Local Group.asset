@@ -33,6 +33,10 @@ MonoBehaviour:
     m_Address: StatusEffectDesc.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 20036ee39e77f084b98c0e7ae46d9fc5
+    m_Address: PicoChan.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 8ddab990de4121140909e54570afce17, type: 2}
   m_SchemaSet:

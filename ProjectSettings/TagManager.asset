@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - Arrow
+  - BaseCamera
   layers:
   - Default
   - TransparentFX

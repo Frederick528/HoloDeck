@@ -72,9 +72,13 @@ public abstract class Enemy : Entity
     {
         _defaultEnemyData = eD;
         enemyData = _defaultEnemyData.Clone();
-        SetupEntity(enemyData.HP, enemyData.CriticalChance/*, enemyData.CriticalDamage*/);      // 일단 크리티컬 데미지를 시트에 안 넣었음으로 그냥 잠시 주석 처리
+        //SetupEntity(enemyData.HP, enemyData.CriticalChance/*, enemyData.CriticalDamage*/);      // 일단 크리티컬 데미지를 시트에 안 넣었음으로 그냥 잠시 주석 처리
+        _maxHP.Value = enemyData.HP;
+        _curHP.Value = _maxHP.Value;
+        _criticalChance.Value = enemyData.CriticalChance;
+        _criticalDamage.Value = 150;
         spawnPosIdx = pos;
-        player = InGameManager.Instance.player;
+        player = InGameManager.Instance.Player;
     }
     public override async UniTask<bool> TakeDamage(int dmg, bool isHit = true)
     {
@@ -169,8 +173,8 @@ public abstract class Enemy : Entity
         bool clear = await EnemyManager.Instance.KillEnemyCheck(this, base.DieAnimation());
         
         //EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);      // 에너미 자리로 클리어 확인을 하기 때문에 적 죽는 모션 기다린 후, 자리 삭제  // 자리는 나중에 배열로 만들고 코드상으로만 확인하도록 변경
-        InGameManager.Instance.ChangeCoinValue((int)(enemyData.DropCoin * (1f + GameManager.Instance.AddCoinGained)));
-        GameManager.Instance.AddGoods((int)(enemyData.DropCoin * (1f + GameManager.Instance.AddCoinGained) * 0.5f));
+        InGameManager.Instance.ChangeCoinValue((int)(enemyData.DropCoin * (1f + GameManager.Instance.AddCoinGained * 0.01f)));
+        GameManager.Instance.AddGoods((int)(enemyData.DropCoin * (1f + GameManager.Instance.AddCoinGained * 0.01f) * 0.5f));
         if (clear)
         {
             ClearCheck();

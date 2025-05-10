@@ -94,9 +94,9 @@ public class TurnManager : MonoBehaviour
         //BattleManager.Instance.HitEntity.Item1 = null;
         //MyTurn = true;
 
-        InGameManager.Instance.player.AddCurHolo(InGameManager.Instance.player.MaxHolo);
-        InGameManager.Instance.player.ShieldReset();
-        InGameManager.Instance.player.TurnStatusEffect();
+        InGameManager.Instance.Player.AddCurHolo(InGameManager.Instance.Player.MaxHolo);
+        InGameManager.Instance.Player.ShieldReset();
+        InGameManager.Instance.Player.TurnStatusEffect();
 
         //InGameUIManager.Instance.ChangeTurnButtonText(true);
 
@@ -190,7 +190,7 @@ public class TurnManager : MonoBehaviour
         if (endBattle)
         {
             CardManager.Instance.ClearCard();
-            InGameManager.Instance.player.ShieldReset();
+            InGameManager.Instance.Player.ShieldReset();
             if (EnemyManager.Instance.EnemyList.Count > 0)
             {
                 foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
@@ -241,7 +241,7 @@ public class TurnManager : MonoBehaviour
     public void StartBattle()       // 배틀 시작시, 덱 섞기 및 액션 추가
     {
         InBattle = true;
-        InGameManager.Instance.player.StartOrEndBattle(InBattle);
+        InGameManager.Instance.Player.StartOrEndBattle(InBattle);
         CancelSource = new();
 
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Battle, true);
@@ -259,7 +259,7 @@ public class TurnManager : MonoBehaviour
     {
         InBattle = false;
         EnemyManager.Instance.HitEnemy = null;
-        InGameManager.Instance.player.StartOrEndBattle(InBattle);
+        InGameManager.Instance.Player.StartOrEndBattle(InBattle);
         CancelSource.Cancel();
         InGameManager.Instance.AbilityEventQueue.QueueClear();
 

@@ -58,9 +58,10 @@ MonoBehaviour:
     Descript: "\uD53C\uD574\uB97C \uBC1B\uAE30 \uC804, {n}\uB9CC\uD07C \uC274\uB4DC\uB97C
       \uC5BB\uC2B5\uB2C8\uB2E4."
     Sprite: {fileID: 0}
-  - SE: 0
+  - SE: 10
     SET: 0
-    Descript: 
+    Descript: "\uCE58\uBA85\uC801\uC778 \uD53C\uD574\uB97C \uBC1B\uC558\uC744 \uACBD\uC6B0,
+      \uCD5C\uB300 \uCCB4\uB825\uC758 50%\uB9CC\uD07C \uD68C\uBCF5\uD569\uB2C8\uB2E4."
     Sprite: {fileID: 0}
   - SE: 0
     SET: 0

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -81,12 +82,12 @@ public class InGameUIManager : MonoBehaviour
 
     bool _addRewardItemCount;
 
-
     private void Awake()
     {
         _canvas = GameObject.Find("InGameCanvases").GetComponent<Transform>();
         if (Instance != null)
         {
+            GameObject.Find("BackgroundCanvas").GetComponent<Canvas>().worldCamera = Camera.main;
             Destroy(_canvas.gameObject);
             //Destroy(transform.root.gameObject);
             return;

@@ -90,10 +90,10 @@ public class CardManager : MonoBehaviour
 
     private void Start()
     {
-        CardSpawnPoint = InGameManager.Instance.player.transform.root.Find("CardSpawnPoint");
-        CardDummyTr = InGameManager.Instance.player.transform.root.Find("CardDummy");
-        myCardLeft = InGameManager.Instance.player.transform.root.Find("MyCardLeft");
-        myCardRight = InGameManager.Instance.player.transform.root.Find("MyCardRight");
+        CardSpawnPoint = InGameManager.Instance.PlayerTr.Find("CardSpawnPoint");
+        CardDummyTr = InGameManager.Instance.PlayerTr.Find("CardDummy");
+        myCardLeft = InGameManager.Instance.PlayerTr.Find("MyCardLeft");
+        myCardRight = InGameManager.Instance.PlayerTr.Find("MyCardRight");
         isUseCard.Subscribe((canUse) =>
         {
             SelectCard?.TurnOnOutline(canUse);
@@ -115,8 +115,6 @@ public class CardManager : MonoBehaviour
                 isSingleTarget = false;
             }
         });
-
-        SetupStartCardDeck();
     }
     public void RewardedCard()
     {
@@ -125,7 +123,7 @@ public class CardManager : MonoBehaviour
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, true);
     }
 
-    void SetupStartCardDeck()   // 시작할 때, 메인덱을 설정하는 함수 (게임 시작 이후에는 사용하지 않음.)
+    public void SetupStartCardDeck()   // 시작할 때, 메인덱을 설정하는 함수 (게임 시작 이후에는 사용하지 않음.)
     {
         int _startDeck = 6;     // 여기 밑 코드 변경해야 함. 캐릭터별로 얻는 카드와 카드 ID가 달라지기 때문에 switch로 구별.
         for (int i = 0; i < _startDeck; i++)
