@@ -98,7 +98,7 @@ public class Player : Entity
         DefensePower.Value = GameManager.Instance.AddDefensePower;
         HealPower.Value = GameManager.Instance.AddHealPower;
 
-        AddStatusEffect((StatusEffect.Resurrection, StatusEffectType.InfiniteDuration), GameManager.Instance.Resurrection);
+        AddStatusEffect((StatusEffect.Resurrection, StatusEffectType.UseAmountInfiniteDuration), GameManager.Instance.Resurrection);
 
         MaxHolo = 3;
         CurHolo = MaxHolo;
