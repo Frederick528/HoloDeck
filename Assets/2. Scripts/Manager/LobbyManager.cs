@@ -93,7 +93,17 @@ public struct Upgrade
     public void Setting(ref TMP_Text title, ref TMP_Text value, ref TMP_Text cost, ref Image valueBar)
     {
         title.text = $"{_title} [{CurLV}/{MaxLV}]";
-        value.text = $"+ {Value[CurLV]}";
+        switch (Index)
+        {
+            case 4:
+            case 5:
+            case 7:
+                value.text = $"+ {Value[CurLV]} %p";
+                break;
+            default:
+                value.text = $"+ {Value[CurLV]}";
+                break;
+        }
         cost.text = $"Cost: {Cost[CurLV]}";
         valueBar.fillAmount = (float)CurLV / MaxLV;
     }
@@ -132,10 +142,10 @@ public class LobbyManager : MonoBehaviour
     [Header("Lobby")]
     TMP_Text _goodsText;
 
-    TMP_Text[] TitleText;
-    Image[] ValueBar;
-    TMP_Text[] ValueText;
-    TMP_Text[] CostText;
+    TMP_Text[] _titleText = new TMP_Text[8];
+    TMP_Text[] _valueText = new TMP_Text[8];
+    TMP_Text[] _costText = new TMP_Text[8];
+    Image[] _valueBar = new Image[8];
 
     //Upgrade[] _upgrade;
 
@@ -151,28 +161,16 @@ public class LobbyManager : MonoBehaviour
         _goodsText.text = "Goods: " + GameManager.Instance.Goods.Value.ToString();
 
         Transform upgradeTr = FindTransform.ContinueFindChildByName(LobbyCanvas(CanvasName.PowerUP), "Upgrade");
-        TitleText = new TMP_Text[upgradeTr.childCount];
-        ValueText = new TMP_Text[upgradeTr.childCount];
-        CostText = new TMP_Text[upgradeTr.childCount];
-        ValueBar = new Image[upgradeTr.childCount];
-        if (GameManager.Instance.Upgrades == null)
-        {
-            Upgrade[] upgrade = new Upgrade[upgradeTr.childCount];
-            for (int i = 0; i < upgrade.Length; ++i)
-            {
-                upgrade[i] = new Upgrade(i, 0);
-            }
-            GameManager.Instance.ChangeUpgrade(upgrade);
-        }
+
         for (int i = 0; i < upgradeTr.childCount; ++i)
         {
             TMP_Text[] tMP_Texts = upgradeTr.GetChild(i).GetComponentsInChildren<TMP_Text>();
-            TitleText[i] = tMP_Texts[0];
-            ValueText[i] = tMP_Texts[1];
-            CostText[i] = tMP_Texts[2];
-            ValueBar[i] = FindTransform.ContinueFindChildByName(upgradeTr.GetChild(i), "ValueBar").GetComponent<Image>();
+            _titleText[i] = tMP_Texts[0];
+            _valueText[i] = tMP_Texts[1];
+            _costText[i] = tMP_Texts[2];
+            _valueBar[i] = FindTransform.ContinueFindChildByName(upgradeTr.GetChild(i), "ValueBar").GetComponent<Image>();
 
-            GameManager.Instance.Upgrades[i].Setting(ref TitleText[i], ref ValueText[i], ref CostText[i], ref ValueBar[i]);
+            GameManager.Instance.Upgrades[i].Setting(ref _titleText[i], ref _valueText[i], ref _costText[i], ref _valueBar[i]);
         }
     }
 
@@ -227,7 +225,7 @@ public class LobbyManager : MonoBehaviour
     {
         if (GameManager.Instance.Upgrades[idx].PowerUP(GameManager.Instance.Upgrades[idx].CurLV + 1))
         {
-            GameManager.Instance.Upgrades[idx].Setting(ref TitleText[idx], ref ValueText[idx], ref CostText[idx], ref ValueBar[idx]);
+            GameManager.Instance.Upgrades[idx].Setting(ref _titleText[idx], ref _valueText[idx], ref _costText[idx], ref _valueBar[idx]);
             _goodsText.text = "Goods: " + GameManager.Instance.Goods.Value.ToString();
         }
     }

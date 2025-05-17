@@ -283,7 +283,6 @@ public class InGameUIManager : MonoBehaviour
                 case CanvasName.RewardBox:
                     if (idx == -1) break;
                     _rewardBoxes[idx].gameObject.SetActive(false);
-                    print("PPP");
                     if (idx == 0)
                     {
                         SetActiveCanvas(CanvasName.ItemReward, false);

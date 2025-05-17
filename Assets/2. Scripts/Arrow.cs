@@ -113,11 +113,11 @@ public class Arrow : MonoBehaviour
         this.controlPoints[1] = this.controlPoints[0] + (this.controlPoints[3] - this.controlPoints[0]) * this.controlPointFactors[ArrowIndex][0];
         this.controlPoints[2] = this.controlPoints[0] + (this.controlPoints[3] - this.controlPoints[0]) * this.controlPointFactors[ArrowIndex][1];
 
-        if (MapManager.Instance.currStage.State == Map.StageState.Boss && ArrowIndex == 0)
-        {
-            this.controlPoints[1] = new Vector2(this.controlPoints[3].x - 3 * this.controlPoints[1].x, 0.75f * this.controlPoints[1].y);        // Boss용 Card 베지어 곡선
-            this.controlPoints[2] = new Vector2(this.controlPoints[3].x + 3 * this.controlPoints[2].x, 0.75f * this.controlPoints[2].y);        // Boss용 Card 베지어 곡선
-        }
+        //if (MapManager.Instance.currStage.State == Map.StageState.Boss && ArrowIndex == 0)
+        //{
+        //    this.controlPoints[1] = new Vector2(this.controlPoints[3].x - 3 * this.controlPoints[1].x, 0.75f * this.controlPoints[1].y);        // Boss용 Card 베지어 곡선
+        //    this.controlPoints[2] = new Vector2(this.controlPoints[3].x + 3 * this.controlPoints[2].x, 0.75f * this.controlPoints[2].y);        // Boss용 Card 베지어 곡선
+        //}
 
 
         for (int i = 0; i < this.arrowNodes.Count; ++i)     // 보스방에서 Node수 적어보이면 그냥 처음에 많이 만들고, 보스방에서는 노드 전부 사용, 일반 적은 일부만 사용 방식 쳬택할 예정.

@@ -17,17 +17,24 @@ public abstract class Entity : MonoBehaviour
     protected TMP_Text hpText;
     protected TMP_Text _criticalText;
     protected TMP_Text shieldText;
-    protected BoxCollider2D col2d;
+    protected BoxCollider2D _col2D;
     protected Canvas canvas;
 
 
     Transform _statusEffectContent;
-    public List<TMP_Text> StatusEffectAmountText;
+    /// <summary>
+    /// 0 = amount, 1 = duration
+    /// </summary>
+    public List<TMP_Text[]> StatusEffectText = new();
 
     Transform _statusEffectDescContent;
     Transform _statusDescWindow;
-    public List<TMP_Text> StatusEffectDescText;
-    public List<TMP_Text> StatusEffectDurationText;
+    BoxCollider2D _statusDescCol2D;
+    /// <summary>
+    /// 0 = desc, 1 = duration
+    /// </summary>
+    public List<TMP_Text[]> StatusEffectDescText = new();
+    //public List<TMP_Text> StatusEffectDurationText;
 
     SendAnimEvent _animEvent;
 
@@ -49,8 +56,11 @@ public abstract class Entity : MonoBehaviour
     protected ReactiveProperty<int> _criticalDamage { get; private set; } = new();
 
     float _hpRatio;
-
+    /// <summary>
+    /// StatusEffect : <StatusEffectType : (amount, duration)>
+    /// </summary>
     public Dictionary<StatusEffect, Dictionary<StatusEffectType, (int, int)>> CurStatusEffect = new();
+
     public Dictionary<(StatusEffect, StatusEffectType), int> StatusEffectTextIdx = new();
 
     int _numberOfStatusEffects = 0;
@@ -308,12 +318,13 @@ public abstract class Entity : MonoBehaviour
         hpText = hpBar.transform.Find("HPText").GetComponent<TMP_Text>();
         _criticalText = _criticalBar.transform.Find("CriticalText").GetComponent<TMP_Text>();
         shieldText = shieldObj.transform.Find("ShieldText").GetComponent<TMP_Text>();
-        col2d = GetComponent<BoxCollider2D>();
+        _col2D = GetComponent<BoxCollider2D>();
 
         _statusEffectContent = FindTransform.ContinueFindChildByName(canvas.transform.Find("StatusEffect"), "Content");
         
         _statusDescWindow = canvas.transform.Find("StatusEffectDesc");
         _statusDescWindow.GetComponent<ChildMouseHandler>().ParentEntity = this;
+        _statusDescCol2D = _statusDescWindow.GetComponent<BoxCollider2D>();
         
         _statusEffectDescContent = FindTransform.ContinueFindChildByName(_statusDescWindow, "Content");
 
@@ -343,6 +354,16 @@ public abstract class Entity : MonoBehaviour
         if (InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf) return;
         _statusEffectDescContent.localPosition = Vector3.zero;
         canvas.sortingOrder = 1;        // 이거 없으면 체력 UI에 가려짐
+        if (transform.position.x > 4 && _statusDescWindow.localPosition.x > 0)
+        {
+            _statusDescWindow.localPosition = new Vector3(-_statusDescWindow.localPosition.x, _statusDescWindow.localPosition.y, -1);       // 체력바보다 앞에 있어야 콜라이더에 문제 안 생김.
+            _statusDescCol2D.offset = new Vector2(-_statusDescCol2D.offset.x, 0);
+        }
+        else if (transform.position.x <= 4 && _statusDescWindow.localPosition.x < 0)
+        {
+            _statusDescWindow.localPosition = new Vector3(-_statusDescWindow.localPosition.x, _statusDescWindow.localPosition.y, -1);
+            _statusDescCol2D.offset = new Vector2(-_statusDescCol2D.offset.x, 0);
+        }
         _statusDescWindow.gameObject.SetActive(true);
     }
 
@@ -607,14 +628,16 @@ public abstract class Entity : MonoBehaviour
     {
         (int, int) info = CurStatusEffect[statusEffect.Item1][statusEffect.Item2];
 
-        StatusEffectAmountText[StatusEffectTextIdx[statusEffect]].text = info.Item1.ToString();
+        StatusEffectText[StatusEffectTextIdx[statusEffect]][0].text = info.Item1.ToString();
 
         if (statusEffect.Item2 == StatusEffectType.InfiniteDuration || statusEffect.Item2 == StatusEffectType.UseAmountInfiniteDuration)
         {
-            StatusEffectDurationText[StatusEffectTextIdx[statusEffect]].text = "지속시간: <color=yellow>∞</color>";
+            StatusEffectText[StatusEffectTextIdx[statusEffect]][1].text = "∞";
+            StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1}</color> / 지속시간: <color=yellow>∞</color>";
         }
         else
         {
+            StatusEffectText[StatusEffectTextIdx[statusEffect]][1].text = info.Item2.ToString();
             string color;
             if (info.Item2 > 5)
             {
@@ -628,32 +651,31 @@ public abstract class Entity : MonoBehaviour
             {
                 color = "red";
             }
-            StatusEffectDurationText[StatusEffectTextIdx[statusEffect]].text = $"지속시간: <color={color}>{info.Item2}</color>";
+            StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1}</color> / 지속시간: <color={color}>{info.Item2}</color>";
         }
-        float descHeight = StatusEffectDescText[StatusEffectTextIdx[statusEffect]].preferredHeight;
+        float descHeight = StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].preferredHeight;
 
-        StatusEffectDescText[StatusEffectTextIdx[statusEffect]].text = InGameManager.Instance.SESO.SEDatas[(int)statusEffect.Item1].Descript.Replace("{n}", $"<color=green>{info.Item1}</color>");
+        StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text = InGameManager.Instance.SESO.SEDatas[(int)statusEffect.Item1].Descript.Replace("{n}", $"<color=green>{info.Item1}</color>");
         if (statusEffect.Item2 == StatusEffectType.UseAmountTurnDuration || statusEffect.Item2 == StatusEffectType.UseAmountInfiniteDuration)
         {
-            StatusEffectDescText[StatusEffectTextIdx[statusEffect]].text += " <size=10><color=yellow>(능력 발동 시, 값이 감소합니다.)</color></size>";
+            StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text += " <size=10><color=yellow>(능력 발동 시, 값이 감소합니다.)</color></size>";
         }
         else if (statusEffect.Item2 == StatusEffectType.DurationIsAmount)
         {
-            StatusEffectDescText[StatusEffectTextIdx[statusEffect]].text += " <size=10><color=yellow>(내 턴마다 값이 감소합니다.)</color></size>";
+            StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text += " <size=10><color=yellow>(지속시간과 값이 같습니다.)</color></size>";
         }
         if (!_statusDescWindow.gameObject.activeSelf)
         {
             _statusDescWindow.gameObject.SetActive(true);           // 켰다가 꺼야 텍스트 크기 가져올 수 있음.. 나중에 좀 고치고 싶음.
             _statusDescWindow.gameObject.SetActive(false);
         }
-
-        if (descHeight == StatusEffectDescText[StatusEffectTextIdx[statusEffect]].preferredHeight)
+        if (descHeight == StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].GetPreferredValues().y)        // GetPreferredValues가 좀 더 정확한 값을 가져옴.
         {
             return;
         }
-        RectTransform rectTransform = StatusEffectDescText[StatusEffectTextIdx[statusEffect]].transform.parent.GetComponent<RectTransform>();
+        RectTransform rectTransform = StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].transform.parent.GetComponent<RectTransform>();
         Vector2 newSize = rectTransform.sizeDelta;
-        newSize.y = 30 + StatusEffectDescText[StatusEffectTextIdx[statusEffect]].preferredHeight;
+        newSize.y = 30 + StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].preferredHeight;
         rectTransform.sizeDelta = newSize;
 
     }
@@ -664,17 +686,18 @@ public abstract class Entity : MonoBehaviour
         {
             StatusEffectTextIdx.Add(statusEffect, StatusEffectTextIdx.Count);
             //Instantiate(InGameUIManager.Instance.StatusEffectPrefab, _statusEffectContent);
-            StatusEffectAmountText.Add(Instantiate(InGameUIManager.Instance.StatusEffectPrefab, _statusEffectContent).GetComponentInChildren<TMP_Text>());
-            var texts = Instantiate(InGameUIManager.Instance.StatusEffectDescPrefab, _statusEffectDescContent).GetComponentsInChildren<TMP_Text>();
-            StatusEffectDurationText.Add(texts[0]);
-            StatusEffectDescText.Add(texts[1]);
+            StatusEffectText.Add(Instantiate(InGameUIManager.Instance.StatusEffectPrefab, _statusEffectContent).GetComponentsInChildren<TMP_Text>());
+            //var texts = Instantiate(InGameUIManager.Instance.StatusEffectDescPrefab, _statusEffectDescContent).GetComponentsInChildren<TMP_Text>();
+            //StatusEffectDurationText.Add(texts[0]);
+            //StatusEffectDescText.Add(texts[1]);
+            StatusEffectDescText.Add(Instantiate(InGameUIManager.Instance.StatusEffectDescPrefab, _statusEffectDescContent).GetComponentsInChildren<TMP_Text>());
         }
-        StatusEffectAmountText[StatusEffectTextIdx[statusEffect]].transform.parent.gameObject.SetActive(isOn);
-        StatusEffectDescText[StatusEffectTextIdx[statusEffect]].transform.parent.gameObject.SetActive(isOn);
+        StatusEffectText[StatusEffectTextIdx[statusEffect]][0].transform.parent.gameObject.SetActive(isOn);
+        StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].transform.parent.gameObject.SetActive(isOn);
         if (isOn)
         {
-            StatusEffectAmountText[StatusEffectTextIdx[statusEffect]].transform.parent.SetAsLastSibling();
-            StatusEffectDescText[StatusEffectTextIdx[statusEffect]].transform.parent.SetAsLastSibling();
+            StatusEffectText[StatusEffectTextIdx[statusEffect]][0].transform.parent.SetAsLastSibling();
+            StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].transform.parent.SetAsLastSibling();
             ++_numberOfStatusEffects;
         }
         else
@@ -762,7 +785,6 @@ public abstract class Entity : MonoBehaviour
             //        amount = 1;
             //        return true;
             //}
-            (int, int) info;
             amount = 0;
             foreach (var typeDictValue in CurStatusEffect[statusEffect].Values)
             {
@@ -777,29 +799,39 @@ public abstract class Entity : MonoBehaviour
                 //        break;
                 //}
             }
+            (int, int) info;
+            bool once = false;
+            if (CurStatusEffect[statusEffect].TryGetValue(StatusEffectType.UseAmountTurnDuration, out info))
+            {
+                if (info.Item1 != 0 && info.Item2 != 0)
+                {
+                    ReduceStatusEffect((statusEffect, StatusEffectType.UseAmountTurnDuration), 1, 0);
+                    //CurStatusEffect[statusEffect][StatusEffectType.UseAmountTurnDuration] = (--info.Item1, info.Item2);
+                    if (statusEffect == StatusEffect.Resurrection)
+                    {
+                        once = true;
+                    }
+                }
+            }
+            if (CurStatusEffect[statusEffect].TryGetValue(StatusEffectType.UseAmountInfiniteDuration, out info))
+            {
+                if (once)       // 해당 상태효과가 1회 사용이고, 이미 turnduration에서 사용됐을 경우, 위에서 전부 더한 amount에 해당 값은 제외하는 코드 (그러나 1회 사용인 경우에는 amount값이 크게 중요하지 않아서 안 할 수도 있음.)
+                {
+                    amount -= info.Item1;
+                }
+                else if (info.Item1 != 0 && info.Item2 != 0)
+                {
+                    ReduceStatusEffect((statusEffect, StatusEffectType.UseAmountInfiniteDuration), 1, 0);
+                    //CurStatusEffect[statusEffect][StatusEffectType.UseAmountInfiniteDuration] = (--info.Item1, info.Item2);       // 해당 타입은 무한 지속시간일 수가 없으므로, 그냥 -1 진행. 그러나, -2를 하게되는 경우에는 예외처리가 필요함.
+                }
+            }
+            //amount = CurStatusEffect[statusEffect.Item1][statusEffect.Item2].Item1;
             switch (statusEffect)       // 능력치는 UI에 띄우기 때문에 바로바로 적용되어야 함.
             {
                 case StatusEffect.ATKUp:
                     AttackPower.Value = amount;
                     break;
             }
-            if (CurStatusEffect[statusEffect].TryGetValue(StatusEffectType.UseAmountInfiniteDuration, out info))
-            {
-                if (info.Item1 != 0 && info.Item2 != 0)
-                {
-                    ReduceStatusEffect((statusEffect, StatusEffectType.UseAmountInfiniteDuration), 1, 0);
-                    //CurStatusEffect[statusEffect][StatusEffectType.UseAmountInfiniteDuration] = (--info.Item1, info.Item2);       // 해당 타입은 무한 지속시간일 수가 없으므로, 그냥 -1 진행. 그러나, -2를 하게되는 경우에는 예외처리가 필요함.
-                }
-            }
-            else if (CurStatusEffect[statusEffect].TryGetValue(StatusEffectType.UseAmountTurnDuration, out info))
-            {
-                if (info.Item1 != 0 && info.Item2 != 0)
-                {
-                    ReduceStatusEffect((statusEffect, StatusEffectType.UseAmountTurnDuration), 1, 0);
-                    //CurStatusEffect[statusEffect][StatusEffectType.UseAmountTurnDuration] = (--info.Item1, info.Item2);
-                }
-            }
-            //amount = CurStatusEffect[statusEffect.Item1][statusEffect.Item2].Item1;
             return true;
         }
         else

@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
 
     public ReactiveProperty<int> Goods { get; private set; } = new();
 
-    public Upgrade[] Upgrades { get; private set; } = null;
+    public Upgrade[] Upgrades { get; private set; }
 
     public int PauseInt;
 
@@ -53,6 +53,12 @@ public class GameManager : MonoBehaviour
                 InGameUIManager.Instance.ChangeStatus(7, goods);
         });
         NowChapterLV = SceneManager.GetActiveScene().buildIndex;
+
+        Upgrades = new Upgrade[8];
+        for (int i = 0; i < Upgrades.Length; ++i)
+        {
+            Upgrades[i] = new Upgrade(i, 0);
+        }
     }
 
     public void AddInGameDontDestroy(GameObject gameObject)
@@ -74,10 +80,6 @@ public class GameManager : MonoBehaviour
     public void AddGoods(int amount)
     {
         Goods.Value += amount;
-    }
-    public void ChangeUpgrade(Upgrade[] upgrades)
-    {
-        Upgrades = upgrades;
     }
     public void ChangeUpgrade(int idx, int amount)
     {

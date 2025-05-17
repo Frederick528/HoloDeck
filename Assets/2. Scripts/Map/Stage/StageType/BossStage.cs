@@ -49,15 +49,17 @@ public class BossStage : MonoBehaviour, IStage
         switch (rand)
         {
             case 0:
-                EnemyManager.Instance.SpawnBoss(100, 0);
-                EnemyManager.Instance.SpawnBoss(101, 1);
-                EnemyManager.Instance.SpawnBoss(102, 2);
+                EnemyManager.Instance.SpawnEnemy(100, 0);       // 잠시 SpawnEnemy 사용. 나중에 Boss로 바꿀거임.
+                EnemyManager.Instance.SpawnEnemy(101, 1);
+                EnemyManager.Instance.SpawnEnemy(102, 2);
+                EnemyManager.Instance.SpawnEnemy(102, 3);
+                print(EnemyManager.Instance.SpawnEnemy(102, 4));
                 break;
             case 1:
-                EnemyManager.Instance.SpawnBoss(101, 1);
+                EnemyManager.Instance.SpawnEnemy(101, 1);
                 break;
             case 2:
-                EnemyManager.Instance.SpawnBoss(102, 1);
+                EnemyManager.Instance.SpawnEnemy(102, 1);
                 break;
         }
     }

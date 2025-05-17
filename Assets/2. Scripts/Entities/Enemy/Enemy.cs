@@ -148,7 +148,7 @@ public abstract class Enemy : Entity
         //int resistDamage = ResistDamage(damage);
         if (((_curHP.Value + _shield.Value) - (resistDamage * count)) <= 0)
         {
-            col2d.enabled = false;
+            _col2D.enabled = false;
             CanClear = true;
             foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
             {
