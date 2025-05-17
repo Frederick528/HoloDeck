@@ -64,21 +64,22 @@ MonoBehaviour:
       \uCD5C\uB300 \uCCB4\uB825\uC758 50%\uB9CC\uD07C \uD68C\uBCF5\uD569\uB2C8\uB2E4.
       ({n}\uBC88 \uC0AC\uC6A9 \uAC00\uB2A5\uD569\uB2C8\uB2E4.)"
     Sprite: {fileID: 0}
-  - SE: 0
+  - SE: 11
     SET: 0
-    Descript: 
+    Descript: "\uC5BB\uB294 \uCF54\uC778 \uD68D\uB4DD\uB7C9\uC774 {n}%p\uB9CC\uD07C
+      \uC99D\uAC00\uD569\uB2C8\uB2E4."
     Sprite: {fileID: 0}
-  - SE: 0
+  - SE: 12
     SET: 0
-    Descript: 
+    Descript: "\uCE58\uBA85\uD0C0 \uD655\uB960\uC774 {n}%p\uB9CC\uD07C \uC99D\uAC00\uD569\uB2C8\uB2E4."
     Sprite: {fileID: 0}
-  - SE: 0
+  - SE: 13
     SET: 0
-    Descript: 
+    Descript: "\uCE58\uBA85\uD0C0 \uB370\uBBF8\uC9C0\uAC00 {n}%p\uB9CC\uD07C \uC99D\uAC00\uD569\uB2C8\uB2E4."
     Sprite: {fileID: 0}
-  - SE: 0
+  - SE: 14
     SET: 0
-    Descript: 
+    Descript: "\uCD5C\uB300 \uCCB4\uB825\uC774 {n}\uB9CC\uD07C \uC99D\uAC00\uD569\uB2C8\uB2E4."
     Sprite: {fileID: 0}
   - SE: 0
     SET: 0

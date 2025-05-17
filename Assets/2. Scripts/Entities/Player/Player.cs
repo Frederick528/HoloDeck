@@ -90,15 +90,23 @@ public class Player : Entity
     void SetupPlayer(int hp, int criticalChance = 10, int criticalDamage = 150)
     {
         //SetupEntity(hp + GameManager.Instance.AddMaxHP, criticalChance + GameManager.Instance.AddCriticalChance, criticalDamage + GameManager.Instance.AddCriticalDamage);
-        _maxHP.Value = hp + GameManager.Instance.AddMaxHP;
-        _curHP.Value = _maxHP.Value;
-        _criticalChance.Value = criticalChance + GameManager.Instance.AddCriticalChance;
-        _criticalDamage.Value = criticalDamage + GameManager.Instance.AddCriticalDamage;
-        AttackPower.Value = GameManager.Instance.AddAttackPower;
-        DefensePower.Value = GameManager.Instance.AddDefensePower;
-        HealPower.Value = GameManager.Instance.AddHealPower;
+        _maxHP.Value = hp/* + GameManager.Instance.AddMaxHP*/;
+        _criticalChance.Value = criticalChance/* + GameManager.Instance.AddCriticalChance*/;
+        _criticalDamage.Value = criticalDamage/* + GameManager.Instance.AddCriticalDamage*/;
+        //AttackPower.Value = GameManager.Instance.AddAttackPower;
+        //DefensePower.Value = GameManager.Instance.AddDefensePower;
+        //HealPower.Value = GameManager.Instance.AddHealPower;
 
-        AddStatusEffect((StatusEffect.Resurrection, StatusEffectType.UseAmountInfiniteDuration), GameManager.Instance.Resurrection);
+        AddStatusEffect((StatusEffect.HPUp, StatusEffectType.Perpetual), GameManager.Instance.AddMaxHP);
+        AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.Perpetual), GameManager.Instance.AddAttackPower);
+        AddStatusEffect((StatusEffect.DEFUp, StatusEffectType.Perpetual), GameManager.Instance.AddDefensePower);
+        AddStatusEffect((StatusEffect.HealUp, StatusEffectType.Perpetual), GameManager.Instance.AddHealPower);
+        AddStatusEffect((StatusEffect.CriticalChanceUp, StatusEffectType.Perpetual), GameManager.Instance.AddCriticalChance);
+        AddStatusEffect((StatusEffect.CriticalDamageUp, StatusEffectType.Perpetual), GameManager.Instance.AddCriticalDamage);
+        AddStatusEffect((StatusEffect.Resurrection, StatusEffectType.UseAmountPerpetual), GameManager.Instance.Resurrection);
+        AddStatusEffect((StatusEffect.CoinGained, StatusEffectType.Perpetual), GameManager.Instance.AddCoinGained);
+        
+        _curHP.Value = _maxHP.Value;
 
         MaxHolo = 3;
         CurHolo = MaxHolo;

@@ -128,6 +128,9 @@ public class CardManager : MonoBehaviour
         int _startDeck = 6;     // 여기 밑 코드 변경해야 함. 캐릭터별로 얻는 카드와 카드 ID가 달라지기 때문에 switch로 구별.
         for (int i = 0; i < _startDeck; i++)
             AddDeck(100 + i, EAddDeck.Main);
+        AddDeck(101, EAddDeck.Main);
+        AddDeck(101, EAddDeck.Main);
+        AddDeck(101, EAddDeck.Main);
     }
     public void AddDeck(CardData cardData, EAddDeck eAddDeck)       // 덱에 카드를 추가할 때 사용, 핸드로 카드를 가져올 때는 AddCard 함수 사용. (주로 데이터 자체가 이동할 때 사용) => 해결함 이제 그냥 써도 됨.
     {

@@ -39,7 +39,7 @@ MonoBehaviour:
   - Name: Name2
     ID: 101
     Cost: 1
-    Damage: 3
+    Damage: 2
     Shield: 0
     Count: 0
     Draw: 1

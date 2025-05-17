@@ -559,8 +559,9 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Slash))
         {
-            Player.AddAndApplyStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), 1);
-            Player.AddAndApplyStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), 3, 10);
+            //Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), 1);
+            Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.UseAmountTurnDuration), 3, 4);
+            //Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), 3, 10);
             //player.AddAndApplyStatusEffect((StatusEffect.HealUp, StatusEffectType.InfiniteDuration), 1);
             //player.AddAndApplyStatusEffect((StatusEffect.DEFUp, StatusEffectType.InfiniteDuration), 1);
             Player.AddStatusEffect((StatusEffect.Resurrection, StatusEffectType.UseAmountTurnDuration), 1, 10);

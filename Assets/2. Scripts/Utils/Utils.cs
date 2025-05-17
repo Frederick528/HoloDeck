@@ -36,7 +36,7 @@ public enum EAddDeck
 
 public enum StatusEffect
 {
-    Attack, Defense, Heal, ATKUp, DEFUp, HealUp, Vulnerable, Weaking, Reflection, Protect, Resurrection
+    Attack, Defense, Heal, ATKUp, DEFUp, HealUp, Vulnerable, Weaking, Reflection, Protect, Resurrection, CoinGained, CriticalChanceUp, CriticalDamageUp, HPUp
 }
 
 public enum StatusEffectType
@@ -44,8 +44,10 @@ public enum StatusEffectType
     InfiniteDuration,                   // 무한 지속 (duration = -1), 버프 제거로만 삭제 가능
     TurnDuration,                       // 턴마다 지속시간 1 감소
     DurationIsAmount,                   // 턴마다 지속시간이 1 감소되며, 이는 값을 의미하기도 함
-    UseAmountInfiniteDuration,          // Amount 값이 사용되며, 값이 0이 되지 않는 한, 무한 지속
+    UseAmountInfiniteDuration,          // Amount 값이 사용되며, 값이 0이 되지 않는다면, 버프 제거로만 삭제 가능
     UseAmountTurnDuration,              // Amount 값이 사용되며, 턴마다 지속시간 1 감소
+    Perpetual,                          // 영구적으로 적용. 버프제거로도 안 사라짐.
+    UseAmountPerpetual                  // Amount 값이 사용되며, 값이 0이 되지 않는다면, 영구적으로 적용.
 }
 
 public class FindTransform

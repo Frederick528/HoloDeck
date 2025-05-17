@@ -171,6 +171,10 @@ public class Card : MonoBehaviour
         //UniTask uniTask = UniTask.Create(() => CardTask);
         //await CardAbility.SetCardAbility(this);     // 다른 방식이 있는지 찾아봐야할 듯
         await CardTask();
+        if (Data.Damage != 0)
+        {
+            InGameManager.Instance.Player.ApplyStatusEffect(StatusEffect.ATKUp, out _);
+        }
     }
     //public async UniTask UseLazy()
     //{
