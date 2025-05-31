@@ -794,10 +794,13 @@ public abstract class Entity : MonoBehaviour
         {
             case StatusEffectType.InfiniteDuration:
             case StatusEffectType.UseAmountInfiniteDuration:
-            case StatusEffectType.Perpetual:
-            case StatusEffectType.UseAmountPerpetual:
                 StatusEffectText[StatusEffectTextIdx[statusEffect]][1].text = "∞";
                 StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1}</color> / 지속시간: <color=yellow>∞</color>";
+                break;
+            case StatusEffectType.Perpetual:
+            case StatusEffectType.UseAmountPerpetual:
+                StatusEffectText[StatusEffectTextIdx[statusEffect]][1].text = null;
+                StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1}</color>"/* / 지속시간: <color=yellow>∞</color>"*/;
                 break;
             default:
                 StatusEffectText[StatusEffectTextIdx[statusEffect]][1].text = info.Item2.ToString();

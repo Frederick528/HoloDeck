@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/1. Scenes/15. Scripts&Map.unity
     guid: 0eca73f92791ad1488c14bb1ba0c642f
   - enabled: 1
-    path: Assets/1. Scenes/16. Scripts&Map Copy.unity
-    guid: 7274596de2619884e8799940fec0adbd
+    path: Assets/1. Scenes/16. EndBoss.unity
+    guid: acad0528ac071294f8c9a9078239f6b0
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 77dd1639f23d301449d15f0751ad0444, type: 2}

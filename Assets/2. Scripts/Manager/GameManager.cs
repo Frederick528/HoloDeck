@@ -114,25 +114,28 @@ public class GameManager : MonoBehaviour
 
     public void ChangeScene(int idx)
     {
-        SceneManager.LoadScene(idx);
+        
         switch (idx)
         {
             case 0:
                 DestroyAllInGameDontDestroyObjects();
                 NowChapterLV = 0;       // 로비
+                SceneManager.LoadScene(idx);
                 break;
             case 1:
-                NowChapterLV = 1;
-                //MapManager.Instance.CreateMapCnt = 15;
-                //MapManager.Instance.MaxDistance = (3, 3);
-                //MapManager.Instance.MapScale = 1;
-                break;
             case 2:
-                NowChapterLV = 2;
-                //MapManager.Instance.CreateMapCnt = 30;
-                //MapManager.Instance.MaxDistance = (4, 3);
-                //MapManager.Instance.MapScale = 0.95f;
-                //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, MapManager.Instance.currStage.rewardBox);
+            case 3:
+                NowChapterLV = idx;
+                SceneManager.LoadScene(1);
+                break;
+            case 4:
+                NowChapterLV = idx;
+                SceneManager.LoadScene(2);
+                break;
+            default:
+                DestroyAllInGameDontDestroyObjects();
+                NowChapterLV = 0;       // 로비
+                SceneManager.LoadScene(idx);
                 break;
         }
     }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MapManager : MonoBehaviour
 {
@@ -43,7 +44,7 @@ public class MapManager : MonoBehaviour
         if (_onLoaded) return;
         SetMapSize();
         _settingMap.Start();
-        ShowAllMap();
+        //ShowAllMap();
     }
 
     void SetMapSize()
@@ -51,14 +52,22 @@ public class MapManager : MonoBehaviour
         switch (GameManager.Instance.NowChapterLV)
         {
             case 1:
-                CreateMapCnt = 5;
+                CreateMapCnt = 10;
                 MaxDistance = (3, 3);
                 MapScale = 1;
                 break;
             case 2:
-                CreateMapCnt = 30;
+                CreateMapCnt = 15;
                 MaxDistance = (4, 3);
-                MapScale = 0.95f;
+                MapScale = 1;
+                //CreateMapCnt = 30;
+                //MaxDistance = (4, 3);
+                //MapScale = 0.95f;
+                break;
+            case 3:
+                CreateMapCnt = 20;
+                MaxDistance = (5, 3);
+                MapScale = 1;
                 break;
         }
     }
@@ -83,7 +92,16 @@ public class MapManager : MonoBehaviour
         //}
         SetMapSize();
         _settingMap.Start();
-        ShowAllMap();
+        //ShowAllMap();
+    }
+
+    public void ResetChapter()
+    {
+        //_onLoaded = true;
+        PrevStage = null;
+        SetMapSize();
+        _settingMap.Start();
+        //ShowAllMap();
     }
 
     public async UniTaskVoid ClearStage()
@@ -108,8 +126,13 @@ public class MapManager : MonoBehaviour
 
     public async UniTaskVoid ClearStage(Map stage)
     {
-        if (stage.State == Map.StageState.Enemy || stage.State == Map.StageState.Boss)
+        if (currStage.State == Map.StageState.Enemy)
         {
+            await TurnManager.Instance.EndBattle();
+        }
+        else if (currStage.State == Map.StageState.Boss)
+        {
+            _settingMap.NextChapterBtn.SetActive(true);
             await TurnManager.Instance.EndBattle();
         }
         stage.ClearMap();

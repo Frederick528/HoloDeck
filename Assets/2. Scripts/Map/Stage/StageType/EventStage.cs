@@ -1,15 +1,27 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class EventStage : MonoBehaviour, IStage
 {
     Map _map;
+    //Button _eventAgreeButton;
+    //Button _eventDisagreeButton;
 
     public void Enter(Map map)
     {
         if (!_map)
+        {
             _map = map;
+        }
+        //if (!_eventAgreeButton)
+        //{
+        //    Button[] buttons = InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.Event).GetComponentsInChildren<Button>();
+        //    _eventAgreeButton = buttons[0];
+        //    _eventDisagreeButton = buttons[1];
+        //}
         if (!map.cleared)
         {
             if (_map.RandomPattern == -1)
@@ -48,10 +60,41 @@ public class EventStage : MonoBehaviour, IStage
         switch (rand)
         {
             case 0:
+                SetEventButton(() =>
+                {
+                    MapManager.Instance.ShowAllMap();
+                },
+                () =>
+                {
+
+                });
+                break;
             case 1:
+                SetEventButton(() =>
+                {
+                    MapManager.Instance.ShowAllMap();
+                },
+                () =>
+                {
+
+                });
+                break;
             case 2:
-                InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Event, true);
+                SetEventButton(() =>
+                {
+                    MapManager.Instance.ShowAllMap();
+                },
+                () =>
+                {
+
+                });
                 break;
         }
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Event, true);
+    }
+    public void SetEventButton(Action agree, Action disagree)
+    {
+        InGameButtonManager.Instance.EventAgreeAction = agree;
+        InGameButtonManager.Instance.EventDisagreeAction = disagree;
     }
 }

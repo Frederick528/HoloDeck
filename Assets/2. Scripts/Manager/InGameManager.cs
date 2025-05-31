@@ -555,7 +555,7 @@ public class InGameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.B))
         {
             print(FindItemData(100));
-
+            MapManager.Instance.ShowAllMap();
         }
         if (Input.GetKeyDown(KeyCode.Slash))
         {

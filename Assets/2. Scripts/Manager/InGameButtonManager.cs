@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
@@ -19,6 +20,12 @@ public class InGameButtonManager : MonoBehaviour
     public Button ActiveItemButton;
     [HideInInspector]
     public Button[] PotionButtons = new Button[4];
+
+    Button _eventAgreeButton;
+    Button _eventDisagreeButton;
+
+    public Action EventAgreeAction;
+    public Action EventDisagreeAction;
 
     int _nowCardState;
 
@@ -43,6 +50,23 @@ public class InGameButtonManager : MonoBehaviour
         //{
         //    ItemManager.Instance.TurnPassiveItemPage(1);
         //});
+        Button[] buttons = InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.Event).GetComponentsInChildren<Button>();
+        _eventAgreeButton = buttons[0];
+        _eventDisagreeButton = buttons[1];
+        _eventAgreeButton.onClick.AddListener(() =>
+        {
+            EventAgreeAction?.Invoke();
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Event, false);
+            MapManager.Instance.ClearStage().Forget();
+            EventAgreeAction = null;
+        });
+        _eventDisagreeButton.onClick.AddListener(() =>
+        {
+            EventDisagreeAction?.Invoke();
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Event, false);
+            MapManager.Instance.ClearStage().Forget();
+            EventDisagreeAction = null;
+        });
 
         ActiveItemButton = InGameUIManager.Instance.ActiveTransform.GetComponent<Button>();
 
@@ -128,11 +152,19 @@ public class InGameButtonManager : MonoBehaviour
         InGameUIManager.Instance.ShowStatus();
     }
 
-    public void EventReward(bool agree)
-    {
-        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Event, false);
-        MapManager.Instance.ClearStage().Forget();
-    }
+    //public void EventReward(bool agree)
+    //{
+    //    if (agree)
+    //    {
+
+    //    }
+    //    else
+    //    {
+
+    //    }
+    //    InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Event, false);
+    //    MapManager.Instance.ClearStage().Forget();
+    //}
 
     public void LookMap()
     {
@@ -147,29 +179,28 @@ public class InGameButtonManager : MonoBehaviour
     public void ChangeScene(int idx)
     {
         GameManager.Instance.ChangeScene(idx);
-        //switch (idx)
-        //{
-        //    case 0:
-        //        GameManager.Instance.DestroyAllInGameDontDestroyObjects();
-        //        break;
-        //    case 1:
-        //        InGameManager.Instance.NowChapterLV = 1;
-        //        MapManager.Instance.CreateMapCnt = 15;
-        //        MapManager.Instance.MaxDistance = (3, 3);
-        //        MapManager.Instance.MapScale = 1;
-        //        break;
-        //    case 2:
-        //        InGameManager.Instance.NowChapterLV = 2;
-        //        MapManager.Instance.CreateMapCnt = 30;
-        //        MapManager.Instance.MaxDistance = (4, 3);
-        //        MapManager.Instance.MapScale = 0.95f;
-        //        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, MapManager.Instance.currStage.rewardBox);
-        //        break;
-        //}
+
     }
 
     public void NextChapter()
     {
-        ChangeScene(++GameManager.Instance.NowChapterLV);
+        switch (GameManager.Instance.NowChapterLV)
+        {
+            case 0:
+                ChangeScene(GameManager.Instance.NowChapterLV);
+                break;
+            case 1:
+            case 2:
+            case 3:
+                ++GameManager.Instance.NowChapterLV;
+                MapManager.Instance.ResetChapter();
+                break;
+            case 4:
+                ChangeScene(++GameManager.Instance.NowChapterLV);
+                break;
+            default:
+                ChangeScene(GameManager.Instance.NowChapterLV);
+                break;
+        }
     }
 }
