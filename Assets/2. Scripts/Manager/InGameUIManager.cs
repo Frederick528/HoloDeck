@@ -82,6 +82,9 @@ public class InGameUIManager : MonoBehaviour
 
     bool _addRewardItemCount;
 
+    public Image EventImage;
+    public TMP_Text EventText;
+
     private void Awake()
     {
         _canvas = GameObject.Find("InGameCanvases").GetComponent<Transform>();
@@ -221,6 +224,9 @@ public class InGameUIManager : MonoBehaviour
         {
             _uiItems[i] = _itemRewardContent.GetChild(i).GetComponent<UIItem>();
         }
+
+        EventImage = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Event), "EventImage").GetComponent<Image>();
+        EventText = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Event), "EventText").GetComponent<TMP_Text>();
 
     }
 

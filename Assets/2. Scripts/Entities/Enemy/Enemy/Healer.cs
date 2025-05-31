@@ -13,6 +13,8 @@ public class Healer : Enemy
         EnemySubScribe();
         AddStatusEffect((StatusEffect.Reflection, StatusEffectType.InfiniteDuration), 3);
         AddStatusEffect((StatusEffect.Protect, StatusEffectType.InfiniteDuration), 1);
+        _nextActImg.transform.localPosition = new Vector3(0, 1.8f);
+        _nextActImg.sprite = EnemyManager.Instance.NextActImg(1);
     }
 
     //protected override async UniTask BeforeTakeDamage()
@@ -63,10 +65,12 @@ public class Healer : Enemy
         switch (turn)
         {
             case 1:
-                await Heal(enemyData.Damage);
+                await Shield(enemyData.Damage);
+                _nextActImg.sprite = EnemyManager.Instance.NextActImg(2);
                 break;
             case 2:
                 await Heal(enemyData.Damage);
+                _nextActImg.sprite = EnemyManager.Instance.NextActImg(1);
                 turn = 0;
                 break;
         }

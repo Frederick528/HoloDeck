@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UniRx;
+using System;
 
 public class Player : Entity
 {
@@ -17,6 +18,8 @@ public class Player : Entity
     //public ReactiveProperty<int> HealPower { get; private set; } = new();
 
     readonly int _battleAnimBool = Animator.StringToHash("Battle");
+    readonly int _runningAnim = Animator.StringToHash("Running");
+    readonly int _enterAnimBool = Animator.StringToHash("Enter");
 
     //bool _resurrection = false;
     //public int _attackPower;
@@ -185,4 +188,66 @@ public class Player : Entity
     {
         animator.SetBool(_battleAnimBool, isBattleStart);
     }
+
+    public async UniTask ExitAndEnterStage(Action isEnter)
+    {
+        Quaternion defaultRot = animator.transform.rotation;
+        Vector3 defaultPos = animator.transform.localPosition;
+        bool canMove = false;
+        if (MapManager.Instance.canMove)
+        {
+            canMove = true;
+            MapManager.Instance.canMove = false;
+        }
+
+        animator.Play(_runningAnim);
+        animator.SetBool(_enterAnimBool, true);
+        animator.transform.rotation = new Quaternion(defaultRot.x, -defaultRot.y, defaultRot.z, defaultRot.w);
+        OutGameUIManager.Instance.FadeOut(0.55f).Forget();
+        await MoveTask(0.65f, defaultPos, new Vector3(-4, 0));
+        isEnter();
+        animator.transform.rotation = defaultRot;
+        OutGameUIManager.Instance.FadeIn(0.75f).Forget();
+        await MoveTask(0.85f, new Vector3(-4, 0), defaultPos);
+        animator.SetBool(_enterAnimBool, false);
+
+        MapManager.Instance.canMove = canMove;
+        //if (isEnter)
+        //{
+        //    animator.Play("Running");
+        //    animator.SetBool("Enter", true);
+        //    await MoveTask(1f, new Vector3(-4, 0), animator.transform.localPosition);
+        //    animator.SetBool("Enter", false);
+        //}
+        //else
+        //{
+        //    animator.Play("Running");
+        //    await MoveTask(1f, animator.transform.localPosition, new Vector3(-4, 0));
+        //    animator.SetTrigger("Exit");
+        //}
+    }
+
+    public async UniTask MoveTask(float time, Vector3 startPos, Vector3 endPos)
+    {
+        animator.transform.localPosition = startPos;
+        //float elapsedTime = 0f;
+
+        //while (elapsedTime < time)
+        //{
+        //    elapsedTime += Time.deltaTime;
+        //    float t = elapsedTime / time;
+        //    animator.transform.localPosition = Vector3.Lerp(animator.transform.localPosition, endPos, t);
+        //    await UniTask.Yield(); // 다음 프레임으로 넘김
+        //}
+        float moveSpeed = Vector3.Distance(animator.transform.localPosition, endPos) / time;
+
+        while (Vector3.Distance(animator.transform.localPosition, endPos) > 0.01f)
+        {
+            animator.transform.localPosition = Vector3.MoveTowards(animator.transform.localPosition, endPos, moveSpeed * Time.deltaTime);
+            await UniTask.Yield(); // 다음 프레임으로 넘김
+        }
+
+        animator.transform.localPosition = endPos; // 정확한 위치 고정
+    }
+
 }

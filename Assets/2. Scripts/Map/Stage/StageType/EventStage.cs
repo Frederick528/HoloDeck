@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -60,33 +61,36 @@ public class EventStage : MonoBehaviour, IStage
         switch (rand)
         {
             case 0:
+                InGameUIManager.Instance.EventText.text = "수락 시, 맵을 밝힙니다.\n거절 시, 체력을 10 회복합니다.";
                 SetEventButton(() =>
                 {
                     MapManager.Instance.ShowAllMap();
                 },
                 () =>
                 {
-
+                    InGameManager.Instance.Player.Heal(10).Forget();
                 });
                 break;
             case 1:
+                InGameUIManager.Instance.EventText.text = "수락 시, 맵을 밝힙니다.\n거절 시, 체력을 10 회복합니다.";
                 SetEventButton(() =>
                 {
                     MapManager.Instance.ShowAllMap();
                 },
                 () =>
                 {
-
+                    InGameManager.Instance.Player.Heal(10).Forget();
                 });
                 break;
             case 2:
+                InGameUIManager.Instance.EventText.text = "수락 시, 맵을 밝힙니다.\n거절 시, 체력을 10 회복합니다.";
                 SetEventButton(() =>
                 {
                     MapManager.Instance.ShowAllMap();
                 },
                 () =>
                 {
-
+                    InGameManager.Instance.Player.Heal(10).Forget();
                 });
                 break;
         }

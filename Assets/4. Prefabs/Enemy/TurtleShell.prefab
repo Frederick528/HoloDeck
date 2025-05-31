@@ -47,9 +47,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16670b7e5f1a354ea9810d8a5efdd0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StatusEffectAmountText: []
-  StatusEffectDescText: []
-  StatusEffectDurationText: []
   spawnPosIdx: 0
   CanClear: 0
 --- !u!61 &548080196766639340

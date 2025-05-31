@@ -12,7 +12,7 @@ public class OutGameButtonManager : MonoBehaviour
         Instance = Instance != null ? Instance : this;
     }
 
-    public void ChangeScene(int idx)
+    public void ChangeScene(int idx)        // Lobby∑Œ ≈Î«’µ .
     {
         GameManager.Instance.ChangeScene(idx);
     }

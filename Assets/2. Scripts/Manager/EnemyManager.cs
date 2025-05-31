@@ -161,4 +161,9 @@ public class EnemyManager : MonoBehaviour
         }
         //return Array.Find(enemySO.enemyDatas, x => x.ID == ID);
     }
+
+    public Sprite NextActImg(int idx)
+    {
+        return enemySO.EnemyNextAct[idx];
+    }
 }

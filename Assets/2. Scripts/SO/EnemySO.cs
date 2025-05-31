@@ -53,6 +53,7 @@ public class EnemySO : ScriptableObject
     public Sprite[] EnemySprites;
     public GameObject[] EnemyPrefabs;
 
+    public Sprite[] EnemyNextAct;
 
     public EnemyData[] EnemyDatas;
 }

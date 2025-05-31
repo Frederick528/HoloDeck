@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -112,9 +113,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ChangeScene(int idx)
+    public async UniTaskVoid ChangeScene(int idx)
     {
-        
+        await OutGameUIManager.Instance.FadeOut(0.55f);
         switch (idx)
         {
             case 0:
@@ -138,5 +139,6 @@ public class GameManager : MonoBehaviour
                 SceneManager.LoadScene(idx);
                 break;
         }
+        await OutGameUIManager.Instance.FadeIn(0.75f);
     }
 }

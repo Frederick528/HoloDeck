@@ -43,6 +43,11 @@ public abstract class Entity : MonoBehaviour
     bool _isDied;
 
     protected Animator animator;
+    readonly int _hitAnim = Animator.StringToHash("Hit");
+    readonly int _attackAnim = Animator.StringToHash("Attack");
+    readonly int _dieAnim = Animator.StringToHash("Die");
+
+
     protected ReactiveProperty<int> _maxHP = new();
     protected ReactiveProperty<int> _curHP = new();
     protected ReactiveProperty<int> _shield = new();
@@ -65,6 +70,15 @@ public abstract class Entity : MonoBehaviour
     public Dictionary<(StatusEffect, StatusEffectType), int> StatusEffectTextIdx = new();
 
     int _numberOfStatusEffects = 0;
+
+    Color _black = new Color(0f, 0f, 0f);      // 검은색 (#000000)
+    Color _white = new Color(1f, 1f, 1f);      // 흰색 (#FFFFFF)
+    Color _navy = new Color(0f, 0.137f, 0.4f); // 짙은 남색 (#002366)
+    Color _gray = new Color(0.827f, 0.827f, 0.827f); // 연한 회색 (#D3D3D3)
+    Color _brown = new Color(0.396f, 0.258f, 0.125f); // 다크 브라운 (#654321)
+    Color _purple = new Color(0.294f, 0f, 0.509f); // 딥 퍼플 (#4B0082)
+    Color _teal = new Color(0f, 0.502f, 0.502f); // 청록색 (#008080)
+
 
     //private void Awake()    // start로 할 경우, Subscribe가 실행되지 않음. Awake로 하면 위험할 것 같아서 일단 함수로 빼고 자식 오브젝트에서 Start로 호출
     //{
@@ -150,7 +164,8 @@ public abstract class Entity : MonoBehaviour
         }
         //AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         //if (stateInfo.IsName("Attack"))
-        animator.Play("Hit", -1, 0);  // 타격 당하는 애니메이션 실행        => 공격 중에는 딜레이를 주거나 무시하는 코드가 필요할 듯.
+        animator.SetTrigger(_hitAnim);
+        //animator.Play("Hit", -1, 0);  // 타격 당하는 애니메이션 실행        => 공격 중에는 딜레이를 주거나 무시하는 코드가 필요할 듯.
         if (_curHP.Value > 0)
         {
             await AfterTakeDamage(isHit);
@@ -179,7 +194,8 @@ public abstract class Entity : MonoBehaviour
 
     public virtual async UniTask AttackAnimation(bool checkAtkTiming = false)
     {
-        animator.Play("Attack", -1, 0);  // 공격 애니메이션 실행
+        animator.SetTrigger(_attackAnim);
+        //animator.Play("Attack", -1, 0);  // 공격 애니메이션 실행
         if (checkAtkTiming)
         {
             await UniTask.WaitUntil(() => _isAtk/*, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token*/);    // 공격하는 모션 중에는 게임이 끝나지 않을 것
@@ -214,7 +230,8 @@ public abstract class Entity : MonoBehaviour
 
     public virtual async UniTask DieAnimation()
     {
-        animator.Play("Die", -1, 0);  // 사망 애니메이션 실행
+        animator.SetTrigger(_dieAnim);
+        //animator.Play("Die", -1, 0);  // 사망 애니메이션 실행
         //await UniTask.Delay(1000);
         await UniTask.WaitUntil(() => _isDied);
         Destroy(gameObject);
@@ -898,7 +915,36 @@ public abstract class Entity : MonoBehaviour
         {
             StatusEffectTextIdx.Add(statusEffect, StatusEffectTextIdx.Count);
             //Instantiate(InGameUIManager.Instance.StatusEffectPrefab, _statusEffectContent);
-            StatusEffectText.Add(Instantiate(InGameUIManager.Instance.StatusEffectPrefab, _statusEffectContent).GetComponentsInChildren<TMP_Text>());
+            GameObject effect = Instantiate(InGameUIManager.Instance.StatusEffectPrefab, _statusEffectContent);
+            Image[] effectImage = effect.GetComponentsInChildren<Image>();      // 0 = 배경, 1 = 상태 효과 이미지
+            switch (statusEffect.Item2)
+            {
+                case StatusEffectType.InfiniteDuration:
+                    effectImage[0].color = _black;
+                    break;
+                case StatusEffectType.TurnDuration:
+                    effectImage[0].color = _white;
+                    break;
+                case StatusEffectType.DurationIsAmount:
+                    effectImage[0].color = _navy;
+                    break;
+                case StatusEffectType.UseAmountInfiniteDuration:
+                    effectImage[0].color = _gray;
+                    break;
+                case StatusEffectType.UseAmountTurnDuration:
+                    effectImage[0].color = _brown;
+                    break;
+                case StatusEffectType.Perpetual:
+                    effectImage[0].color = _purple;
+                    break;
+                case StatusEffectType.UseAmountPerpetual:
+                    effectImage[0].color = _teal;
+                    break;
+                default:
+                    effectImage[0].color = _white;
+                    break;
+            }
+            StatusEffectText.Add(effect.GetComponentsInChildren<TMP_Text>());
             //var texts = Instantiate(InGameUIManager.Instance.StatusEffectDescPrefab, _statusEffectDescContent).GetComponentsInChildren<TMP_Text>();
             //StatusEffectDurationText.Add(texts[0]);
             //StatusEffectDescText.Add(texts[1]);

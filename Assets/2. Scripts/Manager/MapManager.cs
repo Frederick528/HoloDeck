@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEditorInternal.ReorderableList;
 
 public class MapManager : MonoBehaviour
 {
@@ -95,12 +96,16 @@ public class MapManager : MonoBehaviour
         //ShowAllMap();
     }
 
-    public void ResetChapter()
+    public async UniTaskVoid ResetChapter()
     {
+        if (OutGameUIManager.Instance)
+            await OutGameUIManager.Instance.FadeOut(0.55f);
         //_onLoaded = true;
         PrevStage = null;
         SetMapSize();
         _settingMap.Start();
+        if (OutGameUIManager.Instance)
+            await OutGameUIManager.Instance.FadeIn(0.75f);
         //ShowAllMap();
     }
 

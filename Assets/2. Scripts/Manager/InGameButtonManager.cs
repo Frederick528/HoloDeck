@@ -178,7 +178,7 @@ public class InGameButtonManager : MonoBehaviour
     /// </param>
     public void ChangeScene(int idx)
     {
-        GameManager.Instance.ChangeScene(idx);
+        GameManager.Instance.ChangeScene(idx).Forget();
 
     }
 
@@ -193,7 +193,7 @@ public class InGameButtonManager : MonoBehaviour
             case 2:
             case 3:
                 ++GameManager.Instance.NowChapterLV;
-                MapManager.Instance.ResetChapter();
+                MapManager.Instance.ResetChapter().Forget();
                 break;
             case 4:
                 ChangeScene(++GameManager.Instance.NowChapterLV);

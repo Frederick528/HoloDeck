@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UniRx;
+using UnityEngine.UI;
 
 public abstract class Enemy : Entity
 {
@@ -12,6 +13,8 @@ public abstract class Enemy : Entity
     protected EnemyData enemyData;
     public bool CanClear = false;
     protected Player player;
+
+    protected Image _nextActImg;
 
     //public bool Death;
 
@@ -275,6 +278,9 @@ public abstract class Enemy : Entity
         {
             enemyData.Damage = _defaultEnemyData.Damage + atk;
         });
+
+        _nextActImg = canvas.transform.Find("NextAct").GetComponent<Image>();
+        _nextActImg.gameObject.SetActive(true);
     }
     //void Start()      // 모든 상위 코드에 적용시켜야 함.
     //{

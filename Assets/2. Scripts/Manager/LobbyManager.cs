@@ -207,7 +207,7 @@ public class LobbyManager : MonoBehaviour
 
     public void ChangeScene(int idx)
     {
-        GameManager.Instance.ChangeScene(idx);
+        GameManager.Instance.ChangeScene(idx).Forget();
     }
 
     [VisibleEnum(typeof(CanvasName))]

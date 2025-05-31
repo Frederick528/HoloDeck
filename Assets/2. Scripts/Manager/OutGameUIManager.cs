@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -13,12 +14,15 @@ public class OutGameUIManager : MonoBehaviour
     public enum CanvasName
     {
         Option,
-        Sound
+        Sound,
+        Fade
     }
 
     Dictionary<int, Transform> _canvasDict = new();
 
     Transform _canvas;
+
+    Image _fadeImage;
 
 
     void Awake()
@@ -39,6 +43,8 @@ public class OutGameUIManager : MonoBehaviour
             _canvasDict.Add(i, _canvas.GetChild(i));
         }
         DontDestroyOnLoad(_canvas);
+
+        _fadeImage = _canvasDict[(int)CanvasName.Fade].GetComponentInChildren<Image>();
 
     }
 
@@ -86,4 +92,30 @@ public class OutGameUIManager : MonoBehaviour
     {
 
     }
+
+    public async UniTask FadeIn(float fadeDuration)
+    {
+        float time = 0f;
+        while (time < fadeDuration)
+        {
+            time += Time.deltaTime;
+            _fadeImage.color = new Color(0, 0, 0, Mathf.Lerp(1f, 0f, time / fadeDuration));
+            await UniTask.Yield();
+        }
+
+        _fadeImage.color = new Color(0, 0, 0, 0f); // ¿ÏÀüÈ÷ ¹à¾ÆÁü
+        SetActiveCanvas(CanvasName.Fade, false);
+    }
+    public async UniTask FadeOut(float fadeDuration)
+    {
+        SetActiveCanvas(CanvasName.Fade, true);
+        float time = 0f;
+        while (time < fadeDuration)
+        {
+            time += Time.deltaTime;
+            _fadeImage.color = new Color(0, 0, 0, Mathf.Lerp(0f, 1f, time / fadeDuration));
+            await UniTask.Yield();
+        }
+    }
+
 }
