@@ -16,24 +16,24 @@ public class StageContext
     {
         _map = map;
     }
-    public void Transition()
+    public async UniTask Transition()
     {
         Action action = () =>
         {
             CurrentStage.Enter(_map);
         };
-        InGameManager.Instance.Player.ExitAndEnterStage(action).Forget();
+        await InGameManager.Instance.Player.ExitAndEnterStage(action);
         //await InGameManager.Instance.Player.ExitAndEnterStage();
         //CurrentStage.Enter(_map);
     }
-    public void Transition(IStage stage)
+    public async UniTask Transition(IStage stage)
     {
         Action action = () =>
         {
             CurrentStage = stage;
             CurrentStage.Enter(_map);
         };
-        InGameManager.Instance.Player.ExitAndEnterStage(action).Forget();
+        await InGameManager.Instance.Player.ExitAndEnterStage(action);
         //await InGameManager.Instance.Player.ExitAndEnterStage();
         //CurrentStage = stage;
         //CurrentStage.Enter(_map);

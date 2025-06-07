@@ -98,6 +98,11 @@ public class TurnManager : MonoBehaviour
         InGameManager.Instance.Player.ShieldReset();
         InGameManager.Instance.Player.TurnStatusEffect();
 
+        foreach (var enemy in EnemyManager.Instance.EnemyList)
+        {
+            enemy.NextPattern();
+        }
+
         //InGameUIManager.Instance.ChangeTurnButtonText(true);
 
         SetLoading(true);
@@ -228,7 +233,7 @@ public class TurnManager : MonoBehaviour
         int enemyCount = EnemyManager.Instance.EnemyList.Count;
         for (int i = 0; i < enemyCount; ++i)
         {
-            await EnemyManager.Instance.EnemyList[i - (enemyCount - EnemyManager.Instance.EnemyList.Count)].Pattern();
+            await EnemyManager.Instance.EnemyList[i - (enemyCount - EnemyManager.Instance.EnemyList.Count)].PlayPattern();
             await UniTask.WaitForSeconds(0.5f, false, PlayerLoopTiming.Update, CancelSource.Token); // 적 코드 이후 잠시 딜레이 (적이 공격 중에는 죽을 일 없으니 토큰 안 쓰기) => 죽을 일 생겨서 토큰 써야할 듯 ㅋㅋㅋ
         }
         // 적 턴 시작, 적 코드 작성

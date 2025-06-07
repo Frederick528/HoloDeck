@@ -12,7 +12,6 @@ public class BossStage : MonoBehaviour, IStage
             _map = map;
         if (!map.cleared)
         {
-            TurnManager.Instance.StartBattle();
             if (_map.RandomPattern == -1)
             {
                 BossSpawn();
@@ -21,6 +20,7 @@ public class BossStage : MonoBehaviour, IStage
             {
                 BossSpawnPattern(_map.RandomPattern);
             }
+            TurnManager.Instance.StartBattle();
         }
         print("Boss");
     }
@@ -31,12 +31,13 @@ public class BossStage : MonoBehaviour, IStage
         {
             case 1:
             case 2:
+            case 3:
                 BossSpawnPattern(Random.Range(0, 1));
                 break;
-            case 3:
-                BossSpawnPattern(Random.Range(100, 110));
-                break;
             case 4:
+                BossSpawnPattern(Random.Range(100, 100));
+                break;
+            case 5:
                 BossSpawnPattern(Random.Range(200, 210));
                 break;
         }
@@ -53,13 +54,15 @@ public class BossStage : MonoBehaviour, IStage
                 EnemyManager.Instance.SpawnEnemy(101, 1);
                 EnemyManager.Instance.SpawnEnemy(102, 2);
                 EnemyManager.Instance.SpawnEnemy(102, 3);
-                print(EnemyManager.Instance.SpawnEnemy(102, 4));
                 break;
             case 1:
                 EnemyManager.Instance.SpawnEnemy(101, 1);
                 break;
             case 2:
                 EnemyManager.Instance.SpawnEnemy(102, 1);
+                break;
+            case 100:
+                EnemyManager.Instance.SpawnEnemy(101, 2);
                 break;
         }
     }

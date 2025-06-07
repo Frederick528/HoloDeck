@@ -26,7 +26,7 @@ MonoBehaviour:
     Heal: 0
     Duration: 0
     Price: 5
-    Descript: passive1
+    Descript: "passive1\r"
     Sprite: {fileID: 0}
     AttackType: 0
     ItemCanUse: 0

@@ -42,9 +42,10 @@ public class ShopManager : MonoBehaviour
     {
         for (int i = 0; i < _shopCards.Length; ++i)
         {
-            CardData _cardData = InGameManager.Instance.FindCardData(Random.Range(100, 106));
-            _shopCards[i].Setup(_cardData);
-            _shopCardPrices[i].text = _cardData.Price.ToString();
+            //CardData _cardData = InGameManager.Instance.FindCardData(Random.Range(100, 106));
+            CardData cardData = InGameManager.Instance.RandomCard(10);
+            _shopCards[i].Setup(cardData);
+            _shopCardPrices[i].text = cardData.Price.ToString();
         }
     }
     public void BuyCard()

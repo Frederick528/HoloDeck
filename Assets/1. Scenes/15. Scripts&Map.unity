@@ -7580,10 +7580,10 @@ MonoBehaviour:
   - {fileID: -1944292672, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
   - {fileID: 1544773479, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
   LegendarySprites:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 299179172, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
+  - {fileID: -1652735987, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
+  - {fileID: -1944292672, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
+  - {fileID: 1544773479, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
   SelectCard: {fileID: 0}
 --- !u!1 &736059084
 GameObject:

@@ -9,28 +9,57 @@ public class Dog : Enemy
 
     void Start()
     {
-        EnemySubScribe();
+        //EnemySubScribe();
         _nextActImg.transform.localPosition = new Vector3(0, 1.8f);
-        _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
+
+        //NextPattern();
     }
 
-
-    public override async UniTask Pattern()
+    public override void NextPattern()
     {
         turn++;
+        _nextActImg.gameObject.SetActive(true);
         switch (turn)
         {
             case 1:
-                await Attack(enemyData.Damage);
                 _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
-                //InGameManager.Instance.player.TakeDamagePlayer(enemyData.damage).Forget();
+                _nextActText.text = enemyData.Damage.ToString();
+                _nextPattern = () => UniTask.Create(async () =>
+                {
+                    await Attack(enemyData.Damage);
+                });
                 break;
             case 2:
-                await Attack(enemyData.Damage / 2);
                 _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
-                //InGameManager.Instance.player.TakeDamagePlayer((int)(enemyData.damage/2)).Forget();
+                _nextActText.text = (enemyData.Damage / 2).ToString();
+                _nextPattern = () => UniTask.Create(async () =>
+                {
+                    await Attack(enemyData.Damage / 2);
+                });
                 turn = 0;
                 break;
         }
     }
+
+    //public UniTask Pattern()
+    //{
+    //    //await base.Pattern();
+    //    turn++;
+    //    switch (turn)
+    //    {
+    //        case 1:
+    //            _nextPattern = () => UniTask.Create(async () =>
+    //            {
+    //                await Attack(enemyData.Damage);
+    //                _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
+    //            });
+    //            break;
+    //        case 2:
+    //            await Attack(enemyData.Damage / 2);
+    //            _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
+    //            //InGameManager.Instance.player.TakeDamagePlayer((int)(enemyData.damage/2)).Forget();
+    //            turn = 0;
+    //            break;
+    //    }
+    //}
 }

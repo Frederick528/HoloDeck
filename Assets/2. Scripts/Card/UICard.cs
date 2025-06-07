@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
@@ -21,6 +21,8 @@ public class UICard : MonoBehaviour
 
     [SerializeField] UICard enlargeCard;
     CardData _getCardData;
+
+    bool _isXCost;
 
     private void Start()
     {
@@ -48,7 +50,15 @@ public class UICard : MonoBehaviour
         sb.Replace("{Remove}", (data.Remove).ToString());
 
         _nameText.text = data.Name;
-        _costText.text = data.Cost.ToString();
+        if (data.Cost == -1)        // 맨 처음 받을 때는 -1로 받으나, 사용 후, 코스트 값이 변함. UI카드는 기본 데이터가 아닌 변한 데이터 값을 받기 때문에 생기는 문제. 이를 해결하고자 처음에 X 코스트인지 확인하고, 이후에는 코스트 값을 변경하지 않도록 코딩함.
+        {
+            _costText.text = "X";
+            _isXCost = true;
+        }
+        else if (!_isXCost)
+        {
+            _costText.text = data.Cost.ToString();
+        }
         _descText.text = sb.ToString();
         _character.sprite = data.Sprite;
 

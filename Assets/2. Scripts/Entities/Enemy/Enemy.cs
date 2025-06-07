@@ -5,6 +5,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UniRx;
 using UnityEngine.UI;
+using System;
+using TMPro;
 
 public abstract class Enemy : Entity
 {
@@ -15,6 +17,9 @@ public abstract class Enemy : Entity
     protected Player player;
 
     protected Image _nextActImg;
+    protected TMP_Text _nextActText;
+
+    protected Func<UniTask> _nextPattern;
 
     //public bool Death;
 
@@ -82,6 +87,7 @@ public abstract class Enemy : Entity
         _criticalDamage.Value = 150;
         spawnPosIdx = pos;
         player = InGameManager.Instance.Player;
+        EnemySubScribe();
     }
     public override async UniTask<bool> TakeDamage(int dmg, bool isHit = true)
     {
@@ -246,9 +252,13 @@ public abstract class Enemy : Entity
     //    }
     //}
 
-    public virtual async UniTask Pattern()
+    public abstract void NextPattern();
+
+    public async UniTask PlayPattern()
     {
-        await UniTask.CompletedTask;        // 이거 고치자
+        if (_nextPattern == null) await UniTask.CompletedTask;
+        await _nextPattern();
+        _nextActImg.gameObject.SetActive(false);
     }
 
     //public void EnemyTakeDamage(int dmg)
@@ -271,7 +281,7 @@ public abstract class Enemy : Entity
     //}
 
     // Start is called before the first frame update
-    protected void EnemySubScribe()
+    void EnemySubScribe()
     {
         EntitySubScribe();
         AttackPower.Subscribe(atk =>
@@ -280,6 +290,7 @@ public abstract class Enemy : Entity
         });
 
         _nextActImg = canvas.transform.Find("NextAct").GetComponent<Image>();
+        _nextActText = _nextActImg.transform.GetComponentInChildren<TMP_Text>();
         _nextActImg.gameObject.SetActive(true);
     }
     //void Start()      // 모든 상위 코드에 적용시켜야 함.

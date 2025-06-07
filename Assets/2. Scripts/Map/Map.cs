@@ -16,6 +16,7 @@ public class Map : MonoBehaviour
     public bool visited = false;
     public bool cleared = false;
     public bool rewarded = false;
+    public bool NotUsed = false;
 
     public bool ChangedItem = false;
 
@@ -99,6 +100,7 @@ public class Map : MonoBehaviour
         visited = false;
         cleared = false;
         rewarded = false;
+        NotUsed = false;
         ChangedItem = false;
         RandomPattern = -1;
         rewardBox = -1;
@@ -112,6 +114,10 @@ public class Map : MonoBehaviour
             Map connectMap = maps.Find(x => x.array_Position == array_Position + direction);
             if (connectMap != null)
             {
+                if (connectMap.NotUsed)
+                {
+                    continue;
+                }
                 aroundStage.Add(connectMap);
                 connectMap.gameObject.SetActive(true);
                 //connectMap.img.color = Color.white;
@@ -125,6 +131,8 @@ public class Map : MonoBehaviour
         cleared = true;
         foreach (Map map in aroundStage)
         {
+            if (map.NotUsed)
+                { continue; }
             //map.img.color = Color.white;
             map.btn.interactable = true;
         }

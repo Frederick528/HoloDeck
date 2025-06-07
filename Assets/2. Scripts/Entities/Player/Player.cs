@@ -5,6 +5,8 @@ using TMPro;
 using UnityEngine;
 using UniRx;
 using System;
+using static UnityEditorInternal.ReorderableList;
+using Unity.VisualScripting;
 
 public class Player : Entity
 {
@@ -203,15 +205,13 @@ public class Player : Entity
         animator.Play(_runningAnim);
         animator.SetBool(_enterAnimBool, true);
         animator.transform.rotation = new Quaternion(defaultRot.x, -defaultRot.y, defaultRot.z, defaultRot.w);
-        OutGameUIManager.Instance.FadeOut(0.55f).Forget();
-        await MoveTask(0.65f, defaultPos, new Vector3(-4, 0));
+        OutGameUIManager.Instance.FadeOut(0.35f).Forget();
+        await MoveTask(0.45f, defaultPos, new Vector3(-4, 0));
         isEnter();
         animator.transform.rotation = defaultRot;
-        OutGameUIManager.Instance.FadeIn(0.75f).Forget();
-        await MoveTask(0.85f, new Vector3(-4, 0), defaultPos);
-        animator.SetBool(_enterAnimBool, false);
+        EnterStage(canMove, defaultPos).Forget();
 
-        MapManager.Instance.canMove = canMove;
+
         //if (isEnter)
         //{
         //    animator.Play("Running");
@@ -225,6 +225,20 @@ public class Player : Entity
         //    await MoveTask(1f, animator.transform.localPosition, new Vector3(-4, 0));
         //    animator.SetTrigger("Exit");
         //}
+    }
+    /// <summary>
+    /// 맨 처음 시작할 때와 ExitAndEnterStage 함수에서만 사용함.
+    /// </summary>
+    /// <param name="canMove"></param>
+    /// <param name="defaultPos"></param>
+    /// <returns></returns>
+    public async UniTask EnterStage(bool canMove, Vector3 defaultPos = default)
+    {
+        OutGameUIManager.Instance.FadeIn(0.55f).Forget();
+        await MoveTask(0.65f, new Vector3(-4, 0), defaultPos);
+        animator.SetBool(_enterAnimBool, false);
+
+        MapManager.Instance.canMove = canMove;
     }
 
     public async UniTask MoveTask(float time, Vector3 startPos, Vector3 endPos)

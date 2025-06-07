@@ -69,6 +69,21 @@ public class CardAbility
                         await ConfirmedDiscardAB();
                     });
                     break;
+                case 503:
+                    card.CardTask = () => UniTask.Create(async () =>
+                    {
+                        await DelayTask(0.5f);
+                        InGameManager.Instance.Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), card.Data.Cost);
+                    });
+                    break;
+                case 801:
+                    card.CardTask = () => UniTask.Create(async () =>
+                    {
+                        await DelayTask(0.5f);
+                        card.Data.Count = card.Data.Cost;
+                        await SingleAttackAB(card);
+                    });
+                    break;
                 default:
                     card.CardTask = () => UniTask.CompletedTask;
                     break;
@@ -450,9 +465,10 @@ public class CardAbility
                     uniTaskAB = () => UniTask.Create(async () =>
                     {
                         await DelayTask(firstDelay);      // 카드 쓰기 전 딜레이 확인
-                        await SingleAttackAB(card, continuousDelay);
+                        //await SingleAttackAB(card, continuousDelay);
                         await UniTask.WhenAll
                         (
+                            SingleAttackAB(card, continuousDelay),
                             ShieldAB(card, continuousDelay),
                             DrawAB(card)
                         );
@@ -469,9 +485,10 @@ public class CardAbility
                     uniTaskAB = () => UniTask.Create(async () =>
                     {
                         await DelayTask(firstDelay);
-                        await MultiAttackAB(card, continuousDelay);
+                        //await MultiAttackAB(card, continuousDelay);
                         await UniTask.WhenAll
                         (
+                            MultiAttackAB(card, continuousDelay),
                             ShieldAB(card, continuousDelay),
                             DrawAB(card)
                         );
@@ -559,9 +576,14 @@ public class CardAbility
             await InGameManager.Instance.Player.Shield(card.Data.Shield);
         }
     }
-    async UniTask DrawAB(Card card)
+    async UniTask DrawAB(Card card, float delay = 0.3f)
     {
         await CardManager.Instance.DrawCard(card.Data.Draw);
+        for (int i = 1; i < card.Data.Count; ++i)
+        {
+            await DelayTask(delay);
+            await CardManager.Instance.DrawCard(card.Data.Draw);
+        }
     }
 
     //async UniTask SingleAttackAB(Card card)

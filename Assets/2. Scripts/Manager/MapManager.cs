@@ -13,7 +13,7 @@ public class MapManager : MonoBehaviour
     //public Transform rewardCanvas;
 
     public int CreateMapCnt;
-    public (int, int) MaxDistance = (3,3);      // y, x로 되어있음.
+    public (int, int) MaxDistance = (3,3);
 
     public float MapScale = 1;
 
@@ -44,7 +44,8 @@ public class MapManager : MonoBehaviour
     {
         if (_onLoaded) return;
         SetMapSize();
-        _settingMap.Start();
+        bool isEndBoss = GameManager.Instance.NowChapterLV == 4;
+        _settingMap.Start(isEndBoss);
         //ShowAllMap();
     }
 
@@ -70,6 +71,11 @@ public class MapManager : MonoBehaviour
                 MaxDistance = (5, 3);
                 MapScale = 1;
                 break;
+            case 4:
+                CreateMapCnt = 5;
+                MaxDistance = (2, 0);
+                MapScale = 1.5f;
+                break;
         }
     }
 
@@ -92,7 +98,8 @@ public class MapManager : MonoBehaviour
         //    Destroy(_settingMap.MapTr.GetChild(i).gameObject);
         //}
         SetMapSize();
-        _settingMap.Start();
+        bool isEndBoss = GameManager.Instance.NowChapterLV == 4;
+        _settingMap.Start(isEndBoss);
         //ShowAllMap();
     }
 
@@ -103,7 +110,8 @@ public class MapManager : MonoBehaviour
         //_onLoaded = true;
         PrevStage = null;
         SetMapSize();
-        _settingMap.Start();
+        bool isEndBoss = GameManager.Instance.NowChapterLV == 4;
+        _settingMap.Start(isEndBoss);
         if (OutGameUIManager.Instance)
             await OutGameUIManager.Instance.FadeIn(0.75f);
         //ShowAllMap();
@@ -149,7 +157,7 @@ public class MapManager : MonoBehaviour
         if (PrevStage == null) return;
 
         await TurnManager.Instance.EndBattle();
-        _settingMap.MoveStage(PrevStage);
+        _settingMap.MoveStage(PrevStage).Forget();
 
         if (currStage.cleared)
             canMove = true;
@@ -203,6 +211,8 @@ public class MapManager : MonoBehaviour
     {
         foreach (Map map in _settingMap.Maps)
         {
+            if (map.NotUsed)
+                continue;
             if (!map.gameObject.activeSelf)
                 map.gameObject.SetActive(true);
         }

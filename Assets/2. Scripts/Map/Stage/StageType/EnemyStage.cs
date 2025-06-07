@@ -12,7 +12,6 @@ public class EnemyStage : MonoBehaviour, IStage
             _map = map;
         if (!map.cleared)
         {
-            TurnManager.Instance.StartBattle();
             if (_map.RandomPattern == -1)
             {
                 EnemySpawn();
@@ -21,6 +20,7 @@ public class EnemyStage : MonoBehaviour, IStage
             {
                 EnemySpawnPattern(_map.RandomPattern);
             }
+            TurnManager.Instance.StartBattle();
         }
             print("Enemy");
     }
@@ -31,12 +31,13 @@ public class EnemyStage : MonoBehaviour, IStage
         {
             case 1:
             case 2:
+            case 3:
                 EnemySpawnPattern(Random.Range(0, 3));
                 break;
-            case 3:
-                EnemySpawnPattern(Random.Range(100, 110));
-                break;
             case 4:
+                EnemySpawnPattern(Random.Range(100, 100));
+                break;
+            case 5:
                 EnemySpawnPattern(Random.Range(200, 210));
                 break;
         }
@@ -61,6 +62,9 @@ public class EnemyStage : MonoBehaviour, IStage
                 EnemyManager.Instance.SpawnEnemy(102);
                 EnemyManager.Instance.SpawnEnemy(102);
                 EnemyManager.Instance.SpawnEnemy(102);
+                break;
+            case 100:
+                EnemyManager.Instance.SpawnEnemy(101, 1);
                 break;
         }
     }

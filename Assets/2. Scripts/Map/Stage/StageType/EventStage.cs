@@ -43,12 +43,13 @@ public class EventStage : MonoBehaviour, IStage
         {
             case 1:
             case 2:
+            case 3:
                 EventPattern(Random.Range(0, 3));
                 break;
-            case 3:
+            case 4:
                 EventPattern(Random.Range(100, 110));
                 break;
-            case 4:
+            case 5:
                 EventPattern(Random.Range(200, 210));
                 break;
         }

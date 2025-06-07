@@ -120,7 +120,7 @@ public class GameManager : MonoBehaviour
         {
             case 0:
                 DestroyAllInGameDontDestroyObjects();
-                NowChapterLV = 0;       // 로비
+                NowChapterLV = idx;       // 로비
                 SceneManager.LoadScene(idx);
                 break;
             case 1:
@@ -136,7 +136,7 @@ public class GameManager : MonoBehaviour
             default:
                 DestroyAllInGameDontDestroyObjects();
                 NowChapterLV = 0;       // 로비
-                SceneManager.LoadScene(idx);
+                SceneManager.LoadScene(0);
                 break;
         }
         await OutGameUIManager.Instance.FadeIn(0.75f);

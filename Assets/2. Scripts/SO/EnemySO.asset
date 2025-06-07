@@ -59,7 +59,7 @@ MonoBehaviour:
     EnemyTag: 0
     EnemyPrefab: {fileID: 4086410140833498804, guid: 671ee7bd8898ae942820b3810882fc4e, type: 3}
   - Name: E
-    ID: 103
+    ID: 500
     Level: 0
     Damage: 20
     CriticalChance: 10
@@ -71,7 +71,7 @@ MonoBehaviour:
     EnemyTag: 1
     EnemyPrefab: {fileID: 0}
   - Name: B
-    ID: 104
+    ID: 1000
     Level: 0
     Damage: 15
     CriticalChance: 10

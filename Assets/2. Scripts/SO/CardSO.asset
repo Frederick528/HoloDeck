@@ -39,7 +39,7 @@ MonoBehaviour:
   - Name: Name2
     ID: 101
     Cost: 1
-    Damage: 2
+    Damage: 3
     Shield: 0
     Count: 0
     Draw: 1
@@ -64,7 +64,7 @@ MonoBehaviour:
     Discard: 0
     Remove: 0
     Price: 20
-    Descript: All {Damage} Damage X {Count}
+    Descript: All {Damage} Damage * {Count}
     Sprite: {fileID: 21300000, guid: b623f7f0719d30347aa015ccca90bb88, type: 3}
     IsSimpleAB: 1
     HasCondition: 0
@@ -162,7 +162,7 @@ MonoBehaviour:
     Discard: 0
     Remove: 0
     Price: 20
-    Descript: '{Damage} Damage X {Count}'
+    Descript: '{Damage} Damage * {Count}'
     Sprite: {fileID: 0}
     IsSimpleAB: 1
     HasCondition: 0
@@ -198,11 +198,27 @@ MonoBehaviour:
     Discard: 0
     Remove: 0
     Price: 30
-    Descript: All {Damage} Damage X {Count}
+    Descript: All {Damage} Damage * {Count}
     Sprite: {fileID: 0}
     IsSimpleAB: 1
     HasCondition: 0
     CardTag: 1
+    CardRarity: 1
+  - Name: Name18
+    ID: 503
+    Cost: -1
+    Damage: 0
+    Shield: 0
+    Count: 0
+    Draw: 0
+    Discard: 0
+    Remove: 0
+    Price: 60
+    Descript: Get X ATK UP in this Battle
+    Sprite: {fileID: 0}
+    IsSimpleAB: 0
+    HasCondition: 0
+    CardTag: 2
     CardRarity: 1
   - Name: Name12
     ID: 800
@@ -220,6 +236,45 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 0
     CardRarity: 2
+  - Name: Name14
+    ID: 801
+    Cost: -1
+    Damage: 10
+    Shield: 0
+    Count: 0
+    Draw: 0
+    Discard: 0
+    Remove: 0
+    Price: 40
+    Descript: '{Damage} Damage * X'
+    Sprite: {fileID: 0}
+    IsSimpleAB: 0
+    HasCondition: 0
+    CardTag: 0
+    CardRarity: 2
+  - Name: Name15
+    ID: 802
+    Cost: 2
+    Damage: 1
+    Shield: 1
+    Count: 3
+    Draw: 1
+    Discard: 0
+    Remove: 0
+    Price: 20
+    Descript: '(All {Damage} Damage
+
+      {Shield} Shield
+
+      {Draw} Draw)
+
+      *
+      {Count}'
+    Sprite: {fileID: 0}
+    IsSimpleAB: 1
+    HasCondition: 0
+    CardTag: 1
+    CardRarity: 2
   - Name: Name13
     ID: 1000
     Cost: 1
@@ -230,11 +285,43 @@ MonoBehaviour:
     Discard: 0
     Remove: 0
     Price: 105
-    Descript: All {Damage} Damage X {Count}
+    Descript: All {Damage} Damage * {Count}
     Sprite: {fileID: 0}
     IsSimpleAB: 1
     HasCondition: 0
     CardTag: 1
+    CardRarity: 3
+  - Name: Name16
+    ID: 1001
+    Cost: 3
+    Damage: 100
+    Shield: 0
+    Count: 0
+    Draw: 0
+    Discard: 0
+    Remove: 0
+    Price: 200
+    Descript: '{Damage} Damage'
+    Sprite: {fileID: 0}
+    IsSimpleAB: 1
+    HasCondition: 0
+    CardTag: 0
+    CardRarity: 3
+  - Name: Name17
+    ID: 1002
+    Cost: 2
+    Damage: 0
+    Shield: 0
+    Count: 0
+    Draw: 10
+    Discard: 0
+    Remove: 0
+    Price: 150
+    Descript: '{Draw} Draw'
+    Sprite: {fileID: 0}
+    IsSimpleAB: 1
+    HasCondition: 0
+    CardTag: 2
     CardRarity: 3
   - Name: EnhancedName2
     ID: 10001
@@ -320,9 +407,9 @@ MonoBehaviour:
     CardRarity: 0
   ClassifyCardRarityID:
   - {x: 100, y: 107}
-  - {x: 500, y: 502}
-  - {x: 800, y: 800}
-  - {x: 1000, y: 1000}
+  - {x: 500, y: 503}
+  - {x: 800, y: 802}
+  - {x: 1000, y: 1002}
   ClassifyEnhancedCardRarityID:
   - {x: 10001, y: 10005}
   - {x: 10002, y: 10002}

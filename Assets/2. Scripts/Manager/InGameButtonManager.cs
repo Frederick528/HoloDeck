@@ -191,15 +191,14 @@ public class InGameButtonManager : MonoBehaviour
                 break;
             case 1:
             case 2:
-            case 3:
                 ++GameManager.Instance.NowChapterLV;
                 MapManager.Instance.ResetChapter().Forget();
                 break;
-            case 4:
+            case 3:
                 ChangeScene(++GameManager.Instance.NowChapterLV);
                 break;
             default:
-                ChangeScene(GameManager.Instance.NowChapterLV);
+                ChangeScene(++GameManager.Instance.NowChapterLV);
                 break;
         }
     }

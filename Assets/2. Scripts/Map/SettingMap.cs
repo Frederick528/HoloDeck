@@ -1,11 +1,14 @@
 ﻿//using System;
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.PlayerSettings;
 
 public class SettingMap
 {
@@ -64,7 +67,7 @@ public class SettingMap
     //[SerializeField] GameObject shopCanvas;
     //[SerializeField] GameObject shopenlargePanel;
     //[SerializeField] GameObject shopPanel;
-    public void Start()
+    public void Start(bool isEndBoss = false)
     {
         if (MapTr == null)
         {
@@ -78,7 +81,14 @@ public class SettingMap
         _maxDistance = _mapManager.MaxDistance;
         _createMapCnt = (int)Mathf.Clamp(_createMapCnt, 1, (_maxDistance.Item1 * 2 + 1) * (_maxDistance.Item2 * 2 + 1)/*Mathf.Pow(_maxDistance * 2 + 1, 2)*/);
         mapDistance = (int)(100 * _mapManager.MapScale);
-        CreatedMap();
+        if (isEndBoss)
+        {
+            CreatedBossMap();
+        }
+        else
+        {
+            CreatedMap();
+        }
     }
 
     public void CreatedMap()
@@ -114,7 +124,10 @@ public class SettingMap
 
         _mapManager.SetupStart(direction4, Maps);
 
+        // 일단은 초기화 방식을 쓰기 때문에 이렇게 했으나, 나중에는 변경할 수도 있음.
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, 5);     // 방 생성 후, 몇몇 UI 비활성화 (보스 보상)
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, 0);     // 방 생성 후, 몇몇 UI 비활성화 (보물 보상)
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);             // 방 생성 후, 몇몇 UI 비활성화 (상점 보상)
 
         //SettingStage();
 
@@ -123,6 +136,95 @@ public class SettingMap
 
         //// 특수방 BOSS 방 생성
         //AddBossMap();
+
+    }
+
+
+    public void CreatedBossMap()        // 보스맵은 5개만 만들 것. 더 만들 거면 밑에 있는 switch문 수정해야 함.
+    {
+        posArr = new MapInfo[_maxDistance.Item1 * 2 + 1, _maxDistance.Item2 * 2 + 1];
+
+        validMapList.Clear();
+        availableMapList.Clear();
+
+        startMapPosition = new Vector3Int(0, 0, 0);
+        posArr[startMapPosition.x, startMapPosition.y] = AddSingleMap(new MapInfo(), startMapPosition, "Single");
+
+        while (!MapCountCheck())
+        {
+            Vector3Int arrPosition = new Vector3Int(availableMapList[0].array_Position.x, availableMapList[0].array_Position.y, 0);
+            Vector3Int move = arrPosition + new Vector3Int(1, 0, 0);
+            availableMapList.Remove(posArr[arrPosition.x, arrPosition.y]);
+
+            posArr[move.x, move.y] = AddSingleMap(new MapInfo(), move, "Single");
+        }
+
+        for (int i = 0; i < validMapList.Count; ++i)
+        {
+            int mapIdx = 0;
+            switch (i)
+            {
+                case 0:
+                    mapIdx = 0; // Start
+                    break;
+                case 1:
+                    mapIdx = 2; // Shop
+                    break;
+                case 2:
+                    mapIdx = 4; // Enemy
+                    break;
+                case 3:
+                    mapIdx = 3; // Event
+                    break;
+                case 4:
+                    mapIdx = 5; // Boss
+                    break;
+            }
+
+            MapInfo validMap = validMapList[i];
+            GameObject mapObject;
+            Map map;
+            if (Maps.Count > i)
+            {
+                map = Maps[i];
+                map.ResetMap(mapIdx);
+                mapObject = map.gameObject;
+            }
+            else
+            {
+                mapObject = _mapManager.MapInstantiate(/*mapIdx, */MapTr);
+                map = mapObject.GetComponent<Map>();
+                SetClickStage(map);
+                Maps.Add(map);
+            }
+            mapObject.transform.localScale = Vector3.one * _mapManager.MapScale;
+            mapObject.transform.localPosition = (validMap.array_Position - new Vector3Int(_maxDistance.Item1, _maxDistance.Item2, 0)) * mapDistance;
+            map.SettingMap(mapIdx);
+
+            map.array_Position = validMap.array_Position;
+
+
+            mapObject.gameObject.SetActive(false);
+        }
+
+        if (Maps.Count - validMapList.Count > 0)        // 만들어진 방이 만들 방보다 많은 경우
+        {
+            for (int i = validMapList.Count; i < Maps.Count; ++i)
+            {
+                Maps[i].NotUsed = true;
+                Maps[i].gameObject.SetActive(false);
+            }
+        }
+
+        _mark.transform.localScale = Vector3.one * _mapManager.MapScale;
+        _mark.transform.localPosition = new Vector3(-_maxDistance.Item1 * mapDistance, _markDefaultPos.y, 0);
+        _mark.transform.SetAsLastSibling();
+
+        _mapManager.SetupStart(direction4, Maps);
+
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, 5);     // 방 생성 후, 몇몇 UI 비활성화 (보스 보상)
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, 0);     // 방 생성 후, 몇몇 UI 비활성화 (보물 보상)
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);             // 방 생성 후, 몇몇 UI 비활성화 (상점 보상)
 
     }
 
@@ -232,7 +334,7 @@ public class SettingMap
                 ShowMapBtn.SetActive(true);
             }
 
-            MoveStage(stage);
+            MoveStage(stage).Forget();
 
             //// 떠나려는 방에 보상이 떴는데, 그 보상을 받지 않고 떠난다면, 잠시 해당 스테이지 보상을 숨김. 
             //if (_mapManager.currStage.rewardBox != -1 && (_mapManager.currStage.ChangedItem || !_mapManager.currStage.rewarded))
@@ -272,7 +374,7 @@ public class SettingMap
         });
     }
 
-    public void MoveStage(Map stage)
+    public async UniTask MoveStage(Map stage)
     {
         // 떠나려는 방에 보상이 떴는데, 그 보상을 받지 않고 떠난다면, 잠시 해당 스테이지 보상을 숨김. 
         if (_mapManager.currStage.rewardBox != -1 && (_mapManager.currStage.ChangedItem || !_mapManager.currStage.rewarded))
@@ -295,8 +397,9 @@ public class SettingMap
             _mark.transform.localPosition = stage.transform.localPosition + _markDefaultPos;
         }
 
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
         // 방 입장 코드 추가
-        stage.stageContext.Transition(stage.stage);
+        await stage.stageContext.Transition(stage.stage);
         // 들어간 방에 보상이 떴었는데, 예전에 보상을 받지 않았다면, 그 보상을 다시 시각화함.
         if (stage.rewardBox != -1 && (stage.ChangedItem || !stage.rewarded))
         {
@@ -307,11 +410,6 @@ public class SettingMap
                 InGameUIManager.Instance.ShowRewardCard(stage.CardReward);
             }
         }
-
-
-        // 이동 모션 코드 추가
-
-        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
     }
 
     public MapInfo AddSingleMap(MapInfo map, Vector3Int pos, string name)
@@ -320,7 +418,7 @@ public class SettingMap
         map.mapID = name + "(" + pos.x + ", " + pos.y + ", " + pos.z + ")";
         map.mapName = name;
         map.array_Position = pos;
-        map.transform_Position = pos * mapDistance - startMapPosition * mapDistance/* + new Vector3Int(Screen.width/2, Screen.height/2)*/;
+        map.transform_Position = (pos - startMapPosition) * mapDistance/* + new Vector3Int(Screen.width/2, Screen.height/2)*/;
         //single.parent_Position = pos;
         map.mapType = "Single";
         //map.isValidMap = true;
@@ -606,6 +704,15 @@ public class SettingMap
             //}
 
             mapObject.gameObject.SetActive(false);
+        }
+
+        if (Maps.Count - validMapList.Count > 0)        // 만들어진 방이 만들 방보다 많은 경우
+        {
+            for (int i = validMapList.Count; i < Maps.Count; ++i)
+            {
+                Maps[i].NotUsed = true;
+                Maps[i].gameObject.SetActive(false);
+            }
         }
         //if (_markPrefab != null)
         //{

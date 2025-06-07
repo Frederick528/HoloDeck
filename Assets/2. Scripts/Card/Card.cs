@@ -220,8 +220,15 @@ public class Card : MonoBehaviour
         sb.Replace("{Discard}", Data.Discard.ToString());
         sb.Replace("{Remove}", Data.Remove.ToString());
         Desc = sb.ToString();
-            
-        _costText.text = (_defaultData.Cost + 0).ToString();
+        
+        if (_defaultData.Cost == -1)
+        {
+            _costText.text = "X";
+        }
+        else
+        {
+            _costText.text = (_defaultData.Cost + 0).ToString();
+        }
         _descText.text = Desc;
         //}
 
@@ -383,11 +390,27 @@ public class Card : MonoBehaviour
 
     public async UniTask<bool> BeforeUsingCard()
     {
-        if (InGameManager.Instance.Player.CurHolo < Data.Cost)
+        if (_defaultData.Cost == -1)
         {
-            Target(null);
-            return false;
+            if (InGameManager.Instance.Player.CurHolo > 0)
+            {
+                Data.Cost = InGameManager.Instance.Player.CurHolo;
+            }
+            else
+            {
+                Target(null);
+                return false;
+            }
         }
+        else
+        {
+            if (InGameManager.Instance.Player.CurHolo < Data.Cost)
+            {
+                Target(null);
+                return false;
+            }
+        }
+
         MoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale * 0.8f), true, CardUtils.CardAlignmentDelay);
         if (!await CheckUseConditions())
         {

@@ -185,8 +185,8 @@ public class InGameManager : MonoBehaviour
         int probability;
         switch (rewardIdx)
         {
-            case 1:
-                probability = Random.Range(1, 1001);
+            case 1:     // 커먼 상자
+                probability = Random.Range(1, 1001);        // 카드 등급 업 이벤트
                 if (probability > 10)
                 {
                     return CardSwapAndPop(0, Random.Range(0, _randomCardList[0].Count));
@@ -203,7 +203,7 @@ public class InGameManager : MonoBehaviour
                 {
                     return CardSwapAndPop(3, Random.Range(0, _randomCardList[3].Count));
                 }
-            case 2:
+            case 2:     // 레어 상자
                 probability = Random.Range(1, 1001);
                 if (probability > 7)
                 {
@@ -217,7 +217,7 @@ public class InGameManager : MonoBehaviour
                 {
                     return CardSwapAndPop(3, Random.Range(0, _randomCardList[3].Count));
                 }
-            case 3:
+            case 3:     // 에픽 상자
                 probability = Random.Range(1, 1001);
                 if (probability > 4)
                 {
@@ -227,10 +227,28 @@ public class InGameManager : MonoBehaviour
                 {
                     return CardSwapAndPop(3, Random.Range(0, _randomCardList[3].Count));
                 }
-            case 4:
+            case 4:     // 전설 상자
                 return CardSwapAndPop(3, Random.Range(0, _randomCardList[3].Count));
-            case 5:     // 보스 (일단 할 거 없어서 그냥 레전더리 카드 주는 걸로 함.)
+            case 5:     // 보스 (일단 할 거 없어서 그냥 전설 상자랑 똑같게 만듦.)
                 return CardSwapAndPop(3, Random.Range(0, _randomCardList[3].Count));
+            case 10:    // 상점
+                probability = Random.Range(1, 1001);
+                if (probability > 300 + 0)
+                {
+                    return CardSwapAndPop(0, Random.Range(0, _randomCardList[0].Count));
+                }
+                else if (probability > 15 + 0)
+                {
+                    return CardSwapAndPop(1, Random.Range(0, _randomCardList[1].Count));
+                }
+                else if (probability > 2 + 0)
+                {
+                    return CardSwapAndPop(2, Random.Range(0, _randomCardList[2].Count));
+                }
+                else
+                {
+                    return CardSwapAndPop(3, Random.Range(0, _randomCardList[3].Count));
+                }
             default:
                 return null;
         }
