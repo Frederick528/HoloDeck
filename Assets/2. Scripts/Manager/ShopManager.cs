@@ -14,6 +14,8 @@ public class ShopManager : MonoBehaviour
     TMP_Text[] _shopCardPrices;
 
     int _shopCardIdx;
+
+    CardData[] _shopCardData;
     void Awake()
     {
         Instance = Instance != null ? Instance : this;
@@ -40,16 +42,36 @@ public class ShopManager : MonoBehaviour
     }
     public void ChangeCardShop()
     {
-        for (int i = 0; i < _shopCards.Length; ++i)
+        _shopCardData = InGameManager.Instance.RandomCards(10, _shopCards.Length);
+        //InGameManager.Instance.ReturnRandomCard(_shopCardData);
+
+        int i = 0;
+        foreach (var cardData in _shopCardData)
         {
-            //CardData _cardData = InGameManager.Instance.FindCardData(Random.Range(100, 106));
-            CardData cardData = InGameManager.Instance.RandomCard(10);
-            _shopCards[i].Setup(cardData);
-            _shopCardPrices[i].text = cardData.Price.ToString();
+            if (cardData != null)
+            {
+                _shopCards[i].Setup(cardData);
+                _shopCardPrices[i].text = cardData.Price.ToString();
+            }
+            else
+            {
+                _shopCards[i].Setup(cardData);
+                _shopCardPrices[i].text = "0";
+            }
+            ++i;
         }
+
+        //for (int i = 0; i < _shopCards.Length; ++i)
+        //{
+        //    //CardData _cardData = InGameManager.Instance.FindCardData(Random.Range(100, 106));
+        //    CardData cardData = InGameManager.Instance.RandomCard(10);
+        //    _shopCards[i].Setup(cardData);
+        //    _shopCardPrices[i].text = cardData.Price.ToString();
+        //}
     }
     public void BuyCard()
     {
+        if (CardManager.Instance.GetCardData == null) return;
         if (InGameManager.Instance.Player.Coin.Value >= CardManager.Instance.GetCardData.Price)
         {
             InGameManager.Instance.Player.Coin.Value -= CardManager.Instance.GetCardData.Price;

@@ -118,6 +118,7 @@ public class CardManager : MonoBehaviour
     }
     public void RewardedCard()
     {
+        if (GetCardData == null) return;
         AddDeck(GetCardData, EAddDeck.Main);
         MapManager.Instance.GetReward();
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, true);

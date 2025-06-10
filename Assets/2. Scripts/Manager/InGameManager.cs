@@ -253,11 +253,21 @@ public class InGameManager : MonoBehaviour
                 return null;
         }
     }
+    public CardData[] RandomCards(int rewardIdx, int repeatNum)
+    {
+        CardData[] cards = new CardData[repeatNum];
+        for (int i = 0; i < repeatNum; ++i)
+        {
+            cards[i] = RandomCard(rewardIdx);
+        }
+        ReturnRandomCard(cards);
+        return cards;
+    }
     public void ReturnRandomCard(CardData[] cardDatas)
     {
         foreach (CardData cardData in cardDatas/*_popRandomCardList*/)           // _popRandomCardList로 했으나, 굳이 이렇게 해야하나? 싶어서 그냥 Map에서 받아오도록 변경함.
         {
-            if (cardData == null) return;       // 카드 개수가 부족해서 null 뜰 때가 있음. 그냥 리턴해서 없애도록 함.
+            if (cardData == null) continue;       // 카드 개수가 부족해서 null 뜰 때가 있음.
 
             if (cardData.CardRarity == CardRarity.Legendary)
             {

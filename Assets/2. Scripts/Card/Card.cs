@@ -36,7 +36,7 @@ public class Card : MonoBehaviour
     public Order CardOrder;
     //private Animator _anim;
 
-    CardData _defaultData = null;
+    public CardData DefaultData = null;
     //string _defaultDesc = null;
     public CardData Data { get; private set; }
     public string Desc;
@@ -78,8 +78,8 @@ public class Card : MonoBehaviour
         CardOrder = GetComponent<Order>();
         //_boxCollider2 = GetComponent<BoxCollider2D>();
 
-        _defaultData = data;
-        Data = _defaultData.Clone();
+        DefaultData = data;
+        Data = DefaultData.Clone();
         
         //StringBuilder sb = new StringBuilder(_defaultData.Descript);
         //sb.Replace("{Damage}", (_defaultData.Damage + InGameManager.Instance.player.AttackPower.Value).ToString());
@@ -198,21 +198,21 @@ public class Card : MonoBehaviour
         //}
         //else
         //{
-        if (_defaultData.Damage != 0)
+        if (DefaultData.Damage != 0)
         {
-            Data.Damage = _defaultData.Damage + InGameManager.Instance.Player.AttackPower.Value;
+            Data.Damage = DefaultData.Damage + InGameManager.Instance.Player.AttackPower.Value;
             if (Data.Damage < 0) { Data.Damage = 0; }
         }
-        if (_defaultData.Shield != 0)
+        if (DefaultData.Shield != 0)
         {
-            Data.Shield = _defaultData.Shield + InGameManager.Instance.Player.DefensePower.Value;
+            Data.Shield = DefaultData.Shield + InGameManager.Instance.Player.DefensePower.Value;
             if (Data.Shield < 0) { Data.Shield = 0; }
         }
-        Data.Count = _defaultData.Count + 0;
-        Data.Draw = _defaultData.Draw + 0;
-        Data.Discard = _defaultData.Discard + 0;
+        Data.Count = DefaultData.Count + 0;
+        Data.Draw = DefaultData.Draw + 0;
+        Data.Discard = DefaultData.Discard + 0;
         
-        StringBuilder sb = new StringBuilder(_defaultData.Descript);
+        StringBuilder sb = new StringBuilder(DefaultData.Descript);
         sb.Replace("{Damage}", Data.Damage.ToString());
         sb.Replace("{Shield}", Data.Shield.ToString());
         sb.Replace("{Count}", Data.Count.ToString());
@@ -221,13 +221,13 @@ public class Card : MonoBehaviour
         sb.Replace("{Remove}", Data.Remove.ToString());
         Desc = sb.ToString();
         
-        if (_defaultData.Cost == -1)
+        if (DefaultData.Cost == -1)
         {
             _costText.text = "X";
         }
         else
         {
-            _costText.text = (_defaultData.Cost + 0).ToString();
+            _costText.text = (DefaultData.Cost + 0).ToString();
         }
         _descText.text = Desc;
         //}
@@ -390,7 +390,7 @@ public class Card : MonoBehaviour
 
     public async UniTask<bool> BeforeUsingCard()
     {
-        if (_defaultData.Cost == -1)
+        if (DefaultData.Cost == -1)
         {
             if (InGameManager.Instance.Player.CurHolo > 0)
             {

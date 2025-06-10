@@ -22,8 +22,6 @@ public class UICard : MonoBehaviour
     [SerializeField] UICard enlargeCard;
     CardData _getCardData;
 
-    bool _isXCost;
-
     private void Start()
     {
         TryGetComponent(out Button _cardBtn);
@@ -41,6 +39,17 @@ public class UICard : MonoBehaviour
     public void Setup(CardData data)
     {
         _getCardData = data;
+        if (data == null)
+        {
+            _nameText.text = "Null";
+            _costText.text = "0";
+            _descText.text = "This is Null\nYou Can't Get This";
+            _character.sprite = null;
+            _tagText.text = "Null";
+            for (int i = 0; i < _rararityBG.Length; ++i)
+                _rararityBG[i].sprite = CardManager.Instance.CommonSprites[i];
+            return;
+        }
         StringBuilder sb = new StringBuilder(data.Descript);
         sb.Replace("{Damage}", (data.Damage).ToString());
         sb.Replace("{Shield}", (data.Shield).ToString());
@@ -50,12 +59,11 @@ public class UICard : MonoBehaviour
         sb.Replace("{Remove}", (data.Remove).ToString());
 
         _nameText.text = data.Name;
-        if (data.Cost == -1)        // 맨 처음 받을 때는 -1로 받으나, 사용 후, 코스트 값이 변함. UI카드는 기본 데이터가 아닌 변한 데이터 값을 받기 때문에 생기는 문제. 이를 해결하고자 처음에 X 코스트인지 확인하고, 이후에는 코스트 값을 변경하지 않도록 코딩함.
+        if (data.Cost == -1)
         {
             _costText.text = "X";
-            _isXCost = true;
         }
-        else if (!_isXCost)
+        else
         {
             _costText.text = data.Cost.ToString();
         }

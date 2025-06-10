@@ -452,17 +452,17 @@ public class InGameUIManager : MonoBehaviour
             int deckUICardCount = _deckUICards.Count;
             for (int i = 0; i < _lastViewDeckCount; ++i)
             {
-                _deckUICards[i].Setup(deck[i].Data);
+                _deckUICards[i].Setup(deck[i].DefaultData);
             }
             for (int i = _lastViewDeckCount; i < _deckUICards.Count; ++i)
             {
                 _deckUICards[i].gameObject.SetActive(true);
-                _deckUICards[i].Setup(deck[i].Data);
+                _deckUICards[i].Setup(deck[i].DefaultData);
             }
             for (int i = deckUICardCount; i < deck.Count; ++i)
             {
                 _deckUICards.Add(Instantiate(_uiCard, _viewDeckContent));
-                _deckUICards[i].Setup(deck[i].Data);
+                _deckUICards[i].Setup(deck[i].DefaultData);
             }
         }
         else
@@ -471,19 +471,19 @@ public class InGameUIManager : MonoBehaviour
             {
                 for (int i = 0; i < _lastViewDeckCount; ++i)
                 {
-                    _deckUICards[i].Setup(deck[i].Data);
+                    _deckUICards[i].Setup(deck[i].DefaultData);
                 }
                 for (int i = _lastViewDeckCount; i < deck.Count; ++i)
                 {
                     _deckUICards[i].gameObject.SetActive(true);
-                    _deckUICards[i].Setup(deck[i].Data);
+                    _deckUICards[i].Setup(deck[i].DefaultData);
                 }
             }
             else
             {
                 for (int i = 0; i < deck.Count; ++i)
                 {
-                    _deckUICards[i].Setup(deck[i].Data);
+                    _deckUICards[i].Setup(deck[i].DefaultData);
                 }
                 for (int i = deck.Count; i < _lastViewDeckCount; ++i)
                 {
