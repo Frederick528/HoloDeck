@@ -26,9 +26,11 @@ public class GameManager : MonoBehaviour
 
     public Upgrade[] Upgrades { get; private set; }
 
-    public int PauseInt;
+    public int PauseNum;
 
     public int NowChapterLV;
+
+    public bool IsSceneChange;
 
     bool _isESCPause = false;
     // Start is called before the first frame update
@@ -60,6 +62,39 @@ public class GameManager : MonoBehaviour
         {
             Upgrades[i] = new Upgrade(i, 0);
         }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (!IsSceneChange)
+                OutGameUIManager.Instance.SetActiveCanvas(OutGameUIManager.CanvasName.Option, !_isESCPause, 0);
+        }
+    }
+
+    public void ESC(bool esc)
+    {
+        _isESCPause = esc;
+        Pause(_isESCPause);
+        //OutGameUIManager.Instance.SetActiveCanvas(OutGameUIManager.CanvasName.Option, _isESCPause, 0);
+        //TurnManager.Instance.DrawCardTask().Forget();
+    }
+
+    public void Pause(bool pause)
+    {
+        if (pause && PauseNum == 0)
+            ++PauseNum;
+        else if (!pause && PauseNum == 1)
+            --PauseNum;
+        else
+        {
+            PauseNum = pause ? ++PauseNum : --PauseNum;
+            return;
+        }
+        //if (_selectAbility && _option) return;
+        Time.timeScale = pause ? 0 : 1;
+        //Physics2D.autoSyncTransforms = pause ? true : false;      // 정지상태에서 카드를 사용하는 경우에는 필요함. 근데, 지금은 따로 필요없음.
     }
 
     public void AddInGameDontDestroy(GameObject gameObject)
@@ -113,8 +148,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void ExitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+
+    }
+
     public async UniTaskVoid ChangeScene(int idx)
     {
+        if (SceneManager.GetActiveScene().buildIndex == idx) return;
+        IsSceneChange = true;
         await OutGameUIManager.Instance.FadeOut(0.55f);
         switch (idx)
         {
@@ -140,5 +187,6 @@ public class GameManager : MonoBehaviour
                 break;
         }
         await OutGameUIManager.Instance.FadeIn(0.75f);
+        IsSceneChange = false;
     }
 }

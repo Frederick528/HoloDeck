@@ -128,7 +128,7 @@ public class InGameButtonManager : MonoBehaviour
 
     public void Pause(bool isOn)
     {
-        InGameManager.Instance.Pause(isOn);
+        GameManager.Instance.Pause(isOn);
     }
 
     public void SetViewDeck(int deckIdx)

@@ -12,9 +12,18 @@ public class OutGameButtonManager : MonoBehaviour
         Instance = Instance != null ? Instance : this;
     }
 
-    public void ChangeScene(int idx)        // Lobby∑Œ ≈Î«’µ .
+    //public void ESC()
+    //{
+    //    GameManager.Instance.ESC();
+    //}
+
+    public void ChangeScene(int idx)
     {
-        GameManager.Instance.ChangeScene(idx);
+        GameManager.Instance.ChangeScene(idx).Forget();
+    }
+    public void ExitGame()
+    {
+        GameManager.Instance.ExitGame();
     }
 
     [VisibleEnum(typeof(OutGameUIManager.CanvasName))]

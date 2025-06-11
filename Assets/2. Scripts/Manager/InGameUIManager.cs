@@ -28,9 +28,9 @@ public class InGameUIManager : MonoBehaviour
     }
     //public List<GameObject> CanvasList;
     List<GraphicRaycaster> _canvasRaycaster = new();
-    public Dictionary<int, Transform> _canvasDict = new();
+    public Dictionary<int, RectTransform> _canvasDict = new();
 
-    Transform _canvas;
+    Transform _canvasTr;
 
 
 
@@ -41,32 +41,32 @@ public class InGameUIManager : MonoBehaviour
     public GameObject StatusEffectDescPrefab;
 
     //[Header("Panel")]
-    Transform _cardEnlargePanel;
-    Transform _itemEnlargePanel;
+    RectTransform _cardEnlargePanel;
+    RectTransform _itemEnlargePanel;
 
 
-    Transform _shopPanel;
-    Transform _shopEnlargePanel;
+    RectTransform _shopPanel;
+    RectTransform _shopEnlargePanel;
 
     //[Header("Box")]
-    Transform[] _rewardBoxes;
+    RectTransform[] _rewardBoxes;
 
     [HideInInspector]
-    public Transform PassiveTransform;
+    public RectTransform PassiveTransform;
     [HideInInspector]
-    public Transform ActiveTransform;
+    public RectTransform ActiveTransform;
     [HideInInspector]
-    public Transform PotionTransform;
+    public RectTransform PotionTransform;
 
-    Transform _statusWindow;
+    RectTransform _statusWindow;
     Image[] _statusImg = new Image[3];
     TMP_Text[] _statusText = new TMP_Text[8];
 
-    Transform _cardRewardContent;
-    Transform _itemRewardContent;
+    RectTransform _cardRewardContent;
+    RectTransform _itemRewardContent;
 
     int _lastViewDeckCount;
-    Transform _viewDeckContent;
+    RectTransform _viewDeckContent;
     List<UICard> _deckUICards = new();
 
     UICard[] _uiCards = new UICard[4];
@@ -87,11 +87,11 @@ public class InGameUIManager : MonoBehaviour
 
     private void Awake()
     {
-        _canvas = GameObject.Find("InGameCanvases").GetComponent<Transform>();
+        _canvasTr = GameObject.Find("InGameCanvases").transform;
         if (Instance != null)
         {
             GameObject.Find("BackgroundCanvas").GetComponent<Canvas>().worldCamera = Camera.main;
-            Destroy(_canvas.gameObject);
+            Destroy(_canvasTr.gameObject);
             //Destroy(transform.root.gameObject);
             return;
         }
@@ -113,16 +113,16 @@ public class InGameUIManager : MonoBehaviour
         //}
 
         Instance = this;
-        _canvas.gameObject.name = "InGameCanvasesDontDestroy";
-        GameManager.Instance.AddInGameDontDestroy(_canvas.gameObject);
+        _canvasTr.gameObject.name = "InGameCanvasesDontDestroy";
+        GameManager.Instance.AddInGameDontDestroy(_canvasTr.gameObject);
         //GameManager.Instance.AddInGameDontDestroy(transform.root.gameObject);
 
-        for (int i = 0; i < /*CanvasList.Count*/_canvas.childCount; ++i)
+        for (int i = 0; i < /*CanvasList.Count*/_canvasTr.childCount; ++i)
         {
             //_canvasRaycaster.Add(CanvasList[i].GetComponent<GraphicRaycaster>());
             //CanvasDict.Add(i, CanvasList[i]);
-            _canvasRaycaster.Add(_canvas.GetChild(i).GetComponent<GraphicRaycaster>());
-            _canvasDict.Add(i, _canvas.GetChild(i));
+            _canvasRaycaster.Add(_canvasTr.GetChild(i).GetComponent<GraphicRaycaster>());
+            _canvasDict.Add(i, _canvasTr.GetChild(i) as RectTransform);
         }
 
         Addressables.LoadAssetAsync<GameObject>("UICardImg.prefab").Completed += (op) =>
@@ -165,9 +165,9 @@ public class InGameUIManager : MonoBehaviour
 
         };
 
-        _cardEnlargePanel = Canvas(CanvasName.CardReward).Find("CardEnlargePanel");
+        _cardEnlargePanel = Canvas(CanvasName.CardReward).Find("CardEnlargePanel") as RectTransform;
         _cardRewardContent = FindTransform.ContinueFindChildByName(Canvas(CanvasName.CardReward), "Content");
-        _itemEnlargePanel = Canvas(CanvasName.ItemReward).Find("ItemEnlargePanel");
+        _itemEnlargePanel = Canvas(CanvasName.ItemReward).Find("ItemEnlargePanel") as RectTransform;
         _itemRewardContent = FindTransform.ContinueFindChildByName(Canvas(CanvasName.ItemReward), "Content");
 
         _viewDeckContent = FindTransform.ContinueFindChildByName(Canvas(CanvasName.ViewDeck), "Content");
@@ -199,8 +199,8 @@ public class InGameUIManager : MonoBehaviour
 
         ChangeStatus(7, GameManager.Instance.Goods.Value);
 
-        _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel");
-        _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel");
+        _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel") as RectTransform;
+        _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel") as RectTransform;
 
         _topHealthText = FindTransform.ContinueFindChildByName(Canvas(CanvasName.InGame), "HealthText").GetComponent<TMP_Text>();
         _topCoinText = FindTransform.ContinueFindChildByName(Canvas(CanvasName.InGame), "CoinText").GetComponent<TMP_Text>();
@@ -211,10 +211,10 @@ public class InGameUIManager : MonoBehaviour
         _dummyCount = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Battle), "DummyCountText").GetComponent<TMP_Text>();
 
         Transform rewardBoxCanvas = Canvas(CanvasName.RewardBox);
-        _rewardBoxes = new Transform[rewardBoxCanvas.childCount];
+        _rewardBoxes = new RectTransform[rewardBoxCanvas.childCount];
         for (int i = 0; i < _rewardBoxes.Length; ++i)
         {
-            _rewardBoxes[i] = rewardBoxCanvas.GetChild(i);
+            _rewardBoxes[i] = rewardBoxCanvas.GetChild(i) as RectTransform;
         }
         for (int i = 0; i < _uiCards.Length; ++i)
         {
@@ -309,7 +309,7 @@ public class InGameUIManager : MonoBehaviour
                     _shopEnlargePanel.gameObject.SetActive(false);
                     break;
                 case CanvasName.ViewDeck:
-                    InGameManager.Instance.Pause(false);
+                    GameManager.Instance.Pause(false);
                     break;
             }
 
@@ -335,16 +335,16 @@ public class InGameUIManager : MonoBehaviour
                 case CanvasName.ViewDeck:
                     if (Canvas(CanvasName.Map).gameObject.activeSelf)
                         SetActiveCanvas(CanvasName.Map, false);
-                    InGameManager.Instance.Pause(true);
+                    GameManager.Instance.Pause(true);
                     break;
             }
         }
 
     }
 
-    public Transform Canvas(CanvasName canvasName)
+    public RectTransform Canvas(CanvasName canvasName)
     {
-        return _canvasDict[(int)canvasName];
+        return _canvasDict[(int)canvasName] as RectTransform;
     }
 
     public void SetCanvasRaycast(CanvasName canvasName, bool isOn)
@@ -446,7 +446,7 @@ public class InGameUIManager : MonoBehaviour
 
     public void SetViewDeck(List<Card> deck)                // 풀링이지만, Release 개념이 아닌, 활성화 비활성화로 진행됨. Release는 인덱스로 넣는데, Get은 Release된 것 중에서 마지막에 넣었던 것을 꺼내오기 때문에 생긴 문제
     {
-        _viewDeckContent.localPosition = new Vector3(_viewDeckContent.localPosition.x, 0);
+        _viewDeckContent.anchoredPosition = new Vector3(_viewDeckContent.anchoredPosition.x, 0);
         if (deck.Count > _deckUICards.Count)
         {
             int deckUICardCount = _deckUICards.Count;

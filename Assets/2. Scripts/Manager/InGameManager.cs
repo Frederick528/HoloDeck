@@ -44,8 +44,6 @@ public class InGameManager : MonoBehaviour
 
     //public int NowChapterLV = 1;
 
-    bool _isESCPause = false;
-
     //GameObject[] _camera;
     //GameObject[] _player;
 
@@ -258,7 +256,12 @@ public class InGameManager : MonoBehaviour
         CardData[] cards = new CardData[repeatNum];
         for (int i = 0; i < repeatNum; ++i)
         {
-            cards[i] = RandomCard(rewardIdx);
+            CardData card = RandomCard(rewardIdx);
+            while (card == null)
+            {
+                card = RandomCard(rewardIdx);
+            }
+            cards[i] = card;
         }
         ReturnRandomCard(cards);
         return cards;
@@ -423,39 +426,33 @@ public class InGameManager : MonoBehaviour
         Player.Coin.Value += coin;
     }
 
-    public void Pause(bool pause)
-    {
-        if (pause && PauseInt == 0)
-            ++PauseInt;
-        else if (!pause && PauseInt == 1)
-            --PauseInt;
-        else
-        {
-            PauseInt = pause ? ++PauseInt : --PauseInt;
-            return;
-        }
-        //if (_selectAbility && _option) return;
-        Time.timeScale = pause ? 0 : 1;
-        //Physics2D.autoSyncTransforms = pause ? true : false;      // 정지상태에서 카드를 사용하는 경우에는 필요함. 근데, 지금은 따로 필요없음.
-    }
+    //public void Pause(bool pause)
+    //{
+    //    if (pause && PauseInt == 0)
+    //        ++PauseInt;
+    //    else if (!pause && PauseInt == 1)
+    //        --PauseInt;
+    //    else
+    //    {
+    //        PauseInt = pause ? ++PauseInt : --PauseInt;
+    //        return;
+    //    }
+    //    //if (_selectAbility && _option) return;
+    //    Time.timeScale = pause ? 0 : 1;
+    //    //Physics2D.autoSyncTransforms = pause ? true : false;      // 정지상태에서 카드를 사용하는 경우에는 필요함. 근데, 지금은 따로 필요없음.
+    //}
 
     void Update()
     {
-        if (fastMode && PauseInt == 0)
+        if (fastMode && GameManager.Instance.PauseNum == 0)
         {
             Time.timeScale = 3f;
         }
-        else { Time.timeScale = PauseInt != 0 ? 0 : 1; }
+        else { Time.timeScale = GameManager.Instance.PauseNum != 0 ? 0 : 1; }
 
         //print(AbilityEventQueue._queue.Count);
 
 #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            _isESCPause = !_isESCPause;
-            Pause(_isESCPause);
-            //TurnManager.Instance.DrawCardTask().Forget();
-        }
         //if (Input.GetKeyDown(KeyCode.Space))
         //{
         //    TurnManager.OnAddCard?.Invoke();

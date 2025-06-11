@@ -52,14 +52,14 @@ public enum StatusEffectType
 
 public class FindTransform
 {
-    public static Transform ContinueFindChildByName(Transform parent, string name)
+    public static RectTransform ContinueFindChildByName(Transform parent, string name)
     {
-        foreach (Transform child in parent)
+        foreach (RectTransform child in parent)
         {
             if (child.name == name)
                 return child;
 
-            Transform found = ContinueFindChildByName(child, name);
+            RectTransform found = ContinueFindChildByName(child, name);
             if (found != null)
                 return found;
         }

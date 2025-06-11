@@ -18,33 +18,46 @@ public class OutGameUIManager : MonoBehaviour
         Fade
     }
 
-    Dictionary<int, Transform> _canvasDict = new();
+    Dictionary<int, RectTransform> _canvasDict = new();
 
-    Transform _canvas;
+    Transform _canvasTr;
 
     Image _fadeImage;
+
+    (RectTransform, bool)[] _optionContent;
+
+    ScrollRect _optionScrollRect;
 
 
     void Awake()
     {
-        _canvas = GameObject.Find("OutGameCanvases").GetComponent<Transform>();
+        _canvasTr = GameObject.Find("OutGameCanvases").transform;
         
         if (Instance != null)
         {
-            Destroy(_canvas.gameObject);
+            Destroy(_canvasTr.gameObject);
             return;
         }
         //Instance = Instance != null ? Instance : this;
         Instance = this;
         
-        _canvas.gameObject.name = "OutGameCanvasesDontDestroy";
-        for (int i = 0; i < _canvas.childCount; ++i)
+        _canvasTr.gameObject.name = "OutGameCanvasesDontDestroy";
+        for (int i = 0; i < _canvasTr.childCount; ++i)
         {
-            _canvasDict.Add(i, _canvas.GetChild(i));
+            _canvasDict.Add(i, _canvasTr.GetChild(i) as RectTransform);
         }
-        DontDestroyOnLoad(_canvas);
+        DontDestroyOnLoad(_canvasTr);
 
         _fadeImage = _canvasDict[(int)CanvasName.Fade].GetComponentInChildren<Image>();
+
+        ContentSizeFitter[] csf = _canvasDict[(int)CanvasName.Option].GetComponentsInChildren<ContentSizeFitter>(true);
+        _optionContent = new (RectTransform, bool)[csf.Length];
+        for (int i = 0; i < csf.Length; ++i)
+        {
+            _optionContent[i].Item1 = csf[i].transform as RectTransform;
+            _optionContent[i].Item2 = false;
+        }
+        _optionScrollRect = _canvasDict[(int)CanvasName.Option].GetComponentInChildren<ScrollRect>();
 
     }
 
@@ -55,6 +68,7 @@ public class OutGameUIManager : MonoBehaviour
             switch (canvasName)
             {
                 case CanvasName.Option:
+                    GameManager.Instance.ESC(state);
                     break;
             }
 
@@ -67,10 +81,35 @@ public class OutGameUIManager : MonoBehaviour
             switch (canvasName)
             {
                 case CanvasName.Option:
+                    if (idx == -1)
+                        idx = 0;
+                    GameManager.Instance.ESC(state);
+                    SetActiveOptionWindow(idx);
                     break;
             }
         }
 
+    }
+
+    public void SetActiveOptionWindow(int idx)
+    {
+        _optionScrollRect.content = _optionContent[idx].Item1;
+        _optionScrollRect.viewport = _optionContent[idx].Item1.parent as RectTransform;
+        for (int i = 0; i < _optionContent.Length; ++i)
+        {
+            if (i == idx && !_optionContent[i].Item2)
+            {
+                _optionScrollRect.normalizedPosition = new Vector2(0, 1);
+
+                _optionContent[i].Item1.parent.gameObject.SetActive(true);
+                _optionContent[i].Item2 = true;
+            }
+            else if (i != idx && _optionContent[i].Item2)
+            {
+                _optionContent[i].Item1.parent.gameObject.SetActive(false);
+                _optionContent[i].Item2 = false;
+            }
+        }
     }
 
     public Transform OutGameCanvas(CanvasName canvasName)
