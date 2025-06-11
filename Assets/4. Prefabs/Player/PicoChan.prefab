@@ -3396,9 +3396,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9dbe01f98b814c4db41c046fb87c429, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StatusEffect: []
-  StatusDesc: []
-  StatusDuration: []
 --- !u!61 &3567756569159866137
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4210,7 +4207,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3951806100301375230}
-  m_LocalRotation: {x: 0, y: 0.953717, z: 0, w: 0.30070582}
+  m_LocalRotation: {x: 0, y: 0.9848078, z: 0, w: 0.17364825}
   m_LocalPosition: {x: 0, y: 0, z: 3}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 1
@@ -4220,7 +4217,7 @@ Transform:
   - {fileID: 541690185208674256}
   m_Father: {fileID: 247941235007949151}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 145, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 160, z: 0}
 --- !u!95 &7745169697798284862
 Animator:
   serializedVersion: 5

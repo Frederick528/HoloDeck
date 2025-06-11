@@ -61,7 +61,7 @@ public class InGameManager : MonoBehaviour
             //Player = player[0].GetComponentInChildren<Player>(true);
             GameManager.Instance.AddInGameDontDestroy(transform.root.gameObject);
             GameManager.Instance.InGame = true;
-            SpawnPlayer(0);
+            SpawnPlayer(GameManager.Instance.PlayedInt);
         }
         else
         {
@@ -108,10 +108,13 @@ public class InGameManager : MonoBehaviour
         switch (idx)
         {
             case 0:
-                playerName = "PicoChan.prefab";
+                playerName = "PicoChan";
+                break;
+            case 1:
+                playerName = "Muryotaisu";
                 break;
         }
-        Addressables.LoadAssetAsync<GameObject>(playerName).Completed += (op) =>
+        Addressables.LoadAssetAsync<GameObject>(playerName+".prefab").Completed += (op) =>
         {
             if (op.Status != AsyncOperationStatus.Succeeded)
             {

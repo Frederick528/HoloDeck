@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
 
     public int NowChapterLV;
 
+    public int PlayedInt;
+
     public bool IsSceneChange;
 
     bool _isESCPause = false;

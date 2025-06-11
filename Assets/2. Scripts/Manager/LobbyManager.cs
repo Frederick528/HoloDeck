@@ -220,7 +220,11 @@ public class LobbyManager : MonoBehaviour
     {
         SetActiveCanvas((CanvasName)canvasNameIdx, false);
     }
-
+    public void SelectCharacter(int idx)
+    {
+        GameManager.Instance.PlayedInt = idx;
+        ChangeScene(1);
+    }
     public void BuyUpgrade(int idx)
     {
         if (GameManager.Instance.Upgrades[idx].PowerUP(GameManager.Instance.Upgrades[idx].CurLV + 1))

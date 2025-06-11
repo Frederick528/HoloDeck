@@ -5,8 +5,6 @@ using TMPro;
 using UnityEngine;
 using UniRx;
 using System;
-using static UnityEditorInternal.ReorderableList;
-using Unity.VisualScripting;
 
 public class Player : Entity
 {
@@ -204,12 +202,15 @@ public class Player : Entity
 
         animator.Play(_runningAnim);
         animator.SetBool(_enterAnimBool, true);
-        animator.transform.rotation = new Quaternion(defaultRot.x, -defaultRot.y, defaultRot.z, defaultRot.w);
+        await RotationTask(0.2f, defaultRot, Quaternion.Euler(defaultRot.x, -90, defaultRot.z));
+        //animator.transform.rotation = Quaternion.Euler(defaultRot.x, -90, defaultRot.z);
         OutGameUIManager.Instance.FadeOut(0.35f).Forget();
         await MoveTask(0.45f, defaultPos, new Vector3(-4, 0));
         isEnter();
-        animator.transform.rotation = defaultRot;
-        EnterStage(canMove, defaultPos).Forget();
+        animator.transform.rotation = Quaternion.Euler(defaultRot.x, 90, defaultRot.z);
+        await EnterStage(canMove, defaultPos);
+        await RotationTask(0.2f, animator.transform.rotation, defaultRot);
+        //animator.transform.rotation = defaultRot;
 
 
         //if (isEnter)
@@ -262,6 +263,21 @@ public class Player : Entity
         }
 
         animator.transform.localPosition = endPos; // 정확한 위치 고정
+    }
+
+    public async UniTask RotationTask(float time, Quaternion startRot, Quaternion endRot)
+    {
+        animator.transform.localRotation = startRot;
+        float rotateSpeed = Quaternion.Angle(animator.transform.localRotation, endRot) / time;
+
+        while (Quaternion.Angle(animator.transform.localRotation, endRot) > 0.1f)
+        {
+
+            animator.transform.localRotation = Quaternion.RotateTowards(animator.transform.localRotation, endRot, rotateSpeed * Time.deltaTime);
+            await UniTask.Yield(); // 다음 프레임으로 넘김
+        }
+
+        animator.transform.localRotation = endRot; // 정확한 위치 고정
     }
 
 }

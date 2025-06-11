@@ -164,8 +164,8 @@ public abstract class Entity : MonoBehaviour
         }
         //AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         //if (stateInfo.IsName("Attack"))
-        animator.SetTrigger(_hitAnim);
-        //animator.Play("Hit", -1, 0);  // 타격 당하는 애니메이션 실행        => 공격 중에는 딜레이를 주거나 무시하는 코드가 필요할 듯.
+        //animator.SetTrigger(_hitAnim);        // play를 해야 맞을 때마다 실행 가능
+        animator.Play(_hitAnim, -1, 0);  // 타격 당하는 애니메이션 실행        => 공격 중에는 딜레이를 주거나 무시하는 코드가 필요할 듯.
         if (_curHP.Value > 0)
         {
             await AfterTakeDamage(isHit);
@@ -194,8 +194,8 @@ public abstract class Entity : MonoBehaviour
 
     public virtual async UniTask AttackAnimation(bool checkAtkTiming = false)
     {
-        animator.SetTrigger(_attackAnim);
-        //animator.Play("Attack", -1, 0);  // 공격 애니메이션 실행
+        //animator.SetTrigger(_attackAnim);
+        animator.Play(_attackAnim, -1, 0);  // 공격 애니메이션 실행
         if (checkAtkTiming)
         {
             await UniTask.WaitUntil(() => _isAtk/*, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token*/);    // 공격하는 모션 중에는 게임이 끝나지 않을 것
@@ -230,8 +230,8 @@ public abstract class Entity : MonoBehaviour
 
     public virtual async UniTask DieAnimation()
     {
-        animator.SetTrigger(_dieAnim);
-        //animator.Play("Die", -1, 0);  // 사망 애니메이션 실행
+        //animator.SetTrigger(_dieAnim);        // play로 해야 바로 사망 가능
+        animator.Play(_dieAnim, -1, 0);  // 사망 애니메이션 실행
         //await UniTask.Delay(1000);
         await UniTask.WaitUntil(() => _isDied);
         Destroy(gameObject);
