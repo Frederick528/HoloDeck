@@ -260,9 +260,11 @@ public class InGameManager : MonoBehaviour
         for (int i = 0; i < repeatNum; ++i)
         {
             CardData card = RandomCard(rewardIdx);
-            while (card == null)
+            int j = 0;
+            while (card == null && j < 5)
             {
                 card = RandomCard(rewardIdx);
+                ++j;
             }
             cards[i] = card;
         }

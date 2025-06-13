@@ -208,8 +208,13 @@ public class Player : Entity
         await MoveTask(0.45f, defaultPos, new Vector3(-4, 0));
         isEnter();
         animator.transform.rotation = Quaternion.Euler(defaultRot.x, 90, defaultRot.z);
-        await EnterStage(canMove, defaultPos);
+        await EnterStage(defaultPos);
         await RotationTask(0.2f, animator.transform.rotation, defaultRot);
+        if (canMove || MapManager.Instance.canMove)
+        {
+            MapManager.Instance.canMove = true;
+
+        }
         //animator.transform.rotation = defaultRot;
 
 
@@ -233,13 +238,11 @@ public class Player : Entity
     /// <param name="canMove"></param>
     /// <param name="defaultPos"></param>
     /// <returns></returns>
-    public async UniTask EnterStage(bool canMove, Vector3 defaultPos = default)
+    public async UniTask EnterStage(Vector3 defaultPos = default)
     {
         OutGameUIManager.Instance.FadeIn(0.55f).Forget();
         await MoveTask(0.65f, new Vector3(-4, 0), defaultPos);
         animator.SetBool(_enterAnimBool, false);
-
-        MapManager.Instance.canMove = canMove;
     }
 
     public async UniTask MoveTask(float time, Vector3 startPos, Vector3 endPos)
