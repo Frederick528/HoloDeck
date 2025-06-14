@@ -71,7 +71,7 @@ public class InGameManager : MonoBehaviour
                 if (i == 0) break;
                 Destroy(mainCamera[i].gameObject);
             }
-
+            print(player.Length);
             //Destroy(mainCamera[1]);
             Destroy(player[1]);
             Destroy(transform.root.gameObject);
@@ -426,9 +426,17 @@ public class InGameManager : MonoBehaviour
     //    Cursor.visible = !isOn;
     //}
 
-    public void ChangeCoinValue(int coin)
+    public int ChangeCoinValue(int coin)
     {
-        Player.Coin.Value += coin;
+        int changeCoin = coin;
+        Player.Coin.Value += changeCoin;
+        if (Player.Coin.Value < 0)
+        {
+            changeCoin -= Player.Coin.Value;
+            Player.Coin.Value = 0;
+
+        }
+        return changeCoin;
     }
 
     //public void Pause(bool pause)
@@ -477,7 +485,7 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
-            TurnManager.Instance.StartTurnTask().Forget();
+            MapManager.Instance.MoveBossStage().Forget();
         }
 
         //if (Input.GetKeyDown(KeyCode.A))

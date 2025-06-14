@@ -93,9 +93,9 @@ public class ActiveItem : UseItem
             return;
         }
         await base.UseTask();
-        if (Data.Damage != 0)
+        if (Data.Damage != 0)           // 액티브 아이템은 공격력 증가 효과를 받기 때문에 사용 후, 공격력 값이 감소하는 상태 효과들을 감소시켜줘야 함.
         {
-            InGameManager.Instance.Player.ApplyStatusEffect(StatusEffect.ATKUp, out int ds);
+            InGameManager.Instance.Player.ApplyStatusEffect(StatusEffect.ATKUp, out _);
         }
     }
 }

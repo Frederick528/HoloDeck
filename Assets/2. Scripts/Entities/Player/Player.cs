@@ -45,7 +45,7 @@ public class Player : Entity
     void Start()
     {
         PlayerSubScribe();
-        SetupPlayer(30, 10, 150);
+        SetupPlayer(80, 10, 150);
     }
 
     void PlayerSubScribe()
@@ -193,12 +193,7 @@ public class Player : Entity
     {
         Quaternion defaultRot = animator.transform.rotation;
         Vector3 defaultPos = animator.transform.localPosition;
-        bool canMove = false;
-        if (MapManager.Instance.canMove)
-        {
-            canMove = true;
-            MapManager.Instance.canMove = false;
-        }
+        MapManager.Instance.StopMove = true;
 
         animator.Play(_runningAnim);
         animator.SetBool(_enterAnimBool, true);
@@ -210,11 +205,9 @@ public class Player : Entity
         animator.transform.rotation = Quaternion.Euler(defaultRot.x, 90, defaultRot.z);
         await EnterStage(defaultPos);
         await RotationTask(0.2f, animator.transform.rotation, defaultRot);
-        if (canMove || MapManager.Instance.canMove)
-        {
-            MapManager.Instance.canMove = true;
 
-        }
+
+        MapManager.Instance.StopMove = false;
         //animator.transform.rotation = defaultRot;
 
 

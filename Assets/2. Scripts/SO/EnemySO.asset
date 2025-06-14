@@ -17,10 +17,15 @@ MonoBehaviour:
   - {fileID: 5423766591507928315, guid: fb7e25f00b434b447ba0b2db46622238, type: 3}
   - {fileID: 8476364101092123999, guid: b7362bd93fac5cf4a9d671b7ce1493c4, type: 3}
   - {fileID: 4086410140833498804, guid: 671ee7bd8898ae942820b3810882fc4e, type: 3}
+  - {fileID: 920583721148301636, guid: 04c0f2b19c1f8494a89ae3c5a4d401c5, type: 3}
+  - {fileID: 8278908719126247087, guid: a4f241d19b48b3640b8fc5e13a8517f3, type: 3}
+  - {fileID: 951340706938287109, guid: 0f6ea89c345b6894f9b87aabe2eaa2fc, type: 3}
+  - {fileID: 5656774337708926583, guid: aefc403e9689b5f4c944277408b7af98, type: 3}
   EnemyNextAct:
   - {fileID: 21300000, guid: 4ce8264444c6f514389a17a43b7c06a2, type: 3}
   - {fileID: 21300000, guid: e134758ca8a46bb4684676ec229a43d9, type: 3}
   - {fileID: 21300000, guid: 333b7c667071587429495f9d7a0e30ab, type: 3}
+  - {fileID: 21300000, guid: 196654c1199bc374382e8a9cb436bb23, type: 3}
   EnemyDatas:
   - Name: Slime
     ID: 100
@@ -37,7 +42,7 @@ MonoBehaviour:
   - Name: Swarm
     ID: 101
     Level: 0
-    Damage: 10
+    Damage: 5
     CriticalChance: 25
     CriticalDamage: 0
     HP: 7
@@ -58,10 +63,10 @@ MonoBehaviour:
     Sprite: {fileID: 0}
     EnemyTag: 0
     EnemyPrefab: {fileID: 4086410140833498804, guid: 671ee7bd8898ae942820b3810882fc4e, type: 3}
-  - Name: E
+  - Name: E1
     ID: 500
     Level: 0
-    Damage: 20
+    Damage: 5
     CriticalChance: 10
     CriticalDamage: 0
     HP: 30
@@ -69,8 +74,8 @@ MonoBehaviour:
     Descript: E
     Sprite: {fileID: 0}
     EnemyTag: 1
-    EnemyPrefab: {fileID: 0}
-  - Name: B
+    EnemyPrefab: {fileID: 920583721148301636, guid: 04c0f2b19c1f8494a89ae3c5a4d401c5, type: 3}
+  - Name: B1
     ID: 1000
     Level: 0
     Damage: 15
@@ -78,7 +83,31 @@ MonoBehaviour:
     CriticalDamage: 0
     HP: 80
     DropCoin: 160
-    Descript: B
+    Descript: B1
     Sprite: {fileID: 0}
     EnemyTag: 2
-    EnemyPrefab: {fileID: 0}
+    EnemyPrefab: {fileID: 951340706938287109, guid: 0f6ea89c345b6894f9b87aabe2eaa2fc, type: 3}
+  - Name: E2
+    ID: 501
+    Level: 0
+    Damage: 6
+    CriticalChance: 50
+    CriticalDamage: 0
+    HP: 25
+    DropCoin: 95
+    Descript: E2
+    Sprite: {fileID: 0}
+    EnemyTag: 1
+    EnemyPrefab: {fileID: 8278908719126247087, guid: a4f241d19b48b3640b8fc5e13a8517f3, type: 3}
+  - Name: B2
+    ID: 1001
+    Level: 0
+    Damage: 10
+    CriticalChance: 5
+    CriticalDamage: 0
+    HP: 150
+    DropCoin: 170
+    Descript: B2
+    Sprite: {fileID: 0}
+    EnemyTag: 2
+    EnemyPrefab: {fileID: 5656774337708926583, guid: aefc403e9689b5f4c944277408b7af98, type: 3}

@@ -1,0 +1,41 @@
+using Cysharp.Threading.Tasks;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Elite1 : Enemy
+{
+    int turn;
+
+    void Start()
+    {
+        _nextActImg.transform.localPosition = new Vector3(0, 2.2f);
+    }
+
+    public override void NextPattern()
+    {
+        turn++;
+        _nextActImg.gameObject.SetActive(true);
+        switch (turn)
+        {
+            case 1:
+                AttackPattern(enemyData.Damage, 2);
+                break;
+            case 2:
+                SpecialPattern(3);
+                turn = 0;
+                break;
+        }
+    }
+
+    protected override void SpecialPattern(int value, int repeat = 1, float delay = 0.3f)
+    {
+        _specialDesc = "해당 적은 공격력을 {n}만큼 2턴동안 얻습니다.";
+        _nextPattern = () => UniTask.Create(async () =>
+        {
+            await UniTask.WaitForSeconds(delay);
+            AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), value, 2);
+        });
+        base.SpecialPattern(value, repeat, delay);
+    }
+}

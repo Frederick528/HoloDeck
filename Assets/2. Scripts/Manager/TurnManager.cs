@@ -96,7 +96,6 @@ public class TurnManager : MonoBehaviour
 
         InGameManager.Instance.Player.AddCurHolo(InGameManager.Instance.Player.MaxHolo);
         InGameManager.Instance.Player.ShieldReset();
-        InGameManager.Instance.Player.TurnStatusEffect();
 
         foreach (var enemy in EnemyManager.Instance.EnemyList)
         {
@@ -207,7 +206,7 @@ public class TurnManager : MonoBehaviour
             }
             return;
         }
-
+        InGameManager.Instance.Player.TurnStatusEffect();
         EnemyTurnTask().Forget();
     }
     //public async UniTask MyTurnTask(int drawCardValue)  // 나중에 스타트턴이랑 합칠 예정
@@ -226,7 +225,6 @@ public class TurnManager : MonoBehaviour
         foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
         {
             enemy.ShieldReset();
-            enemy.TurnStatusEffect();
         }
 
         await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, false, PlayerLoopTiming.Update, CancelSource.Token);  // 카드 다 버린 이후 적 행동 시작
@@ -239,6 +237,11 @@ public class TurnManager : MonoBehaviour
         // 적 턴 시작, 적 코드 작성
         // 적 턴이 끝나면 내 턴 시작.
         // 적 턴은 비동기함수 하나로 통침.
+
+        foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
+        {
+            enemy.TurnStatusEffect();
+        }
         StartTurnTask().Forget();
         // await MyTurnTask(4);
     }

@@ -61,6 +61,8 @@ public abstract class Entity : MonoBehaviour
     protected ReactiveProperty<int> _criticalChance { get; private set; } = new();
     protected ReactiveProperty<int> _criticalDamage { get; private set; } = new();
 
+    protected string _specialDesc;
+
     float _hpRatio;
     /// <summary>
     /// StatusEffect : <StatusEffectType : (amount, duration)>
@@ -70,6 +72,7 @@ public abstract class Entity : MonoBehaviour
     public Dictionary<(StatusEffect, StatusEffectType), int> StatusEffectTextIdx = new();
 
     int _numberOfStatusEffects = 0;
+    int _numberOfInformation = 0;
 
     Color _black = new Color(0f, 0f, 0f);      // 검은색 (#000000)
     Color _white = new Color(1f, 1f, 1f);      // 흰색 (#FFFFFF)
@@ -365,7 +368,7 @@ public abstract class Entity : MonoBehaviour
     }
     private void OnMouseEnter()
     {
-        if (_numberOfStatusEffects == 0) return;
+        if (_numberOfStatusEffects == 0 && _numberOfInformation == 0) return;
         if (EventSystem.current.IsPointerOverGameObject())
             return;
         if (BattleManager.Instance.ArrowCursor.gameObject.activeSelf) return;
@@ -413,12 +416,13 @@ public abstract class Entity : MonoBehaviour
     public void ReduceStatusEffect((StatusEffect, StatusEffectType) statusEffect, int amount = 0, int duration = 1)        // 턴 감소를 디폴트로 만듦.
     {
         (int, int) info = CurStatusEffect[statusEffect.Item1][statusEffect.Item2];
-        if (info.Item2 - duration > 0 && info.Item1 - amount > 0)
+        if (info.Item2 - duration > 0 && info.Item1 - amount > 0)           // 감소된 값이 둘 다 양수 => 무한 지속은 기본 음수라서 제외하고, 나머지만 적용됨.
         {
             CurStatusEffect[statusEffect.Item1][statusEffect.Item2] = (info.Item1 - amount, info.Item2 - duration);
 
             ChangeStatusEffectDesc(statusEffect);
         }
+        // 둘 중 하나라도 음수인 경우, 무한 지속은 예외 처리
         else
         {
             switch (statusEffect.Item2)
@@ -778,7 +782,7 @@ public abstract class Entity : MonoBehaviour
             //}
         }
     }
-    public void RemoveStatusEffect((StatusEffect, StatusEffectType) statusEffect)
+    public void RemoveStatusEffect((StatusEffect, StatusEffectType) statusEffect/*, bool information = false*/)
     {
         if (!CurStatusEffect.ContainsKey(statusEffect.Item1))
             return;
@@ -789,6 +793,12 @@ public abstract class Entity : MonoBehaviour
             case StatusEffectType.Perpetual:
             case StatusEffectType.UseAmountPerpetual:
                 return;
+            
+            //case StatusEffectType.Information:
+            //    if (!information)
+            //        return;
+            //    break;
+
         }
 
         (int, int) info = CurStatusEffect[statusEffect.Item1][statusEffect.Item2];
@@ -816,6 +826,7 @@ public abstract class Entity : MonoBehaviour
                 break;
             case StatusEffectType.Perpetual:
             case StatusEffectType.UseAmountPerpetual:
+            case StatusEffectType.Information:
                 StatusEffectText[StatusEffectTextIdx[statusEffect]][1].text = null;
                 StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1}</color>"/* / 지속시간: <color=yellow>∞</color>"*/;
                 break;
@@ -862,7 +873,18 @@ public abstract class Entity : MonoBehaviour
         //}
         float descHeight = StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].preferredHeight;
 
-        StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text = InGameManager.Instance.SESO.SEDatas[(int)statusEffect.Item1].Descript.Replace("{n}", $"<color=green>{info.Item1}</color>");
+        string desc = InGameManager.Instance.SESO.SEDatas[(int)statusEffect.Item1].Descript;
+
+        if (string.IsNullOrWhiteSpace(desc))
+        {
+            StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text = _specialDesc.Replace("{n}", $"<color=green>{info.Item1}</color>"); ;
+        }
+        else
+        {
+            StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text = desc.Replace("{n}", $"<color=green>{info.Item1}</color>");
+        }
+        //StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text = InGameManager.Instance.SESO.SEDatas[(int)statusEffect.Item1].Descript.Replace("{n}", $"<color=green>{info.Item1}</color>");
+
         switch (statusEffect.Item2)
         {
             case StatusEffectType.UseAmountTurnDuration:
@@ -913,7 +935,7 @@ public abstract class Entity : MonoBehaviour
     {
         if (!StatusEffectTextIdx.ContainsKey(statusEffect))
         {
-            StatusEffectTextIdx.Add(statusEffect, StatusEffectTextIdx.Count);
+            StatusEffectTextIdx.Add(statusEffect, StatusEffectTextIdx.Count);                   // 각 상태 효과 인덱스 지정
             //Instantiate(InGameUIManager.Instance.StatusEffectPrefab, _statusEffectContent);
             GameObject effect = Instantiate(InGameUIManager.Instance.StatusEffectPrefab, _statusEffectContent);
             Image[] effectImage = effect.GetComponentsInChildren<Image>();      // 0 = 배경, 1 = 상태 효과 이미지
@@ -950,19 +972,49 @@ public abstract class Entity : MonoBehaviour
             //StatusEffectDescText.Add(texts[1]);
             StatusEffectDescText.Add(Instantiate(InGameUIManager.Instance.StatusEffectDescPrefab, _statusEffectDescContent).GetComponentsInChildren<TMP_Text>());
         }
-        StatusEffectText[StatusEffectTextIdx[statusEffect]][0].transform.parent.gameObject.SetActive(isOn);
-        StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].transform.parent.gameObject.SetActive(isOn);
-        if (isOn)
-        {
-            StatusEffectText[StatusEffectTextIdx[statusEffect]][0].transform.parent.SetAsLastSibling();
-            StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].transform.parent.SetAsLastSibling();
-            ++_numberOfStatusEffects;
-        }
-        else
-        {
 
-            --_numberOfStatusEffects;
+
+        StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].transform.parent.gameObject.SetActive(isOn);         // 설명창 내용
+        switch (statusEffect.Item2)
+        {
+            case StatusEffectType.Information:
+                StatusEffectText[StatusEffectTextIdx[statusEffect]][0].transform.parent.gameObject.SetActive(false);
+                if (isOn)
+                {
+                    StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].transform.parent.SetAsFirstSibling();        // 정보 내용은 desc가 가장 위로 올라오게 함. 대신 상태 효과 개수는 변경되지 않고, 정보 값 변경
+                    ++_numberOfInformation;
+                }
+                else
+                {
+                    --_numberOfInformation;
+                }
+                break;
+            default:
+                StatusEffectText[StatusEffectTextIdx[statusEffect]][0].transform.parent.gameObject.SetActive(isOn);             // 체력바 하단 내용
+                if (isOn)
+                {
+                    StatusEffectText[StatusEffectTextIdx[statusEffect]][0].transform.parent.SetAsLastSibling();
+                    StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].transform.parent.SetAsLastSibling();
+                    ++_numberOfStatusEffects;
+                }
+                else
+                {
+
+                    --_numberOfStatusEffects;
+                }
+                break;
         }
+        //if (isOn)
+        //{
+        //    StatusEffectText[StatusEffectTextIdx[statusEffect]][0].transform.parent.SetAsLastSibling();
+        //    StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].transform.parent.SetAsLastSibling();
+        //    ++_numberOfStatusEffects;
+        //}
+        //else
+        //{
+
+        //    --_numberOfStatusEffects;
+        //}
     }
 
     //void LoseStatusEffect((StatusEffect, StatusEffectType) statusEffect)
@@ -1050,6 +1102,13 @@ public abstract class Entity : MonoBehaviour
                 if (info.Item1 != 0 && info.Item2 != 0)
                 {
                     ReduceStatusEffect((dict.Key, StatusEffectType.UseAmountTurnDuration));
+                }
+            }
+            if (dict.Value.TryGetValue(StatusEffectType.Information, out info))
+            {
+                if (info.Item1 != 0 && info.Item2 != 0)
+                {
+                    ReduceStatusEffect((dict.Key, StatusEffectType.Information));
                 }
             }
         }

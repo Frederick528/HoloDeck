@@ -217,7 +217,7 @@ public class SettingMap
         }
 
         _mark.transform.localScale = Vector3.one * _mapManager.MapScale;
-        _mark.transform.localPosition = new Vector3(-_maxDistance.Item1 * mapDistance, _markDefaultPos.y, 0);
+        _mark.transform.localPosition = new Vector3(-_maxDistance.Item1 * mapDistance, _markDefaultPos.y * _mapManager.MapScale, 0);
         _mark.transform.SetAsLastSibling();
 
         _mapManager.SetupStart(direction4, Maps);
@@ -304,35 +304,34 @@ public class SettingMap
 
         stage.btn.onClick.AddListener(() =>
         {
-            if (!_mapManager.canMove)
+            if (!_mapManager.canMove || _mapManager.StopMove)
                 return;
-            
-            if (!stage.cleared)
-            {
-                stage.LookingStage(direction4, Maps);
-                if (stage.State == Map.StageState.Treasure || stage.State == Map.StageState.Shop)
-                {
-                    _mapManager.ClearStage(stage).Forget();
-                }
-                else
-                {
-                    _mapManager.canMove = false;
-                    ShowMapBtn.SetActive(false);
-                }
-                NextChapterBtn.SetActive(false);
-            }
-            else
-            {
-                if (stage.State == Map.StageState.Boss && GameManager.Instance.NowChapterLV <= 2)
-                {
-                    NextChapterBtn.SetActive(true);
-                }
-                else
-                {
-                    NextChapterBtn.SetActive(false);
-                }
-                ShowMapBtn.SetActive(true);
-            }
+            //if (!stage.cleared)
+            //{
+            //    stage.LookingStage(direction4, Maps);
+            //    if (stage.State == Map.StageState.Treasure || stage.State == Map.StageState.Shop)
+            //    {
+            //        _mapManager.ClearStage(stage).Forget();
+            //    }
+            //    else
+            //    {
+            //        _mapManager.canMove = false;
+            //        ShowMapBtn.SetActive(false);
+            //    }
+            //    NextChapterBtn.SetActive(false);
+            //}
+            //else
+            //{
+            //    if (stage.State == Map.StageState.Boss && GameManager.Instance.NowChapterLV <= 2)
+            //    {
+            //        NextChapterBtn.SetActive(true);
+            //    }
+            //    else
+            //    {
+            //        NextChapterBtn.SetActive(false);
+            //    }
+            //    ShowMapBtn.SetActive(true);
+            //}
 
             MoveStage(stage).Forget();
 
@@ -376,6 +375,40 @@ public class SettingMap
 
     public async UniTask MoveStage(Map stage)
     {
+        if (_mapManager.StopMove)
+            return;
+        if (!stage.btn.interactable)
+        {
+            stage.gameObject.SetActive(true);
+            stage.btn.interactable = true;
+        }
+        if (!stage.cleared)
+        {
+            stage.LookingStage(direction4, Maps);
+            if (stage.State == Map.StageState.Treasure || stage.State == Map.StageState.Shop)
+            {
+                _mapManager.ClearStage(stage).Forget();
+            }
+            else
+            {
+                _mapManager.canMove = false;
+                ShowMapBtn.SetActive(false);
+            }
+            NextChapterBtn.SetActive(false);
+        }
+        else
+        {
+            if (stage.State == Map.StageState.Boss && GameManager.Instance.NowChapterLV <= 2)
+            {
+                NextChapterBtn.SetActive(true);
+            }
+            else
+            {
+                NextChapterBtn.SetActive(false);
+            }
+            ShowMapBtn.SetActive(true);
+        }
+
         // 떠나려는 방에 보상이 떴는데, 그 보상을 받지 않고 떠난다면, 잠시 해당 스테이지 보상을 숨김. 
         if (_mapManager.currStage.rewardBox != -1 && (_mapManager.currStage.ChangedItem || !_mapManager.currStage.rewarded))
         {

@@ -11,8 +11,8 @@ public class Healer : Enemy
     void Start()
     {
         //EnemySubScribe();
-        AddStatusEffect((StatusEffect.Reflection, StatusEffectType.InfiniteDuration), 3);
-        AddStatusEffect((StatusEffect.Protect, StatusEffectType.InfiniteDuration), 1);
+        AddStatusEffect((StatusEffect.Reflection, StatusEffectType.Perpetual), 3);
+        AddStatusEffect((StatusEffect.Protect, StatusEffectType.Perpetual), 1);
         _nextActImg.transform.localPosition = new Vector3(0, 1.8f);
 
         //NextPattern();
@@ -25,20 +25,26 @@ public class Healer : Enemy
         switch (turn)
         {
             case 1:
-                _nextActImg.sprite = EnemyManager.Instance.NextActImg(1);
-                _nextActText.text = enemyData.Damage.ToString();
-                _nextPattern = () => UniTask.Create(async () =>
-                {
-                    await Shield(enemyData.Damage);
-                });
+                DefensePattern(enemyData.Damage);
+                //RemoveStatusEffect((StatusEffect.Heal, StatusEffectType.Perpetual));
+                //AddStatusEffect((StatusEffect.Defense, StatusEffectType.Perpetual), enemyData.Damage);
+                //_nextActImg.sprite = EnemyManager.Instance.NextActImg(1);
+                //_nextActText.text = enemyData.Damage.ToString();
+                //_nextPattern = (StatusEffect.Defense, () => UniTask.Create(async () =>
+                //{
+                //    await Shield(enemyData.Damage);
+                //}));
                 break;
             case 2:
-                _nextActImg.sprite = EnemyManager.Instance.NextActImg(2);
-                _nextActText.text = enemyData.Damage.ToString();
-                _nextPattern = () => UniTask.Create(async () =>
-                {
-                    await Heal(enemyData.Damage);
-                });
+                HealPattern(enemyData.Damage);
+                //RemoveStatusEffect((StatusEffect.Defense, StatusEffectType.Perpetual));
+                //AddStatusEffect((StatusEffect.Heal, StatusEffectType.Perpetual), enemyData.Damage);
+                //_nextActImg.sprite = EnemyManager.Instance.NextActImg(2);
+                //_nextActText.text = enemyData.Damage.ToString();
+                //_nextPattern = (StatusEffect.Heal, () => UniTask.Create(async () =>
+                //{
+                //    await Heal(enemyData.Damage);
+                //}));
                 turn = 0;
                 break;
         }

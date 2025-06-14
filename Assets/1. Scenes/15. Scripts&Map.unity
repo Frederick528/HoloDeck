@@ -8702,6 +8702,7 @@ MonoBehaviour:
   PrevStage: {fileID: 0}
   currStage: {fileID: 0}
   canMove: 0
+  StopMove: 0
   MapString:
   - Start
   - Treasure
@@ -25057,7 +25058,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 850, y: 300}
+  m_AnchoredPosition: {x: 0, y: 512}
   m_SizeDelta: {x: 200, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1867868790
@@ -28707,6 +28708,8 @@ MonoBehaviour:
   InGame: 0
   PauseNum: 0
   NowChapterLV: 1
+  PlayedInt: 0
+  IsSceneChange: 0
 --- !u!1 &2097881106
 GameObject:
   m_ObjectHideFlags: 0

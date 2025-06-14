@@ -30,15 +30,16 @@ public class BossStage : MonoBehaviour, IStage
         switch (GameManager.Instance.NowChapterLV)
         {
             case 1:
-            case 2:
-            case 3:
-                BossSpawnPattern(Random.Range(0, 1));
+                BossSpawnPattern(Random.Range(0, 0));
                 break;
-            case 4:
+            case 2:
                 BossSpawnPattern(Random.Range(100, 100));
                 break;
-            case 5:
-                BossSpawnPattern(Random.Range(200, 210));
+            case 3:
+                BossSpawnPattern(Random.Range(200, 202));
+                break;
+            case 4:
+                BossSpawnPattern(Random.Range(300, 300));
                 break;
         }
 
@@ -55,14 +56,19 @@ public class BossStage : MonoBehaviour, IStage
                 EnemyManager.Instance.SpawnEnemy(102, 2);
                 EnemyManager.Instance.SpawnEnemy(102, 3);
                 break;
-            case 1:
-                EnemyManager.Instance.SpawnEnemy(101, 1);
-                break;
-            case 2:
-                EnemyManager.Instance.SpawnEnemy(102, 1);
-                break;
             case 100:
-                EnemyManager.Instance.SpawnEnemy(101, 2);
+                EnemyManager.Instance.SpawnEnemy(500, 2);
+                EnemyManager.Instance.SpawnEnemy(501, 3);
+                break;
+            case 200:
+                EnemyManager.Instance.SpawnEnemy(1000, 2);
+                break;
+            case 201:
+                EnemyManager.Instance.SpawnEnemy(1001, 2);
+                break;
+            case 300:
+                EnemyManager.Instance.SpawnEnemy(1000, 2);
+                EnemyManager.Instance.SpawnEnemy(1001, 3);
                 break;
         }
     }

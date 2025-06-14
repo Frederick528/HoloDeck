@@ -223,6 +223,11 @@ public abstract class Enemy : Entity
         EnemyManager.Instance.HitEnemy = this;
         int criticalDamage = CheckCritical(damage);
 
+        if (ApplyStatusEffect(StatusEffect.Thievery, out int amount) )
+        {
+            enemyData.DropCoin += -InGameManager.Instance.ChangeCoinValue(-amount);
+        }
+
         player.TakeDamage(criticalDamage).Forget();
 
         //Critical(_criticalChance.Value);
@@ -253,6 +258,62 @@ public abstract class Enemy : Entity
     //}
 
     public abstract void NextPattern();
+
+    protected virtual void AttackPattern(int value, int repeat = 1, float delay = 0.3f)
+    {
+        //RemoveStatusEffect((_nextPattern.Item1, StatusEffectType.Information));       턴을 1턴으로 만들어서 굳이 제거 안 해도 됨.
+        AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), value * repeat);
+        _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
+        _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
+        _nextPattern = () => UniTask.Create(async () =>
+        {
+            await Attack(value);
+            for (int i = repeat - 1; i > 0; --i)
+            {
+                await UniTask.WaitForSeconds(delay);
+                await Attack(value);
+            }
+        });
+    }
+    protected virtual void DefensePattern(int value, int repeat = 1, float delay = 0.3f)
+    {
+        //RemoveStatusEffect((_nextPattern.Item1, StatusEffectType.Information));
+        AddStatusEffect((StatusEffect.Defense, StatusEffectType.Information), value * repeat);
+        _nextActImg.sprite = EnemyManager.Instance.NextActImg(1);
+        _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
+        _nextPattern = () => UniTask.Create(async () =>
+        {
+            await Shield(value);
+            for (int i = repeat - 1; i > 0; --i)
+            {
+                await UniTask.WaitForSeconds(delay);
+                await Shield(value);
+            }
+        });
+    }
+    protected virtual void HealPattern(int value, int repeat = 1, float delay = 0.3f)
+    {
+        //RemoveStatusEffect((_nextPattern.Item1, StatusEffectType.Information));
+        AddStatusEffect((StatusEffect.Heal, StatusEffectType.Information), value * repeat);
+        _nextActImg.sprite = EnemyManager.Instance.NextActImg(2);
+        _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
+        _nextPattern = () => UniTask.Create(async () =>
+        {
+            await Heal(value);
+            for (int i = repeat - 1; i > 0; --i)
+            {
+                await UniTask.WaitForSeconds(delay);
+                await Heal(value);
+            }
+        });
+    }
+
+    protected virtual void SpecialPattern(int value, int repeat = 1, float delay = 0.3f)
+    {
+        AddStatusEffect((StatusEffect.Special, StatusEffectType.Information), value * repeat);
+        _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+        _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
+    }
 
     public async UniTask PlayPattern()
     {

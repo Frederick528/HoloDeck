@@ -22,20 +22,26 @@ public class Slime : Enemy
         switch (turn)
         {
             case 1:
-                _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
-                _nextActText.text = enemyData.Damage.ToString();
-                _nextPattern = () => UniTask.Create(async () =>
-                {
-                    await Attack(enemyData.Damage);
-                });
+                AttackPattern(enemyData.Damage);
+                //RemoveStatusEffect((StatusEffect.Heal, StatusEffectType.Perpetual));
+                //AddStatusEffect((StatusEffect.Attack, StatusEffectType.Perpetual), enemyData.Damage);
+                //_nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
+                //_nextActText.text = enemyData.Damage.ToString();
+                //_nextPattern = (StatusEffect.Attack, () => UniTask.Create(async () =>
+                //{
+                //    await Attack(enemyData.Damage);
+                //}));
                 break;
             case 2:
-                _nextActImg.sprite = EnemyManager.Instance.NextActImg(2);
-                _nextActText.text = enemyData.Damage.ToString();
-                _nextPattern = () => UniTask.Create(async () =>
-                {
-                    await Heal(enemyData.Damage);
-                });
+                HealPattern(enemyData.Damage);
+                //RemoveStatusEffect((StatusEffect.Attack, StatusEffectType.Perpetual));
+                //AddStatusEffect((StatusEffect.Heal, StatusEffectType.Perpetual), enemyData.Damage);
+                //_nextActImg.sprite = EnemyManager.Instance.NextActImg(2);
+                //_nextActText.text = enemyData.Damage.ToString();
+                //_nextPattern = (StatusEffect.Heal, () => UniTask.Create(async () =>
+                //{
+                //    await Heal(enemyData.Damage);
+                //}));
                 turn = 0;
                 break;
         }

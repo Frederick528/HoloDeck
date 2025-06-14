@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -21,6 +22,7 @@ public class MapManager : MonoBehaviour
     public Map currStage;
 
     public bool canMove;
+    public bool StopMove;
 
     public string[] MapString = new string[6] { "Start", "Treasure", "Shop", "Event", "Enemy", "Boss"};
 
@@ -156,8 +158,30 @@ public class MapManager : MonoBehaviour
     {
         if (PrevStage == null) return;
 
-        await TurnManager.Instance.EndBattle();
-        _settingMap.MoveStage(PrevStage).Forget();
+        if (!StopMove)
+            await TurnManager.Instance.EndBattle();
+        await _settingMap.MoveStage(PrevStage);
+
+        if (currStage.cleared)
+            canMove = true;
+    }
+
+    public async UniTaskVoid MoveStage(Map stage)
+    {
+        if (stage == null) return;
+        if (!StopMove)
+            await TurnManager.Instance.EndBattle();
+        await _settingMap.MoveStage(stage);
+
+        if (currStage.cleared)
+            canMove = true;
+    }
+
+    public async UniTaskVoid MoveBossStage()
+    {
+        if (!StopMove)
+            await TurnManager.Instance.EndBattle();
+        await _settingMap.MoveStage(_settingMap.Maps[_settingMap.Maps.Count - 1]);
 
         if (currStage.cleared)
             canMove = true;

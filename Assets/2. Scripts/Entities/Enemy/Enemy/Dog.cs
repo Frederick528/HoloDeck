@@ -22,20 +22,26 @@ public class Dog : Enemy
         switch (turn)
         {
             case 1:
-                _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
-                _nextActText.text = enemyData.Damage.ToString();
-                _nextPattern = () => UniTask.Create(async () =>
-                {
-                    await Attack(enemyData.Damage);
-                });
+                AttackPattern(enemyData.Damage * 2);
+                //RemoveStatusEffect((StatusEffect.Attack, StatusEffectType.Perpetual));
+                //AddStatusEffect((StatusEffect.Attack, StatusEffectType.Perpetual), enemyData.Damage);
+                //_nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
+                //_nextActText.text = enemyData.Damage.ToString();
+                //_nextPattern = (StatusEffect.Attack, () => UniTask.Create(async () =>
+                //{
+                //    await Attack(enemyData.Damage);
+                //}));
                 break;
             case 2:
-                _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
-                _nextActText.text = (enemyData.Damage / 2).ToString();
-                _nextPattern = () => UniTask.Create(async () =>
-                {
-                    await Attack(enemyData.Damage / 2);
-                });
+                AttackPattern(enemyData.Damage);
+                //RemoveStatusEffect((StatusEffect.Attack, StatusEffectType.Perpetual));
+                //AddStatusEffect((StatusEffect.Attack, StatusEffectType.Perpetual), enemyData.Damage / 2);
+                //_nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
+                //_nextActText.text = (enemyData.Damage / 2).ToString();
+                //_nextPattern = (StatusEffect.Attack, () => UniTask.Create(async () =>
+                //{
+                //    await Attack(enemyData.Damage / 2);
+                //}));
                 turn = 0;
                 break;
         }

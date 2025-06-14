@@ -16,15 +16,18 @@ MonoBehaviour:
   SEDatas:
   - SE: 0
     SET: 0
-    Descript: "\uD574\uB2F9 \uC801\uC740 \uACF5\uACA9\uC744 \uC900\uBE44 \uC911\uC785\uB2C8\uB2E4."
+    Descript: "\uD574\uB2F9 \uC801\uC740 {n}\uB9CC\uD07C\uC758 \uACF5\uACA9\uC744
+      \uC900\uBE44 \uC911\uC785\uB2C8\uB2E4."
     Sprite: {fileID: 0}
   - SE: 1
     SET: 0
-    Descript: "\uD574\uB2F9 \uC801\uC740 \uBC29\uC5B4\uB97C \uC900\uBE44 \uC911\uC785\uB2C8\uB2E4."
+    Descript: "\uD574\uB2F9 \uC801\uC740 {n}\uB9CC\uD07C\uC758 \uBC29\uC5B4\uB97C
+      \uC900\uBE44 \uC911\uC785\uB2C8\uB2E4."
     Sprite: {fileID: 0}
   - SE: 2
     SET: 0
-    Descript: "\uD574\uB2F9 \uC801\uC740 \uD68C\uBCF5\uC744 \uC900\uBE44 \uC911\uC785\uB2C8\uB2E4."
+    Descript: "\uD574\uB2F9 \uC801\uC740 {n}\uB9CC\uD07C\uC758 \uD68C\uBCF5\uC744
+      \uC900\uBE44 \uC911\uC785\uB2C8\uB2E4."
     Sprite: {fileID: 0}
   - SE: 3
     SET: 0
@@ -81,11 +84,13 @@ MonoBehaviour:
     SET: 0
     Descript: "\uCD5C\uB300 \uCCB4\uB825\uC774 {n}\uB9CC\uD07C \uC99D\uAC00\uD569\uB2C8\uB2E4."
     Sprite: {fileID: 0}
-  - SE: 0
+  - SE: 15
     SET: 0
-    Descript: 
+    Descript: "\uACF5\uACA9\uD560 \uB54C\uB9C8\uB2E4 {n}\uCF54\uC778\uC744 \uD6D4\uCE69\uB2C8\uB2E4.
+      \uD574\uB2F9 \uACE8\uB4DC\uB294 \uC4F0\uB7EC\uB728\uB9AC\uBA74 \uB3CC\uB824
+      \uBC1B\uC744 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
     Sprite: {fileID: 0}
-  - SE: 0
+  - SE: 16
     SET: 0
     Descript: 
     Sprite: {fileID: 0}
