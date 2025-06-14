@@ -108,6 +108,7 @@ public class Player : Entity
         AddStatusEffect((StatusEffect.CriticalDamageUp, StatusEffectType.Perpetual), GameManager.Instance.AddCriticalDamage);
         AddStatusEffect((StatusEffect.Resurrection, StatusEffectType.UseAmountPerpetual), GameManager.Instance.Resurrection);
         AddStatusEffect((StatusEffect.CoinGained, StatusEffectType.Perpetual), GameManager.Instance.AddCoinGained);
+        AddStatusEffect((StatusEffect.Vampire, StatusEffectType.Perpetual), 3);
         
         _curHP.Value = _maxHP.Value;
 

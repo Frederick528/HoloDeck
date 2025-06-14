@@ -427,7 +427,7 @@ public class SettingMap
 
         if (_mark != null)
         {
-            _mark.transform.localPosition = stage.transform.localPosition + _markDefaultPos;
+            _mark.transform.localPosition = stage.transform.localPosition + _markDefaultPos * _mapManager.MapScale;
         }
 
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
@@ -755,7 +755,7 @@ public class SettingMap
         //    _markDefaultPos = _mark.transform.localPosition;
         //}
         _mark.transform.localScale = Vector3.one * _mapManager.MapScale;
-        _mark.transform.localPosition = _markDefaultPos;        // 새로운 맵 생성 시, 현 위치표시 마커를 시작 지점으로 지정해주는 코드
+        _mark.transform.localPosition = _markDefaultPos * _mapManager.MapScale;        // 새로운 맵 생성 시, 현 위치표시 마커를 시작 지점으로 지정해주는 코드
         _mark.transform.SetAsLastSibling();
         //}
         //foreach (Map map in Maps)

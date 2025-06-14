@@ -67,8 +67,7 @@ public class BossStage : MonoBehaviour, IStage
                 EnemyManager.Instance.SpawnEnemy(1001, 2);
                 break;
             case 300:
-                EnemyManager.Instance.SpawnEnemy(1000, 2);
-                EnemyManager.Instance.SpawnEnemy(1001, 3);
+                EnemyManager.Instance.SpawnEnemy(2000, 2);
                 break;
         }
     }

@@ -10,7 +10,7 @@ public class Slime : Enemy
     void Start()
     {
         //EnemySubScribe();
-        _nextActImg.transform.localPosition = new Vector3(0, 1.8f);
+        //_nextActImg.transform.localPosition = new Vector3(0, 1.8f);
 
         //NextPattern();
     }

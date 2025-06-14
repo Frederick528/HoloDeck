@@ -13,7 +13,7 @@ public class Healer : Enemy
         //EnemySubScribe();
         AddStatusEffect((StatusEffect.Reflection, StatusEffectType.Perpetual), 3);
         AddStatusEffect((StatusEffect.Protect, StatusEffectType.Perpetual), 1);
-        _nextActImg.transform.localPosition = new Vector3(0, 1.8f);
+        //_nextActImg.transform.localPosition = new Vector3(0, 1.8f);
 
         //NextPattern();
     }

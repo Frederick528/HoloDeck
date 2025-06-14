@@ -9,7 +9,7 @@ public class Elite1 : Enemy
 
     void Start()
     {
-        _nextActImg.transform.localPosition = new Vector3(0, 2.2f);
+        //_nextActImg.transform.localPosition = new Vector3(0, 2.2f);
     }
 
     public override void NextPattern()
@@ -33,7 +33,7 @@ public class Elite1 : Enemy
         _specialDesc = "해당 적은 공격력을 {n}만큼 2턴동안 얻습니다.";
         _nextPattern = () => UniTask.Create(async () =>
         {
-            await UniTask.WaitForSeconds(delay);
+            await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
             AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), value, 2);
         });
         base.SpecialPattern(value, repeat, delay);

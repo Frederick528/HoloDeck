@@ -10,7 +10,7 @@ public class Elite2 : Enemy
     void Start()
     {
         AddStatusEffect((StatusEffect.Thievery, StatusEffectType.Perpetual), 15);
-        _nextActImg.transform.localPosition = new Vector3(0, 2.2f);
+        //_nextActImg.transform.localPosition = new Vector3(0, 2.2f);
     }
 
     public override void NextPattern()

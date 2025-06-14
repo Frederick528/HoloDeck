@@ -195,6 +195,7 @@ public class TurnManager : MonoBehaviour
         {
             CardManager.Instance.ClearCard();
             InGameManager.Instance.Player.ShieldReset();
+            InGameManager.Instance.Player.RemoveStatusEffect();
             if (EnemyManager.Instance.EnemyList.Count > 0)
             {
                 foreach (Enemy enemy in EnemyManager.Instance.EnemyList)

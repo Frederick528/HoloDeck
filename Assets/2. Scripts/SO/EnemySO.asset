@@ -21,6 +21,7 @@ MonoBehaviour:
   - {fileID: 8278908719126247087, guid: a4f241d19b48b3640b8fc5e13a8517f3, type: 3}
   - {fileID: 951340706938287109, guid: 0f6ea89c345b6894f9b87aabe2eaa2fc, type: 3}
   - {fileID: 5656774337708926583, guid: aefc403e9689b5f4c944277408b7af98, type: 3}
+  - {fileID: 567178948273558935, guid: b22ba3771d8bd9d46bfe961ff2480809, type: 3}
   EnemyNextAct:
   - {fileID: 21300000, guid: 4ce8264444c6f514389a17a43b7c06a2, type: 3}
   - {fileID: 21300000, guid: e134758ca8a46bb4684676ec229a43d9, type: 3}
@@ -111,3 +112,15 @@ MonoBehaviour:
     Sprite: {fileID: 0}
     EnemyTag: 2
     EnemyPrefab: {fileID: 5656774337708926583, guid: aefc403e9689b5f4c944277408b7af98, type: 3}
+  - Name: EB
+    ID: 2000
+    Level: 0
+    Damage: 20
+    CriticalChance: 35
+    CriticalDamage: 0
+    HP: 200
+    DropCoin: 1000
+    Descript: EB
+    Sprite: {fileID: 0}
+    EnemyTag: 2
+    EnemyPrefab: {fileID: 567178948273558935, guid: b22ba3771d8bd9d46bfe961ff2480809, type: 3}

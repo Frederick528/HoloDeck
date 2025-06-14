@@ -9192,25 +9192,25 @@ MonoBehaviour:
   myCardLeft: {fileID: 1666849163}
   myCardRight: {fileID: 1780255930}
   CommonSprites:
-  - {fileID: 1430538741, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
-  - {fileID: -384318306, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
-  - {fileID: 157235924, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
-  - {fileID: 1738065053, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
+  - {fileID: 1020766980, guid: 4814b14ae77975948bb87e32f27413f7, type: 3}
+  - {fileID: -103392275, guid: 4814b14ae77975948bb87e32f27413f7, type: 3}
+  - {fileID: 1057896631, guid: 4814b14ae77975948bb87e32f27413f7, type: 3}
+  - {fileID: -641945519, guid: 4814b14ae77975948bb87e32f27413f7, type: 3}
   RareSprites:
-  - {fileID: 504806700, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
-  - {fileID: -205744452, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
-  - {fileID: 1669967453, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
-  - {fileID: -1337421107, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
+  - {fileID: -1907583615, guid: 4814b14ae77975948bb87e32f27413f7, type: 3}
+  - {fileID: -340512911, guid: 4814b14ae77975948bb87e32f27413f7, type: 3}
+  - {fileID: -1906550430, guid: 4814b14ae77975948bb87e32f27413f7, type: 3}
+  - {fileID: 108993601, guid: 4814b14ae77975948bb87e32f27413f7, type: 3}
   EpicSprites:
-  - {fileID: 299179172, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
-  - {fileID: -1652735987, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
-  - {fileID: -1944292672, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
-  - {fileID: 1544773479, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
+  - {fileID: -867727956, guid: 4814b14ae77975948bb87e32f27413f7, type: 3}
+  - {fileID: 1328426149, guid: 4814b14ae77975948bb87e32f27413f7, type: 3}
+  - {fileID: -1241898004, guid: 4814b14ae77975948bb87e32f27413f7, type: 3}
+  - {fileID: 314490490, guid: 4814b14ae77975948bb87e32f27413f7, type: 3}
   LegendarySprites:
-  - {fileID: 299179172, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
-  - {fileID: -1652735987, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
-  - {fileID: -1944292672, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
-  - {fileID: 1544773479, guid: 8ce6052fba3f3944ab4406eae03ac4ce, type: 3}
+  - {fileID: 1898663132, guid: 4814b14ae77975948bb87e32f27413f7, type: 3}
+  - {fileID: 1135775596, guid: 4814b14ae77975948bb87e32f27413f7, type: 3}
+  - {fileID: 144750313, guid: 4814b14ae77975948bb87e32f27413f7, type: 3}
+  - {fileID: 708007510, guid: 4814b14ae77975948bb87e32f27413f7, type: 3}
   SelectCard: {fileID: 0}
 --- !u!1 &728059830
 GameObject:

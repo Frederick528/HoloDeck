@@ -27,8 +27,8 @@ public class CardManager : MonoBehaviour
     public List<Card> CardDummy;  // 카드 더미(사용 또는 버림)
     public List<Card> HandCard;   // 내 손에 있는 카드
 
-    public bool isSingleTarget;
-    public bool useSingleTargetCard;
+    public bool isSingleTarget;         // 싱글 카드 듦
+    public bool useSingleTargetCard;    // 공격 가능
 
     public ECardState CardState;
 
@@ -38,6 +38,7 @@ public class CardManager : MonoBehaviour
 
     public Transform CardSpawnPoint;
     public Transform CardDummyTr;
+    public Transform WatingCardTr;
 
     //[SerializeField] Transform Deck;    // 소환된 덱 카드들
 
@@ -92,6 +93,7 @@ public class CardManager : MonoBehaviour
     {
         CardSpawnPoint = InGameManager.Instance.PlayerTr.Find("CardSpawnPoint");
         CardDummyTr = InGameManager.Instance.PlayerTr.Find("CardDummy");
+        WatingCardTr = InGameManager.Instance.PlayerTr.Find("WatingCard");
         myCardLeft = InGameManager.Instance.PlayerTr.Find("MyCardLeft");
         myCardRight = InGameManager.Instance.PlayerTr.Find("MyCardRight");
         isUseCard.Subscribe((canUse) =>
@@ -113,6 +115,10 @@ public class CardManager : MonoBehaviour
             {
                 BattleManager.Instance.SetActiveArrowCursor(false, 0);
                 isSingleTarget = false;
+                if (SelectCard != null)
+                {
+                    Cursor.visible = false;
+                }
             }
         });
     }
@@ -290,12 +296,16 @@ public class CardManager : MonoBehaviour
             return;
         }
 
+        await UniTask.WaitForSeconds(1);
 
         InGameManager.Instance.AbilityEventQueue.Enqueue(card);
         //_eventQueue.Enqueue(card);
         _usedCard = null;
 
         HandCard.Remove(card);
+
+
+        card.MoveTransform(new PRS(WatingCardTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.CardAlignmentDelay);
         //SetOriginOrder();
         //CardAlignment();
     }
@@ -1006,6 +1016,8 @@ public class CardManager : MonoBehaviour
         InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.InGame, false);
         InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, false);
 
+        Cursor.visible = false;
+
         SelectCard = card;
         draggable = true;
         card.BlockCard();
@@ -1013,6 +1025,7 @@ public class CardManager : MonoBehaviour
 
     public async UniTask CardMouseUp(Card card)
     {
+        Cursor.visible = true;
         if (CardState != ECardState.CanMouseDrag)
         {
             //card.Block = false;

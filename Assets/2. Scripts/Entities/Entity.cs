@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using TMPro;
 using UniRx;
 using UnityEngine;
@@ -105,38 +106,47 @@ public abstract class Entity : MonoBehaviour
     //    //slider.value = _maxHP.Value;
     //    //hpText.text = _maxHP.ToString();
     //}
-    protected virtual async UniTask BeforeTakeDamage(bool isHit)
+    protected virtual async UniTask<int> BeforeTakeDamage(int damage, bool isHit)
     {
-        if (!isHit) { return; }
+        if (ApplyStatusEffect(StatusEffect.Immunity, out _)) { return 0; }
+        if (!isHit) { return damage; }
         if (ApplyStatusEffect(StatusEffect.Protect, out int amount))
         {
             await Shield(amount);
         }
-        else
-        {
-            await UniTask.CompletedTask;
-        }
+        return damage;
     }
     protected virtual async UniTask AfterTakeDamage(bool isHit)
     {
         if (!isHit) { return; }
+        if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player)        // 현재 턴이 플레이어 턴일 경우 => 플레이어 턴에 직접 타격을 받은 엔티티는 적
+        {
+            // 뱀파이어 효과로 적이 공격 받으면, 직접 타격한 엔티티(여기선 플레이어)가 회복.
+            if (InGameManager.Instance.Player.ApplyStatusEffect(StatusEffect.Vampire, out int vampire))
+            {
+                await InGameManager.Instance.Player.Heal(vampire);
+            }
+        }
+        else if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Enemy)    // 반대 상황
+        {
+            if (EnemyManager.Instance.HitEnemy.ApplyStatusEffect(StatusEffect.Vampire, out int vampire))
+            {
+                await EnemyManager.Instance.HitEnemy.Heal(vampire);
+            }
+        }
         if (ApplyStatusEffect(StatusEffect.Reflection, out int amount))
         {
             if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player/* && BattleManager.Instance.HitEntity.Item1 != null*/)
             {
-                InGameManager.Instance.Player.TakeDamage(amount, false).Forget();
+                await InGameManager.Instance.Player.TakeDamage(amount, false);
             }
             else if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Enemy/* && BattleManager.Instance.HitEntity.Item2 != null*/)
             {
                 EnemyManager.Instance.HitEnemy.CheckIfDead(amount, 1, false);
-                EnemyManager.Instance.HitEnemy.TakeDamage(amount, false).Forget();
+                await EnemyManager.Instance.HitEnemy.TakeDamage(amount, false);
                 //BattleManager.Instance.HitEntity.Item2.CheckIfDead(amount, 1, false);
                 //BattleManager.Instance.HitEntity.Item2.TakeDamage(amount, false).Forget();
             }
-        }
-        else
-        {
-            await UniTask.CompletedTask;
         }
     }
     /// <summary>
@@ -151,10 +161,11 @@ public abstract class Entity : MonoBehaviour
     /// <returns></returns>
     public async virtual UniTask<bool> TakeDamage(int dmg, bool isHit)
     {
-        await BeforeTakeDamage(isHit);
-        if (dmg == 0)       // 데미지가 0일 경우, 맞기 전 효과 발동, 맞은 후 효과는 발동 X
+        dmg = await BeforeTakeDamage(dmg, isHit);
+        if (dmg == 0)       // 데미지가 0일 경우, 맞은 후 효과는 발동 X
             return false;
         TextEffect(-dmg).Forget();
+
         if (_shield.Value >= dmg)
         {
             _shield.Value -= dmg;
@@ -164,6 +175,10 @@ public abstract class Entity : MonoBehaviour
             dmg -= _shield.Value;
             _shield.Value = 0;
             _curHP.Value -= dmg;
+            if (ApplyStatusEffect(StatusEffect.Berserker, out int berserker))       // 버서커 효과는 피해를 받을 때만 발동하기에 쉴도로 막혀도 발동하는 AfterTakeDamage와 다르게, 해당 위치에서 체크함.
+            {
+                AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), berserker);
+            }
         }
         //AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         //if (stateInfo.IsName("Attack"))
@@ -252,9 +267,9 @@ public abstract class Entity : MonoBehaviour
         await UniTask.WaitForSeconds(0.2f);
     }
 
-    public int CheckCritical(int damage)
+    public int CheckCritical(int damage)            // 크리티컬 체크용 및 적과 플레이어가 공격하기 전에 공통으로 하는 코드
     {
-        if (_curCritical.Value >= _useCritical.Value)
+        if (ApplyStatusEffect(StatusEffect.Critical, out _))
         {
             int criticalDamage = Mathf.RoundToInt(damage * _criticalDamage.Value * 0.01f);
             Critical(-_useCritical.Value);
@@ -263,6 +278,10 @@ public abstract class Entity : MonoBehaviour
         else
         {
             Critical(_criticalChance.Value);        // 크리티컬이 안 터질 때만 찬스가 올라감.
+            if (_curCritical.Value >= _useCritical.Value)
+            {
+                AddStatusEffect((StatusEffect.Critical, StatusEffectType.UseAmountPerpetual), 1);
+            }
             return damage;
         }
     }
@@ -332,12 +351,12 @@ public abstract class Entity : MonoBehaviour
 
         //entitySprite = GetComponent<SpriteRenderer>();
         canvas = transform.Find("EntityCanvas").GetComponent<Canvas>();
-        hpBar = canvas.transform.Find("HPBar").GetComponent<Image>();
-        _criticalBar = canvas.transform.Find("CriticalBar").GetComponent<Image>();
+        hpBar = FindTransform.ContinueFindChildByName(canvas.transform, "HPBar").GetComponent<Image>();
+        _criticalBar = FindTransform.ContinueFindChildByName(canvas.transform, "CriticalBar").GetComponent<Image>();
         shieldObj = canvas.transform.Find("Shield").gameObject;
         //slider = GetComponentInChildren<Slider>();
-        hpText = hpBar.transform.Find("HPText").GetComponent<TMP_Text>();
-        _criticalText = _criticalBar.transform.Find("CriticalText").GetComponent<TMP_Text>();
+        hpText = canvas.transform.Find("HPText").GetComponent<TMP_Text>();
+        _criticalText = canvas.transform.Find("CriticalText").GetComponent<TMP_Text>();
         shieldText = shieldObj.transform.Find("ShieldText").GetComponent<TMP_Text>();
         _col2D = GetComponent<BoxCollider2D>();
 
@@ -371,20 +390,20 @@ public abstract class Entity : MonoBehaviour
         if (_numberOfStatusEffects == 0 && _numberOfInformation == 0) return;
         if (EventSystem.current.IsPointerOverGameObject())
             return;
-        if (BattleManager.Instance.ArrowCursor.gameObject.activeSelf) return;
+        if (!Cursor.visible) return;
         if (InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf) return;
         _statusEffectDescContent.localPosition = Vector3.zero;
         canvas.sortingOrder = 1;        // 이거 없으면 체력 UI에 가려짐
-        if (transform.position.x > 4 && _statusDescWindow.localPosition.x > 0)
+        if (_statusDescWindow.position.x > 6.8f/* && _statusDescWindow.localPosition.x > 0*/)
         {
             _statusDescWindow.localPosition = new Vector3(-_statusDescWindow.localPosition.x, _statusDescWindow.localPosition.y, -1);       // 체력바보다 앞에 있어야 콜라이더에 문제 안 생김.
-            _statusDescCol2D.offset = new Vector2(-_statusDescCol2D.offset.x, 0);
+            _statusDescCol2D.offset = new Vector2(-_statusDescCol2D.offset.x, _statusDescCol2D.offset.y);
         }
-        else if (transform.position.x <= 4 && _statusDescWindow.localPosition.x < 0)
-        {
-            _statusDescWindow.localPosition = new Vector3(-_statusDescWindow.localPosition.x, _statusDescWindow.localPosition.y, -1);
-            _statusDescCol2D.offset = new Vector2(-_statusDescCol2D.offset.x, 0);
-        }
+        //else if (_statusDescWindow.position.x <= 6.8f && _statusDescWindow.localPosition.x < 0)
+        //{
+        //    _statusDescWindow.localPosition = new Vector3(-_statusDescWindow.localPosition.x, _statusDescWindow.localPosition.y, -1);
+        //    _statusDescCol2D.offset = new Vector2(-_statusDescCol2D.offset.x, 0);
+        //}
         _statusDescWindow.gameObject.SetActive(true);
     }
 
@@ -873,15 +892,18 @@ public abstract class Entity : MonoBehaviour
         //}
         float descHeight = StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].preferredHeight;
 
-        string desc = InGameManager.Instance.SESO.SEDatas[(int)statusEffect.Item1].Descript;
-
+        string desc = InGameManager.Instance.SESO.SEDatas[(int)statusEffect.Item1].Descript;        // 애도 나중에는 딕셔너리로 바꿔야 하려나
         if (string.IsNullOrWhiteSpace(desc))
         {
             StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text = _specialDesc.Replace("{n}", $"<color=green>{info.Item1}</color>"); ;
         }
         else
         {
-            StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text = desc.Replace("{n}", $"<color=green>{info.Item1}</color>");
+            StringBuilder sb = new(desc);
+            sb.Replace("{CriticalChance}", $"<color=green>{_criticalChance}</color>");
+            sb.Replace("{CriticalDamage}", $"<color=green>{_criticalDamage}</color>");
+            sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
+            StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text = sb.ToString();
         }
         //StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text = InGameManager.Instance.SESO.SEDatas[(int)statusEffect.Item1].Descript.Replace("{n}", $"<color=green>{info.Item1}</color>");
 
@@ -904,7 +926,7 @@ public abstract class Entity : MonoBehaviour
             //    break;
             case StatusEffectType.Perpetual:
             case StatusEffectType.UseAmountPerpetual:
-                StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text += " <size=10><color=red>(해당 상태 효과는 사라지지 않습니다.)</color></size>";
+                StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text += " <size=10><color=red>(해당 상태 효과는 버프 제거로 사라지지 않습니다.)</color></size>";
                 break;
         }
         //if (statusEffect.Item2 == StatusEffectType.UseAmountTurnDuration || statusEffect.Item2 == StatusEffectType.UseAmountInfiniteDuration)
@@ -1150,9 +1172,13 @@ public abstract class Entity : MonoBehaviour
                 {
                     ReduceStatusEffect((statusEffect, StatusEffectType.UseAmountTurnDuration), 1, 0);
                     //CurStatusEffect[statusEffect][StatusEffectType.UseAmountTurnDuration] = (--info.Item1, info.Item2);
-                    if (statusEffect == StatusEffect.Resurrection)
+                    switch (statusEffect)
                     {
-                        once = true;
+                        case StatusEffect.Resurrection:
+                        case StatusEffect.Critical:
+                        case StatusEffect.Immunity:
+                            once = true;
+                            break;
                     }
                 }
             }
@@ -1166,9 +1192,13 @@ public abstract class Entity : MonoBehaviour
                 {
                     ReduceStatusEffect((statusEffect, StatusEffectType.UseAmountInfiniteDuration), 1, 0);
                     //CurStatusEffect[statusEffect][StatusEffectType.UseAmountInfiniteDuration] = (--info.Item1, info.Item2);       // 해당 타입은 무한 지속시간일 수가 없으므로, 그냥 -1 진행. 그러나, -2를 하게되는 경우에는 예외처리가 필요함.
-                    if (statusEffect == StatusEffect.Resurrection)
+                    switch (statusEffect)
                     {
-                        once = true;
+                        case StatusEffect.Resurrection:
+                        case StatusEffect.Critical:
+                        case StatusEffect.Immunity:
+                            once = true;
+                            break;
                     }
                 }
             }
@@ -1207,6 +1237,8 @@ public abstract class Entity : MonoBehaviour
             //        _criticalDamage.Value = amount;
             //        break;
             //}
+            if (amount == 0)
+                return false;
             return true;
         }
         else

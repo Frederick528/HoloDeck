@@ -210,7 +210,6 @@ public abstract class Enemy : Entity
         //    //spawn++;
         //}
         //if (spawn == EnemyManager.Instance.enemySpawnPosition.Count)
-        player.RemoveStatusEffect();
         MapManager.Instance.ClearStage().Forget();
         MapManager.Instance.RewardStage();
         ItemManager.Instance.Charge(1);
@@ -270,7 +269,7 @@ public abstract class Enemy : Entity
             await Attack(value);
             for (int i = repeat - 1; i > 0; --i)
             {
-                await UniTask.WaitForSeconds(delay);
+                await UniTask.WaitForSeconds(delay, false,  PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
                 await Attack(value);
             }
         });
@@ -286,7 +285,7 @@ public abstract class Enemy : Entity
             await Shield(value);
             for (int i = repeat - 1; i > 0; --i)
             {
-                await UniTask.WaitForSeconds(delay);
+                await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
                 await Shield(value);
             }
         });
@@ -302,7 +301,7 @@ public abstract class Enemy : Entity
             await Heal(value);
             for (int i = repeat - 1; i > 0; --i)
             {
-                await UniTask.WaitForSeconds(delay);
+                await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
                 await Heal(value);
             }
         });
@@ -319,6 +318,8 @@ public abstract class Enemy : Entity
     {
         if (_nextPattern == null) await UniTask.CompletedTask;
         await _nextPattern();
+        if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
+            return;
         _nextActImg.gameObject.SetActive(false);
     }
 

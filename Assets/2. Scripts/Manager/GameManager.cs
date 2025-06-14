@@ -57,7 +57,13 @@ public class GameManager : MonoBehaviour
             if (InGame)
                 InGameUIManager.Instance.ChangeStatus(7, goods);
         });
-        NowChapterLV = SceneManager.GetActiveScene().buildIndex;
+
+        if (SceneManager.GetActiveScene().buildIndex == 2)
+        {
+            NowChapterLV = 4;
+        }
+
+        //NowChapterLV = SceneManager.GetActiveScene().buildIndex;
 
         Upgrades = new Upgrade[8];
         for (int i = 0; i < Upgrades.Length; ++i)

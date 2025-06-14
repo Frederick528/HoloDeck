@@ -9,7 +9,7 @@ public class Boss2 : Enemy
 
     void Start()
     {
-        _nextActImg.transform.localPosition = new Vector3(0, 2.5f);
+        //_nextActImg.transform.localPosition = new Vector3(0, 2.5f);
     }
 
     public override void NextPattern()
