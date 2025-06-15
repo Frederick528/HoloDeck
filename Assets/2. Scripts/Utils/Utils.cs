@@ -36,7 +36,7 @@ public enum EAddDeck
 
 public enum StatusEffect
 {
-    Attack, Defense, Heal, ATKUp, DEFUp, HealUp, Vulnerable, Weaking, Reflection, Protect, Resurrection, CoinGained, CriticalChanceUp, CriticalDamageUp, HPUp, Thievery, Special, Critical, Immunity, Vampire, Berserker
+    Attack, Defense, Heal, ATKUp, DEFUp, HealUp, Vulnerable, Weaking, Reflection, Protect, Resurrection, CoinGained, CriticalChanceUp, CriticalDamageUp, HPUp, Thievery, Special, UseCritical, Immunity, Vampire, Berserker, GetCritical
 }
 
 public enum StatusEffectType

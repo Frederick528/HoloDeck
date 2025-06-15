@@ -168,7 +168,7 @@ public class GameManager : MonoBehaviour
 
     public async UniTaskVoid ChangeScene(int idx)
     {
-        if (SceneManager.GetActiveScene().buildIndex == idx) return;
+        if (idx == 0 && SceneManager.GetActiveScene().buildIndex == idx) return;
         IsSceneChange = true;
         await OutGameUIManager.Instance.FadeOut(0.55f);
         switch (idx)

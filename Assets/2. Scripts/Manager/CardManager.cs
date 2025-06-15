@@ -296,8 +296,6 @@ public class CardManager : MonoBehaviour
             return;
         }
 
-        await UniTask.WaitForSeconds(1);
-
         InGameManager.Instance.AbilityEventQueue.Enqueue(card);
         //_eventQueue.Enqueue(card);
         _usedCard = null;
@@ -1066,6 +1064,8 @@ public class CardManager : MonoBehaviour
 
     public async UniTaskVoid PutDownCard(Card card)
     {
+        if (card == null)
+            return;
         card.CardOrder.SetMostFrontOrder(false);
         PullCard();
         await card.TaskMoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay).SuppressCancellationThrow();
@@ -1116,15 +1116,21 @@ public class CardManager : MonoBehaviour
         {
             case 0:
                 CardState = ECardState.Nothing;
+                PutDownCard(SelectCard).Forget();
+                ResetSetting();
                 break;
             case 1:
                 CardState = ECardState.CanMouseOver;
+                PutDownCard(SelectCard).Forget();
+                ResetSetting();
                 break; 
             case 2:
                 CardState = ECardState.CanMouseDrag;
                 break; 
             case 3:
                 CardState = ECardState.OnlyMouseClick;
+                PutDownCard(SelectCard).Forget();
+                ResetSetting();
                 break;
         }
     }

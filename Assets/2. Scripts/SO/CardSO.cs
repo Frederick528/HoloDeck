@@ -55,7 +55,7 @@ public class CardData
     //public string EnhancedDescript;
     public Sprite Sprite;
     public bool IsSimpleAB;
-    public bool HasCondition;
+    public bool HasSimpleCondition;
     public CardTag CardTag;
     public CardRarity CardRarity;
 
@@ -77,7 +77,7 @@ public class CardData
             Descript = Descript,
             Sprite = Sprite,
             IsSimpleAB = IsSimpleAB,
-            HasCondition = HasCondition,
+            HasSimpleCondition = HasSimpleCondition,
             CardTag = CardTag,
             CardRarity = CardRarity
         };

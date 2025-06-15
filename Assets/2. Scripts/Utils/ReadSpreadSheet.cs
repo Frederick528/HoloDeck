@@ -170,7 +170,7 @@ public class ReadSpreadSheet : MonoBehaviour
                 Price = ConvertInt32(cells[9]),
                 Descript = LineBreakStr(cells[10]),
                 IsSimpleAB = NullTrueBool(cells[11]),
-                HasCondition = NullFalseBool(cells[12]),
+                HasSimpleCondition = NullFalseBool(cells[12]),
                 CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[13]),
                 CardRarity = (CardRarity)Enum.Parse(typeof(CardRarity), cells[14])
             };

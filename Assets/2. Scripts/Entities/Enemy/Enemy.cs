@@ -179,7 +179,7 @@ public abstract class Enemy : Entity
         //bool clear = EnemyManager.Instance.enemies.Count == 0;
         //await base.DieAnimation();  // destroy(gameObject)가 들어가있기 때문에, 만약 죽고 난 다음에 추가 행동이 있다면, 이 함수 내에서 작동해야 함.
 
-        bool clear = await EnemyManager.Instance.KillEnemyCheck(this, base.DieAnimation());
+        bool clear = await EnemyManager.Instance.KillEnemyCheck(this, base.DieAnimation(true));
         
         //EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);      // 에너미 자리로 클리어 확인을 하기 때문에 적 죽는 모션 기다린 후, 자리 삭제  // 자리는 나중에 배열로 만들고 코드상으로만 확인하도록 변경
         if (player.ApplyStatusEffect(StatusEffect.CoinGained, out int coinGain))
@@ -217,7 +217,7 @@ public abstract class Enemy : Entity
 
     protected async UniTask Attack(int damage)
     {
-        await AttackAnimation();
+        await AttackAnimation(true);
         //BattleManager.Instance.HitEntity.Item2 = this;
         EnemyManager.Instance.HitEnemy = this;
         int criticalDamage = CheckCritical(damage);
@@ -227,7 +227,7 @@ public abstract class Enemy : Entity
             enemyData.DropCoin += -InGameManager.Instance.ChangeCoinValue(-amount);
         }
 
-        player.TakeDamage(criticalDamage).Forget();
+        await player.TakeDamage(criticalDamage);
 
         //Critical(_criticalChance.Value);
     }
@@ -258,27 +258,76 @@ public abstract class Enemy : Entity
 
     public abstract void NextPattern();
 
-    protected virtual void AttackPattern(int value, int repeat = 1, float delay = 0.3f)
+    protected virtual void AttackPattern(int value, int repeat = 1/*, bool addPattern = false*/, float delay = 0.3f)
     {
         //RemoveStatusEffect((_nextPattern.Item1, StatusEffectType.Information));       턴을 1턴으로 만들어서 굳이 제거 안 해도 됨.
+        AddStatusEffect((StatusEffect.GetCritical, StatusEffectType.Information), _criticalChance.Value * repeat);
         AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), value * repeat);
         _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
+
+        //string valueText = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
+
+        //Func<UniTask> func = () => UniTask.Create(async () =>
+        //{
+        //    await Attack(value);
+        //    for (int i = repeat - 1; i > 0; --i)
+        //    {
+        //        await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+        //        await Attack(value);
+        //    }
+        //});
+
+        //if (addPattern)
+        //{
+        //    _nextActText.text += "/" + valueText;
+        //    _nextPattern += func;
+        //}
+        //else
+        //{
+        //    _nextActText.text = valueText;
+        //    _nextPattern = func;
+        //}
+
         _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
         _nextPattern = () => UniTask.Create(async () =>
         {
             await Attack(value);
             for (int i = repeat - 1; i > 0; --i)
             {
-                await UniTask.WaitForSeconds(delay, false,  PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+                await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
                 await Attack(value);
             }
         });
     }
-    protected virtual void DefensePattern(int value, int repeat = 1, float delay = 0.3f)
+    protected virtual void DefensePattern(int value, int repeat = 1/*, bool addPattern = false*/, float delay = 0.3f)
     {
         //RemoveStatusEffect((_nextPattern.Item1, StatusEffectType.Information));
         AddStatusEffect((StatusEffect.Defense, StatusEffectType.Information), value * repeat);
         _nextActImg.sprite = EnemyManager.Instance.NextActImg(1);
+
+        //string valueText = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
+
+        //Func<UniTask> func = () => UniTask.Create(async () =>
+        //{
+        //    await Shield(value);
+        //    for (int i = repeat - 1; i > 0; --i)
+        //    {
+        //        await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+        //        await Shield(value);
+        //    }
+        //});
+
+        //if (addPattern)
+        //{
+        //    _nextActText.text += "/" + valueText;
+        //    _nextPattern += func;
+        //}
+        //else
+        //{
+        //    _nextActText.text = valueText;
+        //    _nextPattern = func;
+        //}
+
         _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
         _nextPattern = () => UniTask.Create(async () =>
         {
@@ -290,11 +339,35 @@ public abstract class Enemy : Entity
             }
         });
     }
-    protected virtual void HealPattern(int value, int repeat = 1, float delay = 0.3f)
+    protected virtual void HealPattern(int value, int repeat = 1/*, bool addPattern = false*/, float delay = 0.3f)
     {
         //RemoveStatusEffect((_nextPattern.Item1, StatusEffectType.Information));
         AddStatusEffect((StatusEffect.Heal, StatusEffectType.Information), value * repeat);
         _nextActImg.sprite = EnemyManager.Instance.NextActImg(2);
+
+        //string valueText = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
+
+        //Func<UniTask> func = () => UniTask.Create(async () =>
+        //{
+        //    await Heal(value);
+        //    for (int i = repeat - 1; i > 0; --i)
+        //    {
+        //        await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+        //        await Heal(value);
+        //    }
+        //});
+
+        //if (addPattern)
+        //{
+        //    _nextActText.text += "/" + valueText;
+        //    _nextPattern += func;
+        //}
+        //else
+        //{
+        //    _nextActText.text = valueText;
+        //    _nextPattern = func;
+        //}
+
         _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
         _nextPattern = () => UniTask.Create(async () =>
         {

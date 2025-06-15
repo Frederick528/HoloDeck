@@ -212,11 +212,15 @@ public abstract class Entity : MonoBehaviour
 
     public virtual async UniTask AttackAnimation(bool checkAtkTiming = false)
     {
+        if (_animEvent == null)
+            checkAtkTiming = false;
         //animator.SetTrigger(_attackAnim);
         animator.Play(_attackAnim, -1, 0);  // 공격 애니메이션 실행
+        
         if (checkAtkTiming)
         {
             await UniTask.WaitUntil(() => _isAtk/*, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token*/);    // 공격하는 모션 중에는 게임이 끝나지 않을 것
+            _isAtk = false;
         }
     }
 
@@ -246,12 +250,17 @@ public abstract class Entity : MonoBehaviour
         _isDied = true;
     }
 
-    public virtual async UniTask DieAnimation()
+    public virtual async UniTask DieAnimation(bool checkAnim = false)
     {
+        if (_animEvent == null)
+            checkAnim = false;
         //animator.SetTrigger(_dieAnim);        // play로 해야 바로 사망 가능
         animator.Play(_dieAnim, -1, 0);  // 사망 애니메이션 실행
         //await UniTask.Delay(1000);
-        await UniTask.WaitUntil(() => _isDied);
+        if (checkAnim)
+        {
+            await UniTask.WaitUntil(() => _isDied);
+        }
         Destroy(gameObject);
     }
     public virtual async UniTask Heal(int amount)
@@ -269,7 +278,7 @@ public abstract class Entity : MonoBehaviour
 
     public int CheckCritical(int damage)            // 크리티컬 체크용 및 적과 플레이어가 공격하기 전에 공통으로 하는 코드
     {
-        if (ApplyStatusEffect(StatusEffect.Critical, out _))
+        if (ApplyStatusEffect(StatusEffect.UseCritical, out _))
         {
             int criticalDamage = Mathf.RoundToInt(damage * _criticalDamage.Value * 0.01f);
             Critical(-_useCritical.Value);
@@ -280,7 +289,7 @@ public abstract class Entity : MonoBehaviour
             Critical(_criticalChance.Value);        // 크리티컬이 안 터질 때만 찬스가 올라감.
             if (_curCritical.Value >= _useCritical.Value)
             {
-                AddStatusEffect((StatusEffect.Critical, StatusEffectType.UseAmountPerpetual), 1);
+                AddStatusEffect((StatusEffect.UseCritical, StatusEffectType.UseAmountPerpetual), 1);
             }
             return damage;
         }
@@ -1175,7 +1184,7 @@ public abstract class Entity : MonoBehaviour
                     switch (statusEffect)
                     {
                         case StatusEffect.Resurrection:
-                        case StatusEffect.Critical:
+                        case StatusEffect.UseCritical:
                         case StatusEffect.Immunity:
                             once = true;
                             break;
@@ -1195,7 +1204,7 @@ public abstract class Entity : MonoBehaviour
                     switch (statusEffect)
                     {
                         case StatusEffect.Resurrection:
-                        case StatusEffect.Critical:
+                        case StatusEffect.UseCritical:
                         case StatusEffect.Immunity:
                             once = true;
                             break;

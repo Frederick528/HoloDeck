@@ -109,6 +109,7 @@ public class Player : Entity
         AddStatusEffect((StatusEffect.Resurrection, StatusEffectType.UseAmountPerpetual), GameManager.Instance.Resurrection);
         AddStatusEffect((StatusEffect.CoinGained, StatusEffectType.Perpetual), GameManager.Instance.AddCoinGained);
         AddStatusEffect((StatusEffect.Vampire, StatusEffectType.Perpetual), 3);
+        AddStatusEffect((StatusEffect.Reflection, StatusEffectType.Perpetual), 3);
         
         _curHP.Value = _maxHP.Value;
 
@@ -128,7 +129,7 @@ public class Player : Entity
             return false;
         }
         TurnManager.Instance.EndBattle().Forget();
-        await base.DieAnimation();
+        await base.DieAnimation(true);
         print("플레이어가 죽었습니다.");
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.GameOver, true);
         return true;

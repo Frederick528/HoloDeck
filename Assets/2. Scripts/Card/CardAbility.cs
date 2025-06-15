@@ -49,7 +49,7 @@ public class CardAbility
 
     public void SetCardAbility(Card card)
     {
-        if (card.Data.HasCondition)
+        if (card.Data.HasSimpleCondition)
         {
             SettingCondition(card);
         }
@@ -62,10 +62,21 @@ public class CardAbility
             switch (card.Data.ID)
             {
                 case 105:
+                    card.UseConditions = () => UniTask.Create(async () =>
+                    {
+                        CardManager.Instance.SetCardState(1);
+                        await UniTask.CompletedTask;        // 사실 없어도 됨.
+                        return true;
+
+                    });
                     card.CardTask = () => UniTask.Create(async () =>
                     {
+                        //CardManager.Instance.SetCardState(1);
                         await DelayTask(0.5f);
-                        await AfterDrawAB();
+                        //await AfterDrawAB(card);
+                        await DrawAB(card);
+                        //await CardManager.Instance.DrawCard();       // 최하위 UniTask에서 Cancel를 확인하는데... 혹시 문제가 발생할 수도 있나..?
+                        CardManager.Instance.SetCardState(2);
                         await ConfirmedDiscardAB();
                     });
                     break;
@@ -543,6 +554,7 @@ public class CardAbility
             for (int i = 1; i < card.Data.Count; ++i)
             {
                 await DelayTask(delay);
+                damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
                 if (await card.TargetEnemy.TakeDamage(damage))
                     break;
             }
@@ -562,6 +574,7 @@ public class CardAbility
             //    await DelayTask(continuousDelay);
             //}
             await DelayTask(delay);
+            damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
             int enemyCount2 = EnemyManager.Instance.EnemyList.Count;
             await UniTask.WhenAll(Enumerable.Range(0, enemyCount2).
                 Select(j => EnemyManager.Instance.EnemyList[(enemyCount2 - 1) - j].TakeDamage(damage)));
@@ -716,11 +729,12 @@ public class CardAbility
     //    //TurnManager.Instance.DrawTask().Forget();
     //    await CardManager.Instance.DrawCard();       // 최하위 UniTask에서 Cancel를 확인하는데... 혹시 문제가 발생할 수도 있나..?
     //}
-    async UniTask AfterDrawAB(/*Card card*/)
+    async UniTask AfterDrawAB(Card card)
     {
         //TurnManager.Instance.DrawTask().Forget();
         CardManager.Instance.SetCardState(1);
-        await CardManager.Instance.DrawCard();       // 최하위 UniTask에서 Cancel를 확인하는데... 혹시 문제가 발생할 수도 있나..?
+        //await CardManager.Instance.DrawCard();       // 최하위 UniTask에서 Cancel를 확인하는데... 혹시 문제가 발생할 수도 있나..?
+        await DrawAB(card);
         CardManager.Instance.SetCardState(2);
     }
 

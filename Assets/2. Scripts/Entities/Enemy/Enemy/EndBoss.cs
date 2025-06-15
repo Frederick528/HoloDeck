@@ -25,6 +25,9 @@ public class EndBoss : Enemy
                 AttackPattern(enemyData.Damage);
                 break;
             case 2:
+                //HealPattern(enemyData.Damage);
+                //DefensePattern(enemyData.Damage, 1, true);
+                //AttackPattern(enemyData.Damage, 1, true);
                 SpecialPattern(enemyData.Damage);
                 //_nextPattern = () => UniTask.Create(async () =>
                 //{
@@ -44,6 +47,7 @@ public class EndBoss : Enemy
             await Heal(value);
             await Shield(value);
         });
+        AddStatusEffect((StatusEffect.GetCritical, StatusEffectType.Information), _criticalChance.Value * repeat);
         base.SpecialPattern(value, repeat, delay);
     }
 }
