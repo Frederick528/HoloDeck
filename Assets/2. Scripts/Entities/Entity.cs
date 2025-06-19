@@ -226,6 +226,7 @@ public abstract class Entity : MonoBehaviour
 
     async UniTask TextEffect(int value)
     {
+        if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested) return;
         TMP_Text textEffect = PoolManager.Instance.GetText(/*out TMP_Text textEffect*/);
         textEffect.transform.position = transform.position;
         textEffect.transform.localScale = Vector3.one;
@@ -310,6 +311,7 @@ public abstract class Entity : MonoBehaviour
         StartEntity();
         _maxHP.Subscribe(hp =>
         {
+            if (!hpBar) return;
             //slider.maxValue = hp;
             if (hp > 0)
             {
@@ -319,6 +321,7 @@ public abstract class Entity : MonoBehaviour
         });
         _curHP.Subscribe(hp =>
         {
+            if (!hpBar) return;
             //slider.value = hp;
             if (_maxHP.Value > 0)
             {
@@ -328,6 +331,7 @@ public abstract class Entity : MonoBehaviour
         });
         _shield.Subscribe(shield =>
         {
+            if (!shieldObj) return;
             if (shield <= 0)
             {
                 shieldObj.SetActive(false);
@@ -340,12 +344,14 @@ public abstract class Entity : MonoBehaviour
         });
         _useCritical.Subscribe(critical =>
         {
+            if (!_criticalBar) return;
             if (critical <= 0) return;
             _criticalBar.fillAmount = _curCritical.Value / (float)critical;
             _criticalText.text = $"{_curCritical.Value}/{critical}";
         });
         _curCritical.Subscribe(critical =>
         {
+            if (!_criticalBar) return;
             if (_useCritical.Value <= 0) return;
             _criticalBar.fillAmount = (float)critical / _useCritical.Value;
             _criticalText.text = $"{critical}/{_useCritical.Value}";
