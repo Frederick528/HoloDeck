@@ -22,7 +22,7 @@ public class Slime : Enemy
         switch (turn)
         {
             case 1:
-                AttackPattern(enemyData.Damage);
+                AttackPattern(_defaultEnemyData.Damage);
                 //RemoveStatusEffect((StatusEffect.Heal, StatusEffectType.Perpetual));
                 //AddStatusEffect((StatusEffect.Attack, StatusEffectType.Perpetual), enemyData.Damage);
                 //_nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
@@ -33,7 +33,7 @@ public class Slime : Enemy
                 //}));
                 break;
             case 2:
-                HealPattern(enemyData.Damage);
+                HealPattern(_defaultEnemyData.Damage);
                 //RemoveStatusEffect((StatusEffect.Attack, StatusEffectType.Perpetual));
                 //AddStatusEffect((StatusEffect.Heal, StatusEffectType.Perpetual), enemyData.Damage);
                 //_nextActImg.sprite = EnemyManager.Instance.NextActImg(2);

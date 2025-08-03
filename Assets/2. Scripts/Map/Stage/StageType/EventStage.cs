@@ -73,14 +73,15 @@ public class EventStage : MonoBehaviour, IStage
                 });
                 break;
             case 1:
-                InGameUIManager.Instance.EventText.text = "수락 시, 맵을 밝힙니다.\n거절 시, 체력을 10 회복합니다.";
+                InGameUIManager.Instance.EventText.text = "수락 시, 10% 확률로 영구적으로 공격력이 1 증가합니다.\n거절 시, 다음 전투까지 공격력이 2 증가합니다.";
                 SetEventButton(() =>
                 {
-                    MapManager.Instance.ShowAllMap();
+                    if (Random.Range(0, 10) < 1)
+                        InGameManager.Instance.Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.Perpetual), 1);
                 },
                 () =>
                 {
-                    InGameManager.Instance.Player.Heal(10).Forget();
+                    InGameManager.Instance.Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), 2);
                 });
                 break;
             case 2:
@@ -92,6 +93,26 @@ public class EventStage : MonoBehaviour, IStage
                 () =>
                 {
                     InGameManager.Instance.Player.Heal(10).Forget();
+                });
+                break;
+            case 100:
+            case 101:
+            case 102:
+            case 103:
+            case 104:
+            case 105:
+            case 106:
+            case 107:
+            case 108:
+            case 109:
+                InGameUIManager.Instance.EventText.text = "수락 시, 체력을 999 회복합니다.\n거절 시, 피해 면역 효과를 다음 전투까지 3회 얻습니다.";
+                SetEventButton(() =>
+                {
+                    InGameManager.Instance.Player.Heal(999).Forget();
+                },
+                () =>
+                {
+                    InGameManager.Instance.Player.AddStatusEffect((StatusEffect.Immunity, StatusEffectType.UseAmountInfiniteDuration), 3);
                 });
                 break;
         }

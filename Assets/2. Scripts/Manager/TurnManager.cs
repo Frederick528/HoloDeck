@@ -55,7 +55,7 @@ public class TurnManager : MonoBehaviour
         if (IsLoading && CurTurnType != TurnType.Player)       // 로딩 상태에서 내 턴이 아닌 경우
         {
             CardManager.Instance.SetCardState(0);       // Nothing
-            await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, false, PlayerLoopTiming.Update, CancelSource.Token); // 종료 다음에 버리는 시간동안은 확대 안 되게
+            await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, cancellationToken: CancelSource.Token); // 종료 다음에 버리는 시간동안은 확대 안 되게
             CardManager.Instance.SetCardState(1);       // Over
         }
         else if (IsLoading)             // 그냥 로딩 상태(내 턴인 상황에서)
@@ -190,12 +190,8 @@ public class TurnManager : MonoBehaviour
         //InGameButtonManager.Instance.TurnEndBtnInvert(false);
         //InGameUIManager.Instance.ChangeTurnButtonText(false);
         SetLoading(true);
-        await CardManager.Instance.ThrowAwayCard();
         if (endBattle)
         {
-            CardManager.Instance.ClearCard();
-            InGameManager.Instance.Player.ShieldReset();
-            InGameManager.Instance.Player.RemoveStatusEffect();
             if (EnemyManager.Instance.EnemyList.Count > 0)
             {
                 foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
@@ -205,10 +201,35 @@ public class TurnManager : MonoBehaviour
                 EnemyManager.Instance.EnemyList.Clear();
                 EnemyManager.Instance.CanEnemySpawn(true);
             }
-            return;
+            await CardManager.Instance.ThrowAwayCard();
+            CardManager.Instance.ClearCard();
+            InGameManager.Instance.Player.ShieldReset();
+            InGameManager.Instance.Player.RemoveStatusEffect();
         }
-        InGameManager.Instance.Player.TurnStatusEffect();
-        EnemyTurnTask().Forget();
+        else
+        {
+            await CardManager.Instance.ThrowAwayCard();
+            InGameManager.Instance.Player.TurnStatusEffect();
+            EnemyTurnTask().Forget();
+        }
+        //if (endBattle)
+        //{
+        //    CardManager.Instance.ClearCard();
+        //    InGameManager.Instance.Player.ShieldReset();
+        //    InGameManager.Instance.Player.RemoveStatusEffect();
+        //    //if (EnemyManager.Instance.EnemyList.Count > 0)
+        //    //{
+        //    //    foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
+        //    //    {
+        //    //        Destroy(enemy.gameObject);
+        //    //    }
+        //    //    EnemyManager.Instance.EnemyList.Clear();
+        //    //    EnemyManager.Instance.CanEnemySpawn(true);
+        //    //}
+        //    return;
+        //}
+        //InGameManager.Instance.Player.TurnStatusEffect();
+        //EnemyTurnTask().Forget();
     }
     //public async UniTask MyTurnTask(int drawCardValue)  // 나중에 스타트턴이랑 합칠 예정
     //{
@@ -228,12 +249,12 @@ public class TurnManager : MonoBehaviour
             enemy.ShieldReset();
         }
 
-        await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, false, PlayerLoopTiming.Update, CancelSource.Token);  // 카드 다 버린 이후 적 행동 시작
+        await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay, cancellationToken: CancelSource.Token);  // 카드 다 버린 이후 적 행동 시작
         int enemyCount = EnemyManager.Instance.EnemyList.Count;
         for (int i = 0; i < enemyCount; ++i)
         {
             await EnemyManager.Instance.EnemyList[i - (enemyCount - EnemyManager.Instance.EnemyList.Count)].PlayPattern();
-            await UniTask.WaitForSeconds(0.5f, false, PlayerLoopTiming.Update, CancelSource.Token); // 적 코드 이후 잠시 딜레이 (적이 공격 중에는 죽을 일 없으니 토큰 안 쓰기) => 죽을 일 생겨서 토큰 써야할 듯 ㅋㅋㅋ
+            await UniTask.WaitForSeconds(0.5f, cancellationToken: CancelSource.Token); // 적 코드 이후 잠시 딜레이 (적이 공격 중에는 죽을 일 없으니 토큰 안 쓰기) => 죽을 일 생겨서 토큰 써야할 듯 ㅋㅋㅋ
         }
         // 적 턴 시작, 적 코드 작성
         // 적 턴이 끝나면 내 턴 시작.

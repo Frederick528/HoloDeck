@@ -1,14 +1,7 @@
 ﻿//using System;
 using Cysharp.Threading.Tasks;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using TMPro;
-using Unity.VisualScripting;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.UI;
-using static UnityEditor.PlayerSettings;
 
 public class SettingMap
 {
@@ -84,6 +77,7 @@ public class SettingMap
         if (isEndBoss)
         {
             CreatedBossMap();
+            ShopManager.Instance.ChangeCardShop();
         }
         else
         {

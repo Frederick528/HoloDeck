@@ -381,7 +381,7 @@ public class CardManager : MonoBehaviour
         if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기. 이 경우에는 카드 뽑기가 0.5초 후 가능 (카드 버려지는 시간인 0.3초보단 높게 잡아야 함.)
         {
             SetupDrawDeck();
-            await UniTask.WaitForSeconds(CardUtils.LoadCardDummyDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+            await UniTask.WaitForSeconds(CardUtils.LoadCardDummyDelay, cancellationToken: TurnManager.Instance.CancelSource.Token);
         }
 
         if (DrawDeck.Count == 0)    // 덱을 섞은 후에도 뽑을 카드가 없으면 리턴
@@ -460,7 +460,7 @@ public class CardManager : MonoBehaviour
 
         SetOriginOrder();
         CardAlignment();
-        await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+        await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, cancellationToken: TurnManager.Instance.CancelSource.Token);
     }
     public async UniTask DrawCard(int count)   // Count로 뽑는 거 성공 시, 아래 있는 DrawCards는 필요없음.
     {
@@ -477,7 +477,7 @@ public class CardManager : MonoBehaviour
 
             SetOriginOrder();
             CardAlignment();
-            await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+            await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, cancellationToken: TurnManager.Instance.CancelSource.Token);
 
             //drawCard.UnblockCard();
         }

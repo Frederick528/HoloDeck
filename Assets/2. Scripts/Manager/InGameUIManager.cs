@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using TMPro;
@@ -85,6 +86,8 @@ public class InGameUIManager : MonoBehaviour
     public Image EventImage;
     public TMP_Text EventText;
 
+    public bool EndLoad;
+
     private void Awake()
     {
         _canvasTr = GameObject.Find("InGameCanvases").transform;
@@ -125,45 +128,46 @@ public class InGameUIManager : MonoBehaviour
             _canvasDict.Add(i, _canvasTr.GetChild(i) as RectTransform);
         }
 
-        Addressables.LoadAssetAsync<GameObject>("UICardImg.prefab").Completed += (op) =>
-        {
-            if (op.Status != AsyncOperationStatus.Succeeded)
-            {
-                Debug.LogError("UICardImg null");
-            }
-            else
-            {
-                _uiCard = op.Result.GetComponent<UICard>();
-            }
-            Addressables.Release(op);
+        //Addressables.LoadAssetAsync<GameObject>("UICardImg.prefab").Completed += (op) =>
+        //{
+        //    if (op.Status != AsyncOperationStatus.Succeeded)
+        //    {
+        //        Debug.LogError("UICardImg null");
+        //    }
+        //    else
+        //    {
+        //        _uiCard = op.Result.GetComponent<UICard>();
+        //    }
+        //    Addressables.Release(op);
 
-        };
-        Addressables.LoadAssetAsync<GameObject>("StatusEffect.prefab").Completed += (op) =>
-        {
-            if (op.Status != AsyncOperationStatus.Succeeded)
-            {
-                Debug.LogError("StatusEffect null");
-            }
-            else
-            {
-                StatusEffectPrefab = op.Result;
-            }
-            Addressables.Release(op);
+        //};
+        //Addressables.LoadAssetAsync<GameObject>("StatusEffect.prefab").Completed += (op) =>
+        //{
+        //    if (op.Status != AsyncOperationStatus.Succeeded)
+        //    {
+        //        Debug.LogError("StatusEffect null");
+        //    }
+        //    else
+        //    {
+        //        StatusEffectPrefab = op.Result;
+        //    }
+        //    Addressables.Release(op);
 
-        };
-        Addressables.LoadAssetAsync<GameObject>("StatusEffectDesc.prefab").Completed += (op) =>
-        {
-            if (op.Status != AsyncOperationStatus.Succeeded)
-            {
-                Debug.LogError("StatusEffectDesc null");
-            }
-            else
-            {
-                StatusEffectDescPrefab = op.Result;
-            }
-            Addressables.Release(op);
+        //};
+        //Addressables.LoadAssetAsync<GameObject>("StatusEffectDesc.prefab").Completed += (op) =>
+        //{
+        //    if (op.Status != AsyncOperationStatus.Succeeded)
+        //    {
+        //        Debug.LogError("StatusEffectDesc null");
+        //    }
+        //    else
+        //    {
+        //        StatusEffectDescPrefab = op.Result;
+        //    }
+        //    Addressables.Release(op);
 
-        };
+        //};
+        LoadAsync().Forget();
 
         _cardEnlargePanel = Canvas(CanvasName.CardReward).Find("CardEnlargePanel") as RectTransform;
         _cardRewardContent = FindTransform.ContinueFindChildByName(Canvas(CanvasName.CardReward), "Content");
@@ -278,7 +282,47 @@ public class InGameUIManager : MonoBehaviour
     //{
     //    return CanvasDict[(int)canvasName].Find(name);
     //}
+    public async UniTask LoadAsync()
+    {
+        var handle1 = Addressables.LoadAssetAsync<GameObject>("UICardImg.prefab");
+        var handle2 = Addressables.LoadAssetAsync<GameObject>("StatusEffect.prefab");
+        var handle3 = Addressables.LoadAssetAsync<GameObject>("StatusEffectDesc.prefab");
 
+        var playerHandle = InGameManager.Instance.LoadAsync();
+
+        // 전부 기다림
+        await UniTask.WhenAll(
+            handle1.ToUniTask(),
+            handle2.ToUniTask(),
+            handle3.ToUniTask(),
+            playerHandle.ToUniTask()
+        );
+
+        // 성공 여부 확인
+        if (handle1.Status == AsyncOperationStatus.Succeeded &&
+            handle2.Status == AsyncOperationStatus.Succeeded &&
+            handle3.Status == AsyncOperationStatus.Succeeded &&
+            playerHandle.Status == AsyncOperationStatus.Succeeded)
+        {
+            Debug.Log("모든 에셋 로드 성공!");
+            _uiCard = handle1.Result.GetComponent<UICard>();
+            StatusEffectPrefab = handle2.Result;
+            StatusEffectDescPrefab = handle3.Result;
+            InGameManager.Instance.SpawnPlayer(playerHandle.Result);
+            EndLoad = true;
+        }
+        else
+        {
+            Debug.LogWarning("하나 이상의 에셋 로드 실패");
+        }
+
+        Addressables.Release(handle1);
+        Addressables.Release(handle2);
+        Addressables.Release(handle3);
+        //Addressables.Release(playerHandle);
+
+        
+    }
 
     public void SetActiveCanvas(CanvasName canvasName, bool state, int idx = -1)
     {

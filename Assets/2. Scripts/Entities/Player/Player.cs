@@ -42,10 +42,19 @@ public class Player : Entity
     //        Destroy(transform.root.gameObject);
     //    }
     //}
-    void Start()
+    public void SpawnPlayer()
     {
         PlayerSubScribe();
-        SetupPlayer(80, 10, 150);
+        if (GameManager.Instance.PlayerInt == 0)
+        {
+            SetupPlayer(150, 5, 130);
+            AddStatusEffect((StatusEffect.Reflection, StatusEffectType.Perpetual), 3);
+        }
+        else
+        {
+            SetupPlayer(80, 25, 200);
+            AddStatusEffect((StatusEffect.Vampire, StatusEffectType.Perpetual), 3);
+        }
     }
 
     void PlayerSubScribe()
@@ -82,7 +91,7 @@ public class Player : Entity
 
         _criticalChance.Subscribe(criChance => InGameUIManager.Instance.ChangeStatus(4, criChance));
 
-        _criticalDamage.Subscribe(criDamage => InGameUIManager.Instance.ChangeStatus(5, criDamage));
+        CriticalDamage.Subscribe(criDamage => InGameUIManager.Instance.ChangeStatus(5, criDamage));
 
         _useCritical.Subscribe(useCri => InGameUIManager.Instance.ChangeStatus(6, _curCritical.Value, useCri));
 
@@ -95,7 +104,7 @@ public class Player : Entity
         //SetupEntity(hp + GameManager.Instance.AddMaxHP, criticalChance + GameManager.Instance.AddCriticalChance, criticalDamage + GameManager.Instance.AddCriticalDamage);
         _maxHP.Value = hp/* + GameManager.Instance.AddMaxHP*/;
         _criticalChance.Value = criticalChance/* + GameManager.Instance.AddCriticalChance*/;
-        _criticalDamage.Value = criticalDamage/* + GameManager.Instance.AddCriticalDamage*/;
+        CriticalDamage.Value = criticalDamage/* + GameManager.Instance.AddCriticalDamage*/;
         //AttackPower.Value = GameManager.Instance.AddAttackPower;
         //DefensePower.Value = GameManager.Instance.AddDefensePower;
         //HealPower.Value = GameManager.Instance.AddHealPower;
@@ -108,8 +117,6 @@ public class Player : Entity
         AddStatusEffect((StatusEffect.CriticalDamageUp, StatusEffectType.Perpetual), GameManager.Instance.AddCriticalDamage);
         AddStatusEffect((StatusEffect.Resurrection, StatusEffectType.UseAmountPerpetual), GameManager.Instance.Resurrection);
         AddStatusEffect((StatusEffect.CoinGained, StatusEffectType.Perpetual), GameManager.Instance.AddCoinGained);
-        AddStatusEffect((StatusEffect.Vampire, StatusEffectType.Perpetual), 3);
-        AddStatusEffect((StatusEffect.Reflection, StatusEffectType.Perpetual), 3);
         
         _curHP.Value = _maxHP.Value;
 

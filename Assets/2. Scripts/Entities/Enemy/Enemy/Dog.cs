@@ -22,7 +22,7 @@ public class Dog : Enemy
         switch (turn)
         {
             case 1:
-                AttackPattern(enemyData.Damage * 2);
+                AttackPattern(_defaultEnemyData.Damage*2);
                 //RemoveStatusEffect((StatusEffect.Attack, StatusEffectType.Perpetual));
                 //AddStatusEffect((StatusEffect.Attack, StatusEffectType.Perpetual), enemyData.Damage);
                 //_nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
@@ -33,7 +33,7 @@ public class Dog : Enemy
                 //}));
                 break;
             case 2:
-                AttackPattern(enemyData.Damage);
+                AttackPattern(_defaultEnemyData.Damage);
                 //RemoveStatusEffect((StatusEffect.Attack, StatusEffectType.Perpetual));
                 //AddStatusEffect((StatusEffect.Attack, StatusEffectType.Perpetual), enemyData.Damage / 2);
                 //_nextActImg.sprite = EnemyManager.Instance.NextActImg(0);

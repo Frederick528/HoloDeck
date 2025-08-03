@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
 
     public int NowChapterLV;
 
-    public int PlayedInt;
+    public int PlayerInt;
 
     public bool IsSceneChange;
 

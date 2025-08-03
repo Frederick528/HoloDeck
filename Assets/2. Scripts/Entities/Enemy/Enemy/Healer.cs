@@ -25,7 +25,7 @@ public class Healer : Enemy
         switch (turn)
         {
             case 1:
-                DefensePattern(enemyData.Damage);
+                DefensePattern(_defaultEnemyData.Damage);
                 //RemoveStatusEffect((StatusEffect.Heal, StatusEffectType.Perpetual));
                 //AddStatusEffect((StatusEffect.Defense, StatusEffectType.Perpetual), enemyData.Damage);
                 //_nextActImg.sprite = EnemyManager.Instance.NextActImg(1);
@@ -36,7 +36,7 @@ public class Healer : Enemy
                 //}));
                 break;
             case 2:
-                HealPattern(enemyData.Damage);
+                HealPattern(_defaultEnemyData.Damage);
                 //RemoveStatusEffect((StatusEffect.Defense, StatusEffectType.Perpetual));
                 //AddStatusEffect((StatusEffect.Heal, StatusEffectType.Perpetual), enemyData.Damage);
                 //_nextActImg.sprite = EnemyManager.Instance.NextActImg(2);

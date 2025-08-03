@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.UI;
 public struct Upgrade
@@ -222,7 +221,7 @@ public class LobbyManager : MonoBehaviour
     }
     public void SelectCharacter(int idx)
     {
-        GameManager.Instance.PlayedInt = idx;
+        GameManager.Instance.PlayerInt = idx;
         ChangeScene(1);
     }
     public void BuyUpgrade(int idx)

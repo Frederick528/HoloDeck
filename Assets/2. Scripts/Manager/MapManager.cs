@@ -1,11 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using static UnityEditorInternal.ReorderableList;
 
 public class MapManager : MonoBehaviour
 {
@@ -116,6 +112,7 @@ public class MapManager : MonoBehaviour
         _settingMap.Start(isEndBoss);
         if (OutGameUIManager.Instance)
             await OutGameUIManager.Instance.FadeIn(0.75f);
+        ShopManager.Instance.ChangeCardShop();
         //ShowAllMap();
     }
 

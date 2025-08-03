@@ -61,7 +61,7 @@ public class InGameManager : MonoBehaviour
             //Player = player[0].GetComponentInChildren<Player>(true);
             GameManager.Instance.AddInGameDontDestroy(transform.root.gameObject);
             GameManager.Instance.InGame = true;
-            SpawnPlayer(GameManager.Instance.PlayedInt);
+            //SpawnPlayer(GameManager.Instance.PlayerInt);
         }
         else
         {
@@ -128,6 +128,26 @@ public class InGameManager : MonoBehaviour
             Addressables.Release(op);
 
         };
+    }
+    public void SpawnPlayer(GameObject player)
+    {
+        Player = Instantiate(player, PlayerTr).GetComponentInChildren<Player>(); ;
+        CardManager.Instance.SetupStartCardDeck();
+        Player.SpawnPlayer();
+    }
+    public AsyncOperationHandle<GameObject> LoadAsync()
+    {
+        string playerName = "playerName";
+        switch (GameManager.Instance.PlayerInt)
+        {
+            case 0:
+                playerName = "PicoChan";
+                break;
+            case 1:
+                playerName = "Muryotaisu";
+                break;
+        }
+        return Addressables.LoadAssetAsync<GameObject>(playerName + ".prefab");
     }
     void SettingRandomCardList()
     {
@@ -465,7 +485,7 @@ public class InGameManager : MonoBehaviour
 
         //print(AbilityEventQueue._queue.Count);
 
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
         //if (Input.GetKeyDown(KeyCode.Space))
         //{
         //    TurnManager.OnAddCard?.Invoke();
@@ -607,6 +627,6 @@ public class InGameManager : MonoBehaviour
             Player.AddStatusEffect((StatusEffect.Protect, StatusEffectType.DurationIsAmount), 0, 3);
             //player.AddAndApplyStatusEffect((StatusEffect.Resurrection, StatusEffectType.InfiniteDuration), 1);
         }
-#endif
+//#endif
     }
 }

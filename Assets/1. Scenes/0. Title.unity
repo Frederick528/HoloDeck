@@ -181,7 +181,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Pico
+  m_text: "Pico\n\n\n\nHP: 150\n\uD06C\uB9AC\uD2F0\uCEEC \uD655\uB960: 5%\n\uD06C\uB9AC\uD2F0\uCEEC
+    \uB370\uBBF8\uC9C0: 130%\n\n\uBC18\uC0AC \uD6A8\uACFC 3 \uD68D\uB4DD"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d569bcd4182783844b0320f52b6ecaf1, type: 2}
   m_sharedMaterial: {fileID: 7732405259585777707, guid: d569bcd4182783844b0320f52b6ecaf1, type: 2}
@@ -208,8 +209,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 36
+  m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1475,6 +1476,7 @@ MonoBehaviour:
   InGame: 0
   PauseNum: 0
   NowChapterLV: 1
+  PlayedInt: 0
   IsSceneChange: 0
 --- !u!1 &331499823
 GameObject:
@@ -3556,7 +3558,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Muryo
+  m_text: "Muryo\n\n\n\nHP: 80\n\uD06C\uB9AC\uD2F0\uCEEC \uD655\uB960: 25%\n\uD06C\uB9AC\uD2F0\uCEEC
+    \uB370\uBBF8\uC9C0: 200%\n\n\uD761\uD608 \uD6A8\uACFC 3 \uD68D\uB4DD"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d569bcd4182783844b0320f52b6ecaf1, type: 2}
   m_sharedMaterial: {fileID: 7732405259585777707, guid: d569bcd4182783844b0320f52b6ecaf1, type: 2}
@@ -3583,8 +3586,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 36
+  m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +20,7 @@ public class Elite1 : Enemy
         switch (turn)
         {
             case 1:
-                AttackPattern(enemyData.Damage, 2);
+                AttackPattern(_defaultEnemyData.Damage, 2);
                 break;
             case 2:
                 SpecialPattern(3);
@@ -28,14 +29,21 @@ public class Elite1 : Enemy
         }
     }
 
-    protected override void SpecialPattern(int value, int repeat = 1, float delay = 0.3f)
+    protected override void SpecialPattern(int value, int repeat = 1, bool addPattern = false, float delay = 0.3f)
     {
         _specialDesc = "해당 적은 공격력을 {n}만큼 2턴동안 얻습니다.";
-        _nextPattern = () => UniTask.Create(async () =>
+
+        _nextPattern.Add(async () => await UniTask.Create(async () =>
         {
-            await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+            await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token);
             AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), value, 2);
-        });
-        base.SpecialPattern(value, repeat, delay);
+        }));
+
+        //_nextPattern = () => UniTask.Create(async () =>
+        //{
+        //    await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+        //    AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), value, 2);
+        //});
+        base.SpecialPattern(value, repeat, addPattern, delay);
     }
 }

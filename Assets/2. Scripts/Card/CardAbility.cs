@@ -546,27 +546,39 @@ public class CardAbility
         //    }
         //});
     }
+    int CheckCritical(Card card, bool critical)
+    {
+        int damage = card.Data.Damage;
+        if (critical)
+        {
+            damage = Mathf.RoundToInt(damage * InGameManager.Instance.Player.CriticalDamage.Value * 0.01f + 0.0001f);
+        }
+        return damage;
+    }
+
     async UniTask SingleAttackAB(Card card, float delay = 0.3f)             // 컨티뉴 single이랑 그냥 single 합침.
     {
-        int damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
-        if (!await card.TargetEnemy.TakeDamage(damage) && card.Data.Count > 1)
+        bool critical = InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _);
+        if (!await card.TargetEnemy.TakeDamage(CheckCritical(card, critical)) && card.Data.Count > 1)
         {
             for (int i = 1; i < card.Data.Count; ++i)
             {
                 await DelayTask(delay);
-                damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
-                if (await card.TargetEnemy.TakeDamage(damage))
+                //damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
+                if (await card.TargetEnemy.TakeDamage(CheckCritical(card, critical)))
                     break;
             }
         }
         card.Target(null);
+        InGameManager.Instance.Player.CheckCritical();
     }
     async UniTask MultiAttackAB(Card card, float delay = 0.3f)              // 컨티뉴 multi랑 그냥 multi 합침.
     {
-        int damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
+        bool critical = InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _);
+        //int damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
         int enemyCount1 = EnemyManager.Instance.EnemyList.Count;            // 무조건 한 번은 실행되게 함. 이러면 카운트 1를 따로 작성해주지 않아도 상관없음.
         await UniTask.WhenAll(Enumerable.Range(0, enemyCount1).
-            Select(j => EnemyManager.Instance.EnemyList[(enemyCount1 - 1) - j].TakeDamage(damage)));
+            Select(j => EnemyManager.Instance.EnemyList[(enemyCount1 - 1) - j].TakeDamage(CheckCritical(card, critical))));
         for (int i = /*0*/1; i < card.Data.Count; ++i)
         {
             //if (i != 0)
@@ -574,11 +586,12 @@ public class CardAbility
             //    await DelayTask(continuousDelay);
             //}
             await DelayTask(delay);
-            damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
+            //damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
             int enemyCount2 = EnemyManager.Instance.EnemyList.Count;
             await UniTask.WhenAll(Enumerable.Range(0, enemyCount2).
-                Select(j => EnemyManager.Instance.EnemyList[(enemyCount2 - 1) - j].TakeDamage(damage)));
+                Select(j => EnemyManager.Instance.EnemyList[(enemyCount2 - 1) - j].TakeDamage(CheckCritical(card, critical))));
         }
+        InGameManager.Instance.Player.CheckCritical();
     }
     async UniTask ShieldAB(Card card, float delay = 0.3f)
     {
@@ -866,6 +879,6 @@ public class CardAbility
 
     async UniTask DelayTask(float delay = 0.3f)
     {
-        await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
+        await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token);
     }
 }

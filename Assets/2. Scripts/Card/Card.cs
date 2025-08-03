@@ -376,12 +376,22 @@ public class Card : MonoBehaviour
         switch (Data.CardTag)
         {
             case CardTag.SingleAttack:
-                TargetEnemy.CheckIfDead(Data.Damage, count);
+                if (InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _))
+                    TargetEnemy.CheckIfDead(Mathf.RoundToInt(Data.Damage * InGameManager.Instance.Player.CriticalDamage.Value * 0.01f +0.0001f), count);
+                else
+                {
+                    TargetEnemy.CheckIfDead(Data.Damage, count);
+                }
                 break;
             case CardTag.MultiAttack:
                 foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
                 {
-                    enemy.CheckIfDead(Data.Damage, count);
+                    if (InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _))
+                        enemy.CheckIfDead(Mathf.RoundToInt(Data.Damage * InGameManager.Instance.Player.CriticalDamage.Value * 0.01f + 0.0001f), count);
+                    else
+                    {
+                        enemy.CheckIfDead(Data.Damage, count);
+                    }
                 }
                 break;
             default: break;

@@ -19,7 +19,9 @@ public abstract class Enemy : Entity
     protected Image _nextActImg;
     protected TMP_Text _nextActText;
 
-    protected Func<UniTask> _nextPattern;
+    protected List<Func<UniTask>> _nextPattern = new();
+
+    int _checkRepeat = 1;
 
     //public bool Death;
 
@@ -84,7 +86,7 @@ public abstract class Enemy : Entity
         _maxHP.Value = enemyData.HP;
         _curHP.Value = _maxHP.Value;
         _criticalChance.Value = enemyData.CriticalChance;
-        _criticalDamage.Value = 150;
+        CriticalDamage.Value = 150;
         spawnPosIdx = pos;
         player = InGameManager.Instance.Player;
         EnemySubScribe();
@@ -215,19 +217,18 @@ public abstract class Enemy : Entity
         ItemManager.Instance.Charge(1);
     }
 
-    protected async UniTask Attack(int damage)
+    protected async UniTask Attack(int damage)          // 크리티컬 판정 때문에 Attack Pattern에서 실행해야함.
     {
         await AttackAnimation(true);
         //BattleManager.Instance.HitEntity.Item2 = this;
         EnemyManager.Instance.HitEnemy = this;
-        int criticalDamage = CheckCritical(damage);
-
+        //int criticalDamage = CheckCritical(damage);
         if (ApplyStatusEffect(StatusEffect.Thievery, out int amount) )
         {
             enemyData.DropCoin += -InGameManager.Instance.ChangeCoinValue(-amount);
         }
 
-        await player.TakeDamage(criticalDamage);
+        await player.TakeDamage(damage);
 
         //Critical(_criticalChance.Value);
     }
@@ -256,18 +257,76 @@ public abstract class Enemy : Entity
     //    }
     //}
 
+    int CheckCriticalDamage(int dmamge, bool critical)
+    {
+        int criticalDamage = dmamge;
+        //int criticalDamage = Mathf.RoundToInt(enemyData.Damage * multiple);
+        if (critical)
+            criticalDamage = Mathf.RoundToInt(dmamge * CriticalDamage.Value * 0.01f + 0.0001f);     // 부동소수점 오류
+        //criticalDamage = Mathf.RoundToInt(enemyData.Damage * multiple * CriticalDamage.Value * 0.01f);
+        return criticalDamage;
+    }
+
     public abstract void NextPattern();
 
-    protected virtual void AttackPattern(int value, int repeat = 1/*, bool addPattern = false*/, float delay = 0.3f)
+    protected virtual void AttackPattern(int value, int repeat = 1, bool addPattern = false, float delay = 0.3f)
     {
+        _checkRepeat = repeat;
+        GetStatusEffect(StatusEffect.ATKUp, out int addATK);
+        int damage = value + addATK;
         //RemoveStatusEffect((_nextPattern.Item1, StatusEffectType.Information));       턴을 1턴으로 만들어서 굳이 제거 안 해도 됨.
-        AddStatusEffect((StatusEffect.GetCritical, StatusEffectType.Information), _criticalChance.Value * repeat);
-        AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), value * repeat);
-        _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
+        if (!GetStatusEffect(StatusEffect.UseCritical, out _))        // 크리티컬 터지면 에너지 회복 안 됨
+            AddStatusEffect((StatusEffect.GetCritical, StatusEffectType.Information), _criticalChance.Value);
+        AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), damage * repeat);
+        //AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), Mathf.RoundToInt(enemyData.Damage * multiple * repeat));
 
         //string valueText = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
 
-        //Func<UniTask> func = () => UniTask.Create(async () =>
+        //Func<UniTask> func = async () => await UniTask.Create(async () =>
+        //{
+        //    print("A");
+        //    await Attack(Mathf.RoundToInt(enemyData.Damage * multiple));         // 여기 부분 고쳐야 함.
+        //    for (int i = repeat - 1; i > 0; --i)
+        //    {
+        //        await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token);
+        //        await Attack(Mathf.RoundToInt(enemyData.Damage * multiple));
+        //    }
+        //});
+
+        if (addPattern)
+        {
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+            _nextActText.text = "";
+            //_nextPattern.Add(func);
+        }
+        else
+        {
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
+            _nextActText.text = repeat > 1 ? $"{damage}*{repeat}" : damage.ToString();
+            //_nextActText.text = repeat > 1 ? $"{Mathf.RoundToInt(enemyData.Damage * multiple)}*{repeat}" : (Mathf.RoundToInt(enemyData.Damage * multiple)).ToString();
+            //_nextPattern.Add(func);
+        }
+
+        _nextPattern.Add(async () => await UniTask.Create(async () =>
+        {
+            bool critical = GetStatusEffect(StatusEffect.UseCritical, out _);      // 공격하기 전에 크리티컬 확인
+            //if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
+            //    return;
+            //await Attack(Mathf.RoundToInt(enemyData.Damage * multiple));         // 여기 부분 고쳐야 함.
+            for (int i = repeat; i > 0; --i)
+            {
+                GetStatusEffect(StatusEffect.ATKUp, out int addATK);
+                damage = value + addATK;
+                _nextActText.text = _checkRepeat > 1 ? $"{damage}*{_checkRepeat--}" : damage.ToString();
+                await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token);
+                await Attack(CheckCriticalDamage(damage, critical));
+                //await Attack(CheckCriticalDamage(multiple, critical));
+                //await Attack(Mathf.RoundToInt(criticalDamage * multiple));
+            }
+            CheckCritical();
+        }));
+        //_nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
+        //_nextPattern = () => UniTask.Create(async () =>
         //{
         //    await Attack(value);
         //    for (int i = repeat - 1; i > 0; --i)
@@ -276,38 +335,51 @@ public abstract class Enemy : Entity
         //        await Attack(value);
         //    }
         //});
-
-        //if (addPattern)
-        //{
-        //    _nextActText.text += "/" + valueText;
-        //    _nextPattern += func;
-        //}
-        //else
-        //{
-        //    _nextActText.text = valueText;
-        //    _nextPattern = func;
-        //}
-
-        _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
-        _nextPattern = () => UniTask.Create(async () =>
-        {
-            await Attack(value);
-            for (int i = repeat - 1; i > 0; --i)
-            {
-                await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
-                await Attack(value);
-            }
-        });
     }
-    protected virtual void DefensePattern(int value, int repeat = 1/*, bool addPattern = false*/, float delay = 0.3f)
+    protected virtual void DefensePattern(int value, int repeat = 1, bool addPattern = false, float delay = 0.3f)
     {
+        _checkRepeat = repeat;
         //RemoveStatusEffect((_nextPattern.Item1, StatusEffectType.Information));
         AddStatusEffect((StatusEffect.Defense, StatusEffectType.Information), value * repeat);
-        _nextActImg.sprite = EnemyManager.Instance.NextActImg(1);
 
-        //string valueText = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
+        //Func<UniTask> func = async () => await UniTask.Create(async () =>
+        //{
+        //    print("D");
+        //    await Shield(value);
+        //    for (int i = repeat - 1; i > 0; --i)
+        //    {
+        //        await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token);
+        //        await Shield(value);
+        //    }
+        //});
 
-        //Func<UniTask> func = () => UniTask.Create(async () =>
+        if (addPattern)
+        {
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+            _nextActText.text = "";
+            //_nextPattern = (Func<UniTask>)Delegate.Combine(func, _nextPattern);
+        }
+        else
+        {
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(1);
+            _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
+            //_nextPattern = func;
+        }
+
+        _nextPattern.Add(async () => await UniTask.Create(async () =>
+        {
+            //if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
+            //    return;
+            //await Shield(value);         // 여기 부분 고쳐야 함.
+            for (int i = repeat; i > 0; --i)
+            {
+                await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token);
+                await Shield(value);
+            }
+        }));
+
+        //_nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
+        //_nextPattern = () => UniTask.Create(async () =>
         //{
         //    await Shield(value);
         //    for (int i = repeat - 1; i > 0; --i)
@@ -316,38 +388,53 @@ public abstract class Enemy : Entity
         //        await Shield(value);
         //    }
         //});
-
-        //if (addPattern)
-        //{
-        //    _nextActText.text += "/" + valueText;
-        //    _nextPattern += func;
-        //}
-        //else
-        //{
-        //    _nextActText.text = valueText;
-        //    _nextPattern = func;
-        //}
-
-        _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
-        _nextPattern = () => UniTask.Create(async () =>
-        {
-            await Shield(value);
-            for (int i = repeat - 1; i > 0; --i)
-            {
-                await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
-                await Shield(value);
-            }
-        });
     }
-    protected virtual void HealPattern(int value, int repeat = 1/*, bool addPattern = false*/, float delay = 0.3f)
+    protected virtual void HealPattern(int value, int repeat = 1, bool addPattern = false, float delay = 0.3f)
     {
+        _checkRepeat = repeat;
         //RemoveStatusEffect((_nextPattern.Item1, StatusEffectType.Information));
         AddStatusEffect((StatusEffect.Heal, StatusEffectType.Information), value * repeat);
-        _nextActImg.sprite = EnemyManager.Instance.NextActImg(2);
 
         //string valueText = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
 
-        //Func<UniTask> func = () => UniTask.Create(async () =>
+        //Func<UniTask> func = async () => await UniTask.Create(async () =>
+        //{
+        //    print("H");
+        //    await Heal(value);
+        //    for (int i = repeat - 1; i > 0; --i)
+        //    {
+        //        await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token);
+        //        await Heal(value);
+        //    }
+        //});
+
+        if (addPattern)
+        {
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+            _nextActText.text = "";
+            //_nextPattern = (Func<UniTask>)Delegate.Combine(func, _nextPattern);
+        }
+        else
+        {
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(2);
+            _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
+            //_nextPattern = func;
+        }
+
+        _nextPattern.Add(async () => await UniTask.Create(async () =>
+        {
+            //if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
+            //    return;
+            //await Heal(value);
+            for (int i = repeat; i > 0; --i)
+            {
+                await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token);
+                await Heal(value);
+            }
+        }));
+
+        //_nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
+        //_nextPattern = () => UniTask.Create(async () =>
         //{
         //    await Heal(value);
         //    for (int i = repeat - 1; i > 0; --i)
@@ -356,44 +443,55 @@ public abstract class Enemy : Entity
         //        await Heal(value);
         //    }
         //});
-
-        //if (addPattern)
-        //{
-        //    _nextActText.text += "/" + valueText;
-        //    _nextPattern += func;
-        //}
-        //else
-        //{
-        //    _nextActText.text = valueText;
-        //    _nextPattern = func;
-        //}
-
-        _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
-        _nextPattern = () => UniTask.Create(async () =>
-        {
-            await Heal(value);
-            for (int i = repeat - 1; i > 0; --i)
-            {
-                await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
-                await Heal(value);
-            }
-        });
     }
 
-    protected virtual void SpecialPattern(int value, int repeat = 1, float delay = 0.3f)
+    protected virtual void SpecialPattern(int value, int repeat = 1, bool addPattern = false, float delay = 0.3f)
     {
+        _checkRepeat = repeat;
         AddStatusEffect((StatusEffect.Special, StatusEffectType.Information), value * repeat);
+
+        if (addPattern)
+        {
+            _nextActText.text = "";
+            //_nextPattern += func;
+        }
+        else
+        {
+            _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
+            //_nextPattern = func;
+        }
         _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
-        _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
+        //_nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
+
     }
+
+    //protected virtual void MultiplePatterns(params Action<int, int, float>[] pattern)
+    //{
+    //    if (pattern.Length == 0) return;
+    //    pattern();
+    //    _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+    //}
 
     public async UniTask PlayPattern()
     {
         if (_nextPattern == null) await UniTask.CompletedTask;
-        await _nextPattern();
+        for (int i = _nextPattern.Count - 1; i >= 0; --i)
+        {
+            await _nextPattern[i]();
+        }
+        //foreach (var pattern in _nextPattern)
+        //{
+        //    await pattern();
+        //}
         if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
             return;
         _nextActImg.gameObject.SetActive(false);
+        _nextPattern.Clear();
+        RemoveStatusEffect((StatusEffect.Attack, StatusEffectType.Information));
+        RemoveStatusEffect((StatusEffect.GetCritical, StatusEffectType.Information));
+        RemoveStatusEffect((StatusEffect.Heal, StatusEffectType.Information));
+        RemoveStatusEffect((StatusEffect.Defense, StatusEffectType.Information));
+        RemoveStatusEffect((StatusEffect.Special, StatusEffectType.Information));
     }
 
     //public void EnemyTakeDamage(int dmg)
@@ -419,14 +517,30 @@ public abstract class Enemy : Entity
     void EnemySubScribe()
     {
         EntitySubScribe();
-        AttackPower.Subscribe(atk =>
-        {
-            enemyData.Damage = _defaultEnemyData.Damage + atk;
-        });
-
         _nextActImg = canvas.transform.Find("NextAct").GetComponent<Image>();
         _nextActText = _nextActImg.transform.GetComponentInChildren<TMP_Text>();
         _nextActImg.gameObject.SetActive(true);
+
+        AttackPower.Pairwise().Subscribe(atk =>
+        {
+            enemyData.Damage = _defaultEnemyData.Damage + atk.Current;
+            if (GetStatusEffect(StatusEffect.Attack, out int attack))
+            {
+                AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), (atk.Current - atk.Previous) * _checkRepeat);
+                if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+                {
+                    if (_checkRepeat > 1)
+                    {
+                        _nextActText.text = $"{attack / _checkRepeat + atk.Current - atk.Previous}*{_checkRepeat}";
+                    }
+                    else
+                    {
+                        _nextActText.text = $"{attack  + atk.Current - atk.Previous}";
+                    }
+                }
+            }
+        });
+
     }
     //void Start()      // 모든 상위 코드에 적용시켜야 함.
     //{

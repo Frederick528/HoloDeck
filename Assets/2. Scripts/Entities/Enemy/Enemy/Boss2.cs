@@ -19,10 +19,10 @@ public class Boss2 : Enemy
         switch (turn)
         {
             case 1:
-                AttackPattern(enemyData.Damage);
+                AttackPattern(_defaultEnemyData.Damage);
                 break;
             case 2:
-                AttackPattern(enemyData.Damage);
+                AttackPattern(_defaultEnemyData.Damage);
                 turn = 0;
                 break;
         }
