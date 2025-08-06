@@ -7,6 +7,7 @@ using UniRx;
 using UnityEngine.UI;
 using System;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public abstract class Enemy : Entity
 {
@@ -25,6 +26,15 @@ public abstract class Enemy : Entity
 
     //public bool Death;
 
+    protected override bool BoolOnMouseEnter()
+    {
+        if (!base.BoolOnMouseEnter())
+        {
+            return false;
+        }
+        EnemyManager.Instance.EnemyInfo = this;
+        return true;
+    }
     //void OnMouseEnter()
     //{
     //    if (CardManager.Instance.isSingleTarget)
@@ -83,8 +93,8 @@ public abstract class Enemy : Entity
         _defaultEnemyData = eD;
         enemyData = _defaultEnemyData.Clone();
         //SetupEntity(enemyData.HP, enemyData.CriticalChance/*, enemyData.CriticalDamage*/);      // 일단 크리티컬 데미지를 시트에 안 넣었음으로 그냥 잠시 주석 처리
-        _maxHP.Value = enemyData.HP;
-        _curHP.Value = _maxHP.Value;
+        MaxHP.Value = enemyData.HP;
+        CurHP.Value = MaxHP.Value;
         _criticalChance.Value = enemyData.CriticalChance;
         CriticalDamage.Value = 150;
         spawnPosIdx = pos;
@@ -157,7 +167,7 @@ public abstract class Enemy : Entity
             }
         }
         //int resistDamage = ResistDamage(damage);
-        if (((_curHP.Value + _shield.Value) - (resistDamage * count)) <= 0)
+        if (((CurHP.Value + CurShield.Value) - (resistDamage * count)) <= 0)
         {
             _col2D.enabled = false;
             CanClear = true;
@@ -196,15 +206,18 @@ public abstract class Enemy : Entity
         }
         if (clear)
         {
+            print("AA");
             ClearCheck();
         }
     }
 
     public void ClearCheck()
     {
-        if (!EnemyManager.Instance.MapClear/* || (EnemyManager.Instance.enemies.Count != 0 || MapManager.Instance.currStage.rewardBox != -1)*/)
-            return;
-        EnemyManager.Instance.MapClear = false;
+        //if (!EnemyManager.Instance.MapClear/* || (EnemyManager.Instance.enemies.Count != 0 || MapManager.Instance.currStage.rewardBox != -1)*/)
+        //    return;
+        //EnemyManager.Instance.MapClear = false;
+
+
         //for (int i = 0; i < EnemyManager.Instance.enemySpawnPosition.Count; ++i)
         //{
         //    if (!EnemyManager.Instance.enemySpawnPosition[i].gameObject.activeSelf)     // 몬스터가 다 죽어있으면 게임이 클리어되고, 한 마리라도 살아있으면 리턴되어 그냥 몬스터만 죽고 끝.
@@ -272,11 +285,11 @@ public abstract class Enemy : Entity
     protected virtual void AttackPattern(int value, int repeat = 1, bool addPattern = false, float delay = 0.3f)
     {
         _checkRepeat = repeat;
-        GetStatusEffect(StatusEffect.ATKUp, out int addATK);
-        int damage = value + addATK;
+        //GetStatusEffect(StatusEffect.ATKUp, out int addATK);      // 어택 파워 값으로 바로 확인 가능
+        int damage = value + AttackPower.Value;
         //RemoveStatusEffect((_nextPattern.Item1, StatusEffectType.Information));       턴을 1턴으로 만들어서 굳이 제거 안 해도 됨.
-        if (!GetStatusEffect(StatusEffect.UseCritical, out _))        // 크리티컬 터지면 에너지 회복 안 됨
-            AddStatusEffect((StatusEffect.GetCritical, StatusEffectType.Information), _criticalChance.Value);
+        //if (!GetStatusEffect(StatusEffect.UseCritical, out _))        // 크리티컬 터지면 에너지 회복 안 됨
+            //AddStatusEffect((StatusEffect.GetCritical, StatusEffectType.Information), _criticalChance.Value);     // 치명타 획득 확률을 원래 보여줬는데, 그냥 우클릭으로 확인하게 하고, 전투 중에 확인 할 수 없게 변경
         AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), damage * repeat);
         //AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), Mathf.RoundToInt(enemyData.Damage * multiple * repeat));
 
@@ -296,7 +309,7 @@ public abstract class Enemy : Entity
         if (addPattern)
         {
             _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
-            _nextActText.text = "";
+            _nextActText.text = (repeat > 1 ? $"{damage}*{repeat}" : damage.ToString()) + "/" + _nextActText.text;
             //_nextPattern.Add(func);
         }
         else
@@ -315,9 +328,9 @@ public abstract class Enemy : Entity
             //await Attack(Mathf.RoundToInt(enemyData.Damage * multiple));         // 여기 부분 고쳐야 함.
             for (int i = repeat; i > 0; --i)
             {
-                GetStatusEffect(StatusEffect.ATKUp, out int addATK);
-                damage = value + addATK;
-                _nextActText.text = _checkRepeat > 1 ? $"{damage}*{_checkRepeat--}" : damage.ToString();
+                //GetStatusEffect(StatusEffect.ATKUp, out int addATK);
+                damage = value + AttackPower.Value;
+                //_nextActText.text = _checkRepeat > 1 ? $"{damage}*{_checkRepeat--}" : damage.ToString();
                 await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token);
                 await Attack(CheckCriticalDamage(damage, critical));
                 //await Attack(CheckCriticalDamage(multiple, critical));
@@ -356,7 +369,7 @@ public abstract class Enemy : Entity
         if (addPattern)
         {
             _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
-            _nextActText.text = "";
+            _nextActText.text = (repeat > 1 ? $"{value}*{repeat}" : value.ToString()) + "/" + _nextActText.text;
             //_nextPattern = (Func<UniTask>)Delegate.Combine(func, _nextPattern);
         }
         else
@@ -411,7 +424,7 @@ public abstract class Enemy : Entity
         if (addPattern)
         {
             _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
-            _nextActText.text = "";
+            _nextActText.text = (repeat > 1 ? $"{value}*{repeat}" : value.ToString()) + "/" + _nextActText.text;
             //_nextPattern = (Func<UniTask>)Delegate.Combine(func, _nextPattern);
         }
         else
@@ -452,7 +465,7 @@ public abstract class Enemy : Entity
 
         if (addPattern)
         {
-            _nextActText.text = "";
+            _nextActText.text = (repeat > 1 ? $"{value}*{repeat}" : value.ToString()) + "/" + _nextActText.text;
             //_nextPattern += func;
         }
         else
@@ -475,6 +488,12 @@ public abstract class Enemy : Entity
     public async UniTask PlayPattern()
     {
         if (_nextPattern == null) await UniTask.CompletedTask;
+        _nextActImg.gameObject.SetActive(false);
+        RemoveStatusEffect((StatusEffect.Attack, StatusEffectType.Information));
+        //RemoveStatusEffect((StatusEffect.GetCritical, StatusEffectType.Information));
+        RemoveStatusEffect((StatusEffect.Heal, StatusEffectType.Information));
+        RemoveStatusEffect((StatusEffect.Defense, StatusEffectType.Information));
+        RemoveStatusEffect((StatusEffect.Special, StatusEffectType.Information));
         for (int i = _nextPattern.Count - 1; i >= 0; --i)
         {
             await _nextPattern[i]();
@@ -485,13 +504,7 @@ public abstract class Enemy : Entity
         //}
         if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
             return;
-        _nextActImg.gameObject.SetActive(false);
         _nextPattern.Clear();
-        RemoveStatusEffect((StatusEffect.Attack, StatusEffectType.Information));
-        RemoveStatusEffect((StatusEffect.GetCritical, StatusEffectType.Information));
-        RemoveStatusEffect((StatusEffect.Heal, StatusEffectType.Information));
-        RemoveStatusEffect((StatusEffect.Defense, StatusEffectType.Information));
-        RemoveStatusEffect((StatusEffect.Special, StatusEffectType.Information));
     }
 
     //public void EnemyTakeDamage(int dmg)
@@ -526,7 +539,15 @@ public abstract class Enemy : Entity
             enemyData.Damage = _defaultEnemyData.Damage + atk.Current;
             if (GetStatusEffect(StatusEffect.Attack, out int attack))
             {
-                AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), (atk.Current - atk.Previous) * _checkRepeat);
+                if ((atk.Current - atk.Previous) >= 0)
+                {
+                    AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), (atk.Current - atk.Previous) * _checkRepeat);
+                }
+                else
+                {
+                    ReduceStatusEffect((StatusEffect.Attack, StatusEffectType.Information), (atk.Current - atk.Previous) * _checkRepeat, 0);
+                }
+                //AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), (atk.Current - atk.Previous) * _checkRepeat);
                 if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
                 {
                     if (_checkRepeat > 1)
@@ -542,6 +563,7 @@ public abstract class Enemy : Entity
         });
 
     }
+
     //void Start()      // 모든 상위 코드에 적용시켜야 함.
     //{
     //    EntitySubScribe();

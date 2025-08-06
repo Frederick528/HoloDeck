@@ -388,7 +388,7 @@ public class InGameUIManager : MonoBehaviour
 
     public RectTransform Canvas(CanvasName canvasName)
     {
-        return _canvasDict[(int)canvasName] as RectTransform;
+        return _canvasDict[(int)canvasName];
     }
 
     public void SetCanvasRaycast(CanvasName canvasName, bool isOn)

@@ -476,14 +476,14 @@ public class ItemManager : MonoBehaviour
                 if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
                 {
                     _activeItem.Target(enemy);
-                    _activeItem.CheckEnemyDead();
+                    //_activeItem.CheckEnemyDead();
                     //enemy.CheckIfDead(_activeItem.Data.Damage, 1);      // CheckEnemyDead 이걸로 바꿔야 함.
                     UseActiveItem();
                 }
                 break;
             case 2:
                 _potionItem[_clickedPotionIdx].Target(enemy);
-                _potionItem[_clickedPotionIdx].CheckEnemyDead();
+                //_potionItem[_clickedPotionIdx].CheckEnemyDead();
                 UsePotionItem();
                 break;
         }

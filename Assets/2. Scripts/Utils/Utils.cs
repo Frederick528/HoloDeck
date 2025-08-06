@@ -20,7 +20,7 @@ public class PRS
 public class CardUtils
 {
     public static Vector3 CardScale => new Vector3(2.1f, 2.4f, 1f);
-    public static float LargeCardPosY => -3.2f;
+    public static float LargeCardPosY => -2.55f;
     public static float ThrowAwayCardDelay => 0.3f;
     public static float LoadCardDummyDelay => 0.4f;
     public static float CardAlignmentDelay => 0.3f;
@@ -37,6 +37,7 @@ public enum EAddDeck
 public enum StatusEffect
 {
     Attack, Defense, Heal, ATKUp, DEFUp, HealUp, Vulnerable, Weaking, Reflection, Protect, Resurrection, CoinGained, CriticalChanceUp, CriticalDamageUp, HPUp, Thievery, Special, UseCritical, Immunity, Vampire, Berserker, GetCritical
+    // 공격 알림, 방어 알림, 회복 알림, 공격력 업, 방어력 업, 회복력 업, 취약, 약화, 반사, 보호, 부활, 골드 획득량, 치명타 확률 업, 치명타 데미지 업, 체력 업, 도둑, 특별(설명을 직접 작성), 치명타 사용, 면역, 흡혈, 피해 시 공격력 업, 치명타 얻음 알림
 }
 
 public enum StatusEffectType

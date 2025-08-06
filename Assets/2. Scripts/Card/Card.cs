@@ -48,6 +48,8 @@ public class Card : MonoBehaviour
 
     public bool Selected;       // SelectCard = 내가 지금 들고있는 카드 (카드 사용 용), selectedCard = 내가 선택한 카드 (선택해서 버리기 용)
 
+    public bool IsEnqueued;
+
     public CardAbility CardAbility = new();
 
     public Func<UniTask<bool>?> UseConditions;
@@ -173,7 +175,11 @@ public class Card : MonoBehaviour
         await CardTask();
         if (Data.Damage != 0)
         {
-            InGameManager.Instance.Player.ApplyStatusEffect(StatusEffect.ATKUp, out _);
+            InGameManager.Instance.Player.ApplyStatusEffect(StatusEffect.ATKUp, out _);     // 공격 이후 공격력 감소 효과 적용되는 경우
+        }
+        if (Data.Shield != 0)
+        {
+            InGameManager.Instance.Player.ApplyStatusEffect(StatusEffect.DEFUp, out _);     // 마찬가지
         }
     }
     //public async UniTask UseLazy()
@@ -370,33 +376,33 @@ public class Card : MonoBehaviour
         Used = false;
     }
 
-    public void CheckEnemyDead()
-    {
-        int count = (Data.Count == 0) ? 1 : Data.Count;
-        switch (Data.CardTag)
-        {
-            case CardTag.SingleAttack:
-                if (InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _))
-                    TargetEnemy.CheckIfDead(Mathf.RoundToInt(Data.Damage * InGameManager.Instance.Player.CriticalDamage.Value * 0.01f +0.0001f), count);
-                else
-                {
-                    TargetEnemy.CheckIfDead(Data.Damage, count);
-                }
-                break;
-            case CardTag.MultiAttack:
-                foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
-                {
-                    if (InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _))
-                        enemy.CheckIfDead(Mathf.RoundToInt(Data.Damage * InGameManager.Instance.Player.CriticalDamage.Value * 0.01f + 0.0001f), count);
-                    else
-                    {
-                        enemy.CheckIfDead(Data.Damage, count);
-                    }
-                }
-                break;
-            default: break;
-        }
-    }
+    //public void CheckEnemyDead()
+    //{
+    //    int count = (Data.Count == 0) ? 1 : Data.Count;
+    //    switch (Data.CardTag)
+    //    {
+    //        case CardTag.SingleAttack:
+    //            if (InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _))
+    //                TargetEnemy.CheckIfDead(Mathf.RoundToInt(Data.Damage * InGameManager.Instance.Player.CriticalDamage.Value * 0.01f +0.0001f), count);
+    //            else
+    //            {
+    //                TargetEnemy.CheckIfDead(Data.Damage, count);
+    //            }
+    //            break;
+    //        case CardTag.MultiAttack:
+    //            foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
+    //            {
+    //                if (InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _))
+    //                    enemy.CheckIfDead(Mathf.RoundToInt(Data.Damage * InGameManager.Instance.Player.CriticalDamage.Value * 0.01f + 0.0001f), count);
+    //                else
+    //                {
+    //                    enemy.CheckIfDead(Data.Damage, count);
+    //                }
+    //            }
+    //            break;
+    //        default: break;
+    //    }
+    //}
 
     public async UniTask<bool> BeforeUsingCard()
     {
@@ -421,6 +427,12 @@ public class Card : MonoBehaviour
             }
         }
 
+        if (Data.CardTag == CardTag.SingleAttack && TargetEnemy == null)
+        {
+            Target(null);
+            return false;
+        }
+
         MoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale * 0.8f), true, CardUtils.CardAlignmentDelay);
         if (!await CheckUseConditions())
         {
@@ -431,7 +443,7 @@ public class Card : MonoBehaviour
         InGameManager.Instance.Player.AddCurHolo(-Data.Cost);
 
         Used = true;
-        CardOrder.SetOriginOrder(-10);
+        //CardOrder.SetOriginOrder(-10);
 
         //CheckEnemyDead();
 
@@ -488,7 +500,7 @@ public class Card : MonoBehaviour
 
     void OnMouseUp()
     {
-        CardManager.Instance.CardMouseUp(this).Forget();
+        CardManager.Instance.CardMouseUp(this);
 
 
         //if (comeBackCard || TurnManager.Instance.IsLoading)

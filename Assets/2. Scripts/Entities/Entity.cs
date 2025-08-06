@@ -52,9 +52,13 @@ public abstract class Entity : MonoBehaviour
     readonly int _dieAnim = Animator.StringToHash("Die");
 
 
-    protected ReactiveProperty<int> _maxHP = new();
-    protected ReactiveProperty<int> _curHP = new();
-    protected ReactiveProperty<int> _shield = new();
+    public ReactiveProperty<int> _maxHP = new();
+    public ReactiveProperty<int> _curHP = new();
+    public ReactiveProperty<int> _shield = new();
+
+    public ReactiveProperty<int> MaxHP = new();
+    public ReactiveProperty<int> CurHP = new();
+    public ReactiveProperty<int> CurShield = new();
 
     public ReactiveProperty<int> AttackPower { get; private set; } = new();
     public ReactiveProperty<int> DefensePower { get; private set; } = new();
@@ -148,13 +152,14 @@ public abstract class Entity : MonoBehaviour
             }
             else if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Enemy/* && BattleManager.Instance.HitEntity.Item2 != null*/)
             {
-                EnemyManager.Instance.HitEnemy.CheckIfDead(amount, 1, false);
+                //EnemyManager.Instance.HitEnemy.CheckIfDead(amount, 1, false);
                 await EnemyManager.Instance.HitEnemy.TakeDamage(amount, false);
                 //BattleManager.Instance.HitEntity.Item2.CheckIfDead(amount, 1, false);
                 //BattleManager.Instance.HitEntity.Item2.TakeDamage(amount, false).Forget();
             }
         }
     }
+
     /// <summary>
     /// 
     /// </summary>
@@ -172,15 +177,15 @@ public abstract class Entity : MonoBehaviour
             return false;
         TextEffect(-dmg).Forget();
 
-        if (_shield.Value >= dmg)
+        if (CurShield.Value >= dmg)
         {
-            _shield.Value -= dmg;
+            CurShield.Value -= dmg;
         }
         else
         {
-            dmg -= _shield.Value;
-            _shield.Value = 0;
-            _curHP.Value -= dmg;
+            dmg -= CurShield.Value;
+            CurShield.Value = 0;
+            CurHP.Value -= dmg;
             if (ApplyStatusEffect(StatusEffect.Berserker, out int berserker))       // 버서커 효과는 피해를 받을 때만 발동하기에 쉴도로 막혀도 발동하는 AfterTakeDamage와 다르게, 해당 위치에서 체크함.
             {
                 AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), berserker);
@@ -190,7 +195,7 @@ public abstract class Entity : MonoBehaviour
         //if (stateInfo.IsName("Attack"))
         //animator.SetTrigger(_hitAnim);        // play를 해야 맞을 때마다 실행 가능
         animator.Play(_hitAnim, -1, 0);  // 타격 당하는 애니메이션 실행        => 공격 중에는 딜레이를 주거나 무시하는 코드가 필요할 듯.
-        if (_curHP.Value > 0)
+        if (CurHP.Value > 0)
         {
             await AfterTakeDamage(isHit);
             return false;
@@ -198,7 +203,7 @@ public abstract class Entity : MonoBehaviour
 
         if (ApplyStatusEffect(StatusEffect.Resurrection, out _))
         {
-            _curHP.Value = (int)(_maxHP.Value * 0.5f);
+            CurHP.Value = (int)(MaxHP.Value * 0.5f);
             // 부활 수치 감소 코드 추가
             //_resurrection = true;
             return false;
@@ -294,14 +299,20 @@ public abstract class Entity : MonoBehaviour
     }
     public virtual async UniTask Heal(int amount)
     {
-        _curHP.Value = Mathf.Clamp(_curHP.Value + amount, 0, _maxHP.Value);
+        CurHP.Value = Mathf.Clamp(CurHP.Value + amount, 0, MaxHP.Value);
         TextEffect(amount).Forget();        // 텍스트 뜨는 건 1초 고정으로 하고 패턴 넘어가는 건 밑에서 적당히 정해줘야 보기 편할 듯
         await UniTask.WaitForSeconds(0.2f);
     }
 
     public virtual async UniTask Shield(int amount)
     {
-        _shield.Value += amount;
+        CurShield.Value += amount;
+        await UniTask.WaitForSeconds(0.2f);
+    }
+
+    public virtual async UniTask Shield()
+    {
+        CurShield.Value = _shield.Value;
         await UniTask.WaitForSeconds(0.2f);
     }
 
@@ -319,10 +330,10 @@ public abstract class Entity : MonoBehaviour
         else
         {
             Critical(_criticalChance.Value);        // 크리티컬이 안 터질 때만 찬스가 올라감.
-            if (_curCritical.Value >= _useCritical.Value)
-            {
-                AddStatusEffect((StatusEffect.UseCritical, StatusEffectType.UseAmountPerpetual), 1);
-            }
+            //if (_curCritical.Value >= _useCritical.Value)
+            //{
+            //    AddStatusEffect((StatusEffect.UseCritical, StatusEffectType.UseAmountPerpetual), _curCritical.Value/_useCritical.Value);
+            //}
             //return damage;
         }
         //// 일단 그냥 찬스 올리기로 함.
@@ -341,33 +352,33 @@ public abstract class Entity : MonoBehaviour
 
     public virtual void ShieldReset()
     {
-        _shield.Value = 0;
+        CurShield.Value = 0;
     }
 
     protected void EntitySubScribe()
     {
         StartEntity();
-        _maxHP.Subscribe(hp =>
+        MaxHP.Subscribe(hp =>
         {
             if (!hpBar) return;
             //slider.maxValue = hp;
             if (hp > 0)
             {
-                hpBar.fillAmount = _curHP.Value / (float)hp;
-                hpText.text = $"{_curHP.Value}/{hp}";
+                hpBar.fillAmount = CurHP.Value / (float)hp;
+                hpText.text = $"{CurHP.Value}/{hp}";
             }
         });
-        _curHP.Subscribe(hp =>
+        CurHP.Subscribe(hp =>
         {
             if (!hpBar) return;
             //slider.value = hp;
-            if (_maxHP.Value > 0)
+            if (MaxHP.Value > 0)
             {
-                hpBar.fillAmount = (float)hp / _maxHP.Value;
-                hpText.text = $"{hp}/{_maxHP.Value}";
+                hpBar.fillAmount = (float)hp / MaxHP.Value;
+                hpText.text = $"{hp}/{MaxHP.Value}";
             }
         });
-        _shield.Subscribe(shield =>
+        CurShield.Subscribe(shield =>
         {
             if (!shieldObj) return;
             if (shield <= 0)
@@ -393,6 +404,20 @@ public abstract class Entity : MonoBehaviour
             if (_useCritical.Value <= 0) return;
             _criticalBar.fillAmount = (float)critical / _useCritical.Value;
             _criticalText.text = $"{critical}/{_useCritical.Value}";
+
+            GetStatusEffect(StatusEffect.UseCritical, out int amount);
+            if (_curCritical.Value >= _useCritical.Value)       // 수치 변경 후, 치명타 가능한 상태
+            {
+                if (_curCritical.Value / _useCritical.Value - amount > 0)       // 치명타 뎀증 상태 효과의 개수가 치명타 적중 가능한 상태를 계산한 값보다 적으면, 상태 효과 추가
+                    AddStatusEffect((StatusEffect.UseCritical, StatusEffectType.UseAmountPerpetual), _curCritical.Value / _useCritical.Value - amount);
+                else if (_curCritical.Value / _useCritical.Value - amount < 0)  // 치명타 확률이 변경됐는데, 치명타 적중 가능한 상태를 계산한 값보다 치명타 뎀증 상태 효과의 개수가 더 많으면, 상태 효과 제거 (보통 치명타 확률을 감소시켰는데도 불구하고, 상대가 치명타 상태인 경우로 200 / 100 에서 10 감소하여, 190 / 100이 된 경우.)
+                    ReduceStatusEffect((StatusEffect.UseCritical, StatusEffectType.UseAmountPerpetual), amount - _curCritical.Value / _useCritical.Value);
+            }
+            else                                                // 수치 변경 후, 치명타 불가능 상태
+            {
+                if (amount > 0)
+                    ReduceStatusEffect((StatusEffect.UseCritical, StatusEffectType.UseAmountPerpetual), amount);
+            }
         });
     }
 
@@ -438,13 +463,18 @@ public abstract class Entity : MonoBehaviour
         //    }
         //}
     }
-    private void OnMouseEnter()
+    void OnMouseEnter()
     {
-        if (_numberOfStatusEffects == 0 && _numberOfInformation == 0) return;
+        BoolOnMouseEnter();
+    }
+
+    protected virtual bool BoolOnMouseEnter()
+    {
+        if (_numberOfStatusEffects == 0 && _numberOfInformation == 0) return false;
         if (EventSystem.current.IsPointerOverGameObject())
-            return;
-        if (!Cursor.visible) return;
-        if (InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf) return;
+            return false;
+        if (!Cursor.visible) return false;
+        if (InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf) return false;
         _statusEffectDescContent.localPosition = Vector3.zero;
         canvas.sortingOrder = 1;        // 이거 없으면 체력 UI에 가려짐
         if (_statusDescWindow.position.x > 6.8f/* && _statusDescWindow.localPosition.x > 0*/)
@@ -458,10 +488,12 @@ public abstract class Entity : MonoBehaviour
         //    _statusDescCol2D.offset = new Vector2(-_statusDescCol2D.offset.x, 0);
         //}
         _statusDescWindow.gameObject.SetActive(true);
+        return true;
     }
 
     public void OnChildMouseExit()
     {
+        EnemyManager.Instance.EnemyInfo = null;     // 따로 에너미만 받기 귀찮아서 그냥 모든 마우스Exit에서 받음.
         canvas.sortingOrder = 0;
         _statusDescWindow.gameObject.SetActive(false);
     }
@@ -494,7 +526,7 @@ public abstract class Entity : MonoBehaviour
 
             ChangeStatusEffectDesc(statusEffect);
         }
-        // 둘 중 하나라도 음수인 경우, 무한 지속은 예외 처리
+        // 둘 중 하나라도 0 이하인 경우, 무한 지속은 예외 처리
         else
         {
             switch (statusEffect.Item2)
@@ -524,6 +556,18 @@ public abstract class Entity : MonoBehaviour
                     CurStatusEffectDict[statusEffect.Item1][statusEffect.Item2] = (0, 0);
 
                     ActivateStatusEffect(statusEffect, false);
+                    break;
+            }
+
+            // 제거되는 경우, 추가 효과가 필요한 녀석들 (기본 스탯은 밑에서 전부 처리)
+            switch (statusEffect.Item1)
+            {
+                case StatusEffect.UseCritical:
+                    if (GetStatusEffect(StatusEffect.Attack, out _))
+                    {
+                        ChangeStatusEffectDesc((StatusEffect.Attack, StatusEffectType.Information));
+                        //AddStatusEffect((StatusEffect.GetCritical, StatusEffectType.Information), _criticalChance.Value);
+                    }
                     break;
             }
             //if (statusEffect.Item2 == StatusEffectType.InfiniteDuration || statusEffect.Item2 == StatusEffectType.UseAmountInfiniteDuration)
@@ -556,7 +600,7 @@ public abstract class Entity : MonoBehaviour
         switch (statusEffect.Item1)
         {
             case StatusEffect.HPUp:
-                _maxHP.Value -= amount;
+                MaxHP.Value -= amount;
                 break;
             case StatusEffect.ATKUp:
                 AttackPower.Value -= amount;
@@ -652,7 +696,7 @@ public abstract class Entity : MonoBehaviour
         switch (statusEffect.Item1)     // 능력치는 UI에 띄우기 때문에 바로바로 적용되어야 함.
         {
             case StatusEffect.HPUp:
-                _maxHP.Value += amount;
+                MaxHP.Value += amount;
                 break;
             case StatusEffect.ATKUp:
                 AttackPower.Value += amount;
@@ -943,7 +987,10 @@ public abstract class Entity : MonoBehaviour
                 StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1}</color>"/* / 지속시간: <color=yellow>∞</color>"*/;
                 break;
             case StatusEffectType.Information:
-                StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1}</color>";
+                if (statusEffect.Item1 == StatusEffect.Attack && GetStatusEffect(StatusEffect.UseCritical, out _))
+                    StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1} + {Mathf.RoundToInt((CriticalDamage.Value - 100) * 0.01f * info.Item1 + 0.0001f)} </color>";
+                else
+                    StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1}</color>";
                 break;
             default:
                 StatusEffectText[StatusEffectTextIdx[statusEffect]][1].text = info.Item2.ToString();

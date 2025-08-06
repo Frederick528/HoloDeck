@@ -17,6 +17,8 @@ public class EnemyManager : MonoBehaviour
     public Enemy TargetEnemy;
 
     public Enemy HitEnemy;
+
+    public Enemy EnemyInfo;
     //public Arrow ArrowCursor;
 
     public bool MapClear = false;

@@ -60,8 +60,8 @@ public class Player : Entity
     void PlayerSubScribe()
     {
         EntitySubScribe();
-        _maxHP.Subscribe(maxHP => InGameUIManager.Instance.ChangeStatus(0, _curHP.Value, maxHP));
-        _curHP.Subscribe(curHP => InGameUIManager.Instance.ChangeStatus(0, curHP, _maxHP.Value));
+        MaxHP.Subscribe(maxHP => InGameUIManager.Instance.ChangeStatus(0, CurHP.Value, maxHP));
+        CurHP.Subscribe(curHP => InGameUIManager.Instance.ChangeStatus(0, curHP, MaxHP.Value));
 
         Coin.Subscribe(coin =>
         {
@@ -89,7 +89,10 @@ public class Player : Entity
             ItemManager.Instance.ActiveItemDataReset();
         });
 
-        _criticalChance.Subscribe(criChance => InGameUIManager.Instance.ChangeStatus(4, criChance));
+        _criticalChance.Subscribe(criChance =>
+        {
+            InGameUIManager.Instance.ChangeStatus(4, criChance);
+        });
 
         CriticalDamage.Subscribe(criDamage => InGameUIManager.Instance.ChangeStatus(5, criDamage));
 
@@ -102,7 +105,7 @@ public class Player : Entity
     void SetupPlayer(int hp, int criticalChance = 10, int criticalDamage = 150)
     {
         //SetupEntity(hp + GameManager.Instance.AddMaxHP, criticalChance + GameManager.Instance.AddCriticalChance, criticalDamage + GameManager.Instance.AddCriticalDamage);
-        _maxHP.Value = hp/* + GameManager.Instance.AddMaxHP*/;
+        MaxHP.Value = hp/* + GameManager.Instance.AddMaxHP*/;
         _criticalChance.Value = criticalChance/* + GameManager.Instance.AddCriticalChance*/;
         CriticalDamage.Value = criticalDamage/* + GameManager.Instance.AddCriticalDamage*/;
         //AttackPower.Value = GameManager.Instance.AddAttackPower;
@@ -118,7 +121,7 @@ public class Player : Entity
         AddStatusEffect((StatusEffect.Resurrection, StatusEffectType.UseAmountPerpetual), GameManager.Instance.Resurrection);
         AddStatusEffect((StatusEffect.CoinGained, StatusEffectType.Perpetual), GameManager.Instance.AddCoinGained);
         
-        _curHP.Value = _maxHP.Value;
+        CurHP.Value = MaxHP.Value;
 
         MaxHolo = 3;
         CurHolo = MaxHolo;
@@ -169,7 +172,7 @@ public class Player : Entity
 
     public void AddMaxHealth(int value)
     {
-        _maxHP.Value += value;
+        MaxHP.Value += value;
         Heal(value).Forget();
     }
 

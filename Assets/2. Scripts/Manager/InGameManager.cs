@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.EventSystems;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Random = UnityEngine.Random;
@@ -483,6 +484,18 @@ public class InGameManager : MonoBehaviour
         }
         else { Time.timeScale = GameManager.Instance.PauseNum != 0 ? 0 : 1; }
 
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 300, LayerMask.GetMask("Default"));
+            if (hit.transform != null && hit.transform == EnemyManager.Instance.EnemyInfo?.transform)
+            {
+                if (!EventSystem.current.IsPointerOverGameObject())
+                {
+                    print("ASDASD");
+                }
+            }
+        }
         //print(AbilityEventQueue._queue.Count);
 
 //#if UNITY_EDITOR
@@ -543,7 +556,7 @@ public class InGameManager : MonoBehaviour
             {
                 for (int i = EnemyManager.Instance.EnemyList.Count - 1; i >= 0; --i)
                 {
-                    EnemyManager.Instance.EnemyList[i].CheckIfDead(9999, 1);
+                    //EnemyManager.Instance.EnemyList[i].CheckIfDead(9999, 1);
                     EnemyManager.Instance.EnemyList[i].TakeDamage(9999, false).Forget();
                     //EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
                 }
@@ -627,6 +640,11 @@ public class InGameManager : MonoBehaviour
             Player.AddStatusEffect((StatusEffect.Protect, StatusEffectType.DurationIsAmount), 0, 3);
             //player.AddAndApplyStatusEffect((StatusEffect.Resurrection, StatusEffectType.InfiniteDuration), 1);
         }
-//#endif
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            foreach (var enemy in EnemyManager.Instance.EnemyList)
+                enemy.Critical(-10);
+        }
+        //#endif
     }
 }

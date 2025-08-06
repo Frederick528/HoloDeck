@@ -201,10 +201,10 @@ public class TurnManager : MonoBehaviour
                 EnemyManager.Instance.EnemyList.Clear();
                 EnemyManager.Instance.CanEnemySpawn(true);
             }
-            await CardManager.Instance.ThrowAwayCard();
-            CardManager.Instance.ClearCard();
             InGameManager.Instance.Player.ShieldReset();
             InGameManager.Instance.Player.RemoveStatusEffect();
+            await CardManager.Instance.ThrowAwayCard();
+            CardManager.Instance.ClearCard();
         }
         else
         {

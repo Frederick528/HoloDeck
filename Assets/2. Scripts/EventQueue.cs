@@ -31,15 +31,15 @@ public class EventQueue
     public void Enqueue(object usedObject)
     {
         _queue.Enqueue(usedObject);
-        
+
         if (usedObject is Card card)
         {
-            card.CheckEnemyDead();
+            CardManager.Instance.CardInQueue(card, true);
         }
-        else if (usedObject is UseItem item)
-        {
-            item.CheckEnemyDead();
-        }
+        //else if (usedObject is UseItem item)
+        //{
+        //    item.CheckEnemyDead();
+        //}
 
         if (!_isPending )
         {
@@ -69,8 +69,11 @@ public class EventQueue
         if (_queue.Peek() is Card cardEvent)
         {
             _queue.Dequeue();
+
+            CardManager.Instance.CardInQueue(cardEvent, false);
+            //cardEvent.IsEnqueued = false
             //Card cardEvent = _queue.Dequeue();        // 밑에 코드 삭제하고, 카드 쓰는 순간 적들한테 데미지 줘서 0이 된 카드들은 미리 삭제. 딜은 카드 쓰는 순간 들어가고, 보이는 체력은 천천히 깎이는 느낌!
-            
+
             //if (cardEvent.Data.CardTag == CardTag.SingleAttack && (cardEvent.TargetEnemy.Death|| cardEvent.TargetEnemy is null))       // TargetEnemy missing 상태 점검 필요. null로 적용 안 됨. => 그냥 죽은 적한테 사용불가
             //{
             //    Debug.Log(cardEvent.TargetEnemy.ToString());
@@ -120,6 +123,9 @@ public class EventQueue
             if (_queue.Peek() is Card card)
             {
                 _queue.Dequeue();
+
+                CardManager.Instance.CardInQueue(card, false);
+
                 QueueClearCard(card)/*.Forget()*/;
             }
             else if (_queue.Peek() is Item item)

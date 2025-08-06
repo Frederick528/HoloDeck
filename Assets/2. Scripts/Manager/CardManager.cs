@@ -82,6 +82,9 @@ public class CardManager : MonoBehaviour
     bool _discard;
     bool _remove;
 
+    int _enQueuedCardCount;
+    int _waitedCardOrder;
+
 
     private void Awake()
     {
@@ -273,7 +276,7 @@ public class CardManager : MonoBehaviour
     //    playedCard.Used = false;
     //}
 
-    async UniTask CheckCanUseingCard(Card card/*, bool singleAtk = false*/)
+    async UniTask<bool> CheckCanUseingCard(Card card/*, bool singleAtk = false*/)
     {
         //if (card.Used) return;
         //card.Used = true;
@@ -291,21 +294,23 @@ public class CardManager : MonoBehaviour
             _usedCard = null;
             SetOriginOrder();
             CardAlignment();
-            PutDownCard(card).Forget();
+            await PutDownCard(card);
 
-            return;
+            return false;
         }
 
-        InGameManager.Instance.AbilityEventQueue.Enqueue(card);
+        //InGameManager.Instance.AbilityEventQueue.Enqueue(card);
         //_eventQueue.Enqueue(card);
         _usedCard = null;
 
         HandCard.Remove(card);
 
 
-        card.MoveTransform(new PRS(WatingCardTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.CardAlignmentDelay);
+        //card.MoveTransform(new PRS(WatingCardTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.CardAlignmentDelay);
         //SetOriginOrder();
         //CardAlignment();
+
+        return true;
     }
 
     public void ChangeTotalCardDesc()
@@ -756,6 +761,14 @@ public class CardManager : MonoBehaviour
             playedCard.FailedUseCard();
             return;
         }
+        print("XXX");
+        if (!await CheckCanUseingCard(playedCard))
+        {
+            playedCard.FailedUseCard();
+            return;
+        }
+
+        print("YTYY");
         _playedCard = playedCard;       // 마지막으로 시전한 카드 정보를 받아와야 할 수도 있기 때문에 일단 초기화는 안 함.
 
         //HandCard.Remove(playedCard);
@@ -834,9 +847,9 @@ public class CardManager : MonoBehaviour
         for (int i = 0; i < HandCard.Count; i++)
         {
             Card targetCard = HandCard[i];
-            if (targetCard == SelectCard)
+            if (targetCard == SelectCard)       // 내가 현재 마우스를 올리고 있는 카드인 경우
                 continue;
-            if (targetCard == _usedCard || targetCard.Selected)
+            if (targetCard == _usedCard || targetCard.Selected || targetCard.IsEnqueued)      // 카드 조건 확인 상태 || 버리기 및 소멸 등으로 선택된 상태 || 큐에 들어가 있는 상태
             {
                 ++alignmentIdx;
                 continue;
@@ -848,7 +861,7 @@ public class CardManager : MonoBehaviour
     void CardAlignment()
     {
         List<PRS> originCardPRSs;
-        originCardPRSs = RoundAlignment(myCardLeft, myCardRight, HandCard.Count - _selectedCards.Count - (_usedCard ? 1 : 0), CardUtils.CardScale);
+        originCardPRSs = RoundAlignment(myCardLeft, myCardRight, HandCard.Count - _selectedCards.Count - (_usedCard ? 1 : 0) - _enQueuedCardCount, CardUtils.CardScale);
         int alignmentIdx = 0;
         for (int i = 0; i < HandCard.Count; i++)
         {
@@ -859,7 +872,7 @@ public class CardManager : MonoBehaviour
                 targetCard.OriginPRS = originCardPRSs[i - alignmentIdx];
                 continue;
             }
-            if (targetCard == _usedCard || targetCard.Selected)
+            if (targetCard == _usedCard || targetCard.Selected || targetCard.IsEnqueued)
             {
                 ++alignmentIdx;
                 continue;
@@ -908,6 +921,34 @@ public class CardManager : MonoBehaviour
         }
         return results;
     }
+
+    public void CardInQueue(Card card, bool isIn)
+    {
+        card.IsEnqueued = isIn;
+        if (isIn)
+        {
+            card.MoveTransform(new PRS(WatingCardTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.CardAlignmentDelay);
+            _enQueuedCardCount++;
+            if (_enQueuedCardCount > 0)
+            {
+                card.CardOrder.SetOriginOrder(--_waitedCardOrder);
+            }
+            else
+            {
+                _waitedCardOrder = -1;
+                card.CardOrder.SetOriginOrder(_waitedCardOrder);
+            }
+        }
+        else
+            _enQueuedCardCount--;
+
+    }
+
+    //public void DeQueueCard(Card card)
+    //{
+    //    card.IsEnqueued = false;
+    //    enQueuedCardCount--;
+    //}
 
     #region MyCard
 
@@ -964,14 +1005,14 @@ public class CardManager : MonoBehaviour
             return;
         for (int i = 1; i < cardIndex + 1; ++i)
         {
-            if (HandCard[cardIndex - i] == _usedCard || HandCard[cardIndex - i].Selected)
+            if (HandCard[cardIndex - i] == _usedCard || HandCard[cardIndex - i].Selected || HandCard[cardIndex - i].IsEnqueued)
                 continue;
             HandCard[cardIndex - i].transform.DOMoveX(HandCard[cardIndex - i].OriginPRS.pos.x - 0.5f / i, CardUtils.CardAlignmentDelay).SetUpdate(true);        // .SetUpdate(true) 추가함.
         }
 
         for (int i = 1; i < HandCard.Count - cardIndex; ++i)
         {
-            if (HandCard[cardIndex + i] == _usedCard || HandCard[cardIndex + i].Selected)
+            if (HandCard[cardIndex + i] == _usedCard || HandCard[cardIndex + i].Selected || HandCard[cardIndex + i].IsEnqueued)
                 continue;
             HandCard[cardIndex + i].transform.DOMoveX(HandCard[cardIndex + i].OriginPRS.pos.x + 0.5f / i, CardUtils.CardAlignmentDelay).SetUpdate(true);        // .SetUpdate(true) 추가함.
         }
@@ -984,7 +1025,7 @@ public class CardManager : MonoBehaviour
         canPush = true;
         foreach (Card card in HandCard)
         {
-            if (card == _usedCard || card.Selected)
+            if (card == _usedCard || card.Selected || card.IsEnqueued)
                 continue;
             card.transform.DOKill();            // 정렬 하는 코드 삭제
             card.MoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay * 0.9f);
@@ -1021,7 +1062,7 @@ public class CardManager : MonoBehaviour
         card.BlockCard();
     }
 
-    public async UniTask CardMouseUp(Card card)
+    public void CardMouseUp(Card card)
     {
         Cursor.visible = true;
         if (CardState != ECardState.CanMouseDrag)
@@ -1039,15 +1080,17 @@ public class CardManager : MonoBehaviour
             if (card.Data.CardTag != CardTag.SingleAttack)     // 단일타격을 제외한 나머지
             {
                 ResetSetting();
-                await CheckCanUseingCard(card);
+                InGameManager.Instance.AbilityEventQueue.Enqueue(card);
+                //await CheckCanUseingCard(card);
             }
             else if (useSingleTargetCard)                      // 단일타격이 가능할 경우
             {
                 card.Target(EnemyManager.Instance.TargetEnemy/*.GetComponent<Enemy>()*/);
                 ResetSetting();
-                await CheckCanUseingCard(card/*, true*/);
+                InGameManager.Instance.AbilityEventQueue.Enqueue(card);
+                //await CheckCanUseingCard(card/*, true*/);
             }
-            else
+            else                                               // 단일타격 카드이지만, 대상을 지정하지 않았을 경우
             {
                 ResetSetting();
                 PutDownCard(card).Forget();
@@ -1062,7 +1105,8 @@ public class CardManager : MonoBehaviour
         //ResetSetting();
     }
 
-    public async UniTaskVoid PutDownCard(Card card)
+
+    public async UniTask PutDownCard(Card card)
     {
         if (card == null)
             return;
