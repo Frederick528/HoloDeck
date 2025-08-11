@@ -21,7 +21,9 @@ public class SettingMap
     //public Vector3Int upPattern = new Vector3Int(0, 0, -1);
 
     //public Vector3Int leftPattern = new Vector3Int(-1, 0, 0);
-    //public Vector3Int rightPattern = new Vector3Int(1, 0, 0);
+    //public Vector3Int rightPattern = new Vector3Int(1, 0, 0);\
+
+    //public bool[] SaveChapters = new bool[4];
 
     public List<MapInfo> validMapList = new List<MapInfo>();
     public List<MapInfo> availableMapList = new List<MapInfo>();
@@ -52,6 +54,7 @@ public class SettingMap
 
     public GameObject ShowMapBtn;
     public GameObject NextChapterBtn;
+    public GameObject PreviousChapterBtn;
     //[SerializeField] GameObject cardRewardCanvas;
     //[SerializeField] GameObject enlargePanel;
 
@@ -181,7 +184,7 @@ public class SettingMap
             if (Maps.Count > i)
             {
                 map = Maps[i];
-                map.ResetMap(mapIdx);
+                map.ResetMap();
                 mapObject = map.gameObject;
             }
             else
@@ -220,6 +223,50 @@ public class SettingMap
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, 0);     // 방 생성 후, 몇몇 UI 비활성화 (보물 보상)
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);             // 방 생성 후, 몇몇 UI 비활성화 (상점 보상)
 
+    }
+
+    public void SaveChapter(int chapterLV)
+    {
+        if (chapterLV > 0 && chapterLV < _mapManager.IsSaveChapter.Length)
+        {
+            _mapManager.IsSaveChapter[chapterLV] = true;
+            foreach (var map in Maps)
+            {
+                map.ChapterMapInfos[chapterLV].SaveInfo(map);
+                Debug.Log($"{map.State}, {map.img.color}");
+            }
+            Debug.Log(chapterLV);
+        }
+    }
+
+    public void LoadChapter(int chapterLV)
+    {
+        Debug.Log(chapterLV);
+
+        _maxDistance = _mapManager.MaxDistance;
+        mapDistance = (int)(100 * _mapManager.MapScale);
+
+
+        // 더 상위 코드에서 어느 정도 검사하긴 해서 일단 뺌.
+
+        //if (chapterLV > 0 && chapterLV < _mapManager.IsSaveChapter.Length)
+        //{
+        //    if (_mapManager.IsSaveChapter[chapterLV])
+        //    {
+                foreach (var map in Maps)
+                {
+
+                    map.ChapterMapInfos[chapterLV].LoadInfo(map);
+                    if (map.NotUsed)    // break 써도 되나?
+                        continue;
+                    map.transform.localScale = Vector3.one * _mapManager.MapScale;
+                    map.transform.localPosition = (map.array_Position - new Vector3Int(_maxDistance.Item1, _maxDistance.Item2, 0)) * mapDistance;
+                }
+
+                Debug.Log(chapterLV);
+                _mapManager.MoveBossStage().Forget();
+        //    }
+        //}
     }
 
     //public void SettingStage()        // 다른 함수랑 통합됨.
@@ -674,7 +721,7 @@ public class SettingMap
             if (Maps.Count > i)
             {
                 map = Maps[i];
-                map.ResetMap(mapIdx);
+                map.ResetMap();
                 mapObject = map.gameObject;
             }
             else

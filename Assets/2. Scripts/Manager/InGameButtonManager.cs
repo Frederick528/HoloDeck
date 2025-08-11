@@ -187,18 +187,56 @@ public class InGameButtonManager : MonoBehaviour
         switch (GameManager.Instance.NowChapterLV)
         {
             case 0:
-                ChangeScene(GameManager.Instance.NowChapterLV);
+                //ChangeScene(GameManager.Instance.NowChapterLV);
                 break;
             case 1:
             case 2:
-                ++GameManager.Instance.NowChapterLV;
-                MapManager.Instance.ResetChapter().Forget();
+                MapManager.Instance.SaveChapter(GameManager.Instance.NowChapterLV);
+                if (MapManager.Instance.IsSaveChapter[++GameManager.Instance.NowChapterLV])
+                {
+                    MapManager.Instance.LoadChapter(GameManager.Instance.NowChapterLV).Forget();
+                }
+                else
+                {
+                    MapManager.Instance.ResetChapter().Forget();
+                }
                 break;
             case 3:
+                MapManager.Instance.SaveChapter(GameManager.Instance.NowChapterLV);
                 ChangeScene(++GameManager.Instance.NowChapterLV);
+                if (MapManager.Instance.IsSaveChapter[GameManager.Instance.NowChapterLV])
+                {
+                    MapManager.Instance.LoadChapter(GameManager.Instance.NowChapterLV).Forget();
+                }
                 break;
             default:
+                MapManager.Instance.SaveChapter(GameManager.Instance.NowChapterLV);
                 ChangeScene(++GameManager.Instance.NowChapterLV);
+                break;
+        }
+    }
+    public void PreviousChapter()
+    {
+        switch (GameManager.Instance.NowChapterLV)
+        {
+            case 0:
+                break;
+            case 1:
+                ChangeScene(--GameManager.Instance.NowChapterLV);
+                break;
+            case 2:
+            case 3:
+                MapManager.Instance.SaveChapter(GameManager.Instance.NowChapterLV);
+                MapManager.Instance.LoadChapter(--GameManager.Instance.NowChapterLV).Forget();
+                break;
+            case 4:
+                MapManager.Instance.SaveChapter(GameManager.Instance.NowChapterLV);
+                ChangeScene(--GameManager.Instance.NowChapterLV);
+                MapManager.Instance.LoadChapter(GameManager.Instance.NowChapterLV).Forget();
+                break;
+            default:
+                MapManager.Instance.SaveChapter(GameManager.Instance.NowChapterLV);
+                ChangeScene(--GameManager.Instance.NowChapterLV);
                 break;
         }
     }

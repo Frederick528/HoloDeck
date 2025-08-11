@@ -13,6 +13,100 @@ public class Map : MonoBehaviour
     //public bool visitedMap = false;
 
     //public GameObject currStage;
+
+    public class ChapterMapInfo
+    {
+        public bool HasInfo = false;
+
+        bool _isActive = false;
+        bool _isInteractable = false;
+
+        bool _visited = false;
+        bool _cleared = false;
+        bool _rewarded = false;
+        bool _notUsed = false;
+
+        bool _changedItem = false;
+
+        int _randomPattern = -1;
+
+        int _rewardBox = -1;
+
+        CardData[] _cardReward = new CardData[4];
+        ItemData[] _itemReward = new ItemData[4];
+
+        Vector3Int _array_Position;
+        List<Map> _aroundStage = new();
+
+        Color _color;
+
+        StageState _state;
+
+        public void SaveInfo(Map map)
+        {
+            _visited = map.visited;
+            _cleared = map.cleared;
+            _rewarded = map.rewarded;
+            _notUsed = map.NotUsed;
+
+            _changedItem = map.ChangedItem;
+
+            _randomPattern = map.RandomPattern;
+
+            _rewardBox = map.rewardBox;
+
+            _cardReward = map.CardReward;
+            _itemReward = map.ItemReward;
+
+            _array_Position = map.array_Position;
+            _aroundStage = map.aroundStage;
+
+            _color = map.img.color;
+
+            _state = map.State;
+
+            _isActive = map.gameObject.activeSelf;
+            _isInteractable = map.btn.interactable;
+        }
+
+        public void LoadInfo(Map map)
+        {
+            if (!HasInfo)
+            {
+                map.NotUsed = true;
+                map.gameObject.SetActive(false);
+                return;
+            }
+
+            map.visited = _visited;
+            map.cleared = _cleared;
+            map.rewarded = _rewarded;
+            map.NotUsed = _notUsed;
+
+            map.ChangedItem = _changedItem;
+
+            map.RandomPattern = _randomPattern;
+
+            map.rewardBox = _rewardBox;
+
+            map.CardReward = _cardReward;
+            map.ItemReward = _itemReward;
+
+            map.array_Position = _array_Position;
+            map.aroundStage = _aroundStage;
+
+            map.img.color = _color;
+
+            map.State = _state;
+
+            map.SettingMap((int)_state);
+
+            map.gameObject.SetActive(_isActive);
+            map.btn.interactable = _isInteractable;
+        }
+    }
+
+    public ChapterMapInfo[] ChapterMapInfos;        // 챕터 개수만큼
     public bool visited = false;
     public bool cleared = false;
     public bool rewarded = false;
@@ -59,7 +153,15 @@ public class Map : MonoBehaviour
             Stages[3] = GetComponent<EventStage>();
             Stages[4] = GetComponent<EnemyStage>();
             Stages[5] = GetComponent<BossStage>();
+
+            ChapterMapInfos = new ChapterMapInfo[MapManager.Instance.IsSaveChapter.Length];
+            for (int i = 0; i < ChapterMapInfos.Length; ++i)
+            {
+                ChapterMapInfos[i] = new ChapterMapInfo();
+            }
         }
+
+        ChapterMapInfos[GameManager.Instance.NowChapterLV].HasInfo = true;
         TMP_Text.text = MapManager.Instance.MapString[idx];
         btn.interactable = false;
         stage = Stages[idx];
@@ -85,7 +187,7 @@ public class Map : MonoBehaviour
                 break;
         }
     }
-    public void ResetMap(int idx)
+    public void ResetMap()
     {
         if (ItemReward[0] != null)
         {

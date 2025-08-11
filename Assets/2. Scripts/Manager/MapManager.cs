@@ -20,6 +20,8 @@ public class MapManager : MonoBehaviour
     public bool canMove;
     public bool StopMove;
 
+    public bool[] IsSaveChapter = new bool[5];
+
     public string[] MapString = new string[6] { "Start", "Treasure", "Shop", "Event", "Enemy", "Boss"};
 
     SettingMap _settingMap;
@@ -96,9 +98,27 @@ public class MapManager : MonoBehaviour
         //    Destroy(_settingMap.MapTr.GetChild(i).gameObject);
         //}
         SetMapSize();
+        if (IsSaveChapter[GameManager.Instance.NowChapterLV])
+            return;
         bool isEndBoss = GameManager.Instance.NowChapterLV == 4;
         _settingMap.Start(isEndBoss);
         //ShowAllMap();
+    }
+
+    public void SaveChapter(int chapterLV)
+    {
+        _settingMap.SaveChapter(chapterLV);
+    }
+
+    public async UniTaskVoid LoadChapter(int chapterLV)
+    {
+        if (OutGameUIManager.Instance)
+            await OutGameUIManager.Instance.FadeOut(0.55f);
+        PrevStage = null;
+        SetMapSize();
+        _settingMap.LoadChapter(chapterLV);
+        if (OutGameUIManager.Instance)
+            await OutGameUIManager.Instance.FadeIn(0.75f);
     }
 
     public async UniTaskVoid ResetChapter()
