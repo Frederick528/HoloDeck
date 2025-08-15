@@ -12,17 +12,25 @@ public class BossStage : MonoBehaviour, IStage
             _map = map;
         if (!map.cleared)
         {
+            print("Boss1");
             if (_map.RandomPattern == -1)
             {
                 BossSpawn();
+                print("Boss2"); 
             }
             else
             {
                 BossSpawnPattern(_map.RandomPattern);
+                print("Boss3"); 
             }
             TurnManager.Instance.StartBattle();
         }
-        print("Boss");
+        else
+        {
+            print("Boss4");  
+            MapManager.Instance.ShowNextDoor(true);
+        }
+        print("Boss5");
     }
 
     public void BossSpawn()

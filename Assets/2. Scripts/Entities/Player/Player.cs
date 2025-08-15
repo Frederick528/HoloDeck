@@ -201,6 +201,42 @@ public class Player : Entity
         animator.SetBool(_battleAnimBool, isBattleStart);
     }
 
+    public async UniTask EnterChapterDoor(Action isEnter = null, bool changeScene = false)
+    {
+        Quaternion defaultRot = animator.transform.rotation;
+        Vector3 defaultPos = animator.transform.localPosition;
+        MapManager.Instance.StopMove = true;
+
+        animator.Play(_runningAnim);
+        animator.SetBool(_enterAnimBool, true);
+        await RotationTask(0.2f, defaultRot, Quaternion.Euler(defaultRot.x, 90, defaultRot.z));
+        await MoveTask(0.45f, defaultPos, new Vector3(4, 0));
+        animator.SetBool(_enterAnimBool, false);
+        await RotationTask(0.2f, Quaternion.Euler(defaultRot.x, 90, defaultRot.z), Quaternion.identity);
+        await OutGameUIManager.Instance.FadeOut(0.55f);
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false);          // 방 생성 후, 몇몇 UI 비활성화 (상자)
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);               // 방 생성 후, 몇몇 UI 비활성화 (상점 보상)
+        //MapManager.Instance.HideReward(MapManager.Instance.currStage);
+
+        print(MapManager.Instance.currStage.State);
+        if (changeScene)
+        {
+            await GameManager.Instance.ChangeScene();
+        }
+        isEnter?.Invoke();
+        animator.Play(_runningAnim);
+        animator.SetBool(_enterAnimBool, true);
+        animator.transform.rotation = Quaternion.Euler(defaultRot.x, 90, defaultRot.z);
+        OutGameUIManager.Instance.FadeIn(0.85f).Forget();
+        await MoveTask(0.65f, new Vector3(-4, 0), defaultPos);
+        animator.SetBool(_enterAnimBool, false);
+
+        await RotationTask(0.2f, animator.transform.rotation, defaultRot);
+
+
+        MapManager.Instance.StopMove = false;
+    }
+
     public async UniTask ExitAndEnterStage(Action isEnter)
     {
         Quaternion defaultRot = animator.transform.rotation;
@@ -210,12 +246,17 @@ public class Player : Entity
         animator.Play(_runningAnim);
         animator.SetBool(_enterAnimBool, true);
         await RotationTask(0.2f, defaultRot, Quaternion.Euler(defaultRot.x, -90, defaultRot.z));
-        //animator.transform.rotation = Quaternion.Euler(defaultRot.x, -90, defaultRot.z);
         OutGameUIManager.Instance.FadeOut(0.35f).Forget();
         await MoveTask(0.45f, defaultPos, new Vector3(-4, 0));
+        MapManager.Instance.HideReward(MapManager.Instance.currStage);
+        print(MapManager.Instance.currStage);
         isEnter();
         animator.transform.rotation = Quaternion.Euler(defaultRot.x, 90, defaultRot.z);
-        await EnterStage(defaultPos);
+        //await EnterStage(defaultPos);
+        OutGameUIManager.Instance.FadeIn(0.55f).Forget();
+        await MoveTask(0.65f, new Vector3(-4, 0), defaultPos);
+        animator.SetBool(_enterAnimBool, false);
+
         await RotationTask(0.2f, animator.transform.rotation, defaultRot);
 
 

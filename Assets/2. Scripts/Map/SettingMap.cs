@@ -75,17 +75,18 @@ public class SettingMap
         }
         _createMapCnt = _mapManager.CreateMapCnt;
         _maxDistance = _mapManager.MaxDistance;
-        _createMapCnt = (int)Mathf.Clamp(_createMapCnt, 1, (_maxDistance.Item1 * 2 + 1) * (_maxDistance.Item2 * 2 + 1)/*Mathf.Pow(_maxDistance * 2 + 1, 2)*/);
         mapDistance = (int)(100 * _mapManager.MapScale);
         if (isEndBoss)
         {
             CreatedBossMap();
-            ShopManager.Instance.ChangeCardShop();
         }
         else
         {
             CreatedMap();
         }
+
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);                // 방 생성 후, 몇몇 UI 비활성화 (맵)
+        //ShopManager.Instance.ChangeCardShop();
     }
 
     public void CreatedMap()
@@ -122,9 +123,12 @@ public class SettingMap
         _mapManager.SetupStart(direction4, Maps);
 
         // 일단은 초기화 방식을 쓰기 때문에 이렇게 했으나, 나중에는 변경할 수도 있음.
-        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, 5);     // 방 생성 후, 몇몇 UI 비활성화 (보스 보상)
-        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, 0);     // 방 생성 후, 몇몇 UI 비활성화 (보물 보상)
-        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);             // 방 생성 후, 몇몇 UI 비활성화 (상점 보상)
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, 5);     // 방 생성 후, 몇몇 UI 비활성화 (보스 보상)
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, 0);     // 방 생성 후, 몇몇 UI 비활성화 (보물 보상)
+
+
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false);          // 방 생성 후, 몇몇 UI 비활성화 (상자)
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);               // 방 생성 후, 몇몇 UI 비활성화 (상점 보상)
 
         //SettingStage();
 
@@ -219,9 +223,11 @@ public class SettingMap
 
         _mapManager.SetupStart(direction4, Maps);
 
-        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, 5);     // 방 생성 후, 몇몇 UI 비활성화 (보스 보상)
-        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, 0);     // 방 생성 후, 몇몇 UI 비활성화 (보물 보상)
-        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);             // 방 생성 후, 몇몇 UI 비활성화 (상점 보상)
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, 5);     // 방 생성 후, 몇몇 UI 비활성화 (보스 보상)
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, 0);     // 방 생성 후, 몇몇 UI 비활성화 (보물 보상)
+
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false);          // 방 생성 후, 몇몇 UI 비활성화 (상자)
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);               // 방 생성 후, 몇몇 UI 비활성화 (상점 보상)
 
     }
 
@@ -233,15 +239,12 @@ public class SettingMap
             foreach (var map in Maps)
             {
                 map.ChapterMapInfos[chapterLV].SaveInfo(map);
-                Debug.Log($"{map.State}, {map.img.color}");
             }
-            Debug.Log(chapterLV);
         }
     }
 
     public void LoadChapter(int chapterLV)
     {
-        Debug.Log(chapterLV);
 
         _maxDistance = _mapManager.MaxDistance;
         mapDistance = (int)(100 * _mapManager.MapScale);
@@ -264,7 +267,6 @@ public class SettingMap
                 }
 
                 Debug.Log(chapterLV);
-                _mapManager.MoveBossStage().Forget();
         //    }
         //}
     }
@@ -425,46 +427,50 @@ public class SettingMap
         }
         if (!stage.cleared)
         {
-            stage.LookingStage(direction4, Maps);
-            if (stage.State == Map.StageState.Treasure || stage.State == Map.StageState.Shop)
-            {
-                _mapManager.ClearStage(stage).Forget();
-            }
-            else
-            {
-                _mapManager.canMove = false;
-                ShowMapBtn.SetActive(false);
-            }
-            NextChapterBtn.SetActive(false);
+            if (stage.aroundStage.Count == 0)
+                stage.LookingStage(direction4, Maps);
+            //if (stage.State == Map.StageState.Treasure || stage.State == Map.StageState.Shop)
+            //{
+            //    _mapManager.ClearStage(stage).Forget();
+            //}
+            //else
+            //{
+            //    _mapManager.canMove = false;
+            //    ShowMapBtn.SetActive(false);
+            //}
+            _mapManager.canMove = false;
+            ShowMapBtn.SetActive(false);
+            //NextChapterBtn.SetActive(false);
         }
         else
         {
-            if (stage.State == Map.StageState.Boss && GameManager.Instance.NowChapterLV <= 2)
-            {
-                NextChapterBtn.SetActive(true);
-            }
-            else
-            {
-                NextChapterBtn.SetActive(false);
-            }
+            //if (stage.State == Map.StageState.Boss/* && GameManager.Instance.NowChapterLV <= 2*/)
+            //{
+            //    NextChapterBtn.SetActive(true);
+            //}
+            //else
+            //{
+            //    NextChapterBtn.SetActive(false);
+            //}
             ShowMapBtn.SetActive(true);
         }
+        NextChapterBtn.SetActive(false);
 
-        // 떠나려는 방에 보상이 떴는데, 그 보상을 받지 않고 떠난다면, 잠시 해당 스테이지 보상을 숨김. 
-        if (_mapManager.currStage.rewardBox != -1 && (_mapManager.currStage.ChangedItem || !_mapManager.currStage.rewarded))
-        {
-            //_mapManager.rewardCanvas.GetChild(_mapManager.currStage.rewardBox).gameObject.SetActive(false);
-            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, _mapManager.currStage.rewardBox);
-        }
-        if (_mapManager.currStage.State == Map.StageState.Shop)
-        {
-            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);
-        }
+        //// 떠나려는 방에 보상이 떴는데, 그 보상을 받지 않고 떠난다면, 잠시 해당 스테이지 보상을 숨김. 
+        //if (_mapManager.currStage.rewardBox != -1 && (_mapManager.currStage.ChangedItem || !_mapManager.currStage.rewarded))
+        //{
+        //    //_mapManager.rewardCanvas.GetChild(_mapManager.currStage.rewardBox).gameObject.SetActive(false);
+        //    InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, _mapManager.currStage.rewardBox);
+        //}
+        //if (_mapManager.currStage.State == Map.StageState.Shop)
+        //{
+        //    InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);
+        //}
+        //_mapManager.HideReward(_mapManager.currStage);
+
+
         //// 보상과 상관없이 EnlargePanel와 RewardCanvas는 새로운 방에 들어갈 때마다 숨김 처리.
         //InGameUIManager.Instance.MoveMap();
-
-        _mapManager.PrevStage = _mapManager.currStage;
-        _mapManager.currStage = stage;
 
         if (_mark != null)
         {
@@ -474,16 +480,79 @@ public class SettingMap
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
         // 방 입장 코드 추가
         await stage.stageContext.Transition(stage.stage);
+
+        _mapManager.PrevStage = _mapManager.currStage;
+        _mapManager.currStage = stage;
+
         // 들어간 방에 보상이 떴었는데, 예전에 보상을 받지 않았다면, 그 보상을 다시 시각화함.
-        if (stage.rewardBox != -1 && (stage.ChangedItem || !stage.rewarded))
+        //if (stage.rewardBox != -1 && (stage.ChangedItem || !stage.rewarded))
+        //{
+        //    //_mapManager.rewardCanvas.GetChild(stage.rewardBox).gameObject.SetActive(true);
+        //    InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, stage.rewardBox);
+        //    if (stage.rewardBox != 0)       // 보물은 한 스테이지에 한 개이기 때문에 UI를 변경할 필요 없음.
+        //    {
+        //        InGameUIManager.Instance.ShowRewardCard(stage.CardReward);
+        //    }
+        //}
+    }
+
+    public async UniTask LoadStage(Map map, bool changeScene)
+    {
+        if (_mapManager.StopMove)
+            return;
+        if (!map.btn.interactable)
         {
-            //_mapManager.rewardCanvas.GetChild(stage.rewardBox).gameObject.SetActive(true);
-            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, stage.rewardBox);
-            if (stage.rewardBox != 0)       // 보물은 한 스테이지에 한 개이기 때문에 UI를 변경할 필요 없음.
-            {
-                InGameUIManager.Instance.ShowRewardCard(stage.CardReward);
-            }
+            map.gameObject.SetActive(true);
+            map.btn.interactable = true;
         }
+        if (!map.cleared)
+        {
+            if (map.aroundStage.Count == 0)
+                map.LookingStage(direction4, Maps);
+
+            _mapManager.canMove = false;
+            ShowMapBtn.SetActive(false);
+
+        }
+        else
+        {
+            ShowMapBtn.SetActive(true);
+        }
+        NextChapterBtn.SetActive(false);
+
+        // Load 같은 경우에는 모든 보상 UI를 끄기 때문에 밑에 코드는 필요없음.
+        //// 떠나려는 방에 보상이 떴는데, 그 보상을 받지 않고 떠난다면, 잠시 해당 스테이지 보상을 숨김. 
+        //if (_mapManager.currStage.rewardBox != -1 && (_mapManager.currStage.ChangedItem || !_mapManager.currStage.rewarded))
+        //{
+        //    InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, _mapManager.currStage.rewardBox);
+        //}
+        //if (_mapManager.currStage.State == Map.StageState.Shop)
+        //{
+        //    InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);
+        //}
+
+        if (_mark != null)
+        {
+            _mark.transform.localPosition = map.transform.localPosition + _markDefaultPos * _mapManager.MapScale;
+        }
+
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
+
+        await map.stageContext.LoadTransition(map.stage, changeScene);
+
+        _mapManager.PrevStage = null;       // Load는 층(챕터)이 바뀌기 때문에 이전 스테이지가 없음.
+        _mapManager.currStage = map;
+
+
+        //// 들어간 방에 보상이 떴었는데, 예전에 보상을 받지 않았다면, 그 보상을 다시 시각화함.
+        //if (map.rewardBox != -1 && (map.ChangedItem || !map.rewarded))
+        //{
+        //    InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, map.rewardBox);
+        //    if (map.rewardBox != 0)       // 보물은 한 스테이지에 한 개이기 때문에 UI를 변경할 필요 없음.
+        //    {
+        //        InGameUIManager.Instance.ShowRewardCard(map.CardReward);
+        //    }
+        //}
     }
 
     public MapInfo AddSingleMap(MapInfo map, Vector3Int pos, string name)

@@ -15,7 +15,9 @@ public class ShopManager : MonoBehaviour
 
     int _shopCardIdx;
 
-    CardData[] _shopCardData;
+    CardData[][] _shopCardData;
+    bool[,] _buyInfo;
+    bool[] _isSaveShop;
     void Awake()
     {
         Instance = Instance != null ? Instance : this;
@@ -31,6 +33,9 @@ public class ShopManager : MonoBehaviour
 
     void SettingCardShop()
     {
+        _isSaveShop = new bool[MapManager.Instance.IsSaveChapter.Length];
+        _buyInfo = new bool[_isSaveShop.Length, _shopCard.childCount];
+        _shopCardData = new CardData[_isSaveShop.Length][];
         _shopCards = new UICard[_shopCard.childCount];
         _shopCardPrices = new TMP_Text[_shopCard.childCount];
         for (int i = 0; i < _shopCards.Length; ++i)
@@ -38,25 +43,44 @@ public class ShopManager : MonoBehaviour
             _shopCards[i] = _shopCard.GetChild(i).GetComponent<UICard>();
             _shopCardPrices[i] = _shopCardPrice.GetChild(i).GetComponent<TMP_Text>();
         }
-        ChangeCardShop();
     }
-    public void ChangeCardShop()
+    public void ChangeCardShop(bool reroll = false)
     {
-        _shopCardData = InGameManager.Instance.RandomCards(10, _shopCards.Length);
+        int nowChapterLV = GameManager.Instance.NowChapterLV;
+
+        if (reroll || !_isSaveShop[nowChapterLV])
+        {
+            _shopCardData[nowChapterLV] = InGameManager.Instance.RandomCards(10, _shopCard.childCount);
+            for (int col = 0; col < _shopCard.childCount; ++col)
+            {
+                _buyInfo[nowChapterLV, col] = false;
+            }
+            _isSaveShop[nowChapterLV] = true;
+        }
         //InGameManager.Instance.ReturnRandomCard(_shopCardData);
 
         int i = 0;
-        foreach (var cardData in _shopCardData)
+        foreach (var cardData in _shopCardData[nowChapterLV])
         {
-            if (cardData != null)
+            if (!_buyInfo[nowChapterLV, i])
             {
-                _shopCards[i].Setup(cardData);
-                _shopCardPrices[i].text = cardData.Price.ToString();
+                _shopCards[i].gameObject.SetActive(true);
+                if (cardData != null)
+                {
+                    _shopCards[i].Setup(cardData);
+                    _shopCardPrices[i].text = cardData.Price.ToString();
+                }
+                else
+                {
+                    _shopCards[i].Setup(cardData);
+                    _shopCardPrices[i].text = "0";
+                }
             }
             else
             {
-                _shopCards[i].Setup(cardData);
-                _shopCardPrices[i].text = "0";
+                print(i);
+                _shopCards[i].gameObject.SetActive(false);
+                _shopCardPrices[i].text = "";
             }
             ++i;
         }
@@ -76,8 +100,9 @@ public class ShopManager : MonoBehaviour
         {
             InGameManager.Instance.Player.Coin.Value -= CardManager.Instance.GetCardData.Price;
             CardManager.Instance.AddDeck(CardManager.Instance.GetCardData, EAddDeck.Main);
-            _shopCard.GetChild(_shopCardIdx).GetComponent<UICard>().gameObject.SetActive(false);
-            _shopCardPrice.GetChild(_shopCardIdx).GetComponent<TMP_Text>().text = "";
+            _buyInfo[GameManager.Instance.NowChapterLV, _shopCardIdx] = true;
+            _shopCards[_shopCardIdx].gameObject.SetActive(false);
+            _shopCardPrices[_shopCardIdx].text = "";
         }
         else
             print("µ∑∫Œ¡∑");

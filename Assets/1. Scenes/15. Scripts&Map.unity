@@ -3503,7 +3503,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &331692984
 RectTransform:
   m_ObjectHideFlags: 0
@@ -29170,7 +29170,6 @@ MonoBehaviour:
   PauseNum: 0
   NowChapterLV: 1
   PlayerInt: 0
-  IsSceneChange: 0
 --- !u!1 &2097881106
 GameObject:
   m_ObjectHideFlags: 0

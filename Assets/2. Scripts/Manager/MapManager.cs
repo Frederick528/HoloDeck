@@ -43,6 +43,7 @@ public class MapManager : MonoBehaviour
     private void Start()
     {
         if (_onLoaded) return;
+        PrevStage = null;
         SetMapSize();
         bool isEndBoss = GameManager.Instance.NowChapterLV == 4;
         _settingMap.Start(isEndBoss);
@@ -77,62 +78,95 @@ public class MapManager : MonoBehaviour
                 MapScale = 1.5f;
                 break;
         }
+        CreateMapCnt = (int)Mathf.Clamp(CreateMapCnt, 1, (MaxDistance.Item1 * 2 + 1) * (MaxDistance.Item2 * 2 + 1));
     }
 
-    void OnEnable()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
+    //void OnEnable()
+    //{
+    //    SceneManager.sceneLoaded += OnSceneLoaded;
+    //}
 
-    void OnDisable()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
+    //void OnDisable()
+    //{
+    //    SceneManager.sceneLoaded -= OnSceneLoaded;
+    //}
 
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        _onLoaded = true;
-        PrevStage = null;
-        //for (int i = _settingMap.MapTr.childCount - 1; i >= 0; --i)
-        //{
-        //    Destroy(_settingMap.MapTr.GetChild(i).gameObject);
-        //}
-        SetMapSize();
-        if (IsSaveChapter[GameManager.Instance.NowChapterLV])
-            return;
-        bool isEndBoss = GameManager.Instance.NowChapterLV == 4;
-        _settingMap.Start(isEndBoss);
-        //ShowAllMap();
-    }
+    //void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    //{
+    //    _onLoaded = true;
+    //    if (IsSaveChapter[GameManager.Instance.NowChapterLV])
+    //        return;
+    //    PrevStage = null;
+    //    //for (int i = _settingMap.MapTr.childCount - 1; i >= 0; --i)
+    //    //{
+    //    //    Destroy(_settingMap.MapTr.GetChild(i).gameObject);
+    //    //}
+    //    SetMapSize();
+    //    bool isEndBoss = GameManager.Instance.NowChapterLV == 4;
+    //    _settingMap.Start(isEndBoss);
+    //    //ShowAllMap();
+    //}
 
     public void SaveChapter(int chapterLV)
     {
         _settingMap.SaveChapter(chapterLV);
     }
 
-    public async UniTaskVoid LoadChapter(int chapterLV)
+    public async UniTaskVoid LoadChapter(int chapterLV, bool previous = false, bool changeScene = false)
     {
-        if (OutGameUIManager.Instance)
-            await OutGameUIManager.Instance.FadeOut(0.55f);
-        PrevStage = null;
+        //if (OutGameUIManager.Instance && !previous)
+        //{
+        //    await OutGameUIManager.Instance.FadeOut(0.55f);
+        //}
+        if (TurnManager.Instance.InBattle)
+            await TurnManager.Instance.EndBattle();
+        //PrevStage = null;
+        
+        
+        
         SetMapSize();
         _settingMap.LoadChapter(chapterLV);
-        if (OutGameUIManager.Instance)
-            await OutGameUIManager.Instance.FadeIn(0.75f);
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false);          // 방 로드 후, 몇몇 UI 비활성화 (상자)
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);               // 방 로드 후, 몇몇 UI 비활성화 (상점 보상)
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);                // 방 로드 후, 몇몇 UI 비활성화 (맵)
+        ShopManager.Instance.ChangeCardShop();
+        //if (previous)
+        //{
+        //    await MoveBossStage();
+        //}
+        //else
+        //{
+        //    await MoveStage(_settingMap.Maps[0]);
+        //}
+        LoadStage(previous, changeScene).Forget();
+        //if (OutGameUIManager.Instance)
+        //{
+        //    print("AA");
+        //    await OutGameUIManager.Instance.FadeIn(0.75f);
+        //}
     }
 
-    public async UniTaskVoid ResetChapter()
+    public async UniTask ResetChapter(bool changeScene = false)
     {
-        if (OutGameUIManager.Instance)
-            await OutGameUIManager.Instance.FadeOut(0.55f);
-        //_onLoaded = true;
+        //if (OutGameUIManager.Instance)
+        //    await OutGameUIManager.Instance.FadeOut(0.55f);
+        if (TurnManager.Instance.InBattle)
+            await TurnManager.Instance.EndBattle();
+
         PrevStage = null;
         SetMapSize();
         bool isEndBoss = GameManager.Instance.NowChapterLV == 4;
         _settingMap.Start(isEndBoss);
-        if (OutGameUIManager.Instance)
-            await OutGameUIManager.Instance.FadeIn(0.75f);
-        ShopManager.Instance.ChangeCardShop();
+        
+        InGameManager.Instance.Player.EnterChapterDoor(null, changeScene).Forget();
+        
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false);          // 방 생성 후, 몇몇 UI 비활성화 (상자)
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);               // 방 생성 후, 몇몇 UI 비활성화 (상점 보상)
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);                // 방 생성 후, 몇몇 UI 비활성화 (맵)
+        //await LoadStage(false);
+        //_onLoaded = true;
+        //if (OutGameUIManager.Instance)
+        //    await OutGameUIManager.Instance.FadeIn(0.75f);
         //ShowAllMap();
     }
 
@@ -145,12 +179,12 @@ public class MapManager : MonoBehaviour
         }
         else if (currStage.State == Map.StageState.Boss)
         {
-            _settingMap.NextChapterBtn.SetActive(true);
+            ShowNextDoor(true);
             await TurnManager.Instance.EndBattle();
         }
         else if (currStage.State == Map.StageState.Start)
         {
-            _settingMap.NextChapterBtn.SetActive(false);
+            ShowNextDoor(false);
         }
         currStage.ClearMap();
         canMove = true;
@@ -158,24 +192,39 @@ public class MapManager : MonoBehaviour
 
     public async UniTaskVoid ClearStage(Map stage)
     {
+        _settingMap.ShowMapBtn.SetActive(true);
         if (currStage.State == Map.StageState.Enemy)
         {
             await TurnManager.Instance.EndBattle();
         }
         else if (currStage.State == Map.StageState.Boss)
         {
-            _settingMap.NextChapterBtn.SetActive(true);
+            ShowNextDoor(true);
             await TurnManager.Instance.EndBattle();
+        }
+        else if (currStage.State == Map.StageState.Start)
+        {
+            ShowNextDoor(false);
         }
         stage.ClearMap();
         canMove = true;
     }
 
-    public async UniTaskVoid MovePrevStage()
+    public void ShowNextDoor(bool isShow)
+    {
+        _settingMap.NextChapterBtn.SetActive(isShow);
+    }
+
+    public void ShowPreviousDoor(bool isShow)
+    {
+        _settingMap.PreviousChapterBtn.SetActive(isShow);
+    }
+
+    public async UniTask MovePrevStage()
     {
         if (PrevStage == null) return;
 
-        if (!StopMove)
+        if (/*!StopMove*/TurnManager.Instance.InBattle)
             await TurnManager.Instance.EndBattle();
         await _settingMap.MoveStage(PrevStage);
 
@@ -183,10 +232,10 @@ public class MapManager : MonoBehaviour
             canMove = true;
     }
 
-    public async UniTaskVoid MoveStage(Map stage)
+    public async UniTask MoveStage(Map stage)
     {
         if (stage == null) return;
-        if (!StopMove)
+        if (/*!StopMove*/TurnManager.Instance.InBattle)
             await TurnManager.Instance.EndBattle();
         await _settingMap.MoveStage(stage);
 
@@ -194,14 +243,56 @@ public class MapManager : MonoBehaviour
             canMove = true;
     }
 
-    public async UniTaskVoid MoveBossStage()
+    public async UniTask MoveBossStage()
     {
-        if (!StopMove)
+        if (TurnManager.Instance.InBattle)
             await TurnManager.Instance.EndBattle();
-        await _settingMap.MoveStage(_settingMap.Maps[_settingMap.Maps.Count - 1]);
+        await _settingMap.MoveStage(_settingMap.Maps[CreateMapCnt - 1]);
 
         if (currStage.cleared)
             canMove = true;
+    }
+
+    public async UniTask LoadStage(bool isPrevious, bool changeScene)
+    {
+        if (isPrevious)
+        {
+            print("isPrevious");
+            await _settingMap.LoadStage(_settingMap.Maps[CreateMapCnt - 1], changeScene);
+        }
+        else
+        {
+            print(isPrevious);
+            await _settingMap.LoadStage(_settingMap.Maps[0], changeScene);
+        }
+        if (currStage.cleared)
+            canMove = true;
+    }
+
+    public void HideReward(Map map)
+    {
+        // 떠나려는 방에 보상이 떴는데, 그 보상을 받지 않고 떠난다면, 잠시 해당 스테이지 보상을 숨김. 
+        if (map.rewardBox != -1 && (map.ChangedItem || !map.rewarded))
+        {
+            //_mapManager.rewardCanvas.GetChild(_mapManager.currStage.rewardBox).gameObject.SetActive(false);
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, map.rewardBox);
+        }
+        if (map.State == Map.StageState.Shop)
+        {
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);
+        }
+    }
+    public void ShowReward(Map map)
+    {
+        // 들어간 방에 보상이 떴었는데, 예전에 보상을 받지 않았다면, 그 보상을 다시 시각화함.
+        if (map.rewardBox != -1 && (map.ChangedItem || !map.rewarded))
+        {
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, map.rewardBox);
+            if (map.rewardBox != 0)       // 보물은 한 스테이지에 한 개이기 때문에 UI를 변경할 필요 없음.
+            {
+                InGameUIManager.Instance.ShowRewardCard(map.CardReward);
+            }
+        }
     }
 
     public void SetupStart(List<Vector3Int> direction4, List<Map> maps)

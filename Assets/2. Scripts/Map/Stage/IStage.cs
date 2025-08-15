@@ -6,7 +6,7 @@ public interface IStage
 {
     void Enter(Map map)
     {
-
+        
     }
 
 }

@@ -331,7 +331,16 @@ public class InGameUIManager : MonoBehaviour
             switch (canvasName)
             {
                 case CanvasName.RewardBox:
-                    if (idx == -1) break;
+                    if (idx == -1)          // 그냥 쓰면 모든 박스를 비활성화함. 근데 박스는 보통 1개만 활성화하니, 해당 박스가 무엇인지 특정되지 않는 상황이 아니라면, 그냥 쓰지는 말도록 하장.
+                    {
+                        for (int i = 0; i < _rewardBoxes.Length; ++i)
+                        {
+                            _rewardBoxes[i].gameObject.SetActive(false);
+                        }
+                        SetActiveCanvas(CanvasName.ItemReward, false);
+                        SetActiveCanvas(CanvasName.CardReward, false);
+                        break;
+                    }
                     _rewardBoxes[idx].gameObject.SetActive(false);
                     if (idx == 0)
                     {
@@ -565,6 +574,8 @@ public class InGameUIManager : MonoBehaviour
     }
     public void LookMap()
     {
+        if (MapManager.Instance.StopMove)
+            return;
         SetActiveCanvas(CanvasName.Map, !Canvas(CanvasName.Map).gameObject.activeSelf);
     }
 

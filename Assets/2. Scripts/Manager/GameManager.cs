@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
 
     public int PlayerInt;
 
-    public bool IsSceneChange;
+    //public bool IsSceneChange;
 
     //public int OnUINum;
 
@@ -60,6 +60,9 @@ public class GameManager : MonoBehaviour
                 InGameUIManager.Instance.ChangeStatus(7, goods);
         });
 
+        if (!InGame)
+            NowChapterLV = 0;
+
         if (SceneManager.GetActiveScene().buildIndex == 2)
         {
             NowChapterLV = 4;
@@ -78,7 +81,7 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (!IsSceneChange)
+            if (!OutGameUIManager.Instance.OutGameCanvas(OutGameUIManager.CanvasName.Fade).gameObject.activeSelf)
                 OutGameUIManager.Instance.SetActiveCanvas(OutGameUIManager.CanvasName.Option, !_isESCPause, 0);
         }
     }
@@ -182,33 +185,64 @@ public class GameManager : MonoBehaviour
 
     public async UniTaskVoid ChangeScene(int idx)
     {
+        bool lobby = NowChapterLV == 0;
         if (idx == 0 && SceneManager.GetActiveScene().buildIndex == idx) return;
-        IsSceneChange = true;
-        await OutGameUIManager.Instance.FadeOut(0.55f);
+        //IsSceneChange = true;
+        if(lobby || idx == 0)
+            await OutGameUIManager.Instance.FadeOut(0.55f);
         switch (idx)
         {
             case 0:
                 DestroyAllInGameDontDestroyObjects();
                 NowChapterLV = idx;       // 로비
-                SceneManager.LoadScene(idx);
+                await SceneManager.LoadSceneAsync(idx);
+                //SceneManager.LoadScene(idx);
                 break;
             case 1:
             case 2:
             case 3:
                 NowChapterLV = idx;
-                SceneManager.LoadScene(1);
+                await SceneManager.LoadSceneAsync(1);
+                //SceneManager.LoadScene(1);
                 break;
             case 4:
                 NowChapterLV = idx;
-                SceneManager.LoadScene(2);
+                await SceneManager.LoadSceneAsync(2);
+                //SceneManager.LoadScene(2);
                 break;
             default:
                 DestroyAllInGameDontDestroyObjects();
                 NowChapterLV = 0;       // 로비
-                SceneManager.LoadScene(0);
+                await SceneManager.LoadSceneAsync(0);
+                //SceneManager.LoadScene(0);
                 break;
         }
-        await OutGameUIManager.Instance.FadeIn(0.75f);
-        IsSceneChange = false;
+        if (lobby || idx == 0)
+            await OutGameUIManager.Instance.FadeIn(0.75f);
+        //IsSceneChange = false;
+    }
+
+    public async UniTask ChangeScene()
+    {
+        switch (NowChapterLV)
+        {
+            case 0:
+                DestroyAllInGameDontDestroyObjects();
+                await SceneManager.LoadSceneAsync(0);
+                break;
+            case 1:
+            case 2:
+            case 3:
+                await SceneManager.LoadSceneAsync(1);
+                break;
+            case 4:
+                await SceneManager.LoadSceneAsync(2);
+                break;
+            default:
+                DestroyAllInGameDontDestroyObjects();
+                NowChapterLV = 0;       // 로비
+                await SceneManager.LoadSceneAsync(0);
+                break;
+        }
     }
 }

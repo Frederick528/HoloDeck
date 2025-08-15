@@ -11,7 +11,11 @@ public class ShopStage : MonoBehaviour, IStage
         if (!_map)
             _map = map;
         print("Shop");
-
+        if (!map.cleared)
+        {
+            ShopManager.Instance.ChangeCardShop();
+            MapManager.Instance.ClearStage(_map).Forget();
+        }
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, true);
     }
 }

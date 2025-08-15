@@ -11,7 +11,10 @@ public class TreasureStage : MonoBehaviour, IStage
         if (!_map)
             _map = map;
         print("Treasure~!");
-
+        if (!map.cleared)
+        {
+            MapManager.Instance.ClearStage(_map).Forget();
+        }
         MapManager.Instance.Treasure(map.ChangedItem);
     }
 }

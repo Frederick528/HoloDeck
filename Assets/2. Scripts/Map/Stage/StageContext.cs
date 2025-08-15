@@ -21,6 +21,7 @@ public class StageContext
         Action action = () =>
         {
             CurrentStage.Enter(_map);
+            MapManager.Instance.ShowReward(_map);
         };
         await InGameManager.Instance.Player.ExitAndEnterStage(action);
         //await InGameManager.Instance.Player.ExitAndEnterStage();
@@ -32,10 +33,22 @@ public class StageContext
         {
             CurrentStage = stage;
             CurrentStage.Enter(_map);
+            MapManager.Instance.ShowReward(_map);
         };
         await InGameManager.Instance.Player.ExitAndEnterStage(action);
         //await InGameManager.Instance.Player.ExitAndEnterStage();
         //CurrentStage = stage;
         //CurrentStage.Enter(_map);
+    }
+
+    public async UniTask LoadTransition(IStage stage, bool changeScene)
+    {
+        Action action = () =>
+        {
+            CurrentStage = stage;
+            CurrentStage.Enter(_map);
+            MapManager.Instance.ShowReward(_map);
+        };
+        await InGameManager.Instance.Player.EnterChapterDoor(action, changeScene);
     }
 }

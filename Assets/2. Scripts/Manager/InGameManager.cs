@@ -72,7 +72,6 @@ public class InGameManager : MonoBehaviour
                 if (i == 0) break;
                 Destroy(mainCamera[i].gameObject);
             }
-            print(player.Length);
             //Destroy(mainCamera[1]);
             Destroy(player[1]);
             Destroy(transform.root.gameObject);
@@ -597,7 +596,7 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha7))
         {
-            ShopManager.Instance.ChangeCardShop();
+            ShopManager.Instance.ChangeCardShop(true);
         }
         if (Input.GetKeyDown(KeyCode.Alpha8))
         {
