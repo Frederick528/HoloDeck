@@ -65,6 +65,7 @@ public class Player : Entity
 
         Coin.Subscribe(coin =>
         {
+            InGameUIManager.Instance.ChangeStatus(7, coin);
             InGameUIManager.Instance.SetCoin(coin);
         });
 

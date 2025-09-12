@@ -61,7 +61,7 @@ public class InGameUIManager : MonoBehaviour
 
     RectTransform _statusWindow;
     Image[] _statusImg = new Image[3];
-    TMP_Text[] _statusText = new TMP_Text[8];
+    TMP_Text[] _statusText = new TMP_Text[9];
 
     RectTransform _cardRewardContent;
     RectTransform _itemRewardContent;
@@ -197,11 +197,12 @@ public class InGameUIManager : MonoBehaviour
         _statusText[4] = _statusWindow.Find("CriticalChance").GetComponent<TMP_Text>();
         _statusText[5] = _statusWindow.Find("CriticalDamage").GetComponent<TMP_Text>();
         _statusText[6] = _statusWindow.Find("Critical").GetComponent<TMP_Text>();
-        _statusText[7] = _statusWindow.Find("Goods").GetComponent<TMP_Text>();
+        _statusText[7] = _statusWindow.Find("Coin").GetComponent<TMP_Text>();
+        _statusText[8] = _statusWindow.Find("Goods").GetComponent<TMP_Text>();
 
         _statusImg[2] = FindTransform.ContinueFindChildByName(_statusImg[0].transform, "PlayerImage").GetComponent<Image>();
 
-        ChangeStatus(7, GameManager.Instance.Goods.Value);
+        ChangeStatus(8, GameManager.Instance.Goods.Value);
 
         _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel") as RectTransform;
         _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel") as RectTransform;
@@ -448,6 +449,9 @@ public class InGameUIManager : MonoBehaviour
                 _statusText[statusIdx].text = $"{amount} / {refAmount}";
                 break;
             case 7:
+                _statusText[statusIdx].text = "Coin: " + amount.ToString();
+                break;
+            case 8:
                 _statusText[statusIdx].text = "Goods: " + amount.ToString();
                 break;
         }

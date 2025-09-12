@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour
         Goods.Subscribe(goods =>
         {
             if (InGame)
-                InGameUIManager.Instance.ChangeStatus(7, goods);
+                InGameUIManager.Instance.ChangeStatus(8, goods);
         });
 
         if (!InGame)
