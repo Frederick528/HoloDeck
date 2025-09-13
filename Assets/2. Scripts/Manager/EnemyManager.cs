@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
@@ -51,6 +52,17 @@ public class EnemyManager : MonoBehaviour
         _bossSpawn = new bool[_bossSpawnPosition.Length];
         CanEnemySpawn(true);
         CanBossSpawn(true);
+    }
+
+    public void CheckEnemy(Transform targetEnemy)
+    {
+        if (EnemyInfo == null || targetEnemy == null)
+            return;
+        if (targetEnemy != EnemyInfo.transform)
+            return;
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Enemy, true);
+
+        // 이후 스테이터스 창을 닫고 싶은데, 순서 문제로 안 닫힘. 나중에 좀 더 보충.
     }
 
     public void CanEnemySpawn(bool canSpawn)

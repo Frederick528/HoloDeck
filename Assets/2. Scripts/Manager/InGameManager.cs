@@ -486,13 +486,11 @@ public class InGameManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1))
         {
-            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 300, LayerMask.GetMask("Default"));
-            if (hit.transform != null && EnemyManager.Instance.EnemyInfo != null && hit.transform == EnemyManager.Instance.EnemyInfo.transform)
+            if (!EventSystem.current.IsPointerOverGameObject())
             {
-                if (!EventSystem.current.IsPointerOverGameObject())
-                {
-                    print("ASDASD");
-                }
+                RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 300, LayerMask.GetMask("Default"));
+
+                EnemyManager.Instance.CheckEnemy(hit.transform);
             }
         }
         //print(AbilityEventQueue._queue.Count);

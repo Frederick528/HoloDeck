@@ -481,9 +481,6 @@ public class SettingMap
         // 방 입장 코드 추가
         await stage.stageContext.Transition(stage.stage);
 
-        _mapManager.PrevStage = _mapManager.currStage;
-        _mapManager.currStage = stage;
-
         // 들어간 방에 보상이 떴었는데, 예전에 보상을 받지 않았다면, 그 보상을 다시 시각화함.
         //if (stage.rewardBox != -1 && (stage.ChangedItem || !stage.rewarded))
         //{

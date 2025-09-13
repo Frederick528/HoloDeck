@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
@@ -6,6 +7,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Playables;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
 
@@ -13,20 +15,23 @@ public class InGameUIManager : MonoBehaviour
 {
     public static InGameUIManager Instance { get; private set; }
 
-    public enum CanvasName      // 순서가 Canvas 순서랑 일치해야 함.
+    public enum CanvasName      // 순서가 Canvas 순서랑 일치해야 함. 번호를 지정하는 이유는 버튼에서 Enum으로 받을 때, 번호로 받아야 여기 순서를 안 따라가기 때문. (가운데 추가하는 경우 문제가 발생.)
     {
-        InGame,
-        GameOver,
-        Battle,
-        Map,
-        RewardBox,
-        CardReward,
-        ItemReward,
-        Shop,
-        SelectedCard,
-        ViewDeck,
-        Event
+        InGame = 0,
+        Battle = 1,
+        RewardBox = 10,
+        CardReward = 11,
+        ItemReward = 12,
+        SelectedCard = 15,
+        ViewDeck = 20,
+        Inventory = 25,
+        Event = 30,
+        Shop = 40,
+        Map = 50,
+        Enemy = 60,
+        GameOver = 99,
     }
+
     //public List<GameObject> CanvasList;
     List<GraphicRaycaster> _canvasRaycaster = new();
     public Dictionary<int, RectTransform> _canvasDict = new();
@@ -69,6 +74,11 @@ public class InGameUIManager : MonoBehaviour
     int _lastViewDeckCount;
     RectTransform _viewDeckContent;
     List<UICard> _deckUICards = new();
+
+    RectTransform _inventoryContent;
+    RectTransform _dropReward;
+    RectTransform _dropRewardContent;
+    RectTransform _inventoryInfo;
 
     UICard[] _uiCards = new UICard[4];
     UIItem[] _uiItems = new UIItem[4];
@@ -119,13 +129,13 @@ public class InGameUIManager : MonoBehaviour
         _canvasTr.gameObject.name = "InGameCanvasesDontDestroy";
         GameManager.Instance.AddInGameDontDestroy(_canvasTr.gameObject);
         //GameManager.Instance.AddInGameDontDestroy(transform.root.gameObject);
-
+        CanvasName[] canvasNamesArray = (CanvasName[])Enum.GetValues(typeof(CanvasName));
         for (int i = 0; i < /*CanvasList.Count*/_canvasTr.childCount; ++i)
         {
             //_canvasRaycaster.Add(CanvasList[i].GetComponent<GraphicRaycaster>());
             //CanvasDict.Add(i, CanvasList[i]);
             _canvasRaycaster.Add(_canvasTr.GetChild(i).GetComponent<GraphicRaycaster>());
-            _canvasDict.Add(i, _canvasTr.GetChild(i) as RectTransform);
+            _canvasDict.Add((int)canvasNamesArray[i], _canvasTr.GetChild(i) as RectTransform);
         }
 
         //Addressables.LoadAssetAsync<GameObject>("UICardImg.prefab").Completed += (op) =>
@@ -175,6 +185,11 @@ public class InGameUIManager : MonoBehaviour
         _itemRewardContent = FindTransform.ContinueFindChildByName(Canvas(CanvasName.ItemReward), "Content");
 
         _viewDeckContent = FindTransform.ContinueFindChildByName(Canvas(CanvasName.ViewDeck), "Content");
+
+        _inventoryContent = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Inventory), "InventoryContent");
+        _dropReward = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Inventory), "DropReward");
+        _dropRewardContent = FindTransform.ContinueFindChildByName(_dropReward, "DropRewardContent");
+        _inventoryInfo = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Inventory), "Information");
         //for (int i = 0; i < ViewDeckContent.childCount; ++i)
         //{
         //    _deckUICards.Add(ViewDeckContent.GetChild(i).GetComponent<UICard>());
@@ -220,6 +235,18 @@ public class InGameUIManager : MonoBehaviour
         for (int i = 0; i < _rewardBoxes.Length; ++i)
         {
             _rewardBoxes[i] = rewardBoxCanvas.GetChild(i) as RectTransform;
+            switch (_rewardBoxes[i].name)
+            {
+                case "TreasureBox":
+                    _rewardBoxes[i].GetComponent<Button>().onClick.AddListener(() => SetActiveCanvas(CanvasName.ItemReward, true));
+                    break;
+                case "DropBox":
+                    _rewardBoxes[i].GetComponent<Button>().onClick.AddListener(() => SetActiveCanvas(CanvasName.Inventory, true, 1));
+                    break;
+                default:
+                    _rewardBoxes[i].GetComponent<Button>().onClick.AddListener(() => SetActiveCanvas(CanvasName.CardReward, true));
+                    break;
+            }
         }
         for (int i = 0; i < _uiCards.Length; ++i)
         {
@@ -365,6 +392,9 @@ public class InGameUIManager : MonoBehaviour
                 case CanvasName.ViewDeck:
                     GameManager.Instance.Pause(false);
                     break;
+                case CanvasName.Inventory:
+                    _dropReward.gameObject.SetActive(false);
+                    break ;
             }
 
             _canvasDict[(int)canvasName].gameObject.SetActive(false);
@@ -390,6 +420,10 @@ public class InGameUIManager : MonoBehaviour
                     if (Canvas(CanvasName.Map).gameObject.activeSelf)
                         SetActiveCanvas(CanvasName.Map, false);
                     GameManager.Instance.Pause(true);
+                    break;
+                case CanvasName.Inventory:
+                    if (idx == -1) break;
+                    _dropReward.gameObject.SetActive(true);
                     break;
             }
         }

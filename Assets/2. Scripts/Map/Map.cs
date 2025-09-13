@@ -117,6 +117,11 @@ public class Map : MonoBehaviour
     public int RandomPattern = -1;
 
     public int rewardBox { get; private set; } = -1;
+    public enum BoxType
+    {
+        Treasure, Common, Rare, Epic, Legendary, Boss, Drop
+    }
+
     public CardData[] CardReward { get; private set; } = new CardData[4];
     public ItemData[] ItemReward { get; private set; } = new ItemData[4];
 
@@ -245,7 +250,7 @@ public class Map : MonoBehaviour
         if (rewardBox == -1)
         {
             //int probability = Random.Range(1, 101);
-            rewardBox = 5;
+            rewardBox = (int)BoxType.Boss;
 
             InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, rewardBox);
             // 캐릭터별로 보상이 바뀌는 코드 넣어야 함.
@@ -272,19 +277,19 @@ public class Map : MonoBehaviour
             int probability = Random.Range(1, 101);
             if (probability > 30 + 0)       // 현재 스테이지 레벨에 따른 가중치 필요
             {
-                rewardBox = 1;
+                rewardBox = (int)BoxType.Common;
             }
             else if (probability > 5 + 0)
             {
-                rewardBox = 2;
+                rewardBox = (int)BoxType.Rare;
             }
             else if (probability > 1 + 0)
             {
-                rewardBox = 3;
+                rewardBox = (int)BoxType.Epic;
             }
             else if (probability > 0)
             {
-                rewardBox = 4;
+                rewardBox = (int)BoxType.Legendary;
             }
             //rewardBox = Random.Range(1, 5);
             //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(true);
@@ -333,7 +338,7 @@ public class Map : MonoBehaviour
         if (rewardBox == -1)
         {
             int probability = Random.Range(1, 101);     // 아이템도 등급이 생길 경우, 확률 개념 도입해야 함.
-            rewardBox = 0;
+            rewardBox = (int)BoxType.Treasure;
             //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(true);
             InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, rewardBox);
             // 캐릭터별로 보상이 바뀌는 코드 넣어야 함.

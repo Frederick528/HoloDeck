@@ -20,6 +20,8 @@ public class StageContext
     {
         Action action = () =>
         {
+            MapManager.Instance.PrevStage = MapManager.Instance.currStage;
+            MapManager.Instance.currStage = _map;
             CurrentStage.Enter(_map);
             MapManager.Instance.ShowReward(_map);
         };
@@ -31,6 +33,8 @@ public class StageContext
     {
         Action action = () =>
         {
+            MapManager.Instance.PrevStage = MapManager.Instance.currStage;
+            MapManager.Instance.currStage = _map;
             CurrentStage = stage;
             CurrentStage.Enter(_map);
             MapManager.Instance.ShowReward(_map);
@@ -45,6 +49,8 @@ public class StageContext
     {
         Action action = () =>
         {
+            MapManager.Instance.PrevStage = MapManager.Instance.currStage;
+            MapManager.Instance.currStage = _map;
             CurrentStage = stage;
             CurrentStage.Enter(_map);
             MapManager.Instance.ShowReward(_map);

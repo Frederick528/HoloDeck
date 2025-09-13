@@ -250,7 +250,6 @@ public class Player : Entity
         OutGameUIManager.Instance.FadeOut(0.35f).Forget();
         await MoveTask(0.45f, defaultPos, new Vector3(-4, 0));
         MapManager.Instance.HideReward(MapManager.Instance.currStage);
-        print(MapManager.Instance.currStage);
         isEnter();
         animator.transform.rotation = Quaternion.Euler(defaultRot.x, 90, defaultRot.z);
         //await EnterStage(defaultPos);
