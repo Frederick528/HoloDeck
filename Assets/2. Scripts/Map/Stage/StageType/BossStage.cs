@@ -10,7 +10,7 @@ public class BossStage : MonoBehaviour, IStage
     {
         if (!_map)
             _map = map;
-        if (!map.cleared)
+        if (!_map.cleared)
         {
             print("Boss1");
             if (_map.RandomPattern == -1)
@@ -29,6 +29,7 @@ public class BossStage : MonoBehaviour, IStage
         {
             print("Boss4");  
             MapManager.Instance.ShowNextDoor(true);
+            MapManager.Instance.ShowPreviousDoor(true);
         }
         print("Boss5");
     }

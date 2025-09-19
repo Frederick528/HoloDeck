@@ -642,6 +642,16 @@ public class InGameManager : MonoBehaviour
             foreach (var enemy in EnemyManager.Instance.EnemyList)
                 enemy.Critical(-10);
         }
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            foreach (var enemy in EnemyManager.Instance.EnemyList)
+                enemy.Critical(+10);
+        }
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            foreach (var enemy in EnemyManager.Instance.EnemyList)
+                enemy.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), 1);
+        }
         //#endif
     }
 }

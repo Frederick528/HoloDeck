@@ -123,7 +123,7 @@ public class CardManager : MonoBehaviour
                     Cursor.visible = false;
                 }
             }
-        });
+        }).AddTo(this);
     }
     public void RewardedCard()
     {

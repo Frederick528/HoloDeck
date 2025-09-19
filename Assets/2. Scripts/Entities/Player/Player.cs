@@ -60,46 +60,46 @@ public class Player : Entity
     void PlayerSubScribe()
     {
         EntitySubScribe();
-        MaxHP.Subscribe(maxHP => InGameUIManager.Instance.ChangeStatus(0, CurHP.Value, maxHP));
-        CurHP.Subscribe(curHP => InGameUIManager.Instance.ChangeStatus(0, curHP, MaxHP.Value));
+        MaxHP.Subscribe(maxHP => InGameUIManager.Instance.ChangeStatus(0, CurHP.Value, maxHP)).AddTo(this);
+        CurHP.Subscribe(curHP => InGameUIManager.Instance.ChangeStatus(0, curHP, MaxHP.Value)).AddTo(this);
 
         Coin.Subscribe(coin =>
         {
             InGameUIManager.Instance.ChangeStatus(7, coin);
             InGameUIManager.Instance.SetCoin(coin);
-        });
+        }).AddTo(this);
 
         AttackPower.Subscribe(atk =>
         {
             InGameUIManager.Instance.ChangeStatus(1, atk);
             CardManager.Instance.ChangeTotalCardDesc();
             ItemManager.Instance.ActiveItemDataReset();
-        });
+        }).AddTo(this);
 
         DefensePower.Subscribe(def =>
         {
             InGameUIManager.Instance.ChangeStatus(2, def);
             CardManager.Instance.ChangeTotalCardDesc();
             ItemManager.Instance.ActiveItemDataReset();
-        });
+        }).AddTo(this);
 
         HealPower.Subscribe(heal =>
         {
             InGameUIManager.Instance.ChangeStatus(3, heal);
             CardManager.Instance.ChangeTotalCardDesc();
             ItemManager.Instance.ActiveItemDataReset();
-        });
+        }).AddTo(this);
 
         _criticalChance.Subscribe(criChance =>
         {
             InGameUIManager.Instance.ChangeStatus(4, criChance);
-        });
+        }).AddTo(this);
 
-        CriticalDamage.Subscribe(criDamage => InGameUIManager.Instance.ChangeStatus(5, criDamage));
+        CriticalDamage.Subscribe(criDamage => InGameUIManager.Instance.ChangeStatus(5, criDamage)).AddTo(this);
 
-        _useCritical.Subscribe(useCri => InGameUIManager.Instance.ChangeStatus(6, _curCritical.Value, useCri));
+        _useCritical.Subscribe(useCri => InGameUIManager.Instance.ChangeStatus(6, _curCritical.Value, useCri)).AddTo(this);
 
-        _curCritical.Subscribe(curCri => InGameUIManager.Instance.ChangeStatus(6, curCri, _useCritical.Value));
+        _curCritical.Subscribe(curCri => InGameUIManager.Instance.ChangeStatus(6, curCri, _useCritical.Value)).AddTo(this);
 
     }
 

@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using System;
 using TMPro;
 using UnityEngine.EventSystems;
+using System.Text;
 
 public abstract class Enemy : Entity
 {
@@ -270,15 +271,15 @@ public abstract class Enemy : Entity
     //    }
     //}
 
-    int CheckCriticalDamage(int dmamge, bool critical)
-    {
-        int criticalDamage = dmamge;
-        //int criticalDamage = Mathf.RoundToInt(enemyData.Damage * multiple);
-        if (critical)
-            criticalDamage = Mathf.RoundToInt(dmamge * CriticalDamage.Value * 0.01f + 0.0001f);     // 부동소수점 오류
-        //criticalDamage = Mathf.RoundToInt(enemyData.Damage * multiple * CriticalDamage.Value * 0.01f);
-        return criticalDamage;
-    }
+    //int CheckCriticalDamage(int dmamge, bool critical)
+    //{
+    //    int criticalDamage = dmamge;
+    //    //int criticalDamage = Mathf.RoundToInt(enemyData.Damage * multiple);
+    //    if (critical)
+    //        criticalDamage = Mathf.RoundToInt(dmamge * CriticalDamage.Value * 0.01f + 0.0001f);     // 부동소수점 오류
+    //    //criticalDamage = Mathf.RoundToInt(enemyData.Damage * multiple * CriticalDamage.Value * 0.01f);
+    //    return criticalDamage;
+    //}
 
     public abstract void NextPattern();
 
@@ -305,24 +306,51 @@ public abstract class Enemy : Entity
         //        await Attack(Mathf.RoundToInt(enemyData.Damage * multiple));
         //    }
         //});
-
-        if (addPattern)
+        if (GetStatusEffect(StatusEffect.UseCritical, out _))
         {
-            _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
-            _nextActText.text = (repeat > 1 ? $"{damage}*{repeat}" : damage.ToString()) + "/" + _nextActText.text;
-            //_nextPattern.Add(func);
+            if (addPattern)
+            {
+                _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+                _nextActText.text = (repeat > 1 ? $"{damage}*{repeat}<color=green>+{CheckCriticalDamage(damage, true)-damage}*{repeat}" : $"{CheckCriticalDamage(damage, true)}</color>") + "/" + _nextActText.text;
+            }
+            else
+            {
+                _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
+                _nextActText.text = (repeat > 1 ? $"{damage}*{repeat}<color=green>+{CheckCriticalDamage(damage, true)-damage}*{repeat}" : $"{CheckCriticalDamage(damage, true)}</color>");
+            }
         }
         else
         {
-            _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
-            _nextActText.text = repeat > 1 ? $"{damage}*{repeat}" : damage.ToString();
-            //_nextActText.text = repeat > 1 ? $"{Mathf.RoundToInt(enemyData.Damage * multiple)}*{repeat}" : (Mathf.RoundToInt(enemyData.Damage * multiple)).ToString();
-            //_nextPattern.Add(func);
+            if (addPattern)
+            {
+                _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+                _nextActText.text = (repeat > 1 ? $"{damage}*{repeat}" : damage.ToString()) + "/" + _nextActText.text;
+            }
+            else
+            {
+                _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
+                _nextActText.text = repeat > 1 ? $"{damage}*{repeat}" : damage.ToString();
+            }
         }
+        //if (addPattern)
+        //{
+        //    _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+        //    _nextActText.text = (repeat > 1 ? $"{damage}*{repeat}" : damage.ToString()) + "/" + _nextActText.text;
+        //    //_nextPattern.Add(func);
+        //}
+        //else
+        //{
+        //    _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
+
+        //    _nextActText.text = repeat > 1 ? $"{damage}*{repeat}" : damage.ToString();
+        //    //_nextActText.text = repeat > 1 ? $"{Mathf.RoundToInt(enemyData.Damage * multiple)}*{repeat}" : (Mathf.RoundToInt(enemyData.Damage * multiple)).ToString();
+        //    //_nextPattern.Add(func);
+        //}
 
         _nextPattern.Add(async () => await UniTask.Create(async () =>
         {
-            bool critical = GetStatusEffect(StatusEffect.UseCritical, out _);      // 공격하기 전에 크리티컬 확인
+            bool critical = CheckCritical();      // 공격하기 전에 크리티컬 확인
+            //bool critical = GetStatusEffect(StatusEffect.UseCritical, out _);      // 공격하기 전에 크리티컬 확인
             //if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
             //    return;
             //await Attack(Mathf.RoundToInt(enemyData.Damage * multiple));         // 여기 부분 고쳐야 함.
@@ -336,7 +364,7 @@ public abstract class Enemy : Entity
                 //await Attack(CheckCriticalDamage(multiple, critical));
                 //await Attack(Mathf.RoundToInt(criticalDamage * multiple));
             }
-            CheckCritical();
+            //CheckCritical();
         }));
         //_nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
         //_nextPattern = () => UniTask.Create(async () =>
@@ -550,18 +578,113 @@ public abstract class Enemy : Entity
                 //AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), (atk.Current - atk.Previous) * _checkRepeat);
                 if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
                 {
-                    if (_checkRepeat > 1)
+                    int damagePerHit = attack / _checkRepeat + atk.Current - atk.Previous;
+                    if (GetStatusEffect(StatusEffect.UseCritical, out _))
                     {
-                        _nextActText.text = $"{attack / _checkRepeat + atk.Current - atk.Previous}*{_checkRepeat}";
+                        if (_checkRepeat > 1)
+                        {
+                            _nextActText.text = $"{damagePerHit}*{_checkRepeat}<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}*{_checkRepeat}</color>";
+                        }
+                        else
+                        {
+                            _nextActText.text = $"{attack + atk.Current - atk.Previous}<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}</color>";
+                        }
                     }
                     else
                     {
-                        _nextActText.text = $"{attack  + atk.Current - atk.Previous}";
+                        if (_checkRepeat > 1)
+                        {
+                            _nextActText.text = $"{damagePerHit}*{_checkRepeat}";
+                        }
+                        else
+                        {
+                            _nextActText.text = $"{attack + atk.Current - atk.Previous}";
+                        }
                     }
                 }
             }
-        });
+        }).AddTo(this);
 
+        _curCritical.Pairwise().Subscribe(critical =>
+        {
+            if (GetStatusEffect(StatusEffect.Attack, out int attack) && _nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+            {
+                int damagePerHit = attack / _checkRepeat;
+                if (critical.Previous >= _useCritical.Value && critical.Current < _useCritical.Value)
+                {
+                    if (_checkRepeat > 1)
+                    {
+                        _nextActText.text = $"{damagePerHit}*{_checkRepeat}";
+                    }
+                    else
+                    {
+                        _nextActText.text = $"{attack}";
+                    }
+                }
+                else if (critical.Previous < _useCritical.Value && critical.Current >= _useCritical.Value)
+                {
+                    if (_checkRepeat > 1)
+                    {
+                        _nextActText.text = $"{damagePerHit}*{_checkRepeat}<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}*{_checkRepeat}</color>";
+                    }
+                    else
+                    {
+                        _nextActText.text = $"{attack}<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}</color>";
+                    }
+                }
+            }
+        }).AddTo(this);
+
+    }
+
+    protected override void AddStatusEffectDesc((StatusEffect, StatusEffectType) statusEffect, StringBuilder sb, (int, int) info)
+    {
+        base.AddStatusEffectDesc(statusEffect, sb, info);
+        switch (statusEffect.Item1)
+        {
+            case StatusEffect.Attack:
+                if (GetStatusEffect(StatusEffect.UseCritical, out _))
+                {
+                    if (_checkRepeat > 1)
+                    {
+                        int damagePerHit = info.Item1 / _checkRepeat;
+                        sb.Replace("{n}", $"<color=green>{info.Item1} + 치명타 피해({(CheckCriticalDamage(damagePerHit, true) - damagePerHit)*_checkRepeat}) </color>");
+                    }
+                    else
+                    {
+                        sb.Replace("{n}", $"<color=green>{info.Item1} + 치명타 피해({CheckCriticalDamage(info.Item1, true) - info.Item1}) </color>");
+                    }
+                }
+                else
+                    sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
+                break;
+            case StatusEffect.Defense:
+                sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
+                break;
+            case StatusEffect.Heal:
+                sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
+                break;
+            default:
+                sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
+                break;
+        }
+    }
+
+    protected override string ChangeInformationLV((StatusEffect, StatusEffectType) statusEffect, (int, int) info)
+    {
+        if (statusEffect.Item1 == StatusEffect.Attack && GetStatusEffect(StatusEffect.UseCritical, out _))
+        {
+            if (_checkRepeat > 1)
+            {
+                int damagePerHit = info.Item1 / _checkRepeat;
+                return $"LV: <color=green>{info.Item1} + {(CheckCriticalDamage(damagePerHit, true) - damagePerHit) * _checkRepeat} </color>";
+            }
+            else
+            {
+                return $"LV: <color=green>{info.Item1} + {CheckCriticalDamage(info.Item1, true) - info.Item1} </color>";
+            }
+        }
+        return base.ChangeInformationLV(statusEffect, info);
     }
 
     //void Start()      // 모든 상위 코드에 적용시켜야 함.

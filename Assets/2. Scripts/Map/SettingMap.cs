@@ -72,6 +72,7 @@ public class SettingMap
             _markDefaultPos = _mark.transform.localPosition;
             ShowMapBtn = InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.InGame).Find("ShowMap").gameObject;
             NextChapterBtn = InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.InGame).Find("NextChapter").gameObject;
+            PreviousChapterBtn = InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.InGame).Find("PreviousChapter").gameObject;
         }
         _createMapCnt = _mapManager.CreateMapCnt;
         _maxDistance = _mapManager.MaxDistance;
@@ -454,6 +455,7 @@ public class SettingMap
             //}
             ShowMapBtn.SetActive(true);
         }
+        PreviousChapterBtn.SetActive(false);
         NextChapterBtn.SetActive(false);
 
         //// 떠나려는 방에 보상이 떴는데, 그 보상을 받지 않고 떠난다면, 잠시 해당 스테이지 보상을 숨김. 
@@ -515,6 +517,7 @@ public class SettingMap
         {
             ShowMapBtn.SetActive(true);
         }
+        PreviousChapterBtn.SetActive(false);
         NextChapterBtn.SetActive(false);
 
         // Load 같은 경우에는 모든 보상 UI를 끄기 때문에 밑에 코드는 필요없음.

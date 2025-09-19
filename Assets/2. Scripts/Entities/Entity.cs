@@ -316,7 +316,7 @@ public abstract class Entity : MonoBehaviour
         await UniTask.WaitForSeconds(0.2f);
     }
 
-    public void CheckCritical(/*int damage*/)            // 크리티컬 체크용 및 적과 플레이어가 공격하기 전에 공통으로 하는 코드
+    public bool CheckCritical(/*int damage*/)            // 공격 이후 크리티컬 효과 사용됨
     {
         //bool critical = false;
         //int criticalDamage = damage;
@@ -326,6 +326,7 @@ public abstract class Entity : MonoBehaviour
             Critical(-_useCritical.Value);
             //critical = true;
             //return criticalDamage;
+            return true;
         }
         else
         {
@@ -335,6 +336,7 @@ public abstract class Entity : MonoBehaviour
             //    AddStatusEffect((StatusEffect.UseCritical, StatusEffectType.UseAmountPerpetual), _curCritical.Value/_useCritical.Value);
             //}
             //return damage;
+            return false;
         }
         //// 일단 그냥 찬스 올리기로 함.
         //Critical(_criticalChance.Value);
@@ -345,9 +347,19 @@ public abstract class Entity : MonoBehaviour
         //return critical;
     }
 
+    public int CheckCriticalDamage(int dmamge, bool critical)
+    {
+        int criticalDamage = dmamge;
+        //int criticalDamage = Mathf.RoundToInt(enemyData.Damage * multiple);
+        if (critical)
+            criticalDamage = Mathf.RoundToInt(dmamge * CriticalDamage.Value * 0.01f + 0.0001f);     // 부동소수점 오류
+        //criticalDamage = Mathf.RoundToInt(enemyData.Damage * multiple * CriticalDamage.Value * 0.01f);
+        return criticalDamage;
+    }
+
     public void Critical(int amount)
     {
-        _curCritical.Value += amount;
+        _curCritical.Value = Mathf.Max(_curCritical.Value + amount, 0);
     }
 
     public virtual void ShieldReset()
@@ -358,67 +370,62 @@ public abstract class Entity : MonoBehaviour
     protected void EntitySubScribe()
     {
         StartEntity();
-        MaxHP.Subscribe(hp =>
-        {
-            if (!hpBar) return;
-            //slider.maxValue = hp;
-            if (hp > 0)
+        MaxHP
+            .Where(hp => hpBar && hp > 0)
+            .Subscribe(hp =>
             {
                 hpBar.fillAmount = CurHP.Value / (float)hp;
                 hpText.text = $"{CurHP.Value}/{hp}";
-            }
-        });
-        CurHP.Subscribe(hp =>
-        {
-            if (!hpBar) return;
-            //slider.value = hp;
-            if (MaxHP.Value > 0)
+            }).AddTo(this);
+        CurHP
+            .Where(_ => hpBar && MaxHP.Value > 0)
+            .Subscribe(hp =>
             {
-                hpBar.fillAmount = (float)hp / MaxHP.Value;
+                hpBar.fillAmount = hp / (float)MaxHP.Value;
                 hpText.text = $"{hp}/{MaxHP.Value}";
-            }
-        });
-        CurShield.Subscribe(shield =>
-        {
-            if (!shieldObj) return;
-            if (shield <= 0)
+            }).AddTo(this);
+        CurShield
+            .Where(_ => shieldObj)
+            .Subscribe(shield =>
             {
-                shieldObj.SetActive(false);
-            }
-            else
+                if (shield <= 0)
+                {
+                    shieldObj.SetActive(false);
+                }
+                else
+                {
+                    shieldObj.SetActive(true);
+                    shieldText.text = shield.ToString();
+                }
+            }).AddTo(this);
+            _useCritical
+            .Where(critical =>_criticalBar && critical > 0)
+            .Subscribe(critical =>
             {
-                shieldObj.SetActive(true);
-                shieldText.text = shield.ToString();
-            }
-        });
-        _useCritical.Subscribe(critical =>
-        {
-            if (!_criticalBar) return;
-            if (critical <= 0) return;
-            _criticalBar.fillAmount = _curCritical.Value / (float)critical;
-            _criticalText.text = $"{_curCritical.Value}/{critical}";
-        });
-        _curCritical.Subscribe(critical =>
-        {
-            if (!_criticalBar) return;
-            if (_useCritical.Value <= 0) return;
-            _criticalBar.fillAmount = (float)critical / _useCritical.Value;
-            _criticalText.text = $"{critical}/{_useCritical.Value}";
+                _criticalBar.fillAmount = _curCritical.Value / (float)critical;
+                _criticalText.text = $"{_curCritical.Value}/{critical}";
+            }).AddTo(this);
+        _curCritical
+            .Where(_ => _criticalBar && _useCritical.Value > 0)
+            .Subscribe(critical =>
+            {
+                _criticalBar.fillAmount = (float)critical / _useCritical.Value;
+                _criticalText.text = $"{critical}/{_useCritical.Value}";
 
-            GetStatusEffect(StatusEffect.UseCritical, out int amount);
-            if (_curCritical.Value >= _useCritical.Value)       // 수치 변경 후, 치명타 가능한 상태
-            {
-                if (_curCritical.Value / _useCritical.Value - amount > 0)       // 치명타 뎀증 상태 효과의 개수가 치명타 적중 가능한 상태를 계산한 값보다 적으면, 상태 효과 추가
-                    AddStatusEffect((StatusEffect.UseCritical, StatusEffectType.UseAmountPerpetual), _curCritical.Value / _useCritical.Value - amount);
-                else if (_curCritical.Value / _useCritical.Value - amount < 0)  // 치명타 확률이 변경됐는데, 치명타 적중 가능한 상태를 계산한 값보다 치명타 뎀증 상태 효과의 개수가 더 많으면, 상태 효과 제거 (보통 치명타 확률을 감소시켰는데도 불구하고, 상대가 치명타 상태인 경우로 200 / 100 에서 10 감소하여, 190 / 100이 된 경우.)
-                    ReduceStatusEffect((StatusEffect.UseCritical, StatusEffectType.UseAmountPerpetual), amount - _curCritical.Value / _useCritical.Value);
-            }
-            else                                                // 수치 변경 후, 치명타 불가능 상태
-            {
-                if (amount > 0)
-                    ReduceStatusEffect((StatusEffect.UseCritical, StatusEffectType.UseAmountPerpetual), amount);
-            }
-        });
+                GetStatusEffect(StatusEffect.UseCritical, out int amount);
+                if (critical >= _useCritical.Value)       // 수치 변경 후, 치명타 가능한 상태
+                {
+                    if (critical / _useCritical.Value - amount > 0)       // 치명타 뎀증 상태 효과의 개수가 치명타 적중 가능한 상태를 계산한 값보다 적으면, 상태 효과 추가
+                        AddStatusEffect((StatusEffect.UseCritical, StatusEffectType.UseAmountPerpetual), critical / _useCritical.Value - amount);
+                    else if (critical / _useCritical.Value - amount < 0)  // 치명타 확률이 변경됐는데, 치명타 적중 가능한 상태를 계산한 값보다 치명타 뎀증 상태 효과의 개수가 더 많으면, 상태 효과 제거 (보통 치명타 확률을 감소시켰는데도 불구하고, 상대가 치명타 상태인 경우로 200 / 100 에서 10 감소하여, 190 / 100이 된 경우.)
+                        ReduceStatusEffect((StatusEffect.UseCritical, StatusEffectType.UseAmountPerpetual), amount - critical / _useCritical.Value);
+                }
+                else                                                // 수치 변경 후, 치명타 불가능 상태
+                {
+                    if (amount > 0)
+                        ReduceStatusEffect((StatusEffect.UseCritical, StatusEffectType.UseAmountPerpetual), amount);
+                }
+            }).AddTo(this);
     }
 
     protected void StartEntity()
@@ -617,6 +624,12 @@ public abstract class Entity : MonoBehaviour
             case StatusEffect.CriticalDamageUp:
                 CriticalDamage.Value -= amount;
                 break;
+            case StatusEffect.UseCritical:      // 적 개체 한정
+                if (GetStatusEffect(StatusEffect.Attack, out _))
+                {
+                    ChangeStatusEffectDesc((StatusEffect.Attack, StatusEffectType.Information));
+                }
+                break;
         }
     }
 
@@ -693,7 +706,7 @@ public abstract class Entity : MonoBehaviour
                 }
             }
         }
-        switch (statusEffect.Item1)     // 능력치는 UI에 띄우기 때문에 바로바로 적용되어야 함.
+        switch (statusEffect.Item1)     // 능력치는 UI에 띄우기 때문에 바로바로 적용되어야 함. 그 외 치명타 시스템 또한 포함.
         {
             case StatusEffect.HPUp:
                 MaxHP.Value += amount;
@@ -712,6 +725,12 @@ public abstract class Entity : MonoBehaviour
                 break;
             case StatusEffect.CriticalDamageUp:
                 CriticalDamage.Value += amount;
+                break;
+            case StatusEffect.UseCritical:      // 적 개체 한정
+                if (GetStatusEffect(StatusEffect.Attack, out _))
+                {
+                    ChangeStatusEffectDesc((StatusEffect.Attack,StatusEffectType.Information));
+                }
                 break;
         }
         //else if (info.Item2 == -1)     // 상태효과 지속시간이 없는 경우(계속 유지)
@@ -987,10 +1006,11 @@ public abstract class Entity : MonoBehaviour
                 StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1}</color>"/* / 지속시간: <color=yellow>∞</color>"*/;
                 break;
             case StatusEffectType.Information:
-                if (statusEffect.Item1 == StatusEffect.Attack && GetStatusEffect(StatusEffect.UseCritical, out _))
-                    StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1} + {Mathf.RoundToInt((CriticalDamage.Value - 100) * 0.01f * info.Item1 + 0.0001f)} </color>";
-                else
-                    StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1}</color>";
+                StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = ChangeInformationLV(statusEffect, info);
+                //if (statusEffect.Item1 == StatusEffect.Attack && GetStatusEffect(StatusEffect.UseCritical, out _))
+                //    StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1} + {Mathf.RoundToInt((CriticalDamage.Value - 100) * 0.01f * info.Item1 + 0.0001f)} </color>";
+                //else
+                //    StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1}</color>";
                 break;
             default:
                 StatusEffectText[StatusEffectTextIdx[statusEffect]][1].text = info.Item2.ToString();
@@ -1043,26 +1063,25 @@ public abstract class Entity : MonoBehaviour
         else
         {
             StringBuilder sb = new(desc);
-            sb.Replace("{CriticalChance}", $"<color=green>{_criticalChance}</color>");
-            sb.Replace("{CriticalDamage}", $"<color=green>{CriticalDamage}</color>");
-            switch (statusEffect.Item1)
-            {
-                case StatusEffect.Attack:
-                    if (GetStatusEffect(StatusEffect.UseCritical, out _))
-                        sb.Replace("{n}", $"<color=green>{info.Item1} + 치명타 피해({Mathf.RoundToInt((CriticalDamage.Value - 100) * 0.01f * info.Item1 + 0.0001f)}) </color>");
-                    else
-                        sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
-                    break;
-                case StatusEffect.Defense:
-                    sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
-                    break;
-                case StatusEffect.Heal:
-                    sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
-                    break;
-                default:
-                    sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
-                    break;
-            }
+            AddStatusEffectDesc(statusEffect, sb, info);
+            //switch (statusEffect.Item1)
+            //{
+            //    case StatusEffect.Attack:
+            //        if (GetStatusEffect(StatusEffect.UseCritical, out _))
+            //            sb.Replace("{n}", $"<color=green>{info.Item1} + 치명타 피해({CheckCriticalDamage(info.Item1, true) - info.Item1}) </color>");
+            //        else
+            //            sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
+            //        break;
+            //    case StatusEffect.Defense:
+            //        sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
+            //        break;
+            //    case StatusEffect.Heal:
+            //        sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
+            //        break;
+            //    default:
+            //        sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
+            //        break;
+            //}
             StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text = sb.ToString();
         }
         //StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text = InGameManager.Instance.SESO.SEDatas[(int)statusEffect.Item1].Descript.Replace("{n}", $"<color=green>{info.Item1}</color>");
@@ -1111,6 +1130,16 @@ public abstract class Entity : MonoBehaviour
         newSize.y = 30 + StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].preferredHeight;
         rectTransform.sizeDelta = newSize;
 
+    }
+
+    protected virtual void AddStatusEffectDesc((StatusEffect, StatusEffectType) statusEffect, StringBuilder sb, (int, int) info)
+    {
+        sb.Replace("{CriticalChance}", $"<color=green>{_criticalChance}</color>");
+        sb.Replace("{CriticalDamage}", $"<color=green>{CriticalDamage}</color>");
+    }
+    protected virtual string ChangeInformationLV((StatusEffect, StatusEffectType) statusEffect, (int, int) info)
+    {
+        return $"LV: <color=green>{info.Item1}</color>";
     }
 
     void ActivateStatusEffect((StatusEffect, StatusEffectType) statusEffect, bool isOn)

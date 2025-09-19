@@ -180,10 +180,12 @@ public class MapManager : MonoBehaviour
         else if (currStage.State == Map.StageState.Boss)
         {
             ShowNextDoor(true);
+            ShowPreviousDoor(true);
             await TurnManager.Instance.EndBattle();
         }
         else if (currStage.State == Map.StageState.Start)
         {
+            ShowPreviousDoor(true);
             ShowNextDoor(false);
         }
         currStage.ClearMap();
@@ -200,10 +202,12 @@ public class MapManager : MonoBehaviour
         else if (currStage.State == Map.StageState.Boss)
         {
             ShowNextDoor(true);
+            ShowPreviousDoor(true);
             await TurnManager.Instance.EndBattle();
         }
         else if (currStage.State == Map.StageState.Start)
         {
+            ShowPreviousDoor(true);
             ShowNextDoor(false);
         }
         stage.ClearMap();

@@ -54,11 +54,9 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         Screen.SetResolution(1920, 1080, true);
-        Goods.Subscribe(goods =>
-        {
-            if (InGame)
-                InGameUIManager.Instance.ChangeStatus(8, goods);
-        });
+        Goods
+            .Where(_ => InGame)
+            .Subscribe(goods => InGameUIManager.Instance.ChangeStatus(8, goods)).AddTo(this);
 
         if (!InGame)
             NowChapterLV = 0;
