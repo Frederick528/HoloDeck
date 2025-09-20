@@ -15,4 +15,9 @@ public class SendAnimEvent : MonoBehaviour
     {
         ParentEntity.AtkAnimtiming();
     }
+
+    void OnCardAtkTiming()
+    {
+        CardManager.Instance.CardAtkAnimTiming();
+    }
 }

@@ -147,6 +147,7 @@ public class Player : Entity
 
     }
 
+
     //public async UniTaskVoid TakeDamagePlayer(int dmg)
     //{
     //    if (!TakeDamage(dmg))

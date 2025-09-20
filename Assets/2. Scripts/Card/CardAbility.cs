@@ -559,27 +559,27 @@ public class CardAbility
 
     async UniTask SingleAttackAB(Card card, float delay = 0.3f)             // 컨티뉴 single이랑 그냥 single 합침.
     {
-        bool critical = InGameManager.Instance.Player.CheckCritical();
-        //bool critical = InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _);
-        PoolManager.Instance.GetEffect(card.Data.Effect, card.TargetEnemy.transform.position, Quaternion.identity).Forget();
+        //bool critical = InGameManager.Instance.Player.CheckCritical();
+        bool critical = InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _);
+        await PoolManager.Instance.GetEffect(card.Data.Effect, card.TargetEnemy.transform.position, Quaternion.identity);
         if (!await card.TargetEnemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical)) && card.Data.Count > 1)
         {
             for (int i = 1; i < card.Data.Count; ++i)
             {
                 await DelayTask(delay);
-                PoolManager.Instance.GetEffect(card.Data.Effect, card.TargetEnemy.transform.position, Quaternion.identity).Forget();
+                await PoolManager.Instance.GetEffect(card.Data.Effect, card.TargetEnemy.transform.position, Quaternion.identity);
                 //damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
                 if (await card.TargetEnemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical)))
                     break;
             }
         }
         card.Target(null);
-        //InGameManager.Instance.Player.CheckCritical();
+        InGameManager.Instance.Player.CheckCritical();
     }
     async UniTask MultiAttackAB(Card card, float delay = 0.3f)              // 컨티뉴 multi랑 그냥 multi 합침.
     {
-        bool critical = InGameManager.Instance.Player.CheckCritical();
-        //bool critical = InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _);
+        //bool critical = InGameManager.Instance.Player.CheckCritical();
+        bool critical = InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _);
         //int damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
         var enemyList = EnemyManager.Instance.EnemyList.ToList();            // 무조건 한 번은 실행되게 함. 이러면 카운트 1를 따로 작성해주지 않아도 상관없음.
         await UniTask.WhenAll(enemyList.Select(async enemy =>
@@ -618,7 +618,7 @@ public class CardAbility
             //await UniTask.WhenAll(Enumerable.Range(0, enemyCount).
             //    Select(j => EnemyManager.Instance.EnemyList[(enemyCount - 1) - j].TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical))));
         }
-        //InGameManager.Instance.Player.CheckCritical();
+        InGameManager.Instance.Player.CheckCritical();
     }
     async UniTask ShieldAB(Card card, float delay = 0.3f)
     {

@@ -73,7 +73,7 @@ public class CardManager : MonoBehaviour
     bool canPush = true;
     public enum ECardState { Nothing, CanMouseOver, CanMouseDrag, OnlyMouseClick }
 
-    int shopCardIdx;
+    public bool CardAtkTiming { get; private set; } = false;
                                     
     //UICard[] uICards = new UICard[4];
 
@@ -124,6 +124,10 @@ public class CardManager : MonoBehaviour
                 }
             }
         }).AddTo(this);
+    }
+    public void CardAtkAnimTiming()
+    {
+        CardAtkTiming = true;
     }
     public void RewardedCard()
     {
@@ -768,6 +772,8 @@ public class CardManager : MonoBehaviour
         }
 
         _playedCard = playedCard;       // 마지막으로 시전한 카드 정보를 받아와야 할 수도 있기 때문에 일단 초기화는 안 함.
+
+        //InGameManager.Instance.Player.AttackAnimation().Forget();
 
         //HandCard.Remove(playedCard);
 

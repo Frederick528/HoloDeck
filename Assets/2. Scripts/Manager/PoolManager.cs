@@ -204,7 +204,7 @@ public class PoolManager : MonoBehaviour
         }
 
         // 3. 파티클 재생 시간만큼 기다린 후 자동으로 반납하는 코루틴 시작
-        await ReleaseEffect(prefab, instance, ps.main.duration);
+        await ReleaseEffect(prefab, instance, ps.main.duration);        // duration이랑 공격 타이밍 비교해서 딜 넣기.
     }
 
     private async UniTask ReleaseEffect(GameObject prefab, GameObject instance, float delay)

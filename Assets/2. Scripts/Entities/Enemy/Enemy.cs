@@ -348,8 +348,8 @@ public abstract class Enemy : Entity
 
         _nextPattern.Add(async () => await UniTask.Create(async () =>
         {
-            bool critical = CheckCritical();      // 공격하기 전에 크리티컬 확인
-            //bool critical = GetStatusEffect(StatusEffect.UseCritical, out _);      // 공격하기 전에 크리티컬 확인
+            //bool critical = CheckCritical();      // 공격하기 전에 크리티컬 확인
+            bool critical = GetStatusEffect(StatusEffect.UseCritical, out _);      // 공격하기 전에 크리티컬 확인
             //if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
             //    return;
             //await Attack(Mathf.RoundToInt(enemyData.Damage * multiple));         // 여기 부분 고쳐야 함.
@@ -363,7 +363,7 @@ public abstract class Enemy : Entity
                 //await Attack(CheckCriticalDamage(multiple, critical));
                 //await Attack(Mathf.RoundToInt(criticalDamage * multiple));
             }
-            //CheckCritical();
+            CheckCritical();
         }));
         //_nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
         //_nextPattern = () => UniTask.Create(async () =>
