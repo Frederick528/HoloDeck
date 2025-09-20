@@ -49,6 +49,7 @@ public class CardAbility
 
     public void SetCardAbility(Card card)
     {
+        card.UseConditions = null;          // 능력과 조건문은 초기화 해줘야 함. 능력은 모두 초기화 시키지만, 조건문은 일부 초기화가 안 되서 오류가 발생하는 경우 존재.
         if (card.Data.HasSimpleCondition)
         {
             SettingCondition(card);
@@ -560,11 +561,13 @@ public class CardAbility
     {
         bool critical = InGameManager.Instance.Player.CheckCritical();
         //bool critical = InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _);
+        PoolManager.Instance.GetEffect(card.Data.Effect, card.TargetEnemy.transform.position, Quaternion.identity).Forget();
         if (!await card.TargetEnemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical)) && card.Data.Count > 1)
         {
             for (int i = 1; i < card.Data.Count; ++i)
             {
                 await DelayTask(delay);
+                PoolManager.Instance.GetEffect(card.Data.Effect, card.TargetEnemy.transform.position, Quaternion.identity).Forget();
                 //damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
                 if (await card.TargetEnemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical)))
                     break;
@@ -578,9 +581,22 @@ public class CardAbility
         bool critical = InGameManager.Instance.Player.CheckCritical();
         //bool critical = InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _);
         //int damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
-        int enemyCount1 = EnemyManager.Instance.EnemyList.Count;            // 무조건 한 번은 실행되게 함. 이러면 카운트 1를 따로 작성해주지 않아도 상관없음.
-        await UniTask.WhenAll(Enumerable.Range(0, enemyCount1).
-            Select(j => EnemyManager.Instance.EnemyList[(enemyCount1 - 1) - j].TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical))));
+        var enemyList = EnemyManager.Instance.EnemyList.ToList();            // 무조건 한 번은 실행되게 함. 이러면 카운트 1를 따로 작성해주지 않아도 상관없음.
+        await UniTask.WhenAll(enemyList.Select(async enemy =>
+        {
+            if (enemy != null)
+            {
+                await PoolManager.Instance.GetEffect(card.Data.Effect, enemy.transform.position, Quaternion.identity);
+                await enemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical));
+            }
+        }));
+        //await UniTask.WhenAll(Enumerable.Range(0, enemyCount)
+        //    .Select(async j =>
+        //    {
+        //        await PoolManager.Instance.GetEffect(card.Data.Effect, EnemyManager.Instance.EnemyList[(enemyCount - 1) - j].transform.position, Quaternion.identity);
+        //        await EnemyManager.Instance.EnemyList[(enemyCount - 1) - j].TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical));
+
+        //    }));
         for (int i = /*0*/1; i < card.Data.Count; ++i)
         {
             //if (i != 0)
@@ -588,10 +604,19 @@ public class CardAbility
             //    await DelayTask(continuousDelay);
             //}
             await DelayTask(delay);
+            enemyList = EnemyManager.Instance.EnemyList.ToList();
+            await UniTask.WhenAll(enemyList.Select(async enemy =>
+            {
+                if (enemy != null)
+                {
+                    await PoolManager.Instance.GetEffect(card.Data.Effect, enemy.transform.position, Quaternion.identity);
+                    await enemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical));
+                }
+            }));
             //damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
-            int enemyCount2 = EnemyManager.Instance.EnemyList.Count;
-            await UniTask.WhenAll(Enumerable.Range(0, enemyCount2).
-                Select(j => EnemyManager.Instance.EnemyList[(enemyCount2 - 1) - j].TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical))));
+            //enemyCount = EnemyManager.Instance.EnemyList.Count;
+            //await UniTask.WhenAll(Enumerable.Range(0, enemyCount).
+            //    Select(j => EnemyManager.Instance.EnemyList[(enemyCount - 1) - j].TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical))));
         }
         //InGameManager.Instance.Player.CheckCritical();
     }

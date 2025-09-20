@@ -761,14 +761,12 @@ public class CardManager : MonoBehaviour
             playedCard.FailedUseCard();
             return;
         }
-        print("XXX");
         if (!await CheckCanUseingCard(playedCard))
         {
             playedCard.FailedUseCard();
             return;
         }
 
-        print("YTYY");
         _playedCard = playedCard;       // 마지막으로 시전한 카드 정보를 받아와야 할 수도 있기 때문에 일단 초기화는 안 함.
 
         //HandCard.Remove(playedCard);

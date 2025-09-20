@@ -54,6 +54,7 @@ public class CardData
     //[TextArea(1, 5)]
     //public string EnhancedDescript;
     public Sprite Sprite;
+    public GameObject Effect;
     public bool IsSimpleAB;
     public bool HasSimpleCondition;
     public CardTag CardTag;
@@ -76,6 +77,7 @@ public class CardData
             Price = Price,
             Descript = Descript,
             Sprite = Sprite,
+            Effect = Effect,
             IsSimpleAB = IsSimpleAB,
             HasSimpleCondition = HasSimpleCondition,
             CardTag = CardTag,
@@ -88,6 +90,7 @@ public class CardData
 public class CardSO : ScriptableObject
 {
     public Sprite[] CardSprites;
+    public GameObject[] CardEffects;
 
     public CardData[] Cards;
 

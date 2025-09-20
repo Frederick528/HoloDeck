@@ -33,7 +33,7 @@ public class InGameManager : MonoBehaviour
     [SerializeField] bool fastMode;
 
     public StatusEffectSO SESO;
-    [SerializeField] CardSO _cardSO;
+    public CardSO CardSO;
     [SerializeField] ItemSO _itemSO;
 
     //public Arrow ArrowCursor;
@@ -88,8 +88,8 @@ public class InGameManager : MonoBehaviour
     private void Start()
     {
         //Random.InitState(255);
-        CardRarityID = _cardSO.ClassifyCardRarityID;
-        EnhancedCardRarityID = _cardSO.ClassifyEnhancedCardRarityID;
+        CardRarityID = CardSO.ClassifyCardRarityID;
+        EnhancedCardRarityID = CardSO.ClassifyEnhancedCardRarityID;
 
         PassiveID = _itemSO.PassiveID; ActiveID = _itemSO.ActiveID; PotionID = _itemSO.PotionID;
 
@@ -281,7 +281,7 @@ public class InGameManager : MonoBehaviour
         {
             CardData card = RandomCard(rewardIdx);
             int j = 0;
-            while (card == null && j < 5)
+            while (card == null && j < 5)       // 랜덤 카드를 했는데, 없을 경우 5번 더 반복함. 확률적으로 등급이 올라가는 이벤트가 있기 때문.
             {
                 card = RandomCard(rewardIdx);
                 ++j;
@@ -398,7 +398,7 @@ public class InGameManager : MonoBehaviour
         }
         else
         {
-            cardData = Array.Find(_cardSO.Cards, x => x.ID == id).Clone();
+            cardData = Array.Find(CardSO.Cards, x => x.ID == id).Clone();
             CardDatas.Add(id, cardData);
             return cardData;
         }
@@ -591,6 +591,10 @@ public class InGameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha4))       // 카드 생성
         {
             CardManager.Instance.AddDeck(FindCardData(100), EAddDeck.Hand);
+            CardManager.Instance.AddDeck(FindCardData(101), EAddDeck.Hand);
+            CardManager.Instance.AddDeck(FindCardData(102), EAddDeck.Hand);
+            //CardManager.Instance.AddDeck(FindCardData(103), EAddDeck.Hand);
+            //CardManager.Instance.AddDeck(FindCardData(104), EAddDeck.Hand);
         }
         if (Input.GetKeyDown(KeyCode.Alpha7))
         {

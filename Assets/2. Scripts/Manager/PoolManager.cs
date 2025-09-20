@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class PoolManager : MonoBehaviour
     public Card CardPrefab;
     public TMP_Text TextEffectPrefab;
     public UICard UICardPrefab;
+    public GameObject[] EffectPrefabs;
     //public GameObject _mapPrefab;
 
     Transform _deck;
@@ -28,6 +30,7 @@ public class PoolManager : MonoBehaviour
     public IObjectPool<Card> CardPool { get; private set; }
     public IObjectPool<TMP_Text> TextPool { get; private set; }
     public IObjectPool<UICard> UICardPool { get; private set; }
+    public Dictionary<GameObject, IObjectPool<GameObject>> EffectPool = new Dictionary<GameObject, IObjectPool<GameObject>>();
 
     private void Awake()
     {
@@ -49,6 +52,7 @@ public class PoolManager : MonoBehaviour
         TextPool = new ObjectPool<TMP_Text>(CreateTextPooled, OnTakeFromPoolText, OnReturnedToPoolText, OnDestroyPoolText, true, defaultCapacity);
 
         //UICardPool = new ObjectPool<UICard>(CreateUICardPooled, OnTakeFromPoolUICard, OnReturnedToPoolUICard, OnDestroyPoolUICard, true, defaultCapacity);
+        EffectPrefabs = InGameManager.Instance.CardSO.CardEffects;
 
         // 미리 오브젝트 생성 해놓기
         for (int i = 0; i < defaultCapacity; ++i)
@@ -168,5 +172,53 @@ public class PoolManager : MonoBehaviour
     //        UICardPool.Release(uiCard);
     //    }
     //}
+    public async UniTask GetEffect(GameObject prefab, Vector3 position, Quaternion rotation)
+    {
+        if (prefab == null) return;
+        if (!EffectPool.ContainsKey(prefab))
+        {
+            var pool = new ObjectPool<GameObject>(
+                    createFunc: () => Instantiate(prefab, transform),
+                    actionOnGet: (obj) => obj.SetActive(true),
+                    actionOnRelease: (obj) => obj.SetActive(false),
+                    actionOnDestroy: (obj) => Destroy(obj),
+                    collectionCheck: true,
+                    defaultCapacity: 1,
+                    maxSize: 5
+                );
 
+            EffectPool.Add(prefab, pool);
+        }
+
+        // 1. 풀에서 이펙트 오브젝트를 가져옴
+        GameObject instance = EffectPool[prefab].Get();
+        instance.transform.SetPositionAndRotation(position, rotation);
+
+        // 2. 파티클 시스템의 재생 시간을 가져옴
+        var ps = instance.GetComponent<ParticleSystem>();
+        if (ps == null)
+        {
+            // 파티클이 없다면 그냥 반납 처리
+            EffectPool[prefab].Release(instance);
+            return;
+        }
+
+        // 3. 파티클 재생 시간만큼 기다린 후 자동으로 반납하는 코루틴 시작
+        await ReleaseEffect(prefab, instance, ps.main.duration);
+    }
+
+    private async UniTask ReleaseEffect(GameObject prefab, GameObject instance, float delay)
+    {
+        await UniTask.WaitForSeconds(delay, cancellationToken: this.GetCancellationTokenOnDestroy());
+
+        if (prefab != null && EffectPool.ContainsKey(prefab))
+        {
+            EffectPool[prefab].Release(instance);
+        }
+        else
+        {
+            // 풀을 못찾는 경우 파괴
+            Destroy(instance);
+        }
+    }
 }

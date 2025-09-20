@@ -1136,6 +1136,7 @@ public abstract class Entity : MonoBehaviour
     {
         sb.Replace("{CriticalChance}", $"<color=green>{_criticalChance}</color>");
         sb.Replace("{CriticalDamage}", $"<color=green>{CriticalDamage}</color>");
+        sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
     }
     protected virtual string ChangeInformationLV((StatusEffect, StatusEffectType) statusEffect, (int, int) info)
     {

@@ -207,7 +207,6 @@ public abstract class Enemy : Entity
         }
         if (clear)
         {
-            print("AA");
             ClearCheck();
         }
     }
@@ -639,7 +638,6 @@ public abstract class Enemy : Entity
 
     protected override void AddStatusEffectDesc((StatusEffect, StatusEffectType) statusEffect, StringBuilder sb, (int, int) info)
     {
-        base.AddStatusEffectDesc(statusEffect, sb, info);
         switch (statusEffect.Item1)
         {
             case StatusEffect.Attack:
@@ -664,10 +662,8 @@ public abstract class Enemy : Entity
             case StatusEffect.Heal:
                 sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
                 break;
-            default:
-                sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
-                break;
         }
+        base.AddStatusEffectDesc(statusEffect, sb, info);
     }
 
     protected override string ChangeInformationLV((StatusEffect, StatusEffectType) statusEffect, (int, int) info)

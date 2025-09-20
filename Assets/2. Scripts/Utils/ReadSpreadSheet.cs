@@ -175,6 +175,7 @@ public class ReadSpreadSheet : MonoBehaviour
                 CardRarity = (CardRarity)Enum.Parse(typeof(CardRarity), cells[14])
             };
             data.Sprite = Array.Find(CardSO.CardSprites, x => x.name == data.ID.ToString());
+            data.Effect = Array.Find(CardSO.CardEffects, x => x.name == data.ID.ToString());
             //try
             //{
             //    data.Sprite = Array.Find(CardSO.CardSprites, x => x.name == data.ID.ToString());

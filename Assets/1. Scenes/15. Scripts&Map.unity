@@ -10920,6 +10920,7 @@ MonoBehaviour:
     Price: 0
     Descript: 
     Sprite: {fileID: 0}
+    Effect: {fileID: 0}
     IsSimpleAB: 0
     HasSimpleCondition: 0
     CardTag: 0
@@ -18064,6 +18065,7 @@ MonoBehaviour:
   CardPrefab: {fileID: 6399435079816834889, guid: 197073899079ff848924c4c325b401f3, type: 3}
   TextEffectPrefab: {fileID: 2854698627307458664, guid: d16be914b42e1134d8a693ccdda19a86, type: 3}
   UICardPrefab: {fileID: 8050772954400068717, guid: ee0a7fa36e737f0488bb04b744274eda, type: 3}
+  EffectPrefabs: []
 --- !u!1 &1173495376
 GameObject:
   m_ObjectHideFlags: 0
@@ -27659,7 +27661,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fastMode: 0
   SESO: {fileID: 11400000, guid: 8b20e6dc864050345b116627bcf14dc3, type: 2}
-  _cardSO: {fileID: 11400000, guid: 41dad1336250ac04ead82446813d3850, type: 2}
+  CardSO: {fileID: 11400000, guid: 41dad1336250ac04ead82446813d3850, type: 2}
   _itemSO: {fileID: 11400000, guid: e0a522c5b9163b147a4f499e0fde1067, type: 2}
   PlayerTr: {fileID: 0}
   Player: {fileID: 0}
