@@ -29416,6 +29416,8 @@ GameObject:
   - component: {fileID: 6096757213908423747}
   - component: {fileID: 720325515038598322}
   - component: {fileID: 668786554398026484}
+  - component: {fileID: 5194220285509278683}
+  - component: {fileID: 206099856597940348}
   m_Layer: 0
   m_Name: 102
   m_TagString: Untagged
@@ -34281,3 +34283,39 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!95 &5194220285509278683
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8974203713140315807}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7512dfed851b89b4ebc9ce8e1a87320e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &206099856597940348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8974203713140315807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 096e0d3835e04eb44bd7486b47742e30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ParentEntity: {fileID: 0}
+  RepeatEffect: 1
+  AllEnemies: 0

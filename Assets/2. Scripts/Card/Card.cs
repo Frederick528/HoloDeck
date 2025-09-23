@@ -63,6 +63,10 @@ public class Card : MonoBehaviour
 
     public Enemy TargetEnemy { get; private set; } = null;        // 카드 사용 시, 타겟에너미를 받아옴. (나중에 큐에서 체크하기 위함.)
 
+    public bool CardUseTiming { get; private set; }
+    public bool RepeatEffect { get; private set; }
+    public bool AllEnemies { get; private set; }
+
     //BoxCollider2D _boxCollider2;
 
     // Start is called before the first frame update
@@ -352,6 +356,18 @@ public class Card : MonoBehaviour
             //    //SetPRSCollider();
             //}
         }
+    }
+
+    public void CardTiming(bool repeat, bool all)
+    {
+        RepeatEffect = repeat;
+        AllEnemies = all;
+        CardUseTiming = true;
+    }
+
+    public void UseTimingReset()
+    {
+        CardUseTiming = false;
     }
 
     public async UniTaskVoid WaitUnblock(float waitTime)

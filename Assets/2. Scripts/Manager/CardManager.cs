@@ -64,7 +64,7 @@ public class CardManager : MonoBehaviour
     List<Card> _selectedCards = new();           // 배틀 중 버리기, 강화, 교환 등에 의해 카드 위치 조정이 되면 안 되는 카드들
     List<Card> _tempThrowAwayCards = new();      // 카드 버리기를 위한 공용 리스트로, 버릴 카드들을 추가하고, await 다음에 전부 버림.
 
-    Card _playedCard;                            // 큐에서 실행한 카드
+    public Card NowPlayedCard;                            // 큐에서 실행하고 있는 카드
     Card _usedCard;                              // 사용되고 있는 카드(버리기 효과나 다른 효과가 진행되고 있는 카드)
     public Card SelectCard;                            // 들고 있는 카드(drag 중인 카드)
     bool draggable;
@@ -72,8 +72,6 @@ public class CardManager : MonoBehaviour
 
     bool canPush = true;
     public enum ECardState { Nothing, CanMouseOver, CanMouseDrag, OnlyMouseClick }
-
-    public bool CardAtkTiming { get; private set; } = false;
                                     
     //UICard[] uICards = new UICard[4];
 
@@ -124,10 +122,6 @@ public class CardManager : MonoBehaviour
                 }
             }
         }).AddTo(this);
-    }
-    public void CardAtkAnimTiming()
-    {
-        CardAtkTiming = true;
     }
     public void RewardedCard()
     {
@@ -631,9 +625,9 @@ public class CardManager : MonoBehaviour
         }
         else                        // 카드 효과가 버리기인 경우
         {
-            if (_playedCard.Data.Discard > 0)
+            if (NowPlayedCard.Data.Discard > 0)
             {
-                if (_selectedCards.Count == _playedCard.Data.Discard)
+                if (_selectedCards.Count == NowPlayedCard.Data.Discard)
                 {
                     InGameButtonManager.Instance.DiscardBtnInvert(true);
                 }
@@ -642,13 +636,13 @@ public class CardManager : MonoBehaviour
                     InGameButtonManager.Instance.DiscardBtnInvert(false);
                 }
             }
-            else if (_playedCard.Data.Discard == 0)
+            else if (NowPlayedCard.Data.Discard == 0)
             {
                 InGameButtonManager.Instance.DiscardBtnInvert(true);
             }
             else
             {
-                if (_selectedCards.Count >= -_playedCard.Data.Discard)
+                if (_selectedCards.Count >= -NowPlayedCard.Data.Discard)
                 {
                     InGameButtonManager.Instance.DiscardBtnInvert(true);
                 }
@@ -771,7 +765,7 @@ public class CardManager : MonoBehaviour
             return;
         }
 
-        _playedCard = playedCard;       // 마지막으로 시전한 카드 정보를 받아와야 할 수도 있기 때문에 일단 초기화는 안 함.
+        NowPlayedCard = playedCard;       // 마지막으로 시전한 카드 정보를 받아와야 할 수도 있기 때문에 일단 초기화는 안 함.
 
         //InGameManager.Instance.Player.AttackAnimation().Forget();
 

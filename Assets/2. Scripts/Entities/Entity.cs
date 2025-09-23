@@ -242,6 +242,7 @@ public abstract class Entity : MonoBehaviour
             //await UniTask.WaitUntil(() => { f += Time.deltaTime; return _isAtk; }/*, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token*/);    // 공격하는 모션 중에는 게임이 끝나지 않을 것
             _isAtk = false;
             cts.Cancel();
+            cts.Dispose();
         }
     }
 

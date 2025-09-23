@@ -209,7 +209,7 @@ public class PoolManager : MonoBehaviour
 
     private async UniTask ReleaseEffect(GameObject prefab, GameObject instance, float delay)
     {
-        await UniTask.WaitForSeconds(delay, cancellationToken: this.GetCancellationTokenOnDestroy());
+        await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token).SuppressCancellationThrow();
 
         if (prefab != null && EffectPool.ContainsKey(prefab))
         {

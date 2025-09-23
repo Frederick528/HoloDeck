@@ -43985,6 +43985,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentEntity: {fileID: 0}
+  RepeatEffect: 1
+  AllEnemies: 0
 --- !u!1 &9098514075732951805
 GameObject:
   m_ObjectHideFlags: 0
