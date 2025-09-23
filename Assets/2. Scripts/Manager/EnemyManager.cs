@@ -11,10 +11,10 @@ public class EnemyManager : MonoBehaviour
     public Dictionary<int, EnemyData> EnemyDatas { get; private set; } = new Dictionary<int, EnemyData>();
     public List<Enemy> EnemyList;
     public Dictionary<int, Enemy> EnemyDict = new();     // OnTriggerEnter에서 gameObject로 받기 때문에 List에서 확인이 안 됨. 그렇다고 GetComponent 하면 비용적으로 별로라서 그냥 Dict 하나 만듦.
-    Vector3[] _enemySpawnPosition = new Vector3[4];
-    Vector3[] _bossSpawnPosition = new Vector3[3];
-    bool[] _enemySpawn;
-    bool[] _bossSpawn;
+    Vector3[] enemySpawnPosition = new Vector3[4];
+    Vector3[] bossSpawnPosition = new Vector3[3];
+    bool[] enemySpawn;
+    bool[] bossSpawn;
     public Enemy TargetEnemy;
 
     public Enemy HitEnemy;
@@ -23,6 +23,8 @@ public class EnemyManager : MonoBehaviour
     //public Arrow ArrowCursor;
 
     public bool MapClear = false;
+
+    public Vector3 EnemyCenterSpawnPos;
 
     [SerializeField] EnemySO enemySO;
     //[SerializeField] Enemy enemy;
@@ -34,22 +36,28 @@ public class EnemyManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            _enemySpawnPosition[0] = (new Vector3(-1.5f, 0f));      // 0
-            _enemySpawnPosition[1] = (new Vector3(1.25f, 0f));      // 1
-            _enemySpawnPosition[2] = (new Vector3(4f, 0f));      // 2
-            _enemySpawnPosition[3] = (new Vector3(6.75f, 0f));      // 3
+            enemySpawnPosition[0] = (new Vector3(-1.5f, 0f));      // 0
+            enemySpawnPosition[1] = (new Vector3(1.25f, 0f));      // 1
+            enemySpawnPosition[2] = (new Vector3(4f, 0f));      // 2
+            enemySpawnPosition[3] = (new Vector3(6.75f, 0f));      // 3
             //EnemySpawnPosition[4] = (new Vector3(8.25f, 0f));      // 4
 
-            _bossSpawnPosition[0] = (new Vector3(-4, 0));
-            _bossSpawnPosition[1] = (new Vector3(0, 0));
-            _bossSpawnPosition[2] = (new Vector3(4, 0));
+            int index = enemySpawnPosition.Length / 2;
+            if (enemySpawnPosition.Length % 2 != 0)
+                EnemyCenterSpawnPos = enemySpawnPosition[index];
+            else
+                EnemyCenterSpawnPos = (enemySpawnPosition[index] + enemySpawnPosition[index - 1]) / 2;
+
+            bossSpawnPosition[0] = (new Vector3(-4, 0));
+            bossSpawnPosition[1] = (new Vector3(0, 0));
+            bossSpawnPosition[2] = (new Vector3(4, 0));
         }
     }
 
     private void Start()
     {
-        _enemySpawn = new bool[_enemySpawnPosition.Length];
-        _bossSpawn = new bool[_bossSpawnPosition.Length];
+        enemySpawn = new bool[enemySpawnPosition.Length];
+        bossSpawn = new bool[bossSpawnPosition.Length];
         CanEnemySpawn(true);
         CanBossSpawn(true);
     }
@@ -67,25 +75,25 @@ public class EnemyManager : MonoBehaviour
 
     public void CanEnemySpawn(bool canSpawn)
     {
-        Array.Fill(_enemySpawn, canSpawn);
+        Array.Fill(enemySpawn, canSpawn);
     }
 
     public void CanBossSpawn(bool canSpawn)
     {
-        Array.Fill(_bossSpawn, canSpawn);
+        Array.Fill(bossSpawn, canSpawn);
     }
 
     public bool SpawnEnemy(int enemyId, int spawnPosIndex)       // 체력 설정이 아니라 ID를 통해 몬스터 종류와 체력, 공격력을 가져오는 형식으로 변경함.
     {
-        if (spawnPosIndex >= _enemySpawn.Length || !_enemySpawn[spawnPosIndex])       // 나중에 배열 만들어서 gameObject가 아니라 bool값으로 바로 받아올 것.
+        if (spawnPosIndex >= enemySpawn.Length || !enemySpawn[spawnPosIndex])       // 나중에 배열 만들어서 gameObject가 아니라 bool값으로 바로 받아올 것.
             return false;
         EnemyData enemyData = FindEnemyData(enemyId);
-        GameObject enemyObject = Instantiate(enemyData.EnemyPrefab, _enemySpawnPosition[spawnPosIndex], Quaternion.identity);
+        GameObject enemyObject = Instantiate(enemyData.EnemyPrefab, enemySpawnPosition[spawnPosIndex], Quaternion.identity);
         Enemy enemy = enemyObject.GetComponent<Enemy>();
         EnemyList.Add(enemy);
         EnemyDict.Add(enemyObject.GetInstanceID(), enemy);
         enemy.SetupEnemy(enemyData, spawnPosIndex);
-        _enemySpawn[spawnPosIndex] = false;
+        enemySpawn[spawnPosIndex] = false;
         //enemySpawnPosition[spawnPosIndex].gameObject.SetActive(false);
         return true;
     }
@@ -95,17 +103,17 @@ public class EnemyManager : MonoBehaviour
         EnemyData enemyData;
         GameObject enemyObject;
         Enemy enemy;
-        for (int i = 0; i < _enemySpawnPosition.Length; ++i)
+        for (int i = 0; i < enemySpawnPosition.Length; ++i)
         {
-            if (!_enemySpawn[i]/*enemySpawnPosition[i].gameObject.activeSelf*/)
+            if (!enemySpawn[i]/*enemySpawnPosition[i].gameObject.activeSelf*/)
                 continue;
             enemyData = FindEnemyData(enemyId);
-            enemyObject = Instantiate(enemyData.EnemyPrefab, _enemySpawnPosition[i], Quaternion.identity);
+            enemyObject = Instantiate(enemyData.EnemyPrefab, enemySpawnPosition[i], Quaternion.identity);
             enemy = enemyObject.GetComponent<Enemy>();
             EnemyList.Add(enemy);
             EnemyDict.Add(enemyObject.GetInstanceID(), enemy);
             enemy.SetupEnemy(enemyData, i);
-            _enemySpawn[i] = false;
+            enemySpawn[i] = false;
             //enemySpawnPosition[i].gameObject.SetActive(false);
             return true;
         }
@@ -114,15 +122,15 @@ public class EnemyManager : MonoBehaviour
 
     public bool SpawnBoss(int enemyId, int spawnPosIndex)       // 체력 설정이 아니라 ID를 통해 몬스터 종류와 체력, 공격력을 가져오는 형식으로 변경함.
     {
-        if (!_bossSpawn[spawnPosIndex]/*enemySpawnPosition[spawnPosIndex].gameObject.activeSelf*/)       // 나중에 배열 만들어서 gameObject가 아니라 bool값으로 바로 받아올 것.
+        if (!bossSpawn[spawnPosIndex]/*enemySpawnPosition[spawnPosIndex].gameObject.activeSelf*/)       // 나중에 배열 만들어서 gameObject가 아니라 bool값으로 바로 받아올 것.
             return false;
         EnemyData enemyData = FindEnemyData(enemyId);
-        GameObject enemyObject = Instantiate(enemyData.EnemyPrefab, _bossSpawnPosition[spawnPosIndex], Quaternion.identity);
+        GameObject enemyObject = Instantiate(enemyData.EnemyPrefab, bossSpawnPosition[spawnPosIndex], Quaternion.identity);
         Enemy enemy = enemyObject.GetComponent<Enemy>();
         EnemyList.Add(enemy);
         EnemyDict.Add(enemyObject.GetInstanceID(), enemy);
         enemy.SetupEnemy(enemyData, spawnPosIndex);
-        _bossSpawn[spawnPosIndex] = false;
+        bossSpawn[spawnPosIndex] = false;
         //enemySpawnPosition[spawnPosIndex].gameObject.SetActive(false);
         return true;
     }
@@ -132,17 +140,17 @@ public class EnemyManager : MonoBehaviour
         EnemyData enemyData;
         GameObject enemyObject;
         Enemy enemy;
-        for (int i = 0; i < _bossSpawnPosition.Length; ++i)
+        for (int i = 0; i < bossSpawnPosition.Length; ++i)
         {
-            if (!_bossSpawn[i]/*enemySpawnPosition[i].gameObject.activeSelf*/)
+            if (!bossSpawn[i]/*enemySpawnPosition[i].gameObject.activeSelf*/)
                 continue;
             enemyData = FindEnemyData(enemyId);
-            enemyObject = Instantiate(enemyData.EnemyPrefab, _bossSpawnPosition[i], Quaternion.identity);
+            enemyObject = Instantiate(enemyData.EnemyPrefab, bossSpawnPosition[i], Quaternion.identity);
             enemy = enemyObject.GetComponent<Enemy>();
             EnemyList.Add(enemy);
             EnemyDict.Add(enemyObject.GetInstanceID(), enemy);
             enemy.SetupEnemy(enemyData, i);
-            _bossSpawn[i] = false;
+            bossSpawn[i] = false;
             //enemySpawnPosition[i].gameObject.SetActive(false);
             return true;
         }
@@ -156,7 +164,7 @@ public class EnemyManager : MonoBehaviour
         EnemyDict.Remove(enemy.gameObject.GetInstanceID());
         bool noEnemy = EnemyList.Count == 0;
         await task;
-        _enemySpawn[enemy.spawnPosIdx] = true;
+        enemySpawn[enemy.spawnPosIdx] = true;
         return noEnemy;
     }
 

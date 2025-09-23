@@ -172,7 +172,7 @@ public class PoolManager : MonoBehaviour
     //        UICardPool.Release(uiCard);
     //    }
     //}
-    public async UniTask GetEffect(GameObject prefab, Vector3 position, Quaternion rotation)
+    public async UniTask GetEffect(GameObject prefab, PRS prs)
     {
         if (prefab == null) return;
         if (!EffectPool.ContainsKey(prefab))
@@ -192,7 +192,8 @@ public class PoolManager : MonoBehaviour
 
         // 1. 풀에서 이펙트 오브젝트를 가져옴
         GameObject instance = EffectPool[prefab].Get();
-        instance.transform.SetPositionAndRotation(position, rotation);
+        instance.transform.SetPositionAndRotation(prs.pos, prs.rot);
+        instance.transform.localScale = prs.scale;
 
         // 2. 파티클 시스템의 재생 시간을 가져옴
         var ps = instance.GetComponent<ParticleSystem>();

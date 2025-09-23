@@ -135,7 +135,14 @@ public class Card : MonoBehaviour
         //CardAbility.SetCardAbility(this);     // 사용 전에 받기 때문에 굳이 사용 안 해도 됨. 나중에 따로 필요하면 킬 것.
         //CardLazy = CardAbility.SetCardLazyAbility(this);        // 중복 해결을 위해 Lazy를 써봄.
 
-        CardDataReset();
+        //SendAnimEvent sendAnimEvent = Data.Effect.GetComponent<SendAnimEvent>();
+        if (Data.Effect != null && Data.Effect.TryGetComponent<SendAnimEvent>(out SendAnimEvent sendAnimEvent))     // 나중에 모든 이펙트에 SendAnimEvent 넣으면 그냥 GetComponent 하면 됨.
+        {
+            RepeatEffect = sendAnimEvent.RepeatEffect;
+            AllEnemies = sendAnimEvent.AllEnemies;
+        }
+
+        CardDataReset();        // 글(string) 데이터만 초기화
         //Data = _defaultData;
         ////Data.Name = data.Name;
         ////Data.ID = data.ID;
@@ -358,10 +365,8 @@ public class Card : MonoBehaviour
         }
     }
 
-    public void CardTiming(bool repeat, bool all)
+    public void CardTiming()
     {
-        RepeatEffect = repeat;
-        AllEnemies = all;
         CardUseTiming = true;
     }
 

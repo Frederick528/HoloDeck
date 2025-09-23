@@ -25,7 +25,7 @@ public class SendAnimEvent : MonoBehaviour
     {
         if (CardManager.Instance.NowPlayedCard)
         {
-            CardManager.Instance.NowPlayedCard.CardTiming(RepeatEffect, AllEnemies);
+            CardManager.Instance.NowPlayedCard.CardTiming();
         }
     }
 }
