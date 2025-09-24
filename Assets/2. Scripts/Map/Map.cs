@@ -38,8 +38,6 @@ public class Map : MonoBehaviour
         Vector3Int _array_Position;
         List<Map> _aroundStage = new();
 
-        Color _color;
-
         StageState _state;
 
         public void SaveInfo(Map map)
@@ -60,8 +58,6 @@ public class Map : MonoBehaviour
 
             _array_Position = map.array_Position;
             _aroundStage = map.aroundStage;
-
-            _color = map.img.color;
 
             _state = map.State;
 
@@ -95,14 +91,13 @@ public class Map : MonoBehaviour
             map.array_Position = _array_Position;
             map.aroundStage = _aroundStage;
 
-            map.img.color = _color;
-
             map.State = _state;
 
             map.SettingMap((int)_state);
 
             map.gameObject.SetActive(_isActive);
-            map.btn.interactable = _isInteractable;
+            map.ClearMark.SetActive(_cleared);
+            map.LightMap(_isInteractable);
         }
     }
 
@@ -127,8 +122,9 @@ public class Map : MonoBehaviour
 
     //public IObjectPool<GameObject> MapPool { get; set; }
     public Button btn;
-    public TMP_Text TMP_Text;       // 나중에 맵 이미지 생기면, 삭제할 예정.
-    public Image img;
+    //public TMP_Text TMP_Text;       // 나중에 맵 이미지 생기면, 삭제할 예정.
+    public Image Icon;
+    public GameObject ClearMark;
     public Vector3Int array_Position;
     public List<Map> aroundStage = new();
 
@@ -147,6 +143,13 @@ public class Map : MonoBehaviour
     public StageState State;
 
     public StageContext stageContext;
+
+    readonly Color _start = new(0.510f, 0.647f, 0.804f);
+    readonly Color _treasure = new(1.0f, 0.784f, 0.157f);
+    readonly Color _shop = new(0.235f, 0.314f, 0.588f);
+    readonly Color _event = new(0.588f, 0.431f, 0.784f);
+    readonly Color _enemy = new(0.784f, 0.157f, 0.157f);
+    readonly Color _boss = new(0.501f, 0.058f, 0.078f);
 
     public void SettingMap(int idx)
     {
@@ -167,30 +170,37 @@ public class Map : MonoBehaviour
         }
 
         ChapterMapInfos[GameManager.Instance.NowChapterLV].HasInfo = true;
-        TMP_Text.text = MapManager.Instance.MapString[idx];
-        btn.interactable = false;
+        Icon.sprite = MapManager.Instance.MapIcon[idx];
+        //TMP_Text.text = MapManager.Instance.MapString[idx];
         stage = Stages[idx];
         switch (idx)
         {
             case 0:
                 State = StageState.Start;
+                Icon.color = _start;
                 break;
             case 1:
                 State = StageState.Treasure;
+                Icon.color = _treasure;
                 break;
             case 2:
                 State = StageState.Shop;
+                Icon.color = _shop;
                 break;
             case 3:
                 State = StageState.Event;
+                Icon.color = _event;
                 break;
             case 4:
                 State = StageState.Enemy;
+                Icon.color = _enemy;
                 break;
             case 5:
                 State = StageState.Boss;
+                Icon.color = _boss;
                 break;
         }
+        LightMap(false);
     }
     public void ResetMap()
     {
@@ -211,7 +221,7 @@ public class Map : MonoBehaviour
         ChangedItem = false;
         RandomPattern = -1;
         rewardBox = -1;
-        img.color = Color.white;
+        ClearMark.SetActive(cleared);
         aroundStage.Clear();
     }
     public void LookingStage(List<Vector3Int> direction4, List<Map> maps)
@@ -234,15 +244,31 @@ public class Map : MonoBehaviour
     }
     public void ClearMap()
     {
-        img.color = Color.green;
         cleared = true;
+        ClearMark.SetActive(/*cleared*/true);
         foreach (Map map in aroundStage)
         {
             if (map.NotUsed)
                 { continue; }
             //map.img.color = Color.white;
-            map.btn.interactable = true;
+            map.LightMap(true);
         }
+    }
+
+    public void LightMap(bool on)
+    {
+        btn.interactable = on;
+        Color color = Icon.color;
+        if (on)
+        {
+            color.a = 1;
+        }
+        else
+        {
+
+            color.a = 0.35f;
+        }
+        Icon.color = color;
     }
 
     public void BossBox()

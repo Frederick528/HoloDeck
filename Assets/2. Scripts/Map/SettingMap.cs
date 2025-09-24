@@ -424,7 +424,7 @@ public class SettingMap
         if (!stage.btn.interactable)
         {
             stage.gameObject.SetActive(true);
-            stage.btn.interactable = true;
+            stage.LightMap(true);
         }
         if (!stage.cleared)
         {
@@ -502,7 +502,7 @@ public class SettingMap
         if (!map.btn.interactable)
         {
             map.gameObject.SetActive(true);
-            map.btn.interactable = true;
+            map.LightMap(true);
         }
         if (!map.cleared)
         {

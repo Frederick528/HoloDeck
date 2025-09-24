@@ -138,7 +138,11 @@ MonoBehaviour:
   visited: 0
   cleared: 0
   rewarded: 0
+  NotUsed: 0
+  ChangedItem: 0
+  RandomPattern: -1
   btn: {fileID: 5990977913093158265}
+  TMP_Text: {fileID: 0}
   img: {fileID: 6599197913873770386}
   array_Position: {x: 0, y: 0, z: 0}
   aroundStage: []

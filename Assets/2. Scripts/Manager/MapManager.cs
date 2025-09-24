@@ -22,7 +22,7 @@ public class MapManager : MonoBehaviour
 
     public bool[] IsSaveChapter = new bool[5];
 
-    public string[] MapString = new string[6] { "Start", "Treasure", "Shop", "Event", "Enemy", "Boss"};
+    public Sprite[] MapIcon = new Sprite[6];
 
     SettingMap _settingMap;
 
@@ -305,7 +305,7 @@ public class MapManager : MonoBehaviour
         currStage = maps[0];
         currStage.gameObject.SetActive(true);
         //currStage.img.color = Color.white;
-        currStage.btn.interactable = true;
+        currStage.LightMap(true);
         currStage.LookingStage(direction4, maps);
         ClearStage().Forget();
     }
