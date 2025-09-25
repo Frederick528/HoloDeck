@@ -24,6 +24,11 @@ public class MapManager : MonoBehaviour
 
     public Sprite[] MapIcon = new Sprite[6];
 
+    public GameObject LootBox;
+    public GameObject TreasureBox;
+    public GameObject LowTierdBox;
+    public GameObject HighTierdBox;
+
     SettingMap _settingMap;
 
     [SerializeField] GameObject _mapPrefab;

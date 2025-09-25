@@ -144,12 +144,12 @@ public class Map : MonoBehaviour
 
     public StageContext stageContext;
 
-    readonly Color _start = new(0.510f, 0.647f, 0.804f);
-    readonly Color _treasure = new(1.0f, 0.784f, 0.157f);
-    readonly Color _shop = new(0.235f, 0.314f, 0.588f);
-    readonly Color _event = new(0.588f, 0.431f, 0.784f);
-    readonly Color _enemy = new(0.784f, 0.157f, 0.157f);
-    readonly Color _boss = new(0.501f, 0.058f, 0.078f);
+    readonly Color _start = new(0.049f, 0.487f, 0.057f);
+    readonly Color _treasure = new(1.0f, 0.901f, 0.051f);
+    readonly Color _shop = new(0.235f, 0.314f, 0.688f);
+    readonly Color _event = new(0.688f, 0.431f, 0.784f);
+    readonly Color _enemy = new(0.884f, 0.207f, 0.207f);
+    readonly Color _boss = new(0.501f, 0.048f, 0.068f);
 
     public void SettingMap(int idx)
     {
