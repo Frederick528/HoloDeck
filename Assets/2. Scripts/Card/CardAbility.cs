@@ -64,21 +64,20 @@ public class CardAbility
             switch (card.Data.ID)
             {
                 case 105:
-                    card.UseConditions = () => UniTask.Create(async () =>
-                    {
-                        CardManager.Instance.SetCardState(1);
-                        await UniTask.CompletedTask;        // 사실 없어도 됨.
-                        return true;
+                    //card.UseConditions = () => UniTask.Create(async () =>
+                    //{
+                    //    CardManager.Instance.SetCardState(1);
+                    //    await UniTask.CompletedTask;        // 사실 없어도 됨.
+                    //    return true;
 
-                    });
+                    //});
                     card.CardTask = () => UniTask.Create(async () =>
                     {
-                        //CardManager.Instance.SetCardState(1);
+                        CardManager.Instance.SetCardState(1);
                         await DelayTask(0.5f);
                         //await AfterDrawAB(card);
                         await DrawAB(card);
                         //await CardManager.Instance.DrawCard();       // 최하위 UniTask에서 Cancel를 확인하는데... 혹시 문제가 발생할 수도 있나..?
-                        CardManager.Instance.SetCardState(2);
                         await ConfirmedDiscardAB();
                     });
                     break;
