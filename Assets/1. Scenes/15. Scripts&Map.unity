@@ -10808,7 +10808,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: a8af1ce53c4c7524a86273d7adbdf178, type: 3}
   LootBox: {fileID: 0}
   TreasureBox: {fileID: 0}
-  RewardBox: {fileID: 0}
+  LowTierdBox: {fileID: 0}
+  HighTierdBox: {fileID: 0}
   _mapPrefab: {fileID: 8038856734214612220, guid: c22443bd9853fe946a7c5d2b01fc8829, type: 3}
   _markPrefab: {fileID: 8688223864113708633, guid: 9e8aa145d5ebc374f8c5c50e57cbb775, type: 3}
 --- !u!1 &720858997
@@ -14780,7 +14781,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &900597964
 Transform:
   m_ObjectHideFlags: 0
