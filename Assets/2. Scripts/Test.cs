@@ -1,40 +1,67 @@
-//using System.Collections;
-//using System.Collections.Generic;
-//using UnityEngine;
+using Cysharp.Threading.Tasks;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
 
-//public class Test : MonoBehaviour
-//{
-//    [SerializeField] Arrow ArrowCursor;
+public class Test : MonoBehaviour
+{
+    bool start =false;
+    bool play = false;
 
-//    private void OnMouseEnter()
-//    {
-//        if (CardManager.Instance.isSingleTarget && this.CompareTag("Enemy"))
-//        {
-//            CardManager.Instance.useSingleTargetCard = true;
-//            for (int i = 0; i < ArrowCursor.arrowRenderer.Count; i++)
-//            {
-//                ArrowCursor.arrowRenderer[i].color = Color.red;
-//            }
-//        }
-//        //if (CardManager.Instance.isSingleTarget && this.CompareTag("Player"))
-//        //{
-//        //    CardManager.Instance.useSingleTargetCard = true;
-//        //}
-//    }
+    AsyncLazy test = null;
+    async UniTask TestTask1()
+    {
+        await UniTask.WhenAll(
+            UniTask.Create(async () =>
+            {
+                print("1 start");
+                if (test == null)
+                {
+                    print("1 check1");
+                    print("1 check1");
+                    print("1 check1");
+                    print("1 check1");
+                    await (test = UniTask.Lazy(async () => await UniTask.Delay(3000)));
+                    print("1 end");
+                    await test;
+                    print("1 check2");
+                    test = null;
+                    print("1 play");
+                }
+                else
+                {
+                    await test;
+                    test = null;
+                    print("1 play");
+                }
+            }),
+            UniTask.Create(async () =>
+            {
+                print("2 start");
+                if (test == null)
+                {
+                    await (test = UniTask.Lazy(async () => await UniTask.Delay(2000)));
+                    print("2 end");
+                    await test;
+                    test = null;
+                    print("2 start play");
+                }
+                else
+                {
 
-//    private void OnMouseExit()
-//    {
-//        if (CardManager.Instance.isSingleTarget && this.CompareTag("Enemy"))
-//        {
-//            CardManager.Instance.useSingleTargetCard = false;
-//            for (int i = 0; i < ArrowCursor.arrowRenderer.Count; i++)
-//            {
-//                ArrowCursor.arrowRenderer[i].color = Color.white;
-//            }
-//        }
-//        //if (CardManager.Instance.isSingleTarget && this.CompareTag("Player"))
-//        //{
-//        //    CardManager.Instance.useSingleTargetCard = false;
-//        //}
-//    }
-//}
+                    print("2 check1");
+                    await test;
+                    print("2 check2");
+                    test = null;
+                    print("2 play");
+                }
+            })
+        );
+    }
+
+    private void Start()
+    {
+        TestTask1().Forget();
+    }
+}

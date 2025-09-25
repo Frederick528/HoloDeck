@@ -67,6 +67,8 @@ public class Card : MonoBehaviour
     public bool RepeatEffect { get; private set; }
     public bool AllEnemies { get; private set; }
 
+    //public AsyncLazy PlayEffect = null;
+
     //BoxCollider2D _boxCollider2;
 
     // Start is called before the first frame update

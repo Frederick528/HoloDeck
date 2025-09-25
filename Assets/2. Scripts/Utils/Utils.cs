@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -38,20 +38,20 @@ public enum StatusEffect
 {
     Attack, Defense, Heal, ATKUp, DEFUp, HealUp, Vulnerable, Weaking, Reflection, Protect, Resurrection, CoinGained, CriticalChanceUp,
     CriticalDamageUp, HPUp, Thievery, Special, UseCritical, Immunity, Vampire, Berserker, GetCritical, Bleed
-    // °ø°İ ¾Ë¸², ¹æ¾î ¾Ë¸², È¸º¹ ¾Ë¸², °ø°İ·Â ¾÷, ¹æ¾î·Â ¾÷, È¸º¹·Â ¾÷, Ãë¾à, ¾àÈ­, ¹İ»ç, º¸È£, ºÎÈ°, °ñµå È¹µæ·®, Ä¡¸íÅ¸ È®·ü ¾÷,
-    // Ä¡¸íÅ¸ µ¥¹ÌÁö ¾÷, Ã¼·Â ¾÷, µµµÏ, Æ¯º°(¼³¸íÀ» Á÷Á¢ ÀÛ¼º), Ä¡¸íÅ¸ »ç¿ë, ¸é¿ª, ÈíÇ÷, ÇÇÇØ ½Ã °ø°İ·Â ¾÷, Ä¡¸íÅ¸ ¾òÀ½ ¾Ë¸², ÃâÇ÷
+    // ê³µê²© ì•Œë¦¼, ë°©ì–´ ì•Œë¦¼, íšŒë³µ ì•Œë¦¼, ê³µê²©ë ¥ ì—…, ë°©ì–´ë ¥ ì—…, íšŒë³µë ¥ ì—…, ì·¨ì•½, ì•½í™”, ë°˜ì‚¬, ë³´í˜¸, ë¶€í™œ, ê³¨ë“œ íšë“ëŸ‰, ì¹˜ëª…íƒ€ í™•ë¥  ì—…,
+    // ì¹˜ëª…íƒ€ ë°ë¯¸ì§€ ì—…, ì²´ë ¥ ì—…, ë„ë‘‘, íŠ¹ë³„(ì„¤ëª…ì„ ì§ì ‘ ì‘ì„±), ì¹˜ëª…íƒ€ ì‚¬ìš©, ë©´ì—­, í¡í˜ˆ, í”¼í•´ ì‹œ ê³µê²©ë ¥ ì—…, ì¹˜ëª…íƒ€ ì–»ìŒ ì•Œë¦¼, ì¶œí˜ˆ
 }
 
 public enum StatusEffectType
 {
-    InfiniteDuration,                   // ¹«ÇÑ Áö¼Ó (duration = -1), ¹öÇÁ Á¦°Å·Î¸¸ »èÁ¦ °¡´É
-    TurnDuration,                       // ÅÏ¸¶´Ù Áö¼Ó½Ã°£ 1 °¨¼Ò
-    DurationIsAmount,                   // ÅÏ¸¶´Ù Áö¼Ó½Ã°£ÀÌ 1 °¨¼ÒµÇ¸ç, ÀÌ´Â °ªÀ» ÀÇ¹ÌÇÏ±âµµ ÇÔ
-    UseAmountInfiniteDuration,          // Amount °ªÀÌ »ç¿ëµÇ¸ç, °ªÀÌ 0ÀÌ µÇÁö ¾Ê´Â´Ù¸é, ¹öÇÁ Á¦°Å·Î¸¸ »èÁ¦ °¡´É
-    UseAmountTurnDuration,              // Amount °ªÀÌ »ç¿ëµÇ¸ç, ÅÏ¸¶´Ù Áö¼Ó½Ã°£ 1 °¨¼Ò
-    Perpetual,                          // ¿µ±¸ÀûÀ¸·Î Àû¿ë. ¹öÇÁÁ¦°Å·Îµµ ¾È »ç¶óÁü.
-    UseAmountPerpetual,                 // Amount °ªÀÌ »ç¿ëµÇ¸ç, °ªÀÌ 0ÀÌ µÇÁö ¾Ê´Â´Ù¸é, ¿µ±¸ÀûÀ¸·Î Àû¿ë.
-    Information                         // Á¤º¸(~~À» ÁØºñ Áß) Ç¥½Ã¿ëÀÌ¸ç, Ã¼·Â¹Ù ¾Æ·¡¿¡ ÀÌ¹ÌÁö°¡ Ç¥½Ã ¾È µÊ.
+    InfiniteDuration,                   // ë¬´í•œ ì§€ì† (duration = -1), ë²„í”„ ì œê±°ë¡œë§Œ ì‚­ì œ ê°€ëŠ¥
+    TurnDuration,                       // í„´ë§ˆë‹¤ ì§€ì†ì‹œê°„ 1 ê°ì†Œ
+    DurationIsAmount,                   // í„´ë§ˆë‹¤ ì§€ì†ì‹œê°„ì´ 1 ê°ì†Œë˜ë©°, ì´ëŠ” ê°’ì„ ì˜ë¯¸í•˜ê¸°ë„ í•¨
+    UseAmountInfiniteDuration,          // Amount ê°’ì´ ì‚¬ìš©ë˜ë©°, ê°’ì´ 0ì´ ë˜ì§€ ì•ŠëŠ”ë‹¤ë©´, ë²„í”„ ì œê±°ë¡œë§Œ ì‚­ì œ ê°€ëŠ¥
+    UseAmountTurnDuration,              // Amount ê°’ì´ ì‚¬ìš©ë˜ë©°, í„´ë§ˆë‹¤ ì§€ì†ì‹œê°„ 1 ê°ì†Œ
+    Perpetual,                          // ì˜êµ¬ì ìœ¼ë¡œ ì ìš©. ë²„í”„ì œê±°ë¡œë„ ì•ˆ ì‚¬ë¼ì§.
+    UseAmountPerpetual,                 // Amount ê°’ì´ ì‚¬ìš©ë˜ë©°, ê°’ì´ 0ì´ ë˜ì§€ ì•ŠëŠ”ë‹¤ë©´, ì˜êµ¬ì ìœ¼ë¡œ ì ìš©.
+    Information                         // ì •ë³´(~~ì„ ì¤€ë¹„ ì¤‘) í‘œì‹œìš©ì´ë©°, ì²´ë ¥ë°” ì•„ë˜ì— ì´ë¯¸ì§€ê°€ í‘œì‹œ ì•ˆ ë¨.
 }
 
 public class FindTransform

@@ -26,6 +26,7 @@ MonoBehaviour:
   - {fileID: 689667626583958020, guid: 1336648bc1d8baf46a4515860950c9d4, type: 3}
   - {fileID: 7478731271839673279, guid: 4d3c8045dd8857a4b8d34c2361c61045, type: 3}
   - {fileID: 7957833072274404953, guid: 3355f6bfa6db8b24281b827de929694c, type: 3}
+  - {fileID: 8974203713140315807, guid: c0e63d685aed24d47aef3d8a8063c162, type: 3}
   - {fileID: 8378648546881499446, guid: 867c572a5be680d42a042d2349f10143, type: 3}
   Cards:
   - Name: Name1
@@ -293,7 +294,7 @@ MonoBehaviour:
       *
       {Count}'
     Sprite: {fileID: 0}
-    Effect: {fileID: 0}
+    Effect: {fileID: 8974203713140315807, guid: c0e63d685aed24d47aef3d8a8063c162, type: 3}
     IsSimpleAB: 1
     HasSimpleCondition: 0
     CardTag: 1
