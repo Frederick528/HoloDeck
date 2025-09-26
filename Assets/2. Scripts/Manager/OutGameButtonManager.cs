@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class OutGameButtonManager : MonoBehaviour
 {
     public static OutGameButtonManager Instance { get; private set; }
+
     private void Awake()
     {
         Instance = Instance != null ? Instance : this;
@@ -24,6 +24,13 @@ public class OutGameButtonManager : MonoBehaviour
     public void ExitGame()
     {
         GameManager.Instance.ExitGame();
+    }
+    
+    public void FullScreen()
+    {
+        GameManager.Instance.FullScreen = !GameManager.Instance.FullScreen;
+        //Screen.SetResolution(Screen.width, Screen.height, false);
+        GameManager.Instance.ResolutionSetting(Camera.main);
     }
 
     [VisibleEnum(typeof(OutGameUIManager.CanvasName))]

@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UniRx;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -32,6 +33,10 @@ public class GameManager : MonoBehaviour
 
     public int PlayerInt;
 
+    public GameObject OutGameRootObj = null;
+    public (int, int) ScreenWH = (1920, 1080);
+    public bool FullScreen = false;
+
     //public bool IsSceneChange;
 
     //public int OnUINum;
@@ -43,17 +48,18 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(transform.root.gameObject);
+            OutGameRootObj = transform.root.root.gameObject;
+            DontDestroyOnLoad(OutGameRootObj);
         }
         else
         {
-            Destroy(transform.root.gameObject);
+            Destroy(transform.root.root.gameObject);
         }
+        ResolutionSetting(Camera.main);
     }
 
     private void Start()
     {
-        Screen.SetResolution(1920, 1080, true);
         Goods
             .Where(_ => InGame)
             .Subscribe(goods => InGameUIManager.Instance.ChangeStatus(8, goods)).AddTo(this);
@@ -82,6 +88,38 @@ public class GameManager : MonoBehaviour
             if (!OutGameUIManager.Instance.OutGameCanvas(OutGameUIManager.CanvasName.Fade).gameObject.activeSelf)
                 OutGameUIManager.Instance.SetActiveCanvas(OutGameUIManager.CanvasName.Option, !_isESCPause, 0);
         }
+    }
+
+
+    public void ResolutionSetting(Camera cam, int width = -1, int height = -1)
+    {
+        if (width == -1 || height == -1)
+        {
+            width = ScreenWH.Item1;
+            height = ScreenWH.Item2;
+        }
+        else
+        {
+            ScreenWH = (width, height);
+        }
+
+        float targetAspectRatio = 16.0f / 9.0f;
+        // 현재 화면의 비율
+        float windowAspectRatio = (float)width / (float)height;
+
+        // 목표 비율보다 화면이 가로로 더 넓은 경우 (Pillarbox)
+        if (windowAspectRatio > targetAspectRatio)
+        {
+            float newWidth = targetAspectRatio / windowAspectRatio;
+            cam.rect = new Rect((1f - newWidth) / 2f, 0, newWidth, 1f);
+        }
+        // 목표 비율보다 화면이 세로로 더 긴 경우 (Letterbox)
+        else
+        {
+            float newHeight = windowAspectRatio / targetAspectRatio;
+            cam.rect = new Rect(0, (1f - newHeight) / 2f, 1f, newHeight);
+        }
+        Screen.SetResolution(width, height, FullScreen);
     }
 
     public void ESC(bool esc)
@@ -214,6 +252,29 @@ public class GameManager : MonoBehaviour
                 await SceneManager.LoadSceneAsync(0);
                 //SceneManager.LoadScene(0);
                 break;
+        }
+        if (lobby && InGameUIManager.Instance)
+        {
+            CancellationTokenSource cts = new CancellationTokenSource();
+            UniTask.Create(async () =>
+            {
+                await UniTask.WaitForSeconds(2f);
+                if (!cts.IsCancellationRequested)
+                {
+                    cts.Cancel();
+                    cts.Dispose();
+                }
+            }).Forget();
+            await UniTask.WaitUntil(() => InGameUIManager.Instance.EndLoad, PlayerLoopTiming.Update, cts.Token).SuppressCancellationThrow();
+            if (!cts.IsCancellationRequested)
+            {
+                cts.Cancel();
+                cts.Dispose();
+            }
+        }
+        if (idx == 0)
+        {
+            ResolutionSetting(Camera.main);
         }
         if (lobby || idx == 0)
             await OutGameUIManager.Instance.FadeIn(0.75f);

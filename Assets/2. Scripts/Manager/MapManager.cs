@@ -24,10 +24,11 @@ public class MapManager : MonoBehaviour
 
     public Sprite[] MapIcon = new Sprite[6];
 
-    public GameObject LootBox;
-    public GameObject TreasureBox;
-    public GameObject LowTierdBox;
-    public GameObject HighTierdBox;
+    public GameObject[] _boxes;
+    //public GameObject LootBox;
+    //public GameObject TreasureBox;
+    //public GameObject LowTierBox;
+    //public GameObject HighTierBox;
 
     SettingMap _settingMap;
 
@@ -42,6 +43,25 @@ public class MapManager : MonoBehaviour
         {
             Instance = this;
             _settingMap = new(this);
+            GameObject boxObj = GameObject.Find("Boxes");
+            if (boxObj != null)
+            {
+                _boxes = new GameObject[boxObj.transform.childCount];
+                for (int i = 0; i < _boxes.Length; ++i)
+                {
+                    _boxes[i] = boxObj.transform.GetChild(i).gameObject;
+                }
+                GameManager.Instance.AddInGameDontDestroy(boxObj);
+                //LootBox = boxObj.transform.Find(nameof(LootBox)).gameObject;
+                //TreasureBox = boxObj.transform.Find(nameof(TreasureBox)).gameObject;
+                //LowTierBox = boxObj.transform.Find(nameof(LowTierBox)).gameObject;
+                //HighTierBox = boxObj.transform.Find(nameof(HighTierBox)).gameObject;
+
+            }
+            else
+            {
+                print("Addressable이랑 instantiate 이용해서 오브젝트 만들어야 함.");
+            }
         }
     }
 
@@ -111,6 +131,11 @@ public class MapManager : MonoBehaviour
     //    _settingMap.Start(isEndBoss);
     //    //ShowAllMap();
     //}
+
+    public void ShowBox(int idx, bool show)
+    {
+        _boxes[idx].SetActive(show);
+    }
 
     public void SaveChapter(int chapterLV)
     {

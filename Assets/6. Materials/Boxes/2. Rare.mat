@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: sf_chest_IRON_Evil
+  m_Name: 2. Rare
   m_Shader: {fileID: -6465566751694194690, guid: fdd26ef226e4b094b97b464be82f21c2, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -59,11 +59,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - Vector1_94D885E6: 1.3
-    - Vector1_B44D720B: 0.73
+    - Vector1_94D885E6: 10
+    - Vector1_B44D720B: 0
     - Vector1_C59E1950: 0
     - Vector1_E5F30B13: 3
-    - Vector1_F9DE9AEF: 0.5
+    - Vector1_F9DE9AEF: 0
     - Vector1_FF1FB6CD: 0
     - _QueueControl: 0
     - _QueueOffset: 0

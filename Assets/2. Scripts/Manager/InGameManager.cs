@@ -76,7 +76,7 @@ public class InGameManager : MonoBehaviour
             Destroy(player[1]);
             Destroy(transform.root.gameObject);
         }
-
+        GameManager.Instance.ResolutionSetting(Camera.main);
         //StartCoroutine(ReadSpreadSheet.LoadData("https://docs.google.com/spreadsheets/d/1CqNR2Rh_OIVe8n0CG8vC7YVpbNUn_-0rXeBab72gXvs", "A3:D14", 0));
 
         //if (!CardDataDeserializer.TryGetData(1015, out CardData row))
@@ -148,6 +148,11 @@ public class InGameManager : MonoBehaviour
                 break;
         }
         return Addressables.LoadAssetAsync<GameObject>(playerName + ".prefab");
+    }
+
+    public void ReleaseAddressable(AsyncOperationHandle handle)
+    {
+        Addressables.Release(handle);
     }
     void SettingRandomCardList()
     {

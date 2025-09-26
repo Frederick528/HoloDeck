@@ -347,9 +347,10 @@ public class InGameUIManager : MonoBehaviour
         Addressables.Release(handle1);
         Addressables.Release(handle2);
         Addressables.Release(handle3);
+        //InGameManager.Instance.ReleaseAddressable(playerHandle);
         //Addressables.Release(playerHandle);
 
-        
+
     }
 
     public void SetActiveCanvas(CanvasName canvasName, bool state, int idx = -1)
@@ -364,15 +365,21 @@ public class InGameUIManager : MonoBehaviour
                         for (int i = 0; i < _rewardBoxes.Length; ++i)
                         {
                             _rewardBoxes[i].gameObject.SetActive(false);
+                            MapManager.Instance.ShowBox(i, false);
                         }
                         SetActiveCanvas(CanvasName.ItemReward, false);
                         SetActiveCanvas(CanvasName.CardReward, false);
                         break;
                     }
                     _rewardBoxes[idx].gameObject.SetActive(false);
+                    MapManager.Instance.ShowBox(idx, false);
                     if (idx == 0)
                     {
                         SetActiveCanvas(CanvasName.ItemReward, false);
+                    }
+                    else if (idx == 6)
+                    {
+                        SetActiveCanvas(CanvasName.Inventory, false);
                     }
                     else
                     {
@@ -407,6 +414,7 @@ public class InGameUIManager : MonoBehaviour
             {
                 case CanvasName.RewardBox:
                     if (idx == -1) break;
+                    MapManager.Instance.ShowBox(idx, true);
                     _rewardBoxes[idx].gameObject.SetActive(true);
                     break;
                 case CanvasName.Map:

@@ -28,25 +28,41 @@ public class OutGameUIManager : MonoBehaviour
 
     ScrollRect _optionScrollRect;
 
+    //[SerializeField]
+    //private TMP_Dropdown resolutionDropdown; // 인스펙터에서 연결할 UI 드롭다운
+
+    private Resolution[] resolutions; // 컴퓨터가 지원하는 해상도 목록 저장
+
 
     void Awake()
     {
-        _canvasTr = GameObject.Find("OutGameCanvases").transform;
-        
+        if (GameManager.Instance.OutGameRootObj != null)
+        {
+            _canvasTr = GameObject.Find("OutGame").transform.Find("OutGameCanvases");
+        }
+        else
+        {
+            _canvasTr = GameObject.Find("OutGameCanvases").transform;
+        }
+
         if (Instance != null)
         {
-            Destroy(_canvasTr.gameObject);
+            //Destroy(_canvasTr.gameObject);
             return;
         }
         //Instance = Instance != null ? Instance : this;
         Instance = this;
-        
-        _canvasTr.gameObject.name = "OutGameCanvasesDontDestroy";
+
         for (int i = 0; i < _canvasTr.childCount; ++i)
         {
             _canvasDict.Add(i, _canvasTr.GetChild(i) as RectTransform);
         }
-        DontDestroyOnLoad(_canvasTr);
+        if (GameManager.Instance.OutGameRootObj == null)
+        {
+            //print(GameManager.Instance.OutGameRootObj);
+            _canvasTr.gameObject.name = "OutGameCanvasesDontDestroy";
+            DontDestroyOnLoad(_canvasTr);
+        }
 
         _fadeImage = _canvasDict[(int)CanvasName.Fade].GetComponentInChildren<Image>();
 
@@ -59,6 +75,47 @@ public class OutGameUIManager : MonoBehaviour
         }
         _optionScrollRect = _canvasDict[(int)CanvasName.Option].GetComponentInChildren<ScrollRect>();
 
+        SettingCanResolution();
+    }
+    public void SettingCanResolution()
+    {
+        TMP_Dropdown resolutionDropdown;
+        if (!FindTransform.ContinueFindChildByName(_optionContent[1].Item1, "Resolution").gameObject.TryGetComponent<TMP_Dropdown>(out resolutionDropdown))
+            return;
+        // 1. 컴퓨터가 지원하는 모든 해상도 가져오기
+        resolutions = Screen.resolutions;
+
+        // 2. 드롭다운의 기존 옵션 모두 삭제
+        resolutionDropdown.ClearOptions();
+
+        // 3. 해상도 목록 가공 및 드롭다운 옵션으로 추가
+        List<string> options = new List<string>();
+        int currentResolutionIndex = 0;
+
+        for (int i = 0; i < resolutions.Length; i++)
+        {
+            // "너비 x 높이" 형태의 문자열 생성
+            string option = resolutions[i].width + " x " + resolutions[i].height;
+            options.Add(option);
+
+            // 현재 게임의 해상도와 일치하는 옵션을 찾으면 인덱스 저장
+            if (resolutions[i].width == Screen.currentResolution.width &&
+                resolutions[i].height == Screen.currentResolution.height)
+            {
+                currentResolutionIndex = i;
+            }
+        }
+
+        resolutionDropdown.AddOptions(options); // 가공된 목록을 드롭다운에 추가
+        resolutionDropdown.value = currentResolutionIndex; // 현재 해상도를 기본값으로 설정
+        resolutionDropdown.RefreshShownValue(); // 드롭다운 UI 갱신
+
+        // 드롭다운 값이 변경될 때 호출될 함수 연결
+        resolutionDropdown.onValueChanged.AddListener((resolutionIndex) =>
+        {
+            Resolution selectedResolution = resolutions[resolutionIndex];
+            GameManager.Instance.ResolutionSetting(Camera.main, selectedResolution.width, selectedResolution.height);
+        });
     }
 
     public void SetActiveCanvas(CanvasName canvasName, bool state, int idx = -1)
