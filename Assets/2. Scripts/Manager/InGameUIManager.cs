@@ -180,26 +180,26 @@ public class InGameUIManager : MonoBehaviour
         LoadAsync().Forget();
 
         _cardEnlargePanel = Canvas(CanvasName.CardReward).Find("CardEnlargePanel") as RectTransform;
-        _cardRewardContent = FindTransform.ContinueFindChildByName(Canvas(CanvasName.CardReward), "Content");
+        _cardRewardContent = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.CardReward), "Content");
         _itemEnlargePanel = Canvas(CanvasName.ItemReward).Find("ItemEnlargePanel") as RectTransform;
-        _itemRewardContent = FindTransform.ContinueFindChildByName(Canvas(CanvasName.ItemReward), "Content");
+        _itemRewardContent = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.ItemReward), "Content");
 
-        _viewDeckContent = FindTransform.ContinueFindChildByName(Canvas(CanvasName.ViewDeck), "Content");
+        _viewDeckContent = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.ViewDeck), "Content");
 
-        _inventoryContent = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Inventory), "InventoryContent");
-        _dropReward = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Inventory), "DropReward");
-        _dropRewardContent = FindTransform.ContinueFindChildByName(_dropReward, "DropRewardContent");
-        _inventoryInfo = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Inventory), "Information");
+        _inventoryContent = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.Inventory), "InventoryContent");
+        _dropReward = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.Inventory), "DropReward");
+        _dropRewardContent = FindTransform.ContinueFindChildUIByName(_dropReward, "DropRewardContent");
+        _inventoryInfo = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.Inventory), "Information");
         //for (int i = 0; i < ViewDeckContent.childCount; ++i)
         //{
         //    _deckUICards.Add(ViewDeckContent.GetChild(i).GetComponent<UICard>());
         //}
 
-        PassiveTransform = FindTransform.ContinueFindChildByName(Canvas(CanvasName.InGame), "PassiveItem");
-        ActiveTransform = FindTransform.ContinueFindChildByName(Canvas(CanvasName.InGame), "ActiveItemButton");
-        PotionTransform = FindTransform.ContinueFindChildByName(Canvas(CanvasName.InGame), "PotionItem");
+        PassiveTransform = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "PassiveItem");
+        ActiveTransform = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "ActiveItemButton");
+        PotionTransform = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "PotionItem");
 
-        _statusWindow = FindTransform.ContinueFindChildByName(Canvas(CanvasName.InGame), "Status");
+        _statusWindow = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "Status");
         _statusImg[0] = _statusWindow.Find("HPCircle").GetComponent<Image>();
         _statusText[0] = _statusWindow.Find("HP").GetComponent<TMP_Text>();
 
@@ -215,20 +215,20 @@ public class InGameUIManager : MonoBehaviour
         _statusText[7] = _statusWindow.Find("Coin").GetComponent<TMP_Text>();
         _statusText[8] = _statusWindow.Find("Goods").GetComponent<TMP_Text>();
 
-        _statusImg[2] = FindTransform.ContinueFindChildByName(_statusImg[0].transform, "PlayerImage").GetComponent<Image>();
+        _statusImg[2] = FindTransform.ContinueFindChildUIByName(_statusImg[0].transform, "PlayerImage").GetComponent<Image>();
 
         ChangeStatus(8, GameManager.Instance.Goods.Value);
 
         _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel") as RectTransform;
         _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel") as RectTransform;
 
-        _topHealthText = FindTransform.ContinueFindChildByName(Canvas(CanvasName.InGame), "HealthText").GetComponent<TMP_Text>();
-        _topCoinText = FindTransform.ContinueFindChildByName(Canvas(CanvasName.InGame), "CoinText").GetComponent<TMP_Text>();
+        _topHealthText = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "HealthText").GetComponent<TMP_Text>();
+        _topCoinText = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "CoinText").GetComponent<TMP_Text>();
 
-        _holoValue = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Battle), "HoloValueText").GetComponent<TMP_Text>();
-        _turnEndButtonText = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Battle), "TurnText").GetComponent<TMP_Text>();
-        _drawCount = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Battle), "DrawCountText").GetComponent<TMP_Text>();
-        _dummyCount = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Battle), "DummyCountText").GetComponent<TMP_Text>();
+        _holoValue = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.Battle), "HoloValueText").GetComponent<TMP_Text>();
+        _turnEndButtonText = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.Battle), "TurnText").GetComponent<TMP_Text>();
+        _drawCount = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.Battle), "DrawCountText").GetComponent<TMP_Text>();
+        _dummyCount = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.Battle), "DummyCountText").GetComponent<TMP_Text>();
 
         Transform rewardBoxCanvas = Canvas(CanvasName.RewardBox);
         _rewardBoxes = new RectTransform[rewardBoxCanvas.childCount];
@@ -238,13 +238,25 @@ public class InGameUIManager : MonoBehaviour
             switch (_rewardBoxes[i].name)
             {
                 case "TreasureBox":
-                    _rewardBoxes[i].GetComponent<Button>().onClick.AddListener(() => SetActiveCanvas(CanvasName.ItemReward, true));
+                    _rewardBoxes[i].GetComponent<Button>().onClick.AddListener(() =>
+                    {
+                        SetActiveCanvas(CanvasName.ItemReward, true);
+                        MapManager.Instance.BoxOpen(true).Forget();
+                    });
                     break;
                 case "DropBox":
-                    _rewardBoxes[i].GetComponent<Button>().onClick.AddListener(() => SetActiveCanvas(CanvasName.Inventory, true, 1));
+                    _rewardBoxes[i].GetComponent<Button>().onClick.AddListener(() =>
+                    {
+                        SetActiveCanvas(CanvasName.Inventory, true, 1);
+                        MapManager.Instance.BoxOpen(true, true).Forget();
+                    });
                     break;
                 default:
-                    _rewardBoxes[i].GetComponent<Button>().onClick.AddListener(() => SetActiveCanvas(CanvasName.CardReward, true));
+                    _rewardBoxes[i].GetComponent<Button>().onClick.AddListener(() =>
+                    {
+                        SetActiveCanvas(CanvasName.CardReward, true);
+                        MapManager.Instance.BoxOpen(true).Forget();
+                    });
                     break;
             }
         }
@@ -256,9 +268,32 @@ public class InGameUIManager : MonoBehaviour
         {
             _uiItems[i] = _itemRewardContent.GetChild(i).GetComponent<UIItem>();
         }
+        Transform cardWindow = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.CardReward), "CardRewardWindow");
+        Button cardBackBtn = FindTransform.ContinueFindChildUIByName(cardWindow, "BackButton").GetComponent<Button>();
+        cardBackBtn.onClick.AddListener(() =>
+        {
+            SetActiveCanvas(CanvasName.CardReward, false);
+            MapManager.Instance.BoxOpen(false).Forget();
+        });
 
-        EventImage = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Event), "EventImage").GetComponent<Image>();
-        EventText = FindTransform.ContinueFindChildByName(Canvas(CanvasName.Event), "EventText").GetComponent<TMP_Text>();
+        Transform itemWindow = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.CardReward), "ItemRewardWindow");
+        Button itemBackBtn = FindTransform.ContinueFindChildUIByName(cardWindow, "BackButton").GetComponent<Button>();
+        itemBackBtn.onClick.AddListener(() =>
+        {
+            SetActiveCanvas(CanvasName.ItemReward, false);
+            MapManager.Instance.BoxOpen(false).Forget();
+        });
+
+        Button invenBackBtn = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.Inventory), "BackButton").GetComponent<Button>();
+        invenBackBtn.onClick.AddListener(() =>
+        {
+            SetActiveCanvas(CanvasName.Inventory, false);
+            if (MapManager.Instance.currStage.LootBox)
+                MapManager.Instance.BoxOpen(false, true).Forget();
+        });
+
+        EventImage = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.Event), "EventImage").GetComponent<Image>();
+        EventText = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.Event), "EventText").GetComponent<TMP_Text>();
 
     }
 
@@ -360,7 +395,7 @@ public class InGameUIManager : MonoBehaviour
             switch (canvasName)
             {
                 case CanvasName.RewardBox:
-                    if (idx == -1)          // 그냥 쓰면 모든 박스를 비활성화함. 근데 박스는 보통 1개만 활성화하니, 해당 박스가 무엇인지 특정되지 않는 상황이 아니라면, 그냥 쓰지는 말도록 하장.
+                    if (idx == -1)          // 그냥 쓰면 모든 박스를 비활성화함. 근데 박스는 보통 1개만 활성화하니, 해당 박스가 무엇인지 특정되지 않는 상황이 아니라면, 그냥 쓰지는 말도록 하장. -> (드롭박스 추가됨. 그래도 일단 상황 봐서 쓰기로)
                     {
                         for (int i = 0; i < _rewardBoxes.Length; ++i)
                         {
@@ -373,11 +408,11 @@ public class InGameUIManager : MonoBehaviour
                     }
                     _rewardBoxes[idx].gameObject.SetActive(false);
                     MapManager.Instance.ShowBox(idx, false);
-                    if (idx == 0)
+                    if (idx == (int)Map.BoxType.Treasure)
                     {
                         SetActiveCanvas(CanvasName.ItemReward, false);
                     }
-                    else if (idx == 6)
+                    else if (idx == (int)Map.BoxType.Drop)
                     {
                         SetActiveCanvas(CanvasName.Inventory, false);
                     }

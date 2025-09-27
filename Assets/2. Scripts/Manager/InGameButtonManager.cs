@@ -37,11 +37,11 @@ public class InGameButtonManager : MonoBehaviour
     private void Start()
     {
         if (InGameUIManager.Instance == null) { return; }
-        _turnEndButton = FindTransform.ContinueFindChildByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.Battle), "TurnEndButton").GetComponent<Button>();
-        DiscardButton = FindTransform.ContinueFindChildByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard), "DiscardButton").GetComponent<Button>();
-        DiscardCancelButton = FindTransform.ContinueFindChildByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard), "CancelButton").GetComponent<Button>();
+        _turnEndButton = FindTransform.ContinueFindChildUIByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.Battle), "TurnEndButton").GetComponent<Button>();
+        DiscardButton = FindTransform.ContinueFindChildUIByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard), "DiscardButton").GetComponent<Button>();
+        DiscardCancelButton = FindTransform.ContinueFindChildUIByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard), "CancelButton").GetComponent<Button>();
 
-        TurnPassiveButton = FindTransform.ContinueFindChildByName(InGameUIManager.Instance.PassiveTransform, "TurnButton").GetComponentsInChildren<Button>(true);
+        TurnPassiveButton = FindTransform.ContinueFindChildUIByName(InGameUIManager.Instance.PassiveTransform, "TurnButton").GetComponentsInChildren<Button>(true);
         //TurnPassiveButton[0].onClick.AddListener(() =>
         //{
         //    ItemManager.Instance.TurnPassiveItemPage(0);

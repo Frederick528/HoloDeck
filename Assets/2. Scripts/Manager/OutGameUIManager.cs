@@ -80,7 +80,7 @@ public class OutGameUIManager : MonoBehaviour
     public void SettingCanResolution()
     {
         TMP_Dropdown resolutionDropdown;
-        if (!FindTransform.ContinueFindChildByName(_optionContent[1].Item1, "Resolution").gameObject.TryGetComponent<TMP_Dropdown>(out resolutionDropdown))
+        if (!FindTransform.ContinueFindChildUIByName(_optionContent[1].Item1, "Resolution").gameObject.TryGetComponent<TMP_Dropdown>(out resolutionDropdown))
             return;
         // 1. 컴퓨터가 지원하는 모든 해상도 가져오기
         resolutions = Screen.resolutions;

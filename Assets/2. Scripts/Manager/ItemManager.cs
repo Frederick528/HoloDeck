@@ -44,9 +44,9 @@ public class ItemManager : MonoBehaviour
 
     private void Start()
     {
-        _passiveTransform = (RectTransform)FindTransform.ContinueFindChildByName(InGameUIManager.Instance.PassiveTransform, "PassiveContent");
-        _activeItemChargeImgae = FindTransform.ContinueFindChildByName(InGameUIManager.Instance.ActiveTransform, "ChargeBar").GetComponent<Image>();
-        _activeItemChargeText = FindTransform.ContinueFindChildByName(InGameUIManager.Instance.ActiveTransform, "ChargeText").GetComponent<TMP_Text>();
+        _passiveTransform = (RectTransform)FindTransform.ContinueFindChildUIByName(InGameUIManager.Instance.PassiveTransform, "PassiveContent");
+        _activeItemChargeImgae = FindTransform.ContinueFindChildUIByName(InGameUIManager.Instance.ActiveTransform, "ChargeBar").GetComponent<Image>();
+        _activeItemChargeText = FindTransform.ContinueFindChildUIByName(InGameUIManager.Instance.ActiveTransform, "ChargeText").GetComponent<TMP_Text>();
 
         _activeItem = InGameUIManager.Instance.ActiveTransform.GetComponent<ActiveItem>();
         _potionItem = InGameUIManager.Instance.PotionTransform.GetComponentsInChildren<PotionItem>();

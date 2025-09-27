@@ -156,10 +156,10 @@ public class LobbyManager : MonoBehaviour
             //_canvasRaycaster.Add(_canvas.GetChild(i).GetComponent<GraphicRaycaster>());
             _canvasDict.Add(i, canvas.GetChild(i));
         }
-        _goodsText = FindTransform.ContinueFindChildByName(LobbyCanvas(CanvasName.PowerUP), "GoodsText").GetComponent<TMP_Text>();
+        _goodsText = FindTransform.ContinueFindChildUIByName(LobbyCanvas(CanvasName.PowerUP), "GoodsText").GetComponent<TMP_Text>();
         _goodsText.text = "Goods: " + GameManager.Instance.Goods.Value.ToString();
 
-        Transform upgradeTr = FindTransform.ContinueFindChildByName(LobbyCanvas(CanvasName.PowerUP), "Upgrade");
+        Transform upgradeTr = FindTransform.ContinueFindChildUIByName(LobbyCanvas(CanvasName.PowerUP), "Upgrade");
 
         for (int i = 0; i < upgradeTr.childCount; ++i)
         {
@@ -167,7 +167,7 @@ public class LobbyManager : MonoBehaviour
             _titleText[i] = tMP_Texts[0];
             _valueText[i] = tMP_Texts[1];
             _costText[i] = tMP_Texts[2];
-            _valueBar[i] = FindTransform.ContinueFindChildByName(upgradeTr.GetChild(i), "ValueBar").GetComponent<Image>();
+            _valueBar[i] = FindTransform.ContinueFindChildUIByName(upgradeTr.GetChild(i), "ValueBar").GetComponent<Image>();
 
             GameManager.Instance.Upgrades[i].Setting(ref _titleText[i], ref _valueText[i], ref _costText[i], ref _valueBar[i]);
         }

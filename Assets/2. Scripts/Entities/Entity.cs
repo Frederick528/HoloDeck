@@ -437,8 +437,8 @@ public abstract class Entity : MonoBehaviour
 
         //entitySprite = GetComponent<SpriteRenderer>();
         canvas = transform.Find("EntityCanvas").GetComponent<Canvas>();
-        hpBar = FindTransform.ContinueFindChildByName(canvas.transform, "HPBar").GetComponent<Image>();
-        _criticalBar = FindTransform.ContinueFindChildByName(canvas.transform, "CriticalBar").GetComponent<Image>();
+        hpBar = FindTransform.ContinueFindChildUIByName(canvas.transform, "HPBar").GetComponent<Image>();
+        _criticalBar = FindTransform.ContinueFindChildUIByName(canvas.transform, "CriticalBar").GetComponent<Image>();
         shieldObj = canvas.transform.Find("Shield").gameObject;
         //slider = GetComponentInChildren<Slider>();
         hpText = canvas.transform.Find("HPText").GetComponent<TMP_Text>();
@@ -446,13 +446,13 @@ public abstract class Entity : MonoBehaviour
         shieldText = shieldObj.transform.Find("ShieldText").GetComponent<TMP_Text>();
         _col2D = GetComponent<BoxCollider2D>();
 
-        _statusEffectContent = FindTransform.ContinueFindChildByName(canvas.transform.Find("StatusEffect"), "Content");
+        _statusEffectContent = FindTransform.ContinueFindChildUIByName(canvas.transform.Find("StatusEffect"), "Content");
         
         _statusDescWindow = canvas.transform.Find("StatusEffectDesc");
         _statusDescWindow.GetComponent<ChildMouseHandler>().ParentEntity = this;
         _statusDescCol2D = _statusDescWindow.GetComponent<BoxCollider2D>();
         
-        _statusEffectDescContent = FindTransform.ContinueFindChildByName(_statusDescWindow, "Content");
+        _statusEffectDescContent = FindTransform.ContinueFindChildUIByName(_statusDescWindow, "Content");
 
         //StatusEffectAmountText = canvas.transform.Find("StatusEffect").GetComponentsInChildren<TMP_Text>(true);
 

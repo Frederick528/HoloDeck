@@ -44,7 +44,7 @@ public class PoolManager : MonoBehaviour
     private void Init()
     {
         _deck = InGameManager.Instance.PlayerTr.Find("Deck");
-        _textParent = FindTransform.ContinueFindChildByName(InGameUIManager.Instance.Canvas(CanvasName.InGame), "TextEffect");
+        _textParent = FindTransform.ContinueFindChildUIByName(InGameUIManager.Instance.Canvas(CanvasName.InGame), "TextEffect");
         //ViewDeckContent = InGameUIManager.Instance.ContinueFindChildByName(InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.ViewDeck), "Content");
 
         CardPool = new ObjectPool<Card>(CreateCardPooled, OnTakeFromPoolCard, OnReturnedToPoolCard, OnDestroyPoolCard, true, defaultCapacity);

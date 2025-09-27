@@ -24,7 +24,9 @@ public class MapManager : MonoBehaviour
 
     public Sprite[] MapIcon = new Sprite[6];
 
-    public GameObject[] _boxes;
+    private GameObject[] _boxes;
+    private Transform[] _boxesTop;
+    bool _isBoxOpen;
     //public GameObject LootBox;
     //public GameObject TreasureBox;
     //public GameObject LowTierBox;
@@ -47,9 +49,11 @@ public class MapManager : MonoBehaviour
             if (boxObj != null)
             {
                 _boxes = new GameObject[boxObj.transform.childCount];
+                _boxesTop = new Transform[_boxes.Length];
                 for (int i = 0; i < _boxes.Length; ++i)
                 {
                     _boxes[i] = boxObj.transform.GetChild(i).gameObject;
+                    _boxesTop[i] = FindTransform.ContinueFindChildObjByName(_boxes[i].transform, "top");
                 }
                 GameManager.Instance.AddInGameDontDestroy(boxObj);
                 //LootBox = boxObj.transform.Find(nameof(LootBox)).gameObject;
@@ -135,6 +139,44 @@ public class MapManager : MonoBehaviour
     public void ShowBox(int idx, bool show)
     {
         _boxes[idx].SetActive(show);
+    }
+
+    public async UniTaskVoid BoxOpen(bool open, bool drop = false)
+    {
+        if (_isBoxOpen == open)
+        {
+            return;
+        }
+        int idx = drop ? (int)Map.BoxType.Drop : currStage.rewardBox;
+        _isBoxOpen = open;
+        float targetAngle = open ? -130f : 0;
+        float startAngle = _boxesTop[idx].rotation.x;
+        float elapsed = 0f;
+        float duration = 1f;
+        while (elapsed < duration)
+        {
+            await UniTask.Yield();
+            if (_isBoxOpen == open)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                float currentRotation = Mathf.Lerp(startAngle, targetAngle, t);
+                //_boxesTop[idx].localEulerAngles = new Vector3(currentRotation, 0, 0);
+                _boxesTop[idx].localRotation = Quaternion.Euler(currentRotation, 0, 0);
+            }
+            else
+            {
+                return;
+            }
+
+        }
+        //_boxesTop[idx].localEulerAngles = new Vector3(targetAngle, 0, 0);
+        _boxesTop[idx].localRotation = Quaternion.Euler(targetAngle, 0, 0);
+        //if (_isBoxOpen == open)
+        //{
+        //    transform.rotation = Quaternion.Euler(targetAngle, 0, 0);
+        //}
+
     }
 
     public void SaveChapter(int chapterLV)
@@ -310,6 +352,12 @@ public class MapManager : MonoBehaviour
         {
             //_mapManager.rewardCanvas.GetChild(_mapManager.currStage.rewardBox).gameObject.SetActive(false);
             InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, map.rewardBox);
+            ShowBox(map.rewardBox, false);
+        }
+        if (map.LootBox)
+        {
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, (int)Map.BoxType.Drop);
+            ShowBox((int)Map.BoxType.Drop, false);
         }
         if (map.State == Map.StageState.Shop)
         {
@@ -326,6 +374,11 @@ public class MapManager : MonoBehaviour
             {
                 InGameUIManager.Instance.ShowRewardCard(map.CardReward);
             }
+        }
+        if (map.LootBox)
+        {
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, (int)Map.BoxType.Drop);
+            ShowBox((int)Map.BoxType.Drop, true);
         }
     }
 

@@ -31,6 +31,7 @@ public class Map : MonoBehaviour
         int _randomPattern = -1;
 
         int _rewardBox = -1;
+        bool _lootBox = false;
 
         CardData[] _cardReward = new CardData[4];
         ItemData[] _itemReward = new ItemData[4];
@@ -52,6 +53,7 @@ public class Map : MonoBehaviour
             _randomPattern = map.RandomPattern;
 
             _rewardBox = map.rewardBox;
+            _lootBox = map.LootBox;
 
             _cardReward = map.CardReward;
             _itemReward = map.ItemReward;
@@ -84,6 +86,7 @@ public class Map : MonoBehaviour
             map.RandomPattern = _randomPattern;
 
             map.rewardBox = _rewardBox;
+            map.LootBox = _lootBox;
 
             map.CardReward = _cardReward;
             map.ItemReward = _itemReward;
@@ -112,6 +115,7 @@ public class Map : MonoBehaviour
     public int RandomPattern = -1;
 
     public int rewardBox { get; private set; } = -1;
+    public bool LootBox { get; private set; } = false;
     public enum BoxType
     {
         Treasure, Common, Rare, Epic, Legendary, Boss, Drop
@@ -221,6 +225,7 @@ public class Map : MonoBehaviour
         ChangedItem = false;
         RandomPattern = -1;
         rewardBox = -1;
+        LootBox = false;
         ClearMark.SetActive(cleared);
         aroundStage.Clear();
     }
