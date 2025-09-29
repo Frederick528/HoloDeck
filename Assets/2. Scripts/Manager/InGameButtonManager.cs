@@ -136,13 +136,13 @@ public class InGameButtonManager : MonoBehaviour
         switch (deckIdx)
         {
             case 0:
-                InGameUIManager.Instance.SetViewDeck(CardManager.Instance.TotalDeck);
+                InGameUIManager.Instance.SetViewDeck(0/*CardManager.Instance.TotalDeck*/);
                 break;
             case 1:
-                InGameUIManager.Instance.SetViewDeck(CardManager.Instance.DrawDeck);
+                InGameUIManager.Instance.SetViewDeck(1/*CardManager.Instance.DrawDeck*/);
                 break;
             case 2:
-                InGameUIManager.Instance.SetViewDeck(CardManager.Instance.CardDummy);
+                InGameUIManager.Instance.SetViewDeck(2/*CardManager.Instance.CardDummy*/);
                 break;
         }
     }

@@ -68,8 +68,12 @@ public class InGameUIManager : MonoBehaviour
     RectTransform _cardRewardContent;
     RectTransform _itemRewardContent;
 
-    int _lastViewDeckCount;
+    int _lastViewDeckCount = 0;
+    int _lastViewDeckIdx = 0;
     RectTransform _viewDeckContent;
+
+    GameObject[] _viewDeckDesc = new GameObject[4];
+
     List<UICard> _deckUICards = new();
 
     RectTransform _inventoryContent;
@@ -215,7 +219,12 @@ public class InGameUIManager : MonoBehaviour
             _uiItems[i] = _itemRewardContent.GetChild(i).GetComponent<UIItem>();
         }
 
-        _viewDeckContent = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.ViewDeck), "Content");
+        Transform viewDeckPanel = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.ViewDeck), "ViewDeckPanel");
+        _viewDeckContent = FindTransform.ContinueFindChildUIByName(viewDeckPanel, "Content");
+
+        _viewDeckDesc[0] = viewDeckPanel.Find("TotalDeckDesc").gameObject;
+        _viewDeckDesc[1] = viewDeckPanel.Find("DrawDeckButton").gameObject;
+        _viewDeckDesc[2] = viewDeckPanel.Find("CardDummyButton").gameObject;
 
         _inventoryContent = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.Inventory), "InventoryContent");
         _dropReward = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.Inventory), "DropReward");
@@ -466,6 +475,14 @@ public class InGameUIManager : MonoBehaviour
                     ShopManager.Instance.CloseShop();
                     break;
                 case CanvasName.ViewDeck:
+                    if (TurnManager.Instance.InBattle)      // 시간이 멈춰있어서 이거 말고 다르게 받아와도 될 듯
+                    {
+                        SetActiveCanvas(CanvasName.Battle, true);
+                    }
+                    _viewDeckDesc[_lastViewDeckIdx].SetActive(false);
+                    //_viewDeckDesc[1].SetActive(false);
+                    //_viewDeckDesc[2].SetActive(false);
+                    //_viewDeckDesc[3].SetActive(false);
                     GameManager.Instance.Pause(false);
                     break;
                 case CanvasName.Inventory:
@@ -521,8 +538,13 @@ public class InGameUIManager : MonoBehaviour
                     }
                     break;
                 case CanvasName.ViewDeck:
+                    if (Canvas(CanvasName.Battle).gameObject.activeSelf)
+                    {
+                        SetActiveCanvas(CanvasName.Battle, false);
+                    }
                     if (Canvas(CanvasName.Map).gameObject.activeSelf)
                         SetActiveCanvas(CanvasName.Map, false);
+                    _viewDeckDesc[idx].SetActive(true);
                     GameManager.Instance.Pause(true);
                     break;
                 case CanvasName.Inventory:
@@ -679,8 +701,26 @@ public class InGameUIManager : MonoBehaviour
         _itemRewardContent.GetChild(_itemRewardContent.childCount - 1).gameObject.SetActive(isOn);
     }
 
-    public void SetViewDeck(List<Card> deck)                // 풀링이지만, Release 개념이 아닌, 활성화 비활성화로 진행됨. Release는 인덱스로 넣는데, Get은 Release된 것 중에서 마지막에 넣었던 것을 꺼내오기 때문에 생긴 문제
+    /// <summary>
+    /// 내 덱 상황 보기 (0~3)
+    /// 매개변수: 0 = 전체덱, 1 = 뽑을 카드 더미, 2 = 버린 카드 더미, 3 = 소멸된 카드 더미
+    /// </summary>
+    /// <param name="idx">0 = 전체덱, 1 = 뽑을 카드 더미, 2 = 버린 카드 더미, 3 = 소멸된 카드 더미</param>
+    public void SetViewDeck(int idx = 0)                // 풀링이지만, Release 개념이 아닌, 활성화 비활성화로 진행됨. Release는 인덱스로 넣는데, Get은 Release된 것 중에서 마지막에 넣었던 것을 꺼내오기 때문에 생긴 문제
     {
+        List<Card> deck = new();
+        switch (idx)
+        {
+            case 0:
+                deck = CardManager.Instance.TotalDeck;
+                break;
+            case 1:
+                deck = CardManager.Instance.DrawDeck;
+                break;
+            case 2:
+                deck = CardManager.Instance.CardDummy;
+                break;
+        }
         _viewDeckContent.anchoredPosition = new Vector3(_viewDeckContent.anchoredPosition.x, 0);
         if (deck.Count > _deckUICards.Count)
         {
@@ -727,7 +767,8 @@ public class InGameUIManager : MonoBehaviour
             }
         }
         _lastViewDeckCount = deck.Count;
-        SetActiveCanvas(CanvasName.ViewDeck, true);
+        _lastViewDeckIdx = idx;
+        SetActiveCanvas(CanvasName.ViewDeck, true, idx);
     }
 
     //public void SetupGameUi(bool state)
