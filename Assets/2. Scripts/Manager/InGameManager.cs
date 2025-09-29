@@ -42,6 +42,7 @@ public class InGameManager : MonoBehaviour
     public Player Player;
 
     public int PauseInt;
+    public bool ShowStatus;
 
     //public int NowChapterLV = 1;
 
@@ -535,7 +536,7 @@ public class InGameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.S))
         {
-            InGameUIManager.Instance.ShowStatus();
+            InGameUIManager.Instance.ShowStatus().Forget();
             //int i = 0;
             //while (!EnemyManager.Instance.SpawnEnemy(100, i))
             //{

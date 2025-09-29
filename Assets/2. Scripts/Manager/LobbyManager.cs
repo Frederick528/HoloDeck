@@ -179,6 +179,14 @@ public class LobbyManager : MonoBehaviour
         {
             switch (canvasName)
             {
+                case CanvasName.PowerUP:
+                case CanvasName.Character:
+                    OutGameUIManager.Instance.RemoveOpenUIOrder(canvasName.ToString());
+                    break;
+            }
+
+            switch (canvasName)
+            {
                 case CanvasName.Main:
                     break;
             }
@@ -187,6 +195,13 @@ public class LobbyManager : MonoBehaviour
         }
         else
         {
+            switch (canvasName)
+            {
+                case CanvasName.PowerUP:
+                case CanvasName.Character:
+                    OutGameUIManager.Instance.AddOpenUIOreder(canvasName.ToString(), () => SetActiveCanvas(canvasName, !state, idx));
+                    break;
+            }
             _canvasDict[(int)canvasName].gameObject.SetActive(true);
 
             switch (canvasName)
@@ -221,6 +236,7 @@ public class LobbyManager : MonoBehaviour
     }
     public void SelectCharacter(int idx)
     {
+        SetActiveCanvas(CanvasName.Character, false);       // 이거 안 해주면 캐릭터 UI가 켜져있는 상태라고 판단함.
         GameManager.Instance.PlayerInt = idx;
         ChangeScene(1);
     }

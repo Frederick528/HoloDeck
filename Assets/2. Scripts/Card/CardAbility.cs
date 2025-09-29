@@ -1057,6 +1057,7 @@ public class CardAbility
         InGameButtonManager.Instance.DiscardBtnInvert(false);
         InGameButtonManager.Instance.SetActiveDiscardCancelBtn(false);
         CardManager.Instance.ChangeDiscard(true);
+        OutGameUIManager.Instance.RemoveOpenUIOrder(InGameUIManager.CanvasName.SelectedCard.ToString());        // 강제 조건확인이라 뒤로가기를 미리 막음.
         await UniTask.Create(async () =>
         {
             await InGameButtonManager.Instance.DiscardButton.OnClickAsync();
@@ -1083,7 +1084,13 @@ public class CardAbility
             CardManager.Instance.ReturnSelectedCard();
             discarded = false;
         });
-        await UniTask.WhenAny(task1, task2);
+        var task3 = UniTask.Create(async () =>
+        {
+            await UniTask.WaitUntil(() => !InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf, cancellationToken: cts.Token);
+            CardManager.Instance.ReturnSelectedCard();
+            discarded = false;
+        });
+        await UniTask.WhenAny(task1, task2, task3);
         cts.Cancel();
         //await UniTask.WhenAny(
         //    UniTask.Create(async () =>

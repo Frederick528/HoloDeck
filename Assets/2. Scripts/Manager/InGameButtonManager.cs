@@ -149,7 +149,7 @@ public class InGameButtonManager : MonoBehaviour
 
     public void ControlStatusWindow()
     {
-        InGameUIManager.Instance.ShowStatus();
+        InGameUIManager.Instance.ShowStatus().Forget();
     }
 
     //public void EventReward(bool agree)

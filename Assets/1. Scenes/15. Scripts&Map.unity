@@ -3712,7 +3712,7 @@ RectTransform:
   m_Children:
   - {fileID: 280835421}
   m_Father: {fileID: 1424643751}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3762,19 +3762,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 264393304}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1189286152}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: OffCanvas
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 12
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &264393304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6104,7 +6092,7 @@ PrefabInstance:
       objectReference: {fileID: 2095829564935791798}
     - target: {fileID: 2095829566177210759, guid: b4bc1a06a60c8fb4eaa1725f2d5bc145, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2095829566177210759, guid: b4bc1a06a60c8fb4eaa1725f2d5bc145, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -9367,7 +9355,7 @@ PrefabInstance:
       objectReference: {fileID: 2095829564935791798}
     - target: {fileID: 2095829566177210759, guid: b4bc1a06a60c8fb4eaa1725f2d5bc145, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2095829566177210759, guid: b4bc1a06a60c8fb4eaa1725f2d5bc145, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -9842,7 +9830,7 @@ PrefabInstance:
       objectReference: {fileID: 2095829564935791798}
     - target: {fileID: 2095829566177210759, guid: b4bc1a06a60c8fb4eaa1725f2d5bc145, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2095829566177210759, guid: b4bc1a06a60c8fb4eaa1725f2d5bc145, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -10122,7 +10110,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &720858998
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12629,7 +12617,7 @@ GameObject:
   - component: {fileID: 859706763}
   - component: {fileID: 859706762}
   m_Layer: 5
-  m_Name: Button
+  m_Name: BackBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12699,19 +12687,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 859706763}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 331692983}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &859706763
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13169,7 +13145,7 @@ MonoBehaviour:
   _costText: {fileID: 0}
   _tagText: {fileID: 0}
   _descText: {fileID: 0}
-  enlargeCard: {fileID: 0}
+  EnlargeCard: {fileID: 0}
 --- !u!114 &875556787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14040,8 +14016,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1600, y: -25}
-  m_SizeDelta: {x: 50, y: 50}
+  m_AnchoredPosition: {x: 1620, y: -25}
+  m_SizeDelta: {x: 40, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &948453301
 MonoBehaviour:
@@ -14063,7 +14039,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 3518137006509659680, guid: 78d1f73ae35a549409595d6b7e60fe56, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -15050,19 +15026,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1038470082}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1189286152}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: OffCanvas
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 11
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1038470082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15184,31 +15148,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1045615699}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 802417578}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1189286152}
-        m_TargetAssemblyTypeName: ButtonManager, Assembly-CSharp
-        m_MethodName: BuyCardBtn
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1045615699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15781,7 +15721,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 1700, y: -25}
-  m_SizeDelta: {x: 50, y: 50}
+  m_SizeDelta: {x: 60, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1091828538
 MonoBehaviour:
@@ -15803,7 +15743,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: -566981784949952167, guid: 4a82e804aa2303243a2809843ec25157, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -16945,19 +16885,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1173495379}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1189286152}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: OffCanvas
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 25
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1173495379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17599,8 +17527,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9255a1f7b3c48f4ab035775a27a2567, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shopCard: {fileID: 1836354403}
-  _shopCardPrice: {fileID: 1194470124}
 --- !u!1 &1202749361
 GameObject:
   m_ObjectHideFlags: 0
@@ -17978,19 +17904,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1222363848}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 331692983}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1222363848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21500,8 +21414,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 264393302}
   - {fileID: 1740512358}
+  - {fileID: 264393302}
   m_Father: {fileID: 94748868}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -23269,19 +23183,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1577618105}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 802417578}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1577618105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23562,31 +23464,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1598278835}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1189286152}
-        m_TargetAssemblyTypeName: ButtonManager, Assembly-CSharp
-        m_MethodName: RewardedCardBtn
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1189286152}
-        m_TargetAssemblyTypeName: ButtonManager, Assembly-CSharp
-        m_MethodName: OffCanvas
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 11
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1598278835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26028,12 +25906,12 @@ RectTransform:
   m_GameObject: {fileID: 1740512357}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2022580022}
   m_Father: {fileID: 1424643751}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -26294,6 +26172,7 @@ MonoBehaviour:
   PlayerTr: {fileID: 0}
   Player: {fileID: 0}
   PauseInt: 0
+  ShowStatus: 0
 --- !u!1 &1760813469
 GameObject:
   m_ObjectHideFlags: 0
@@ -27945,19 +27824,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1876778626}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1972120905}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1876778626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31304,7 +31171,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2047436819
 RectTransform:
   m_ObjectHideFlags: 0
@@ -33253,7 +33120,7 @@ PrefabInstance:
       objectReference: {fileID: 2095829564935791798}
     - target: {fileID: 2095829566177210759, guid: b4bc1a06a60c8fb4eaa1725f2d5bc145, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2095829566177210759, guid: b4bc1a06a60c8fb4eaa1725f2d5bc145, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -35049,7 +34916,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7785919527836680440}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0.029227752, y: 0, z: 0, w: 0.9995728}
   m_LocalPosition: {x: -0, y: 1.0381764, z: -1.3217943}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

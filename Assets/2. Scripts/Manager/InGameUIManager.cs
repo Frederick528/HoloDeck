@@ -20,15 +20,15 @@ public class InGameUIManager : MonoBehaviour
         InGame = 0,
         Battle = 1,
         RewardBox = 10,
-        CardReward = 11,
-        ItemReward = 12,
-        SelectedCard = 15,
-        ViewDeck = 20,
-        Inventory = 25,
+        CardReward = 11,        // ESC
+        ItemReward = 12,        // ESC
+        SelectedCard = 15,      // ESC
+        ViewDeck = 20,          // ESC
+        Inventory = 25,         // ESC
         Event = 30,
-        Shop = 40,
-        Map = 50,
-        Enemy = 60,
+        Shop = 40,              
+        Map = 50,               // ESC
+        Enemy = 60,             // ESC
         GameOver = 99,
     }
 
@@ -50,9 +50,6 @@ public class InGameUIManager : MonoBehaviour
     RectTransform _cardEnlargePanel;
     RectTransform _itemEnlargePanel;
 
-
-    RectTransform _shopPanel;
-    RectTransform _shopEnlargePanel;
 
     //[Header("Box")]
     RectTransform[] _rewardBoxes;
@@ -97,6 +94,8 @@ public class InGameUIManager : MonoBehaviour
     public TMP_Text EventText;
 
     public bool EndLoad;
+
+    bool _showStatus;
 
     private void Awake()
     {
@@ -180,9 +179,41 @@ public class InGameUIManager : MonoBehaviour
         LoadAsync().Forget();
 
         _cardEnlargePanel = Canvas(CanvasName.CardReward).Find("CardEnlargePanel") as RectTransform;
+        UICard enlargeRewardCard = _cardEnlargePanel.Find("UICard").GetComponent<UICard>();
+        Button enlargeRewardCardBtn, enlargeCardBackBtn;
+        if (_cardEnlargePanel.Find("RewardedBtn").TryGetComponent<Button>(out enlargeRewardCardBtn))
+        {
+            enlargeRewardCardBtn.onClick.AddListener(() =>
+            {
+                CardManager.Instance.RewardedCard();
+                OutGameUIManager.Instance.RemoveOpenUIOrder("EnlargeCard");
+                SetActiveCanvas(CanvasName.CardReward, false);
+            });
+        }
+        if (_cardEnlargePanel.Find("BackBtn").TryGetComponent<Button>(out enlargeCardBackBtn))
+        {
+            enlargeCardBackBtn.onClick.AddListener(() =>
+            {
+                OutGameUIManager.Instance.RemoveOpenUIOrder("EnlargeCard");
+                _cardEnlargePanel.gameObject.SetActive(false);
+            });
+        }
+
         _cardRewardContent = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.CardReward), "Content");
+        
+        for (int i = 0; i < _uiCards.Length; ++i)
+        {
+            _uiCards[i] = _cardRewardContent.GetChild(i).GetComponent<UICard>();
+            _uiCards[i].EnlargeCard = enlargeRewardCard;
+        }
+
         _itemEnlargePanel = Canvas(CanvasName.ItemReward).Find("ItemEnlargePanel") as RectTransform;
         _itemRewardContent = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.ItemReward), "Content");
+
+        for (int i = 0; i < _uiItems.Length; ++i)
+        {
+            _uiItems[i] = _itemRewardContent.GetChild(i).GetComponent<UIItem>();
+        }
 
         _viewDeckContent = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.ViewDeck), "Content");
 
@@ -218,9 +249,6 @@ public class InGameUIManager : MonoBehaviour
         _statusImg[2] = FindTransform.ContinueFindChildUIByName(_statusImg[0].transform, "PlayerImage").GetComponent<Image>();
 
         ChangeStatus(8, GameManager.Instance.Goods.Value);
-
-        _shopPanel = Canvas(CanvasName.Shop).Find("ShopPanel") as RectTransform;
-        _shopEnlargePanel = Canvas(CanvasName.Shop).Find("ShopEnlargePanel") as RectTransform;
 
         _topHealthText = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "HealthText").GetComponent<TMP_Text>();
         _topCoinText = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "CoinText").GetComponent<TMP_Text>();
@@ -260,36 +288,28 @@ public class InGameUIManager : MonoBehaviour
                     break;
             }
         }
-        for (int i = 0; i < _uiCards.Length; ++i)
-        {
-            _uiCards[i] = _cardRewardContent.GetChild(i).GetComponent<UICard>();
-        }
-        for (int i = 0; i < _uiItems.Length; ++i)
-        {
-            _uiItems[i] = _itemRewardContent.GetChild(i).GetComponent<UIItem>();
-        }
         Transform cardWindow = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.CardReward), "CardRewardWindow");
         Button cardBackBtn = FindTransform.ContinueFindChildUIByName(cardWindow, "BackButton").GetComponent<Button>();
         cardBackBtn.onClick.AddListener(() =>
         {
             SetActiveCanvas(CanvasName.CardReward, false);
-            MapManager.Instance.BoxOpen(false).Forget();
+            //MapManager.Instance.BoxOpen(false).Forget();
         });
 
-        Transform itemWindow = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.CardReward), "ItemRewardWindow");
-        Button itemBackBtn = FindTransform.ContinueFindChildUIByName(cardWindow, "BackButton").GetComponent<Button>();
+        Transform itemWindow = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.ItemReward), "ItemRewardWindow");
+        Button itemBackBtn = FindTransform.ContinueFindChildUIByName(itemWindow, "BackButton").GetComponent<Button>();
         itemBackBtn.onClick.AddListener(() =>
         {
             SetActiveCanvas(CanvasName.ItemReward, false);
-            MapManager.Instance.BoxOpen(false).Forget();
+            //MapManager.Instance.BoxOpen(false).Forget();
         });
 
         Button invenBackBtn = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.Inventory), "BackButton").GetComponent<Button>();
         invenBackBtn.onClick.AddListener(() =>
         {
             SetActiveCanvas(CanvasName.Inventory, false);
-            if (MapManager.Instance.currStage.LootBox)
-                MapManager.Instance.BoxOpen(false, true).Forget();
+            //if (MapManager.Instance.currStage.LootBox)
+                //MapManager.Instance.BoxOpen(false, true).Forget();
         });
 
         EventImage = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.Event), "EventImage").GetComponent<Image>();
@@ -392,6 +412,19 @@ public class InGameUIManager : MonoBehaviour
     {
         if (!state)     // 꺼질 때
         {
+            switch (canvasName)     // ESC 체크용. 각각 쓰기 귀찮아서 그냥 한 곳에 모음.
+            {
+                case CanvasName.CardReward:
+                case CanvasName.ItemReward:
+                case CanvasName.SelectedCard:
+                case CanvasName.ViewDeck:
+                case CanvasName.Inventory:
+                //case CanvasName.Shop:
+                case CanvasName.Map:
+                case CanvasName.Enemy:
+                    OutGameUIManager.Instance.RemoveOpenUIOrder(canvasName.ToString());
+                    break;
+            }
             switch (canvasName)
             {
                 case CanvasName.RewardBox:
@@ -423,19 +456,21 @@ public class InGameUIManager : MonoBehaviour
                     break;
                 case CanvasName.CardReward:
                     _cardEnlargePanel.gameObject.SetActive(false);
+                    MapManager.Instance.BoxOpen(false).Forget();
                     break;
                 case CanvasName.ItemReward:
                     _itemEnlargePanel.gameObject.SetActive(false);
+                    MapManager.Instance.BoxOpen(false).Forget();
                     break;
                 case CanvasName.Shop:
-                    _shopPanel.gameObject.SetActive(false);
-                    _shopEnlargePanel.gameObject.SetActive(false);
+                    ShopManager.Instance.CloseShop();
                     break;
                 case CanvasName.ViewDeck:
                     GameManager.Instance.Pause(false);
                     break;
                 case CanvasName.Inventory:
                     _dropReward.gameObject.SetActive(false);
+                    MapManager.Instance.BoxOpen(false, true).Forget();
                     break ;
             }
 
@@ -443,6 +478,20 @@ public class InGameUIManager : MonoBehaviour
         }
         else
         {
+            switch (canvasName)     // ESC 체크용. 각각 쓰기 귀찮아서 그냥 한 곳에 모음.
+            {
+                case CanvasName.CardReward:
+                case CanvasName.ItemReward:
+                case CanvasName.SelectedCard:
+                case CanvasName.ViewDeck:
+                case CanvasName.Inventory:
+                //case CanvasName.Shop:
+                case CanvasName.Map:
+                case CanvasName.Enemy:
+                    OutGameUIManager.Instance.AddOpenUIOreder(canvasName.ToString(), () => SetActiveCanvas(canvasName, !state, idx));
+                    break;
+            }
+
             _canvasDict[(int)canvasName].gameObject.SetActive(true);
 
             switch (canvasName)
@@ -453,10 +502,22 @@ public class InGameUIManager : MonoBehaviour
                     _rewardBoxes[idx].gameObject.SetActive(true);
                     break;
                 case CanvasName.Map:
+                    if (Canvas(CanvasName.CardReward).gameObject.activeSelf)
+                    {
+                        SetActiveCanvas(CanvasName.CardReward, false);
+                    }
+                    if (Canvas(CanvasName.ItemReward).gameObject.activeSelf)
+                    {
+                        SetActiveCanvas(CanvasName.ItemReward, false);
+                    }
+                    if (Canvas(CanvasName.Inventory).gameObject.activeSelf)
+                    {
+                        SetActiveCanvas(CanvasName.Inventory, false);
+                    }
                     //if (Canvas(CanvasName.ViewDeck).gameObject.activeSelf)
                     //{
                     //    SetActiveCanvas(CanvasName.ViewDeck, false);
-                        //InGameManager.Instance.Pause(false);      // UI가 막아서 뷰덱 중에는 맵 화면 클릭 불가(그렇게 되도록 배치한 거라서 문제인 건 아니고, 그냥 나중을 위한 코멘트임.)
+                    //InGameManager.Instance.Pause(false);      // UI가 막아서 뷰덱 중에는 맵 화면 클릭 불가(그렇게 되도록 배치한 거라서 문제인 건 아니고, 그냥 나중을 위한 코멘트임.)
                     //}
                     break;
                 case CanvasName.ViewDeck:
@@ -483,15 +544,55 @@ public class InGameUIManager : MonoBehaviour
         _canvasRaycaster[(int)canvasName].enabled = isOn;
     }
 
-    public void ShowStatus()
+    public async UniTaskVoid ShowStatus()
     {
-        if (_statusWindow.localPosition.x == -985)
+        _showStatus = !_showStatus;
+        float showPos = -985f;
+        float hidePos = -1460f;
+        float elapsed = 0f;
+        float duration = 0.5f;
+        if (/*_statusWindow.localPosition.x == showPos*/!_showStatus)       // 켜져있는 상태에서 이제 끌 때
         {
-            _statusWindow.localPosition = new Vector3(-1460, 0, 0);
+            OutGameUIManager.Instance.RemoveOpenUIOrder("Status");
+            while (elapsed < duration)
+            {
+                if (_showStatus == false)
+                {
+                    await UniTask.Yield();
+                    elapsed += Time.deltaTime;
+                    float t = Mathf.Clamp01(elapsed / duration);
+                    float curPos = Mathf.Lerp(_statusWindow.localPosition.x, hidePos, t);
+                    _statusWindow.localPosition = new Vector3(curPos, 0, 0);
+                }
+                else
+                {
+                    return;
+                }
+            }
+            _statusWindow.localPosition = new Vector3(hidePos, 0, 0);
         }
-        else if (_statusWindow.localPosition.x == -1460)
+        else/* if (_statusWindow.localPosition.x == hidePos)*/
         {
-            _statusWindow.localPosition = new Vector3(-985, 0, 0);
+            OutGameUIManager.Instance.AddOpenUIOreder("Status", () =>
+            {
+                ShowStatus().Forget();
+            });
+            while (elapsed < duration)
+            {
+                if (_showStatus == true)
+                {
+                    await UniTask.Yield();
+                    elapsed += Time.deltaTime;
+                    float t = Mathf.Clamp01(elapsed / duration);
+                    float curPos = Mathf.Lerp(_statusWindow.localPosition.x, showPos, t);
+                    _statusWindow.localPosition = new Vector3(curPos, 0, 0);
+                }
+                else
+                {
+                    return;
+                }
+            }
+            _statusWindow.localPosition = new Vector3(showPos, 0, 0);
         }
     }
 

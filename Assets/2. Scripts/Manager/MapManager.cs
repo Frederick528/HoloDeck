@@ -138,6 +138,10 @@ public class MapManager : MonoBehaviour
 
     public void ShowBox(int idx, bool show)
     {
+        if (!show)
+        {
+            _boxesTop[idx].localRotation = Quaternion.identity;
+        }
         _boxes[idx].SetActive(show);
     }
 
@@ -148,9 +152,15 @@ public class MapManager : MonoBehaviour
             return;
         }
         int idx = drop ? (int)Map.BoxType.Drop : currStage.rewardBox;
+        if (!_boxes[idx].activeSelf)
+            return;
         _isBoxOpen = open;
-        float targetAngle = open ? -130f : 0;
-        float startAngle = _boxesTop[idx].rotation.x;
+        float targetAngle = open ? -130 : 0;
+        float startAngle = _boxesTop[idx].eulerAngles.x;
+        if (startAngle > 180)
+        {
+            startAngle -= 360;
+        }
         float elapsed = 0f;
         float duration = 1f;
         while (elapsed < duration)
@@ -352,11 +362,13 @@ public class MapManager : MonoBehaviour
         {
             //_mapManager.rewardCanvas.GetChild(_mapManager.currStage.rewardBox).gameObject.SetActive(false);
             InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, map.rewardBox);
+            //BoxOpen(false).Forget();
             ShowBox(map.rewardBox, false);
         }
         if (map.LootBox)
         {
             InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, (int)Map.BoxType.Drop);
+            //BoxOpen(false, true).Forget();
             ShowBox((int)Map.BoxType.Drop, false);
         }
         if (map.State == Map.StageState.Shop)

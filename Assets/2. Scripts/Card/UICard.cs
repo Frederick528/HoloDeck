@@ -19,18 +19,27 @@ public class UICard : MonoBehaviour
     [SerializeField] TMP_Text _descText;
     //[SerializeField] Button _cardBtn;
 
-    [SerializeField] UICard enlargeCard;
+    public UICard EnlargeCard;
     CardData _getCardData;
+
+    Transform _enlargeTr;
 
     private void Start()
     {
         TryGetComponent(out Button _cardBtn);
         if (_cardBtn != null)
         {
+            _enlargeTr = EnlargeCard.transform.parent;
             _cardBtn.onClick.AddListener(() =>
             {
                 CardManager.Instance.GetCardData = _getCardData;
-                enlargeCard.Setup(_getCardData);
+                EnlargeCard.Setup(_getCardData);
+                _enlargeTr.gameObject.SetActive(true);
+                OutGameUIManager.Instance.AddOpenUIOreder("EnlargeCard", () =>
+                {
+                    OutGameUIManager.Instance.RemoveOpenUIOrder("EnlargeCard");
+                    _enlargeTr.gameObject.SetActive(false);
+                });
             });
 
         }

@@ -1,4 +1,5 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -18,6 +19,9 @@ public class OutGameUIManager : MonoBehaviour
         Fade
     }
 
+    public Dictionary<string, Action> CurOpenUI = new();
+    public List<string> OpenUIOrder = new();
+
     Dictionary<int, RectTransform> _canvasDict = new();
 
     Transform _canvasTr;
@@ -29,9 +33,9 @@ public class OutGameUIManager : MonoBehaviour
     ScrollRect _optionScrollRect;
 
     //[SerializeField]
-    //private TMP_Dropdown resolutionDropdown; // ÀÎ½ºÆåÅÍ¿¡¼­ ¿¬°áÇÒ UI µå·Ó´Ù¿î
+    //private TMP_Dropdown resolutionDropdown; // ì¸ìŠ¤í™í„°ì—ì„œ ì—°ê²°í•  UI ë“œë¡­ë‹¤ìš´
 
-    private Resolution[] resolutions; // ÄÄÇ»ÅÍ°¡ Áö¿øÇÏ´Â ÇØ»óµµ ¸ñ·Ï ÀúÀå
+    private Resolution[] resolutions; // ì»´í“¨í„°ê°€ ì§€ì›í•˜ëŠ” í•´ìƒë„ ëª©ë¡ ì €ì¥
 
 
     void Awake()
@@ -82,23 +86,23 @@ public class OutGameUIManager : MonoBehaviour
         TMP_Dropdown resolutionDropdown;
         if (!FindTransform.ContinueFindChildUIByName(_optionContent[1].Item1, "Resolution").gameObject.TryGetComponent<TMP_Dropdown>(out resolutionDropdown))
             return;
-        // 1. ÄÄÇ»ÅÍ°¡ Áö¿øÇÏ´Â ¸ğµç ÇØ»óµµ °¡Á®¿À±â
+        // 1. ì»´í“¨í„°ê°€ ì§€ì›í•˜ëŠ” ëª¨ë“  í•´ìƒë„ ê°€ì ¸ì˜¤ê¸°
         resolutions = Screen.resolutions;
 
-        // 2. µå·Ó´Ù¿îÀÇ ±âÁ¸ ¿É¼Ç ¸ğµÎ »èÁ¦
+        // 2. ë“œë¡­ë‹¤ìš´ì˜ ê¸°ì¡´ ì˜µì…˜ ëª¨ë‘ ì‚­ì œ
         resolutionDropdown.ClearOptions();
 
-        // 3. ÇØ»óµµ ¸ñ·Ï °¡°ø ¹× µå·Ó´Ù¿î ¿É¼ÇÀ¸·Î Ãß°¡
+        // 3. í•´ìƒë„ ëª©ë¡ ê°€ê³µ ë° ë“œë¡­ë‹¤ìš´ ì˜µì…˜ìœ¼ë¡œ ì¶”ê°€
         List<string> options = new List<string>();
         int currentResolutionIndex = 0;
 
         for (int i = 0; i < resolutions.Length; i++)
         {
-            // "³Êºñ x ³ôÀÌ" ÇüÅÂÀÇ ¹®ÀÚ¿­ »ı¼º
+            // "ë„ˆë¹„ x ë†’ì´" í˜•íƒœì˜ ë¬¸ìì—´ ìƒì„±
             string option = resolutions[i].width + " x " + resolutions[i].height;
             options.Add(option);
 
-            // ÇöÀç °ÔÀÓÀÇ ÇØ»óµµ¿Í ÀÏÄ¡ÇÏ´Â ¿É¼ÇÀ» Ã£À¸¸é ÀÎµ¦½º ÀúÀå
+            // í˜„ì¬ ê²Œì„ì˜ í•´ìƒë„ì™€ ì¼ì¹˜í•˜ëŠ” ì˜µì…˜ì„ ì°¾ìœ¼ë©´ ì¸ë±ìŠ¤ ì €ì¥
             if (resolutions[i].width == Screen.currentResolution.width &&
                 resolutions[i].height == Screen.currentResolution.height)
             {
@@ -106,11 +110,11 @@ public class OutGameUIManager : MonoBehaviour
             }
         }
 
-        resolutionDropdown.AddOptions(options); // °¡°øµÈ ¸ñ·ÏÀ» µå·Ó´Ù¿î¿¡ Ãß°¡
-        resolutionDropdown.value = currentResolutionIndex; // ÇöÀç ÇØ»óµµ¸¦ ±âº»°ªÀ¸·Î ¼³Á¤
-        resolutionDropdown.RefreshShownValue(); // µå·Ó´Ù¿î UI °»½Å
+        resolutionDropdown.AddOptions(options); // ê°€ê³µëœ ëª©ë¡ì„ ë“œë¡­ë‹¤ìš´ì— ì¶”ê°€
+        resolutionDropdown.value = currentResolutionIndex; // í˜„ì¬ í•´ìƒë„ë¥¼ ê¸°ë³¸ê°’ìœ¼ë¡œ ì„¤ì •
+        resolutionDropdown.RefreshShownValue(); // ë“œë¡­ë‹¤ìš´ UI ê°±ì‹ 
 
-        // µå·Ó´Ù¿î °ªÀÌ º¯°æµÉ ¶§ È£ÃâµÉ ÇÔ¼ö ¿¬°á
+        // ë“œë¡­ë‹¤ìš´ ê°’ì´ ë³€ê²½ë  ë•Œ í˜¸ì¶œë  í•¨ìˆ˜ ì—°ê²°
         resolutionDropdown.onValueChanged.AddListener((resolutionIndex) =>
         {
             Resolution selectedResolution = resolutions[resolutionIndex];
@@ -120,11 +124,22 @@ public class OutGameUIManager : MonoBehaviour
 
     public void SetActiveCanvas(CanvasName canvasName, bool state, int idx = -1)
     {
-        if (!state)     // ²¨Áú ¶§
+        if (!state)     // êº¼ì§ˆ ë•Œ
         {
+            switch (canvasName)     // ESC ì²´í¬ìš©. ê°ê° ì“°ê¸° ê·€ì°®ì•„ì„œ ê·¸ëƒ¥ í•œ ê³³ì— ëª¨ìŒ.
+            {
+                case CanvasName.Option:
+                    RemoveOpenUIOrder(canvasName.ToString());
+                    break;
+            }
+            //if (curUI.Remove(() => SetActiveCanvas(canvasName, state, idx)))
+            //{
+
+            //}
             switch (canvasName)
             {
                 case CanvasName.Option:
+                    //RemoveOpenUIOrder(canvasName.ToString());
                     GameManager.Instance.ESC(state);
                     break;
             }
@@ -133,6 +148,15 @@ public class OutGameUIManager : MonoBehaviour
         }
         else
         {
+            switch (canvasName)     // ESC ì²´í¬ìš©. ê°ê° ì“°ê¸° ê·€ì°®ì•„ì„œ ê·¸ëƒ¥ í•œ ê³³ì— ëª¨ìŒ.
+            {
+                case CanvasName.Option:
+                    if (idx == -1)
+                        idx = 0;
+                    AddOpenUIOreder(canvasName.ToString(), () => SetActiveCanvas(canvasName, !state, idx));
+                    break;
+            }
+
             _canvasDict[(int)canvasName].gameObject.SetActive(true);
 
             switch (canvasName)
@@ -140,6 +164,7 @@ public class OutGameUIManager : MonoBehaviour
                 case CanvasName.Option:
                     if (idx == -1)
                         idx = 0;
+                    //AddOpenUIOreder(canvasName.ToString(), () => SetActiveCanvas(canvasName, !state, idx));
                     GameManager.Instance.ESC(state);
                     SetActiveOptionWindow(idx);
                     break;
@@ -167,6 +192,27 @@ public class OutGameUIManager : MonoBehaviour
                 _optionContent[i].Item2 = false;
             }
         }
+    }
+
+    public void CloseUIByOrder()
+    {
+        CurOpenUI[OpenUIOrder[^1]]();
+    }
+
+    public void AddOpenUIOreder(string key, Action action)
+    {
+        if (CurOpenUI.ContainsKey(key))
+        {
+            return;
+        }
+        CurOpenUI.Add(key, action);
+        OpenUIOrder.Add(key);
+    }
+
+    public void RemoveOpenUIOrder(string key)
+    {
+        CurOpenUI.Remove(key);
+        OpenUIOrder.Remove(key);
     }
 
     public Transform OutGameCanvas(CanvasName canvasName)
@@ -199,7 +245,7 @@ public class OutGameUIManager : MonoBehaviour
             await UniTask.Yield();
         }
 
-        _fadeImage.color = new Color(0, 0, 0, 0f); // ¿ÏÀüÈ÷ ¹à¾ÆÁü
+        _fadeImage.color = new Color(0, 0, 0, 0f); // ì™„ì „íˆ ë°ì•„ì§
         SetActiveCanvas(CanvasName.Fade, false);
     }
     public async UniTask FadeOut(float fadeDuration)

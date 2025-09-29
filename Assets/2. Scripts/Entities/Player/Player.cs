@@ -249,8 +249,8 @@ public class Player : Entity
         animator.SetBool(_enterAnimBool, true);
         await RotationTask(0.2f, defaultRot, Quaternion.Euler(defaultRot.x, -90, defaultRot.z));
         OutGameUIManager.Instance.FadeOut(0.35f).Forget();
-        await MoveTask(0.45f, defaultPos, new Vector3(-4, 0));
         MapManager.Instance.HideReward(MapManager.Instance.currStage);
+        await MoveTask(0.45f, defaultPos, new Vector3(-4, 0));
         isEnter();
         animator.transform.rotation = Quaternion.Euler(defaultRot.x, 90, defaultRot.z);
         //await EnterStage(defaultPos);

@@ -48,12 +48,12 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            OutGameRootObj = transform.root.root.gameObject;
+            OutGameRootObj = transform.root.gameObject;
             DontDestroyOnLoad(OutGameRootObj);
         }
         else
         {
-            Destroy(transform.root.root.gameObject);
+            Destroy(transform.root.gameObject);
         }
         ResolutionSetting(Camera.main);
     }
@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour
         //NowChapterLV = SceneManager.GetActiveScene().buildIndex;
 
         Upgrades = new Upgrade[8];
-        for (int i = 0; i < Upgrades.Length; ++i)
+        for (int i = 0; i < Upgrades.Length; i++)
         {
             Upgrades[i] = new Upgrade(i, 0);
         }
@@ -83,10 +83,19 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && OutGameUIManager.Instance != null)
         {
             if (!OutGameUIManager.Instance.OutGameCanvas(OutGameUIManager.CanvasName.Fade).gameObject.activeSelf)
-                OutGameUIManager.Instance.SetActiveCanvas(OutGameUIManager.CanvasName.Option, !_isESCPause, 0);
+            {
+                if (OutGameUIManager.Instance.OpenUIOrder.Count == 0)
+                {
+                    OutGameUIManager.Instance.SetActiveCanvas(OutGameUIManager.CanvasName.Option, /*!_isESCPause*/true, 0);
+                }
+                else
+                {
+                    OutGameUIManager.Instance.CloseUIByOrder();
+                }
+            }
         }
     }
 
