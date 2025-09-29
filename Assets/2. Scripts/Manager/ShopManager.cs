@@ -188,7 +188,9 @@ public class ShopManager : MonoBehaviour
 
     public void CloseShop()
     {
+        OutGameUIManager.Instance.RemoveOpenUIOrder(InGameUIManager.CanvasName.Shop.ToString());
         _shopPanel.gameObject.SetActive(false);
+        OutGameUIManager.Instance.RemoveOpenUIOrder("EnlargeCard");
         _shopEnlargePanel.gameObject.SetActive(false);
     }
     public void BuyCard()

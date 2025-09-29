@@ -514,11 +514,11 @@ public class InGameUIManager : MonoBehaviour
                     {
                         SetActiveCanvas(CanvasName.Inventory, false);
                     }
-                    //if (Canvas(CanvasName.ViewDeck).gameObject.activeSelf)
-                    //{
-                    //    SetActiveCanvas(CanvasName.ViewDeck, false);
-                    //InGameManager.Instance.Pause(false);      // UI가 막아서 뷰덱 중에는 맵 화면 클릭 불가(그렇게 되도록 배치한 거라서 문제인 건 아니고, 그냥 나중을 위한 코멘트임.)
-                    //}
+                    if (Canvas(CanvasName.ViewDeck).gameObject.activeSelf)
+                    {
+                        SetActiveCanvas(CanvasName.ViewDeck, false);
+                        //InGameManager.Instance.Pause(false);      // UI가 막아서 뷰덱 중에는 맵 화면 클릭 불가(그렇게 되도록 배치한 거라서 문제인 건 아니고, 그냥 나중을 위한 코멘트임.)
+                    }
                     break;
                 case CanvasName.ViewDeck:
                     if (Canvas(CanvasName.Map).gameObject.activeSelf)
