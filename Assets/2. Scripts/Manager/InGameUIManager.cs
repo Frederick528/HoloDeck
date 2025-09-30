@@ -436,7 +436,7 @@ public class InGameUIManager : MonoBehaviour
             }
             switch (canvasName)
             {
-                case CanvasName.RewardBox:
+                case CanvasName.RewardBox:      // 같은 캔버스에서 서로 다른 박스가 공존하기에, 캔버스 자체를 끌 수가 없음. 일단 return해서 canvas는 계속 켜두는 걸루 함.
                     if (idx == -1)          // 그냥 쓰면 모든 박스를 비활성화함. 근데 박스는 보통 1개만 활성화하니, 해당 박스가 무엇인지 특정되지 않는 상황이 아니라면, 그냥 쓰지는 말도록 하장. -> (드롭박스 추가됨. 그래도 일단 상황 봐서 쓰기로)
                     {
                         for (int i = 0; i < _rewardBoxes.Length; ++i)
@@ -445,8 +445,9 @@ public class InGameUIManager : MonoBehaviour
                             MapManager.Instance.ShowBox(i, false);
                         }
                         SetActiveCanvas(CanvasName.ItemReward, false);
+                        SetActiveCanvas(CanvasName.Inventory, false);
                         SetActiveCanvas(CanvasName.CardReward, false);
-                        break;
+                        return;
                     }
                     _rewardBoxes[idx].gameObject.SetActive(false);
                     MapManager.Instance.ShowBox(idx, false);
@@ -462,7 +463,7 @@ public class InGameUIManager : MonoBehaviour
                     {
                         SetActiveCanvas(CanvasName.CardReward, false);
                     }
-                    break;
+                    return;
                 case CanvasName.CardReward:
                     _cardEnlargePanel.gameObject.SetActive(false);
                     MapManager.Instance.BoxOpen(false).Forget();
@@ -487,8 +488,15 @@ public class InGameUIManager : MonoBehaviour
                     break;
                 case CanvasName.Inventory:
                     _dropReward.gameObject.SetActive(false);
-                    MapManager.Instance.BoxOpen(false, true).Forget();
-                    break ;
+                    if (MapManager.Instance.currStage.LootBox)
+                    {
+                        MapManager.Instance.BoxOpen(false, true).Forget();
+                    }
+                    else
+                    {
+                        MapManager.Instance.ShowBox((int)Map.BoxType.Drop, false);
+                    }
+                    break;
             }
 
             _canvasDict[(int)canvasName].gameObject.SetActive(false);

@@ -409,11 +409,11 @@ public class MapManager : MonoBehaviour
     public void RewardStage()
     {
         if (currStage.State == Map.StageState.Enemy)
-            currStage.RewardBox();
+            currStage.DropRewardBox();
         else if (currStage.State == Map.StageState.Boss)
-            currStage.BossBox();
+            currStage.DropBossBox();
     }
-    public void GetReward(bool changed = false)
+    public void GetReward(bool changed = false) // 메인박스 전용
     {
         currStage.rewarded = true;
         switch (currStage.State)
@@ -428,9 +428,14 @@ public class MapManager : MonoBehaviour
         }
     }
 
+    public void GetLootItem()
+    {
+        currStage.DropLootBox();
+    }
+
     public void Treasure(bool changed)
     {
-        currStage.TreasureBox(changed);
+        currStage.DropTreasureBox(changed);
     }
 
     public void ChangedUseItem(ItemData itemData, int idx)

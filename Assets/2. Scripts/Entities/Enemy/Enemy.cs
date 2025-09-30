@@ -192,6 +192,8 @@ public abstract class Enemy : Entity
         //bool clear = EnemyManager.Instance.enemies.Count == 0;
         //await base.DieAnimation();  // destroy(gameObject)가 들어가있기 때문에, 만약 죽고 난 다음에 추가 행동이 있다면, 이 함수 내에서 작동해야 함.
 
+        // 자기 드랍템을 상자에 넣는 코드 필요.
+
         bool clear = await EnemyManager.Instance.KillEnemyCheck(this, base.DieAnimation(true));
         
         //EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);      // 에너미 자리로 클리어 확인을 하기 때문에 적 죽는 모션 기다린 후, 자리 삭제  // 자리는 나중에 배열로 만들고 코드상으로만 확인하도록 변경
@@ -227,6 +229,7 @@ public abstract class Enemy : Entity
         //if (spawn == EnemyManager.Instance.enemySpawnPosition.Count)
         MapManager.Instance.ClearStage().Forget();
         MapManager.Instance.RewardStage();
+        MapManager.Instance.currStage.DropLootBox();
         ItemManager.Instance.Charge(1);
     }
 

@@ -115,7 +115,7 @@ public class Map : MonoBehaviour
     public int RandomPattern = -1;
 
     public int rewardBox { get; private set; } = -1;
-    public bool LootBox { get; private set; } = false;
+    public bool LootBox { get; /*private*/ set; } = false;
     public enum BoxType
     {
         Treasure, Common, Rare, Epic, Legendary, Boss, Drop
@@ -276,7 +276,7 @@ public class Map : MonoBehaviour
         Icon.color = color;
     }
 
-    public void BossBox()
+    public void DropBossBox()
     {
         if (rewardBox == -1)
         {
@@ -301,7 +301,7 @@ public class Map : MonoBehaviour
             InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, rewardBox);
     }
 
-    public void RewardBox()
+    public void DropRewardBox()
     {
         if (rewardBox == -1)
         {
@@ -364,7 +364,27 @@ public class Map : MonoBehaviour
             InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, rewardBox);
     }
 
-    public void TreasureBox(bool changed)
+    public void DropLootBox()       // rewardBox 변수를 건드리지는 않음.
+    {
+        //if (대충 드랍템이 1개라도 있으면)
+        if (!LootBox && true)
+        {
+            LootBox = true;
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, (int)Map.BoxType.Drop);
+        }
+        //else if (true)
+        //{
+
+        //}
+        else
+        {
+            LootBox = false;
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, (int)Map.BoxType.Drop);
+
+        }
+    }
+
+    public void DropTreasureBox(bool changed)
     {
         if (rewardBox == -1)
         {

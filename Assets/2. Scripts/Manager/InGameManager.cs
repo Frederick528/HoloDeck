@@ -612,7 +612,7 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
-            TurnManager.Instance.StartBattle();
+            MapManager.Instance.GetLootItem();
         }
         if (Input.GetKeyDown(KeyCode.Equals))
         {
