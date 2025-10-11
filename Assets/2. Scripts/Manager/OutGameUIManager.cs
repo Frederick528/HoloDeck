@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -93,7 +94,7 @@ public class OutGameUIManager : MonoBehaviour
         resolutionDropdown.ClearOptions();
 
         // 3. 해상도 목록 가공 및 드롭다운 옵션으로 추가
-        List<string> options = new List<string>();
+        HashSet<string> options = new HashSet<string>();
         int currentResolutionIndex = 0;
 
         for (int i = 0; i < resolutions.Length; i++)
@@ -110,7 +111,7 @@ public class OutGameUIManager : MonoBehaviour
             }
         }
 
-        resolutionDropdown.AddOptions(options); // 가공된 목록을 드롭다운에 추가
+        resolutionDropdown.AddOptions(options.ToList()); // 가공된 목록을 드롭다운에 추가
         resolutionDropdown.value = currentResolutionIndex; // 현재 해상도를 기본값으로 설정
         resolutionDropdown.RefreshShownValue(); // 드롭다운 UI 갱신
 
