@@ -229,7 +229,7 @@ public abstract class Enemy : Entity
         //if (spawn == EnemyManager.Instance.enemySpawnPosition.Count)
         MapManager.Instance.ClearStage().Forget();
         MapManager.Instance.RewardStage();
-        MapManager.Instance.currStage.DropLootBox();
+        //MapManager.Instance.currStage.DropLootBox();
         ItemManager.Instance.Charge(1);
     }
 

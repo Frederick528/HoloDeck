@@ -30,7 +30,8 @@ public class InGameManager : MonoBehaviour
 
     public EventQueue AbilityEventQueue = new();                // 나중에 BattleManager로 이동
 
-    [SerializeField] bool fastMode;
+    bool _fastMode;
+    bool _slowMode;
 
     public StatusEffectSO SESO;
     public CardSO CardSO;
@@ -483,9 +484,13 @@ public class InGameManager : MonoBehaviour
 
     void Update()
     {
-        if (fastMode && GameManager.Instance.PauseNum == 0)
+        if (_fastMode && GameManager.Instance.PauseNum == 0)
         {
             Time.timeScale = 3f;
+        }
+        else if (_slowMode && GameManager.Instance.PauseNum == 0)
+        {
+            Time.timeScale = 0.25f;
         }
         else { Time.timeScale = GameManager.Instance.PauseNum != 0 ? 0 : 1; }
 
@@ -501,7 +506,7 @@ public class InGameManager : MonoBehaviour
         }
         //print(AbilityEventQueue._queue.Count);
 
-//#if UNITY_EDITOR
+#if UNITY_EDITOR
         //if (Input.GetKeyDown(KeyCode.Space))
         //{
         //    TurnManager.OnAddCard?.Invoke();
@@ -547,7 +552,15 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
-            fastMode = !fastMode;
+            _fastMode = !_fastMode;
+            if (_fastMode)
+                _slowMode = false;
+        }
+        if (Input.GetKeyDown(KeyCode.RightShift))
+        {
+            _slowMode = !_slowMode;
+            if (_slowMode)
+                _fastMode = false;
         }
         if (Input.GetKeyDown(KeyCode.M))
         {
@@ -635,6 +648,10 @@ public class InGameManager : MonoBehaviour
             print(FindItemData(100));
             MapManager.Instance.ShowAllMap();
         }
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            Player.AddCurHolo(10);
+        }
         if (Input.GetKeyDown(KeyCode.Slash))
         {
             //Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), 1);
@@ -642,9 +659,9 @@ public class InGameManager : MonoBehaviour
             //Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), 3, 10);
             //player.AddAndApplyStatusEffect((StatusEffect.HealUp, StatusEffectType.InfiniteDuration), 1);
             //player.AddAndApplyStatusEffect((StatusEffect.DEFUp, StatusEffectType.InfiniteDuration), 1);
-            Player.AddStatusEffect((StatusEffect.Resurrection, StatusEffectType.UseAmountTurnDuration), 1, 10);
-            Player.AddStatusEffect((StatusEffect.Reflection, StatusEffectType.UseAmountTurnDuration), 5, 3);
-            Player.AddStatusEffect((StatusEffect.Protect, StatusEffectType.DurationIsAmount), 0, 3);
+            //Player.AddStatusEffect((StatusEffect.Resurrection, StatusEffectType.UseAmountTurnDuration), 1, 10);
+            //Player.AddStatusEffect((StatusEffect.Reflection, StatusEffectType.UseAmountTurnDuration), 5, 3);
+            //Player.AddStatusEffect((StatusEffect.Protect, StatusEffectType.DurationIsAmount), 0, 3);
             //player.AddAndApplyStatusEffect((StatusEffect.Resurrection, StatusEffectType.InfiniteDuration), 1);
         }
         if (Input.GetKeyDown(KeyCode.Z))
@@ -662,6 +679,6 @@ public class InGameManager : MonoBehaviour
             foreach (var enemy in EnemyManager.Instance.EnemyList)
                 enemy.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), 1);
         }
-        //#endif
+#endif
     }
 }

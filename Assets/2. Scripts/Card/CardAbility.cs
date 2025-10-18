@@ -484,8 +484,8 @@ public class CardAbility
                         await UniTask.WhenAll
                         (
                             SingleAttackAB(card, continuousDelay),
-                            ShieldAB(card, continuousDelay),
-                            DrawAB(card)
+                            ShieldAB(card, continuousDelay, 1),
+                            DrawAB(card, continuousDelay, 1)
                         );
                     });
                 else
@@ -504,8 +504,8 @@ public class CardAbility
                         await UniTask.WhenAll
                         (
                             MultiAttackAB(card, continuousDelay),
-                            ShieldAB(card, continuousDelay),
-                            DrawAB(card)
+                            ShieldAB(card, continuousDelay, 1),
+                            DrawAB(card, continuousDelay, 1)
                         );
                     });
                 else
@@ -559,13 +559,41 @@ public class CardAbility
     //    }
     //    return damage;
     //}
+    
+    async UniTask CheckAllEndTask()
+    {
+        if (_endTask > 0)
+            Debug.Log(--_endTask);
+        await UniTask.WaitUntil(() => _endTask == 0);   // 다른 곳에서 게임 끝났는지 확인하고, 애초에 애는 다 끝났을 때, 값만 0이 됐는지 확인하는 거라 굳이 토큰 필요없음.
+    }
+    async UniTask CheckTaskOrder(int order, bool start = true)
+    {
+        if (start)
+        {
+            await UniTask.WaitUntil(() => _endTask == order, cancellationToken: TurnManager.Instance.CancelSource.Token);
+            Debug.Log($"{order}번째 실행");
+        }
+        else
+        {
+            await CheckAllEndTask();
+            await UniTask.WaitUntil(() => _endTask == order, cancellationToken: TurnManager.Instance.CancelSource.Token);
+            Debug.Log($"{order}번째 실행");
+        }
+    }
+
+    // 카드 사용 시, 사용하는 카드 이벤트 개수만큼 startTask가 증가함. 그 후, 각각의 이벤트가 끝날 때마다 endTask값을 올림.
+    // endTask가 startTask만큼 즉, 모든 카드 이벤트가 끝났으면, 해당 카드의 공격타이밍을 초기화하고 초기화한 카드 개수가 startTask와 같을 때까지 기다림.
+    // 초기화한 카드 개수를 구하지 않으면, 반복 카드일 경우, endTask를 낮췄다가 다시 올리기에 조건 검사에 문제가 생김.
     async UniTask CheckTaskCount(Card card)
     {
         _checkTask = 0;
-        await UniTask.WaitUntil(() => _startTask == _endTask, cancellationToken: TurnManager.Instance.CancelSource.Token);
+        await UniTask.WaitUntil(() => _startTask == _endTask, cancellationToken: TurnManager.Instance.CancelSource.Token).SuppressCancellationThrow();
         if (card.CardUseTiming)
             card.UseTimingReset();
         ++_checkTask;
+        // 밑에 내용 상관없음. 그냥 WaitUntil 쓰기로 함.
+        // 작거나 같은 경우를 쓰는 이유: 각각의 카드 이벤트가 마무리 될 때마다 startTask를 1씩 감소시킴. 이 때, checkTask값이 startTask 값보다 커지게 되는데
+        // 굳이 WaitUntil 써서 밑에 endTask가 0이 될 때까지 대기하는 것보단, 이 방식이 더 나을 것 같음. 
         await UniTask.WaitUntil(() => _startTask == _checkTask, cancellationToken: TurnManager.Instance.CancelSource.Token);
         //if (await UniTask.WaitUntil(() => _startTask == _endTask, cancellationToken: TurnManager.Instance.CancelSource.Token).SuppressCancellationThrow())
         //{
@@ -579,9 +607,15 @@ public class CardAbility
         //}
     }
 
-    async UniTask SingleAttackAB(Card card, float delay = 0.3f)             // 컨티뉴 single이랑 그냥 single 합침.
+    async UniTask SingleAttackAB(Card card, float delay = 0.3f, int order = 0)             // 컨티뉴 single이랑 그냥 single 합침.
     {
         Debug.Log(++_startTask);
+        await CheckTaskOrder(order);
+        if (EnemyManager.Instance.EnemyList.Count == 0)
+        {
+            Debug.Log(--_startTask);
+            return;
+        }
         //bool critical = InGameManager.Instance.Player.CheckCritical();
         bool critical = InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _);
         //await PoolManager.Instance.GetEffect(card.Data.Effect, card.TargetEnemy.transform.position, Quaternion.identity);
@@ -606,7 +640,10 @@ public class CardAbility
                 {
                     break;
                 }
-                Debug.Log(--_endTask);
+                if (await CheckTaskOrder(order, false).SuppressCancellationThrow())
+                {
+                    break;
+                }
                 //card.UseTimingReset();
                 if (card.Data.Effect != null)
                 {
@@ -639,12 +676,19 @@ public class CardAbility
         cts.Dispose();
         card.Target(null);
         InGameManager.Instance.Player.CheckCritical();
+        await CheckTaskCount(card).SuppressCancellationThrow();
+        await CheckAllEndTask();
         Debug.Log(--_startTask);
-        Debug.Log(--_endTask);
     }
-    async UniTask MultiAttackAB(Card card, float delay = 0.3f)              // 컨티뉴 multi랑 그냥 multi 합침.
+    async UniTask MultiAttackAB(Card card, float delay = 0.3f, int order = 0)              // 컨티뉴 multi랑 그냥 multi 합침.
     {
         Debug.Log(++_startTask);
+        await CheckTaskOrder(order);
+        if (EnemyManager.Instance.EnemyList.Count == 0)
+        {
+            Debug.Log(--_startTask);
+            return;
+        }
         //bool critical = InGameManager.Instance.Player.CheckCritical();
         bool critical = InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _);
         //int damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
@@ -686,17 +730,19 @@ public class CardAbility
                 {
                     break;
                 }
-                Debug.Log(--_endTask);
+                if (await CheckTaskOrder(order, false).SuppressCancellationThrow())
+                {
+                    break;
+                }
 
-                //if (EnemyManager.Instance.EnemyList.Count == 0)
-                //{
-                //    break;
-                //}
-                //else
-                //{
-                //    enemyList = EnemyManager.Instance.EnemyList.ToList();
-                //}
-                enemyList = EnemyManager.Instance.EnemyList.ToList();
+                if (EnemyManager.Instance.EnemyList.Count == 0)
+                {
+                    break;
+                }
+                else
+                {
+                    enemyList = EnemyManager.Instance.EnemyList.ToList();
+                }
                 //card.UseTimingReset();
                 if (card.Data.Effect != null)
                 {
@@ -747,16 +793,19 @@ public class CardAbility
                 {
                     break;
                 }
-                Debug.Log(--_endTask);
-                //if (EnemyManager.Instance.EnemyList.Count == 0)
-                //{
-                //    break;
-                //}
-                //else
-                //{
-                //    enemyList = EnemyManager.Instance.EnemyList.ToList();
-                //}
-                enemyList = EnemyManager.Instance.EnemyList.ToList();
+                if (await CheckTaskOrder(order, false).SuppressCancellationThrow())
+                {
+                    break;
+                }
+                if (EnemyManager.Instance.EnemyList.Count == 0)
+                {
+                    break;
+                }
+                else
+                {
+                    enemyList = EnemyManager.Instance.EnemyList.ToList();
+                }
+                //enemyList = EnemyManager.Instance.EnemyList.ToList();
                 //card.UseTimingReset();
                 await UniTask.WhenAll(enemyList.Select(async enemy =>
                 {
@@ -825,16 +874,22 @@ public class CardAbility
         //    //await UniTask.WhenAll(Enumerable.Range(0, enemyCount).
         //    //    Select(j => EnemyManager.Instance.EnemyList[(enemyCount - 1) - j].TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical))));
         //}
-
         cts.Cancel();
         cts.Dispose();
         InGameManager.Instance.Player.CheckCritical();
+        await CheckTaskCount(card).SuppressCancellationThrow();
+        await CheckAllEndTask();
         Debug.Log(--_startTask);
-        Debug.Log(--_endTask);
     }
-    async UniTask ShieldAB(Card card, float delay = 0.3f)
+    async UniTask ShieldAB(Card card, float delay = 0.3f, int order = 0)
     {
         Debug.Log(++_startTask);
+        await CheckTaskOrder(order);
+        if (EnemyManager.Instance.EnemyList.Count == 0)
+        {
+            Debug.Log(--_startTask);
+            return;
+        }
         if (card.Data.Effect != null)       // effect가 널이 아닐 경우를 확인하지만, 공격 모션이나 특수 모션이 있을 경우를 확인하는 것이고, 모션이 있다면, 해당 모션을 기다린 후 실행. 아니면 쉴드 사용(사용 시, 전용 이펙트 실행) 
         {
             await UniTask.WaitUntil(() => card.CardUseTiming);
@@ -848,7 +903,10 @@ public class CardAbility
             {
                 break;
             }
-            Debug.Log(--_endTask);
+            if (await CheckTaskOrder(order, false).SuppressCancellationThrow())
+            {
+                break;
+            }
             if (card.Data.Effect != null)
             {
                 await UniTask.WaitUntil(() => card.CardUseTiming);
@@ -858,14 +916,21 @@ public class CardAbility
                 await DelayTask(delay);
             }
             await InGameManager.Instance.Player.Shield(card.Data.Shield);
-            ++_endTask;
-        }   
+            Debug.Log(++_endTask);
+        }
+        await CheckTaskCount(card).SuppressCancellationThrow();
+        await CheckAllEndTask();
         Debug.Log(--_startTask);
-        Debug.Log(--_endTask);
     }
-    async UniTask DrawAB(Card card, float delay = 0.3f)
+    async UniTask DrawAB(Card card, float delay = 0.3f, int order = 0)
     {
         Debug.Log(++_startTask);
+        await CheckTaskOrder(order);
+        if (EnemyManager.Instance.EnemyList.Count == 0)
+        {
+            Debug.Log(--_startTask);
+            return;
+        }
         if (card.Data.Effect != null)
         {
             await UniTask.WaitUntil(() => card.CardUseTiming);
@@ -878,7 +943,10 @@ public class CardAbility
             {
                 break;
             }
-            Debug.Log(--_endTask);
+            if (await CheckTaskOrder(order, false).SuppressCancellationThrow())
+            {
+                break;
+            }
             if (card.Data.Effect != null)
             {
                 await UniTask.WaitUntil(() => card.CardUseTiming);
@@ -890,8 +958,9 @@ public class CardAbility
             await CardManager.Instance.DrawCard(card.Data.Draw);
             Debug.Log(++_endTask);
         }
+        await CheckTaskCount(card).SuppressCancellationThrow();
+        await CheckAllEndTask();
         Debug.Log(--_startTask);
-        Debug.Log(--_endTask);
     }
 
     //async UniTask SingleAttackAB(Card card)
