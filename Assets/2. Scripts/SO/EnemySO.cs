@@ -6,7 +6,8 @@ public enum EnemyTag
 {
     Nomal,
     Elite,
-    Boss
+    Boss,
+    EndBoss
 }
 [System.Serializable]
 public class EnemyData

@@ -64,8 +64,8 @@ public class EnemyStage : MonoBehaviour, IStage
                 EnemyManager.Instance.SpawnEnemy(102);
                 break;
             case 100:
-                EnemyManager.Instance.SpawnEnemy(1000, 1);
-                EnemyManager.Instance.SpawnEnemy(1001, 3);
+                EnemyManager.Instance.SpawnEnemy(900, 1);
+                EnemyManager.Instance.SpawnEnemy(901, 3);
                 break;
         }
     }
