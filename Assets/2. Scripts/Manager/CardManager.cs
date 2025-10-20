@@ -319,6 +319,14 @@ public class CardManager : MonoBehaviour
         }
     }
 
+    public void ChangeHandCardDesc()
+    {
+        foreach (Card card in HandCard)
+        {
+            card.CardDataReset();
+        }
+    }
+
     public void ClearCard()
     {
         DrawDeck.Clear();
