@@ -611,11 +611,11 @@ public class CardAbility
     {
         Debug.Log(++_startTask);
         await CheckTaskOrder(order);
-        if (EnemyManager.Instance.EnemyList.Count == 0)
-        {
-            Debug.Log(--_startTask);
-            return;
-        }
+        //if (EnemyManager.Instance.EnemyList.Count == 0)
+        //{
+        //    Debug.Log(--_startTask);
+        //    return;
+        //}
         //bool critical = InGameManager.Instance.Player.CheckCritical();
         bool critical = InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _);
         //await PoolManager.Instance.GetEffect(card.Data.Effect, card.TargetEnemy.transform.position, Quaternion.identity);
@@ -684,11 +684,11 @@ public class CardAbility
     {
         Debug.Log(++_startTask);
         await CheckTaskOrder(order);
-        if (EnemyManager.Instance.EnemyList.Count == 0)
-        {
-            Debug.Log(--_startTask);
-            return;
-        }
+        //if (EnemyManager.Instance.EnemyList.Count == 0)
+        //{
+        //    Debug.Log(--_startTask);
+        //    return;
+        //}
         //bool critical = InGameManager.Instance.Player.CheckCritical();
         bool critical = InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _);
         //int damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
@@ -885,11 +885,11 @@ public class CardAbility
     {
         Debug.Log(++_startTask);
         await CheckTaskOrder(order);
-        if (EnemyManager.Instance.EnemyList.Count == 0)
-        {
-            Debug.Log(--_startTask);
-            return;
-        }
+        //if (EnemyManager.Instance.EnemyList.Count == 0)
+        //{
+        //    Debug.Log(--_startTask);
+        //    return;
+        //}
         if (card.Data.Effect != null)       // effect가 널이 아닐 경우를 확인하지만, 공격 모션이나 특수 모션이 있을 경우를 확인하는 것이고, 모션이 있다면, 해당 모션을 기다린 후 실행. 아니면 쉴드 사용(사용 시, 전용 이펙트 실행) 
         {
             await UniTask.WaitUntil(() => card.CardUseTiming);
@@ -926,11 +926,11 @@ public class CardAbility
     {
         Debug.Log(++_startTask);
         await CheckTaskOrder(order);
-        if (EnemyManager.Instance.EnemyList.Count == 0)
-        {
-            Debug.Log(--_startTask);
-            return;
-        }
+        //if (EnemyManager.Instance.EnemyList.Count == 0)
+        //{
+        //    Debug.Log(--_startTask);
+        //    return;
+        //}
         if (card.Data.Effect != null)
         {
             await UniTask.WaitUntil(() => card.CardUseTiming);
