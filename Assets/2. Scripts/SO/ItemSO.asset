@@ -15,7 +15,7 @@ MonoBehaviour:
   ItemSprites: []
   Items:
   - Name: Passive1
-    ID: 1
+    ID: 100
     ItemTag: 0
     ItemRarity: 0
     StartCharge: 0
@@ -26,12 +26,12 @@ MonoBehaviour:
     Heal: 0
     Duration: 0
     Price: 5
-    Descript: "passive1\r"
+    Descript: passive1
     Sprite: {fileID: 0}
     AttackType: 0
     ItemCanUse: 0
   - Name: Passive2
-    ID: 2
+    ID: 101
     ItemTag: 0
     ItemRarity: 0
     StartCharge: 0
@@ -42,12 +42,12 @@ MonoBehaviour:
     Heal: 0
     Duration: 0
     Price: 10
-    Descript: "passive2\r"
+    Descript: passive2
     Sprite: {fileID: 0}
     AttackType: 0
     ItemCanUse: 0
   - Name: Passive3
-    ID: 3
+    ID: 102
     ItemTag: 0
     ItemRarity: 1
     StartCharge: 0
@@ -58,12 +58,12 @@ MonoBehaviour:
     Heal: 0
     Duration: 0
     Price: 20
-    Descript: "passive3\r"
+    Descript: passive3
     Sprite: {fileID: 0}
     AttackType: 0
     ItemCanUse: 0
   - Name: Passive4
-    ID: 4
+    ID: 103
     ItemTag: 0
     ItemRarity: 0
     StartCharge: 0
@@ -74,12 +74,12 @@ MonoBehaviour:
     Heal: 0
     Duration: 0
     Price: 20
-    Descript: "passive4\r"
+    Descript: passive4
     Sprite: {fileID: 0}
     AttackType: 0
     ItemCanUse: 0
   - Name: Passive5
-    ID: 5
+    ID: 104
     ItemTag: 0
     ItemRarity: 0
     StartCharge: 0
@@ -90,12 +90,12 @@ MonoBehaviour:
     Heal: 0
     Duration: 0
     Price: 15
-    Descript: "passive5\r"
+    Descript: passive5
     Sprite: {fileID: 0}
     AttackType: 0
     ItemCanUse: 0
   - Name: Passive6
-    ID: 6
+    ID: 105
     ItemTag: 0
     ItemRarity: 0
     StartCharge: 0
@@ -176,6 +176,6 @@ MonoBehaviour:
     Sprite: {fileID: 0}
     AttackType: 1
     ItemCanUse: 1
-  PassiveID: {x: 1, y: 6}
+  PassiveID: {x: 100, y: 105}
   ActiveID: {x: 501, y: 503}
   PotionID: {x: 1001, y: 1001}

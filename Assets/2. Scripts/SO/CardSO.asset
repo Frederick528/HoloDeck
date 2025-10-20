@@ -24,7 +24,7 @@ MonoBehaviour:
   - {fileID: 8974203713140315807, guid: c0e63d685aed24d47aef3d8a8063c162, type: 3}
   - {fileID: 8378648546881499446, guid: 867c572a5be680d42a042d2349f10143, type: 3}
   Cards:
-  - Name: Name1
+  - Name: Name100
     ID: 100
     Cost: 1
     Damage: 5
@@ -41,7 +41,7 @@ MonoBehaviour:
     HasSimpleCondition: 1
     CardTag: 0
     CardRarity: 0
-  - Name: Name2
+  - Name: Name101
     ID: 101
     Cost: 1
     Damage: 3
@@ -60,7 +60,7 @@ MonoBehaviour:
     HasSimpleCondition: 0
     CardTag: 0
     CardRarity: 0
-  - Name: Name3
+  - Name: Name102
     ID: 102
     Cost: 2
     Damage: 2
@@ -77,7 +77,7 @@ MonoBehaviour:
     HasSimpleCondition: 0
     CardTag: 1
     CardRarity: 0
-  - Name: Name4
+  - Name: Name103
     ID: 103
     Cost: 1
     Damage: 0
@@ -94,7 +94,7 @@ MonoBehaviour:
     HasSimpleCondition: 0
     CardTag: 2
     CardRarity: 0
-  - Name: Name5
+  - Name: Name104
     ID: 104
     Cost: 1
     Damage: 0
@@ -111,7 +111,7 @@ MonoBehaviour:
     HasSimpleCondition: 0
     CardTag: 2
     CardRarity: 0
-  - Name: Name6
+  - Name: Name105
     ID: 105
     Cost: 0
     Damage: 0
@@ -128,7 +128,7 @@ MonoBehaviour:
     HasSimpleCondition: 0
     CardTag: 2
     CardRarity: 0
-  - Name: Name7
+  - Name: Name106
     ID: 106
     Cost: 1
     Damage: 0
@@ -145,7 +145,7 @@ MonoBehaviour:
     HasSimpleCondition: 1
     CardTag: 2
     CardRarity: 0
-  - Name: Name8
+  - Name: Name107
     ID: 107
     Cost: 0
     Damage: 1
@@ -164,7 +164,24 @@ MonoBehaviour:
     HasSimpleCondition: 0
     CardTag: 0
     CardRarity: 0
-  - Name: Name9
+  - Name: Name108
+    ID: 108
+    Cost: 1
+    Damage: 0
+    Shield: 0
+    Count: 0
+    Draw: 0
+    Discard: 0
+    Remove: 0
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    IsSimpleAB: 0
+    HasSimpleCondition: 0
+    CardTag: 0
+    CardRarity: 0
+  - Name: Name500
     ID: 500
     Cost: 1
     Damage: 3
@@ -181,7 +198,7 @@ MonoBehaviour:
     HasSimpleCondition: 0
     CardTag: 0
     CardRarity: 1
-  - Name: Name10
+  - Name: Name501
     ID: 501
     Cost: 1
     Damage: 3
@@ -202,7 +219,7 @@ MonoBehaviour:
     HasSimpleCondition: 0
     CardTag: 0
     CardRarity: 1
-  - Name: Name11
+  - Name: Name502
     ID: 502
     Cost: 2
     Damage: 1
@@ -219,7 +236,7 @@ MonoBehaviour:
     HasSimpleCondition: 0
     CardTag: 1
     CardRarity: 1
-  - Name: Name18
+  - Name: Name503
     ID: 503
     Cost: -1
     Damage: 0
@@ -236,7 +253,7 @@ MonoBehaviour:
     HasSimpleCondition: 0
     CardTag: 2
     CardRarity: 1
-  - Name: Name12
+  - Name: Name800
     ID: 800
     Cost: 3
     Damage: 30
@@ -253,7 +270,7 @@ MonoBehaviour:
     HasSimpleCondition: 0
     CardTag: 0
     CardRarity: 2
-  - Name: Name14
+  - Name: Name801
     ID: 801
     Cost: -1
     Damage: 10
@@ -270,7 +287,7 @@ MonoBehaviour:
     HasSimpleCondition: 0
     CardTag: 0
     CardRarity: 2
-  - Name: Name15
+  - Name: Name802
     ID: 802
     Cost: 2
     Damage: 1
@@ -294,7 +311,7 @@ MonoBehaviour:
     HasSimpleCondition: 0
     CardTag: 1
     CardRarity: 2
-  - Name: Name13
+  - Name: Name1000
     ID: 1000
     Cost: 1
     Damage: 10
@@ -311,7 +328,7 @@ MonoBehaviour:
     HasSimpleCondition: 0
     CardTag: 1
     CardRarity: 3
-  - Name: Name16
+  - Name: Name1001
     ID: 1001
     Cost: 3
     Damage: 100
@@ -328,7 +345,7 @@ MonoBehaviour:
     HasSimpleCondition: 0
     CardTag: 0
     CardRarity: 3
-  - Name: Name17
+  - Name: Name1002
     ID: 1002
     Cost: 2
     Damage: 0
@@ -433,7 +450,7 @@ MonoBehaviour:
     CardTag: 2
     CardRarity: 0
   ClassifyCardRarityID:
-  - {x: 100, y: 107}
+  - {x: 100, y: 108}
   - {x: 500, y: 503}
   - {x: 800, y: 802}
   - {x: 1000, y: 1002}
