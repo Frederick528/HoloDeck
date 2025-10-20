@@ -81,6 +81,14 @@ public class CardAbility
                         await ConfirmedDiscardAB();
                     });
                     break;
+                case 108:
+                    card.CardTask = () => UniTask.Create(async () =>
+                    {
+                        await DelayTask(0.5f);
+                        card.Data.Damage = card.TargetEnemy.CurStatusEffectList.Count() + card.TargetEnemy.CurStatusEffectPerpetualList.Count();
+                        await SingleAttackAB(card);
+                    });
+                    break;
                 case 503:
                     card.CardTask = () => UniTask.Create(async () =>
                     {

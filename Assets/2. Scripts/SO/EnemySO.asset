@@ -28,99 +28,99 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 333b7c667071587429495f9d7a0e30ab, type: 3}
   - {fileID: 21300000, guid: 196654c1199bc374382e8a9cb436bb23, type: 3}
   EnemyDatas:
-  - Name: Slime
+  - Name: Slime100
     ID: 100
     Level: 0
     Damage: 7
     CriticalChance: 10
-    CriticalDamage: 0
+    CriticalDamage: 125
     HP: 10
     DropCoin: 10
     Descript: Slime
     Sprite: {fileID: 0}
     EnemyTag: 0
     EnemyPrefab: {fileID: 5423766591507928315, guid: fb7e25f00b434b447ba0b2db46622238, type: 3}
-  - Name: Swarm
+  - Name: Swarm101
     ID: 101
     Level: 0
     Damage: 5
     CriticalChance: 25
-    CriticalDamage: 0
+    CriticalDamage: 125
     HP: 7
     DropCoin: 17
     Descript: Dog
     Sprite: {fileID: 0}
     EnemyTag: 0
     EnemyPrefab: {fileID: 8476364101092123999, guid: b7362bd93fac5cf4a9d671b7ce1493c4, type: 3}
-  - Name: TurtleShell
+  - Name: TurtleShell102
     ID: 102
     Level: 0
     Damage: 3
     CriticalChance: 10
-    CriticalDamage: 0
+    CriticalDamage: 125
     HP: 5
     DropCoin: 5
     Descript: Healer
     Sprite: {fileID: 0}
     EnemyTag: 0
     EnemyPrefab: {fileID: 4086410140833498804, guid: 671ee7bd8898ae942820b3810882fc4e, type: 3}
-  - Name: E1
+  - Name: Elite500
     ID: 500
     Level: 0
     Damage: 5
     CriticalChance: 10
-    CriticalDamage: 0
+    CriticalDamage: 125
     HP: 30
     DropCoin: 85
-    Descript: E
+    Descript: E1
     Sprite: {fileID: 0}
     EnemyTag: 1
     EnemyPrefab: {fileID: 920583721148301636, guid: 04c0f2b19c1f8494a89ae3c5a4d401c5, type: 3}
-  - Name: B1
-    ID: 1000
-    Level: 0
-    Damage: 15
-    CriticalChance: 10
-    CriticalDamage: 0
-    HP: 80
-    DropCoin: 160
-    Descript: B1
-    Sprite: {fileID: 0}
-    EnemyTag: 2
-    EnemyPrefab: {fileID: 951340706938287109, guid: 0f6ea89c345b6894f9b87aabe2eaa2fc, type: 3}
-  - Name: E2
+  - Name: Elite501
     ID: 501
     Level: 0
     Damage: 6
     CriticalChance: 50
-    CriticalDamage: 0
+    CriticalDamage: 150
     HP: 25
     DropCoin: 95
     Descript: E2
     Sprite: {fileID: 0}
     EnemyTag: 1
     EnemyPrefab: {fileID: 8278908719126247087, guid: a4f241d19b48b3640b8fc5e13a8517f3, type: 3}
-  - Name: B2
-    ID: 1001
+  - Name: Boss900
+    ID: 900
+    Level: 0
+    Damage: 15
+    CriticalChance: 10
+    CriticalDamage: 125
+    HP: 80
+    DropCoin: 160
+    Descript: B1
+    Sprite: {fileID: 0}
+    EnemyTag: 2
+    EnemyPrefab: {fileID: 951340706938287109, guid: 0f6ea89c345b6894f9b87aabe2eaa2fc, type: 3}
+  - Name: Boss901
+    ID: 901
     Level: 0
     Damage: 10
     CriticalChance: 5
-    CriticalDamage: 0
+    CriticalDamage: 110
     HP: 150
     DropCoin: 170
     Descript: B2
     Sprite: {fileID: 0}
     EnemyTag: 2
     EnemyPrefab: {fileID: 5656774337708926583, guid: aefc403e9689b5f4c944277408b7af98, type: 3}
-  - Name: EB
-    ID: 2000
+  - Name: EndBoss1000
+    ID: 1000
     Level: 0
     Damage: 20
     CriticalChance: 35
-    CriticalDamage: 0
+    CriticalDamage: 130
     HP: 200
     DropCoin: 1000
-    Descript: EB
+    Descript: EB1
     Sprite: {fileID: 0}
-    EnemyTag: 2
+    EnemyTag: 3
     EnemyPrefab: {fileID: 567178948273558935, guid: b22ba3771d8bd9d46bfe961ff2480809, type: 3}
