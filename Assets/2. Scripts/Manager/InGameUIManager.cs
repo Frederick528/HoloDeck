@@ -19,7 +19,7 @@ public class InGameUIManager : MonoBehaviour
     {
         InGame = 0,
         Battle = 1,
-        RewardBox = 10,
+        //RewardBox = 10,
         CardReward = 11,        // ESC
         ItemReward = 12,        // ESC
         SelectedCard = 15,      // ESC
@@ -52,7 +52,7 @@ public class InGameUIManager : MonoBehaviour
 
 
     //[Header("Box")]
-    RectTransform[] _rewardBoxes;
+    //RectTransform[] _rewardBoxes;
 
     [HideInInspector]
     public RectTransform PassiveTransform;
@@ -267,36 +267,36 @@ public class InGameUIManager : MonoBehaviour
         _drawCount = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.Battle), "DrawCountText").GetComponent<TMP_Text>();
         _dummyCount = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.Battle), "DummyCountText").GetComponent<TMP_Text>();
 
-        Transform rewardBoxCanvas = Canvas(CanvasName.RewardBox);
-        _rewardBoxes = new RectTransform[rewardBoxCanvas.childCount];
-        for (int i = 0; i < _rewardBoxes.Length; ++i)
-        {
-            _rewardBoxes[i] = rewardBoxCanvas.GetChild(i) as RectTransform;
-            switch (_rewardBoxes[i].name)
-            {
-                case "TreasureBox":
-                    _rewardBoxes[i].GetComponent<Button>().onClick.AddListener(() =>
-                    {
-                        SetActiveCanvas(CanvasName.ItemReward, true);
-                        MapManager.Instance.BoxOpen(true).Forget();
-                    });
-                    break;
-                case "DropBox":
-                    _rewardBoxes[i].GetComponent<Button>().onClick.AddListener(() =>
-                    {
-                        SetActiveCanvas(CanvasName.Inventory, true, 1);
-                        MapManager.Instance.BoxOpen(true, true).Forget();
-                    });
-                    break;
-                default:
-                    _rewardBoxes[i].GetComponent<Button>().onClick.AddListener(() =>
-                    {
-                        SetActiveCanvas(CanvasName.CardReward, true);
-                        MapManager.Instance.BoxOpen(true).Forget();
-                    });
-                    break;
-            }
-        }
+        //Transform rewardBoxCanvas = Canvas(CanvasName.RewardBox);
+        //_rewardBoxes = new RectTransform[rewardBoxCanvas.childCount];
+        //for (int i = 0; i < _rewardBoxes.Length; ++i)
+        //{
+        //    _rewardBoxes[i] = rewardBoxCanvas.GetChild(i) as RectTransform;
+        //    switch (_rewardBoxes[i].name)
+        //    {
+        //        case "TreasureBox":
+        //            _rewardBoxes[i].GetComponent<Button>().onClick.AddListener(() =>
+        //            {
+        //                SetActiveCanvas(CanvasName.ItemReward, true);
+        //                MapManager.Instance.BoxOpen(true).Forget();
+        //            });
+        //            break;
+        //        case "DropBox":
+        //            _rewardBoxes[i].GetComponent<Button>().onClick.AddListener(() =>
+        //            {
+        //                SetActiveCanvas(CanvasName.Inventory, true, 1);
+        //                MapManager.Instance.BoxOpen(true, true).Forget();
+        //            });
+        //            break;
+        //        default:
+        //            _rewardBoxes[i].GetComponent<Button>().onClick.AddListener(() =>
+        //            {
+        //                SetActiveCanvas(CanvasName.CardReward, true);
+        //                MapManager.Instance.BoxOpen(true).Forget();
+        //            });
+        //            break;
+        //    }
+        //}
         Transform cardWindow = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.CardReward), "CardRewardWindow");
         Button cardBackBtn = FindTransform.ContinueFindChildUIByName(cardWindow, "BackButton").GetComponent<Button>();
         cardBackBtn.onClick.AddListener(() =>
@@ -436,34 +436,34 @@ public class InGameUIManager : MonoBehaviour
             }
             switch (canvasName)
             {
-                case CanvasName.RewardBox:      // 같은 캔버스에서 서로 다른 박스가 공존하기에, 캔버스 자체를 끌 수가 없음. 일단 return해서 canvas는 계속 켜두는 걸루 함.
-                    if (idx == -1)          // 그냥 쓰면 모든 박스를 비활성화함. 근데 박스는 보통 1개만 활성화하니, 해당 박스가 무엇인지 특정되지 않는 상황이 아니라면, 그냥 쓰지는 말도록 하장. -> (드롭박스 추가됨. 그래도 일단 상황 봐서 쓰기로)
-                    {
-                        for (int i = 0; i < _rewardBoxes.Length; ++i)
-                        {
-                            _rewardBoxes[i].gameObject.SetActive(false);
-                            MapManager.Instance.ShowBox(i, false);
-                        }
-                        SetActiveCanvas(CanvasName.ItemReward, false);
-                        SetActiveCanvas(CanvasName.Inventory, false);
-                        SetActiveCanvas(CanvasName.CardReward, false);
-                        return;
-                    }
-                    _rewardBoxes[idx].gameObject.SetActive(false);
-                    MapManager.Instance.ShowBox(idx, false);
-                    if (idx == (int)Map.BoxType.Treasure)
-                    {
-                        SetActiveCanvas(CanvasName.ItemReward, false);
-                    }
-                    else if (idx == (int)Map.BoxType.Drop)
-                    {
-                        SetActiveCanvas(CanvasName.Inventory, false);
-                    }
-                    else
-                    {
-                        SetActiveCanvas(CanvasName.CardReward, false);
-                    }
-                    return;
+                //case CanvasName.RewardBox:      // 같은 캔버스에서 서로 다른 박스가 공존하기에, 캔버스 자체를 끌 수가 없음. 일단 return해서 canvas는 계속 켜두는 걸루 함.
+                //    if (idx == -1)          // 그냥 쓰면 모든 박스를 비활성화함. 근데 박스는 보통 1개만 활성화하니, 해당 박스가 무엇인지 특정되지 않는 상황이 아니라면, 그냥 쓰지는 말도록 하장. -> (드롭박스 추가됨. 그래도 일단 상황 봐서 쓰기로)
+                //    {
+                //        for (int i = 0; i < _rewardBoxes.Length; ++i)
+                //        {
+                //            _rewardBoxes[i].gameObject.SetActive(false);
+                //            MapManager.Instance.ShowBox(i, false);
+                //        }
+                //        SetActiveCanvas(CanvasName.ItemReward, false);
+                //        SetActiveCanvas(CanvasName.Inventory, false);
+                //        SetActiveCanvas(CanvasName.CardReward, false);
+                //        return;
+                //    }
+                //    _rewardBoxes[idx].gameObject.SetActive(false);
+                //    MapManager.Instance.ShowBox(idx, false);
+                //    if (idx == (int)Map.BoxType.Treasure)
+                //    {
+                //        SetActiveCanvas(CanvasName.ItemReward, false);
+                //    }
+                //    else if (idx == (int)Map.BoxType.Drop)
+                //    {
+                //        SetActiveCanvas(CanvasName.Inventory, false);
+                //    }
+                //    else
+                //    {
+                //        SetActiveCanvas(CanvasName.CardReward, false);
+                //    }
+                //    return;
                 case CanvasName.CardReward:
                     _cardEnlargePanel.gameObject.SetActive(false);
                     MapManager.Instance.BoxOpen(false).Forget();
@@ -487,15 +487,11 @@ public class InGameUIManager : MonoBehaviour
                     GameManager.Instance.Pause(false);
                     break;
                 case CanvasName.Inventory:
+                    if (_dropReward.gameObject.activeSelf)
+                    {
+                        MapManager.Instance.DropBoxOpen(false).Forget();
+                    }
                     _dropReward.gameObject.SetActive(false);
-                    if (MapManager.Instance.currStage.LootBox)
-                    {
-                        MapManager.Instance.BoxOpen(false, true).Forget();
-                    }
-                    else
-                    {
-                        MapManager.Instance.ShowBox((int)Map.BoxType.Drop, false);
-                    }
                     break;
             }
 
@@ -521,11 +517,11 @@ public class InGameUIManager : MonoBehaviour
 
             switch (canvasName)
             {
-                case CanvasName.RewardBox:
-                    if (idx == -1) break;
-                    MapManager.Instance.ShowBox(idx, true);
-                    _rewardBoxes[idx].gameObject.SetActive(true);
-                    break;
+                //case CanvasName.RewardBox:
+                //    if (idx == -1) break;
+                //    MapManager.Instance.ShowBox(idx, true);
+                //    _rewardBoxes[idx].gameObject.SetActive(true);
+                //    break;
                 case CanvasName.Map:
                     if (Canvas(CanvasName.CardReward).gameObject.activeSelf)
                     {

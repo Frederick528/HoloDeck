@@ -36,10 +36,10 @@ public class EnemyManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            enemySpawnPosition[0] = (new Vector3(-1.5f, 0f));      // 0
-            enemySpawnPosition[1] = (new Vector3(1.25f, 0f));      // 1
-            enemySpawnPosition[2] = (new Vector3(4f, 0f));      // 2
-            enemySpawnPosition[3] = (new Vector3(6.75f, 0f));      // 3
+            enemySpawnPosition[0] = (new Vector3(-1.5f, -0.1f));      // 0
+            enemySpawnPosition[1] = (new Vector3(1.25f, -0.1f));      // 1
+            enemySpawnPosition[2] = (new Vector3(4f, -0.1f));      // 2
+            enemySpawnPosition[3] = (new Vector3(6.75f, -0.1f));      // 3
             //EnemySpawnPosition[4] = (new Vector3(8.25f, 0f));      // 4
 
             int index = enemySpawnPosition.Length / 2;

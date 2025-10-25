@@ -996,6 +996,7 @@ public class CardManager : MonoBehaviour
         }
 
         card.transform.DOKill();              // 정렬 드로우 문제 등 제거
+        InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, false);
         Vector3 largePos = new(card.OriginPRS.pos.x, CardUtils.LargeCardPosY, -1f);      // z축 변경 안 하면, MouseOver 문제 생김.
         card.MoveTransform(new PRS(largePos, Quaternion.identity, CardUtils.CardScale * 1.2f));
 
@@ -1059,7 +1060,7 @@ public class CardManager : MonoBehaviour
             return;
 
         InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.InGame, false);
-        InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, false);
+        //InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, false);
 
         Cursor.visible = false;
 

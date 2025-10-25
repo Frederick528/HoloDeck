@@ -24,9 +24,11 @@ public class MapManager : MonoBehaviour
 
     public Sprite[] MapIcon = new Sprite[6];
 
-    private GameObject[] _boxes;
+    public int? CurShowBoxIdx;
+    private Box[] _boxes;
     private Transform[] _boxesTop;
     bool _isBoxOpen;
+    bool _isDropBoxOpen;
     //public GameObject LootBox;
     //public GameObject TreasureBox;
     //public GameObject LowTierBox;
@@ -48,12 +50,31 @@ public class MapManager : MonoBehaviour
             GameObject boxObj = GameObject.Find("Boxes");
             if (boxObj != null)
             {
-                _boxes = new GameObject[boxObj.transform.childCount];
+                _boxes = new Box[boxObj.transform.childCount];
                 _boxesTop = new Transform[_boxes.Length];
                 for (int i = 0; i < _boxes.Length; ++i)
                 {
-                    _boxes[i] = boxObj.transform.GetChild(i).gameObject;
-                    _boxesTop[i] = FindTransform.ContinueFindChildObjByName(_boxes[i].transform, "top");
+                    int idx = i;
+                    _boxes[idx] = boxObj.transform.GetChild(i).GetComponent<Box>();
+                    _boxes[idx].OpenBox = () =>
+                    {
+                        switch (idx)
+                        {
+                            case (int)Map.BoxType.Treasure:
+                                InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.ItemReward, true);
+                                BoxOpen(true).Forget();
+                                break;
+                            case (int)Map.BoxType.Drop:
+                                InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Inventory, true, 1);
+                                DropBoxOpen(true).Forget();
+                                break;
+                            default:
+                                InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.CardReward, true);
+                                BoxOpen(true).Forget();
+                                break;
+                        }
+                    };
+                    _boxesTop[idx] = FindTransform.ContinueFindChildObjByName(_boxes[idx].transform, "top");
                 }
                 GameManager.Instance.AddInGameDontDestroy(boxObj);
                 //LootBox = boxObj.transform.Find(nameof(LootBox)).gameObject;
@@ -136,43 +157,69 @@ public class MapManager : MonoBehaviour
     //    //ShowAllMap();
     //}
 
+
+    public void HideBox()
+    {
+
+    }
+
+    public void ShowBox()
+    {
+
+    }
+
     public void ShowBox(int idx, bool show)
     {
         if (!show)
         {
             _boxesTop[idx].localRotation = Quaternion.identity;
+            if (idx == (int)Map.BoxType.Treasure)
+            {
+                InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.ItemReward, false);
+                CurShowBoxIdx = null;
+            }
+            else if (idx == (int)Map.BoxType.Drop)
+            {
+                InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Inventory, false);
+            }
+            else
+            {
+                InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.CardReward, false);
+                CurShowBoxIdx = null;
+            }
         }
-        _boxes[idx].SetActive(show);
+        else
+        {
+            if (idx != (int)Map.BoxType.Drop)
+                CurShowBoxIdx = idx;
+        }
+        _boxes[idx].gameObject.SetActive(show);
     }
-
-    public async UniTaskVoid BoxOpen(bool open, bool drop = false)
+    public async UniTaskVoid DropBoxOpen(bool open)
     {
-        if (_isBoxOpen == open)
+        if (_isDropBoxOpen == open)
         {
             return;
         }
-        int idx = drop ? (int)Map.BoxType.Drop : currStage.rewardBox;
-        if (!_boxes[idx].activeSelf)
+        int idx = (int)Map.BoxType.Drop;
+        if (!_boxes[idx].gameObject.activeSelf)
             return;
-        _isBoxOpen = open;
-        float targetAngle = open ? -130 : 0;
-        float startAngle = _boxesTop[idx].eulerAngles.x;
-        if (startAngle > 180)
-        {
-            startAngle -= 360;
-        }
+        _isDropBoxOpen = open;
+        Quaternion targetAngle = open ? Quaternion.Euler(-60f, 0, 0) : Quaternion.identity;
+        Quaternion startAngle = _boxesTop[idx].localRotation;
+
         float elapsed = 0f;
         float duration = 1f;
         while (elapsed < duration)
         {
             await UniTask.Yield();
-            if (_isBoxOpen == open)
+            if (_isDropBoxOpen == open)
             {
+                Quaternion currentRotation = Quaternion.Slerp(startAngle, targetAngle, elapsed / duration);
                 elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01(elapsed / duration);
-                float currentRotation = Mathf.Lerp(startAngle, targetAngle, t);
+                //float t = Mathf.Clamp01(elapsed / duration);
                 //_boxesTop[idx].localEulerAngles = new Vector3(currentRotation, 0, 0);
-                _boxesTop[idx].localRotation = Quaternion.Euler(currentRotation, 0, 0);
+                _boxesTop[idx].localRotation = currentRotation;
             }
             else
             {
@@ -181,7 +228,42 @@ public class MapManager : MonoBehaviour
 
         }
         //_boxesTop[idx].localEulerAngles = new Vector3(targetAngle, 0, 0);
-        _boxesTop[idx].localRotation = Quaternion.Euler(targetAngle, 0, 0);
+        _boxesTop[idx].localRotation = targetAngle;
+    }
+    public async UniTaskVoid BoxOpen(bool open)
+    {
+        if (_isBoxOpen == open)
+        {
+            return;
+        }
+        int idx = currStage.rewardBox;
+        if (!_boxes[idx].gameObject.activeSelf)
+            return;
+        _isBoxOpen = open;
+        Quaternion targetAngle = open ? Quaternion.Euler(-130f, 0, 0) : Quaternion.identity;
+        Quaternion startAngle = _boxesTop[idx].localRotation;
+
+        float elapsed = 0f;
+        float duration = 1f;
+        while (elapsed < duration)
+        {
+            await UniTask.Yield();
+            if (_isBoxOpen == open)
+            {
+                //float t = Mathf.Clamp01(elapsed / duration);
+                Quaternion currentRotation = Quaternion.Slerp(startAngle, targetAngle, elapsed / duration);
+                elapsed += Time.deltaTime;
+                //_boxesTop[idx].localEulerAngles = new Vector3(currentRotation, 0, 0);
+                _boxesTop[idx].localRotation = currentRotation;
+            }
+            else
+            {
+                return;
+            }
+
+        }
+        //_boxesTop[idx].localEulerAngles = new Vector3(targetAngle, 0, 0);
+        _boxesTop[idx].localRotation = targetAngle;
         //if (_isBoxOpen == open)
         //{
         //    transform.rotation = Quaternion.Euler(targetAngle, 0, 0);
@@ -361,13 +443,13 @@ public class MapManager : MonoBehaviour
         if (map.rewardBox != -1 && (map.ChangedItem || !map.rewarded))
         {
             //_mapManager.rewardCanvas.GetChild(_mapManager.currStage.rewardBox).gameObject.SetActive(false);
-            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, map.rewardBox);
+            //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, map.rewardBox);
             //BoxOpen(false).Forget();
             ShowBox(map.rewardBox, false);
         }
         if (map.LootBox)
         {
-            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, (int)Map.BoxType.Drop);
+            //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, (int)Map.BoxType.Drop);
             //BoxOpen(false, true).Forget();
             ShowBox((int)Map.BoxType.Drop, false);
         }
@@ -381,15 +463,16 @@ public class MapManager : MonoBehaviour
         // 들어간 방에 보상이 떴었는데, 예전에 보상을 받지 않았다면, 그 보상을 다시 시각화함.
         if (map.rewardBox != -1 && (map.ChangedItem || !map.rewarded))
         {
-            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, map.rewardBox);
-            if (map.rewardBox != 0)       // 보물은 한 스테이지에 한 개이기 때문에 UI를 변경할 필요 없음.
+            //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, map.rewardBox);
+            ShowBox(map.rewardBox, true);
+            if (map.rewardBox != 0)       // 보물은 한 스테이지에 한 개이기 때문에 UI를 변경할 필요 없음. (만약 여러 개가 된다면, 해당 맵에 있는 보물 정보로 UI 수정하는 거 추가해야 함.)
             {
                 InGameUIManager.Instance.ShowRewardCard(map.CardReward);
             }
         }
         if (map.LootBox)
         {
-            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, (int)Map.BoxType.Drop);
+            //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, (int)Map.BoxType.Drop);
             ShowBox((int)Map.BoxType.Drop, true);
         }
     }

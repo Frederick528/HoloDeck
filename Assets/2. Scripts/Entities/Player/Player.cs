@@ -216,7 +216,15 @@ public class Player : Entity
         animator.SetBool(_enterAnimBool, false);
         await RotationTask(0.2f, Quaternion.Euler(defaultRot.x, 90, defaultRot.z), Quaternion.identity);
         await OutGameUIManager.Instance.FadeOut(0.55f);
-        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false);          // 방 생성 후, 몇몇 UI 비활성화 (상자)
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false);          // 방 생성 후, 몇몇 UI 비활성화 (상자)
+        int? boxIdx = MapManager.Instance.CurShowBoxIdx;
+        if (boxIdx != null)
+        {
+            MapManager.Instance.ShowBox(boxIdx.Value, false);
+            MapManager.Instance.CurShowBoxIdx = null;
+
+        }
+        MapManager.Instance.ShowBox((int)Map.BoxType.Drop, false);
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);               // 방 생성 후, 몇몇 UI 비활성화 (상점 보상)
         //MapManager.Instance.HideReward(MapManager.Instance.currStage);
 
