@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 
 public class CardAbility
 {
@@ -53,7 +52,7 @@ public class CardAbility
 
     public void SetCardAbility(Card card)
     {
-        card.UseConditions = null;          // 능력과 조건문은 초기화 해줘야 함. 능력은 모두 초기화 시키지만, 조건문은 일부 초기화가 안 되서 오류가 발생하는 경우 존재.
+        card.SetUseConditions(null);          // 능력과 조건문은 초기화 해줘야 함. 능력은 모두 초기화 시키지만, 조건문은 일부 초기화가 안 되서 오류가 발생하는 경우 존재.
         if (card.Data.HasSimpleCondition)
         {
             SettingCondition(card);
@@ -74,7 +73,7 @@ public class CardAbility
                     //    return true;
 
                     //});
-                    card.CardTask = () => UniTask.Create(async () =>
+                    card.SetCardTask(() => UniTask.Create(async () =>
                     {
                         CardManager.Instance.SetCardState(1);
                         await DelayTask(0.5f);
@@ -82,25 +81,25 @@ public class CardAbility
                         await DrawAB(card);
                         //await CardManager.Instance.DrawCard();       // 최하위 UniTask에서 Cancel를 확인하는데... 혹시 문제가 발생할 수도 있나..?
                         await ConfirmedDiscardAB();
-                    });
+                    }));
                     break;
                 case 503:
-                    card.CardTask = () => UniTask.Create(async () =>
+                    card.SetCardTask(() => UniTask.Create(async () =>
                     {
                         await DelayTask(0.5f);
                         InGameManager.Instance.Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), card.Data.Cost);
-                    });
+                    }));
                     break;
                 case 801:
-                    card.CardTask = () => UniTask.Create(async () =>
+                    card.SetCardTask(() => UniTask.Create(async () =>
                     {
                         await DelayTask(0.5f);
                         card.Data.Count = card.Data.Cost;
                         await SingleAttackAB(card);
-                    });
+                    }));
                     break;
                 default:
-                    card.CardTask = () => UniTask.CompletedTask;
+                    card.SetCardTask(() => UniTask.CompletedTask);
                     break;
             }
         }
@@ -467,7 +466,7 @@ public class CardAbility
                 return await ConditionRemoveAB();
             });
         }
-        card.UseConditions = uniTaskCondition;
+        card.SetUseConditions(uniTaskCondition);
     }
 
     void SettingSimpleAB(Card card, float firstDelay = 0.5f, float continuousDelay = 0.3f)
@@ -527,7 +526,7 @@ public class CardAbility
                 });
                 break;
         }
-        card.CardTask = uniTaskAB;
+        card.SetCardTask(uniTaskAB);
         //card.CardTask = () => UniTask.Create(async () =>
         //{
         //    await DelayTask(0.5f);
@@ -586,6 +585,7 @@ public class CardAbility
     // 초기화한 카드 개수를 구하지 않으면, 반복 카드일 경우, endTask를 낮췄다가 다시 올리기에 조건 검사에 문제가 생김.
     async UniTask CheckTaskCount(Card card)
     {
+        // 카드에 시작한 모든 이벤트가 끝났는지 확인(반복에서 사용)
         _checkTask = 0;
         await UniTask.WaitUntil(() => _startTask == _endTask, cancellationToken: TurnManager.Instance.CancelSource.Token).SuppressCancellationThrow();
         if (card.CardUseTiming)
@@ -638,10 +638,12 @@ public class CardAbility
             {
                 if (await CheckTaskCount(card).SuppressCancellationThrow())
                 {
+                    //i = card.Data.Count;
                     break;
                 }
                 if (await CheckTaskOrder(order, false).SuppressCancellationThrow())
                 {
+                    //i = card.Data.Count;
                     break;
                 }
                 //card.UseTimingReset();
@@ -664,6 +666,7 @@ public class CardAbility
                 if (await card.TargetEnemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical)))
                 {
                     Debug.Log(++_endTask);
+                    //i = card.Data.Count;
                     break;
                 }
                 else
@@ -728,15 +731,18 @@ public class CardAbility
             {
                 if (await CheckTaskCount(card).SuppressCancellationThrow())
                 {
+                    //i = card.Data.Count;
                     break;
                 }
                 if (await CheckTaskOrder(order, false).SuppressCancellationThrow())
                 {
+                    //i = card.Data.Count;
                     break;
                 }
 
                 if (EnemyManager.Instance.EnemyList.Count == 0)
                 {
+                    //i = card.Data.Count;
                     break;
                 }
                 else
@@ -746,9 +752,11 @@ public class CardAbility
                 //card.UseTimingReset();
                 if (card.Data.Effect != null)
                 {
+                    // 이펙트가 반복 이펙트인 경우(한 번 소환하고 끝이 아니라 계속 소환하는 경우)
                     if (card.RepeatEffect)
                     {
                         await DelayTask(delay);
+                        // 이펙트가 끝나거나 타이밍을 받아올 때까지 대기.
                         await UniTask.WhenAny(
                         PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(EnemyManager.Instance.EnemyCenterSpawnPos, Quaternion.identity, Vector3.one * 3))
                         , UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: cts.Token)
@@ -756,7 +764,7 @@ public class CardAbility
                     }
                     else
                     {
-                        await UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: cts.Token);
+                        await UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: cts.Token);        // 해당 경우에는 await를 얘만 하기에 따로 토큰 줘도 의미 없긴 함.
                     }
                 }
 
@@ -791,14 +799,18 @@ public class CardAbility
             {
                 if (await CheckTaskCount(card).SuppressCancellationThrow())
                 {
+                    //i = card.Data.Count;
                     break;
                 }
                 if (await CheckTaskOrder(order, false).SuppressCancellationThrow())
                 {
+                    //i = card.Data.Count;
                     break;
                 }
+
                 if (EnemyManager.Instance.EnemyList.Count == 0)
                 {
+
                     break;
                 }
                 else
@@ -901,10 +913,12 @@ public class CardAbility
         {
             if (await CheckTaskCount(card).SuppressCancellationThrow())
             {
+                //i = card.Data.Count;
                 break;
             }
             if (await CheckTaskOrder(order, false).SuppressCancellationThrow())
             {
+                //i = card.Data.Count;
                 break;
             }
             if (card.Data.Effect != null)
@@ -941,10 +955,12 @@ public class CardAbility
         {
             if (await CheckTaskCount(card).SuppressCancellationThrow())
             {
+                //i = card.Data.Count;
                 break;
             }
             if (await CheckTaskOrder(order, false).SuppressCancellationThrow())
             {
+                //i = card.Data.Count;
                 break;
             }
             if (card.Data.Effect != null)

@@ -52,11 +52,11 @@ public class Card : MonoBehaviour
 
     public CardAbility CardAbility = new();
 
-    public Func<UniTask<bool>?> UseConditions;
+    public Func<UniTask<bool>?> UseConditions { get; private set; }
 
     //public Action<Card> CardAction { get; private set; }
     //public Action CardAction { get; private set; }
-    public Func<UniTask> CardTask;
+    public Func<UniTask> CardTask { get; private set; }
     //public AsyncLazy CardLazy { get; private set; }
 
     public bool Enhanced = false;
@@ -168,6 +168,16 @@ public class Card : MonoBehaviour
         //character.sprite = Data.Sprite;
 
         //CardTask = CardAbility.SetCardTaskAbility(Data.ID);
+    }
+
+    public void SetCardTask(Func<UniTask> cardTask)
+    {
+        CardTask = cardTask;
+    }
+
+    public void SetUseConditions(Func<UniTask<bool>?> condition)
+    {
+        UseConditions = condition;
     }
 
     public async UniTask<bool> CheckUseConditions()
