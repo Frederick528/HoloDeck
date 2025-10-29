@@ -29,7 +29,7 @@ MonoBehaviour:
     Cost: 1
     Damage: 5
     Shield: 0
-    Count: 0
+    Count: 1
     Draw: 0
     Discard: 2
     Remove: 0
@@ -46,7 +46,7 @@ MonoBehaviour:
     Cost: 1
     Damage: 3
     Shield: 0
-    Count: 0
+    Count: 1
     Draw: 1
     Discard: 0
     Remove: 0
@@ -82,7 +82,7 @@ MonoBehaviour:
     Cost: 1
     Damage: 0
     Shield: 0
-    Count: 0
+    Count: 1
     Draw: 2
     Discard: 0
     Remove: 0
@@ -99,7 +99,7 @@ MonoBehaviour:
     Cost: 1
     Damage: 0
     Shield: 6
-    Count: 0
+    Count: 1
     Draw: 0
     Discard: 0
     Remove: 0
@@ -116,7 +116,7 @@ MonoBehaviour:
     Cost: 0
     Damage: 0
     Shield: 0
-    Count: 0
+    Count: 1
     Draw: 1
     Discard: 1
     Remove: 0
@@ -133,7 +133,7 @@ MonoBehaviour:
     Cost: 1
     Damage: 0
     Shield: 5
-    Count: 0
+    Count: 1
     Draw: 0
     Discard: 1
     Remove: 0
@@ -150,7 +150,7 @@ MonoBehaviour:
     Cost: 0
     Damage: 1
     Shield: 1
-    Count: 0
+    Count: 1
     Draw: 0
     Discard: 0
     Remove: 0
@@ -169,12 +169,12 @@ MonoBehaviour:
     Cost: 1
     Damage: 0
     Shield: 0
-    Count: 0
+    Count: 1
     Draw: 0
     Discard: 0
     Remove: 0
     Price: 0
-    Descript: 
+    Descript: 1 Damage * Target's Status Count
     Sprite: {fileID: 0}
     Effect: {fileID: 0}
     IsSimpleAB: 0
@@ -203,7 +203,7 @@ MonoBehaviour:
     Cost: 1
     Damage: 3
     Shield: 3
-    Count: 0
+    Count: 1
     Draw: 1
     Discard: 0
     Remove: 0
@@ -241,7 +241,7 @@ MonoBehaviour:
     Cost: -1
     Damage: 0
     Shield: 0
-    Count: 0
+    Count: 1
     Draw: 0
     Discard: 0
     Remove: 0
@@ -258,7 +258,7 @@ MonoBehaviour:
     Cost: 3
     Damage: 30
     Shield: 0
-    Count: 0
+    Count: 1
     Draw: 0
     Discard: 0
     Remove: 0
@@ -275,7 +275,7 @@ MonoBehaviour:
     Cost: -1
     Damage: 10
     Shield: 0
-    Count: 0
+    Count: 1
     Draw: 0
     Discard: 0
     Remove: 0
@@ -333,7 +333,7 @@ MonoBehaviour:
     Cost: 3
     Damage: 100
     Shield: 0
-    Count: 0
+    Count: 1
     Draw: 0
     Discard: 0
     Remove: 0
@@ -350,7 +350,7 @@ MonoBehaviour:
     Cost: 2
     Damage: 0
     Shield: 0
-    Count: 0
+    Count: 1
     Draw: 10
     Discard: 0
     Remove: 0
@@ -367,7 +367,7 @@ MonoBehaviour:
     Cost: 1
     Damage: 4
     Shield: 0
-    Count: 0
+    Count: 1
     Draw: 2
     Discard: 0
     Remove: 0
@@ -420,7 +420,7 @@ MonoBehaviour:
     Cost: 1
     Damage: 0
     Shield: 0
-    Count: 0
+    Count: 1
     Draw: 3
     Discard: 0
     Remove: 0
@@ -437,7 +437,7 @@ MonoBehaviour:
     Cost: 1
     Damage: 0
     Shield: 11
-    Count: 0
+    Count: 1
     Draw: 0
     Discard: 0
     Remove: 0

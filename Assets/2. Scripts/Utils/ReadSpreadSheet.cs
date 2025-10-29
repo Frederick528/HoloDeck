@@ -162,7 +162,7 @@ public class ReadSpreadSheet : MonoBehaviour
                 Cost = ConvertInt32(cells[2]),
                 Damage = ConvertInt32(cells[3]),
                 Shield = ConvertInt32(cells[4]),
-                Count = ConvertInt32(cells[5]),
+                Count = ConvertInt32(cells[5]) == 0 ? 1 : ConvertInt32(cells[5]),
                 Draw = ConvertInt32(cells[6]),
                 Discard = ConvertInt32(cells[7]),
                 Remove = ConvertInt32(cells[8]),
