@@ -573,7 +573,7 @@ public class InGameManager : MonoBehaviour
                 for (int i = EnemyManager.Instance.EnemyList.Count - 1; i >= 0; --i)
                 {
                     //EnemyManager.Instance.EnemyList[i].CheckIfDead(9999, 1);
-                    EnemyManager.Instance.EnemyList[i].TakeDamage(9999, false).Forget();
+                    EnemyManager.Instance.EnemyList[i].TakeDamage(9999).Forget();
                     //EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
                 }
             }

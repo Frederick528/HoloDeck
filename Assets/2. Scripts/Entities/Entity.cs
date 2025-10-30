@@ -116,48 +116,70 @@ public abstract class Entity : MonoBehaviour
     //    //slider.value = _maxHP.Value;
     //    //hpText.text = _maxHP.ToString();
     //}
-    protected virtual async UniTask<int> BeforeTakeDamage(int damage, bool isHit)
+    protected virtual async UniTask<int> BeforeTakeDamage(int damage, Entity attacker = null)
     {
         if (ApplyStatusEffect(StatusEffect.Immunity, out _)) { return 0; }
-        if (!isHit) { return damage; }
+        if (attacker == null) { return damage; }
         if (ApplyStatusEffect(StatusEffect.Protect, out int amount))
         {
             await Shield(amount);
         }
         return damage;
     }
-    protected virtual async UniTask AfterTakeDamage(bool isHit)
+    protected virtual async UniTask AfterTakeDamage(Entity attacker = null)
     {
-        if (!isHit) { return; }
-        if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player)        // 현재 턴이 플레이어 턴일 경우 => 플레이어 턴에 직접 타격을 받은 엔티티는 적
+        if (attacker == null) { return; }
+
+        if (ApplyStatusEffect(StatusEffect.Vampire, out int vampire))
         {
-            // 뱀파이어 효과로 적이 공격 받으면, 직접 타격한 엔티티(여기선 플레이어)가 회복.
-            if (InGameManager.Instance.Player.ApplyStatusEffect(StatusEffect.Vampire, out int vampire))
-            {
-                await InGameManager.Instance.Player.Heal(vampire);
-            }
+            await attacker.Heal(vampire);
         }
-        else if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Enemy)    // 반대 상황
-        {
-            if (EnemyManager.Instance.HitEnemy.ApplyStatusEffect(StatusEffect.Vampire, out int vampire))
-            {
-                await EnemyManager.Instance.HitEnemy.Heal(vampire);
-            }
-        }
+
         if (ApplyStatusEffect(StatusEffect.Reflection, out int amount))
         {
-            if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player/* && BattleManager.Instance.HitEntity.Item1 != null*/)
-            {
-                await InGameManager.Instance.Player.TakeDamage(amount, false);
-            }
-            else if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Enemy/* && BattleManager.Instance.HitEntity.Item2 != null*/)
-            {
-                //EnemyManager.Instance.HitEnemy.CheckIfDead(amount, 1, false);
-                await EnemyManager.Instance.HitEnemy.TakeDamage(amount, false);
-                //BattleManager.Instance.HitEntity.Item2.CheckIfDead(amount, 1, false);
-                //BattleManager.Instance.HitEntity.Item2.TakeDamage(amount, false).Forget();
-            }
+            await attacker.TakeDamage(amount);
         }
+
+
+        //if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player)        // 현재 턴이 플레이어 턴일 경우 => 플레이어 턴에 직접 타격을 받은 엔티티는 적
+        //{
+        //    // 뱀파이어 효과로 적이 공격 받으면, 직접 타격한 엔티티(여기선 플레이어)가 회복.
+        //    if (InGameManager.Instance.Player.ApplyStatusEffect(StatusEffect.Vampire, out int vampire))
+        //    {
+        //        await InGameManager.Instance.Player.Heal(vampire);
+        //    }
+
+        //    if (ApplyStatusEffect(StatusEffect.Reflection, out int amount))
+        //    {
+        //        await InGameManager.Instance.Player.TakeDamage(amount);
+        //    }
+        //}
+        //else if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Enemy)    // 반대 상황
+        //{
+        //    if (EnemyManager.Instance.HitEnemy.ApplyStatusEffect(StatusEffect.Vampire, out int vampire))
+        //    {
+        //        await EnemyManager.Instance.HitEnemy.Heal(vampire);
+        //    }
+
+        //    if (ApplyStatusEffect(StatusEffect.Reflection, out int amount))
+        //    {
+        //        await EnemyManager.Instance.HitEnemy.TakeDamage(amount);
+        //    }
+        //}
+        //if (ApplyStatusEffect(StatusEffect.Reflection, out int amount))
+        //{
+        //    if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player/* && BattleManager.Instance.HitEntity.Item1 != null*/)
+        //    {
+        //        await InGameManager.Instance.Player.TakeDamage(amount, false);
+        //    }
+        //    else if (TurnManager.Instance.CurTurnType == TurnManager.TurnType.Enemy/* && BattleManager.Instance.HitEntity.Item2 != null*/)
+        //    {
+        //        //EnemyManager.Instance.HitEnemy.CheckIfDead(amount, 1, false);
+        //        await EnemyManager.Instance.HitEnemy.TakeDamage(amount, false);
+        //        //BattleManager.Instance.HitEntity.Item2.CheckIfDead(amount, 1, false);
+        //        //BattleManager.Instance.HitEntity.Item2.TakeDamage(amount, false).Forget();
+        //    }
+        //}
     }
 
     /// <summary>
@@ -170,9 +192,9 @@ public abstract class Entity : MonoBehaviour
     /// 상대가 직접 타격한 것인지 아닌지 확인.
     /// </param>
     /// <returns></returns>
-    public async virtual UniTask<bool> TakeDamage(int dmg, bool isHit)
+    public async virtual UniTask<bool> TakeDamage(int dmg, Entity attacker = null)
     {
-        dmg = await BeforeTakeDamage(dmg, isHit);
+        dmg = await BeforeTakeDamage(dmg, attacker);
         if (dmg == 0)       // 데미지가 0일 경우, 맞은 후 효과는 발동 X
             return false;
         TextEffect(-dmg).Forget();
@@ -197,7 +219,7 @@ public abstract class Entity : MonoBehaviour
         animator.Play(_hitAnim, -1, 0);  // 타격 당하는 애니메이션 실행        => 공격 중에는 딜레이를 주거나 무시하는 코드가 필요할 듯.
         if (CurHP.Value > 0)
         {
-            await AfterTakeDamage(isHit);
+            await AfterTakeDamage(attacker);
             return false;
         }
 

@@ -762,7 +762,7 @@ public class CardManager : MonoBehaviour
 
     public async UniTask PlayedCard(Card playedCard)
     {
-        if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
+        if (!TurnManager.Instance.InBattle)
         {
             playedCard.FailedUseCard();
             return;
@@ -845,6 +845,12 @@ public class CardManager : MonoBehaviour
             results.Add(new PRS(targetPos, Quaternion.identity, scale));
         }
         return results;
+    }
+
+    public void HandCardSort()
+    {
+        SetOriginOrder();
+        CardAlignment();
     }
 
     void SetOriginOrder()       // 카드가 보이는 순서 설정
@@ -933,15 +939,16 @@ public class CardManager : MonoBehaviour
         card.IsEnqueued = isIn;
         if (isIn)
         {
+            card.ImmediatelyUseCard?.Invoke();
             card.MoveTransform(new PRS(WatingCardTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.CardAlignmentDelay);
             _enQueuedCardCount++;
             if (_enQueuedCardCount > 0)
             {
-                card.CardOrder.SetOriginOrder(--_waitedCardOrder);
+                card.CardOrder.SetOriginOrder(++_waitedCardOrder);
             }
             else
             {
-                _waitedCardOrder = -1;
+                _waitedCardOrder = -10;
                 card.CardOrder.SetOriginOrder(_waitedCardOrder);
             }
         }

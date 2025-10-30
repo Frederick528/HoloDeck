@@ -16,8 +16,9 @@ public class EnemyManager : MonoBehaviour
     bool[] enemySpawn;
     bool[] bossSpawn;
     public Enemy TargetEnemy;
+    public bool NoEnemy;    // TurnManager에 있는 InBattle은 전투가 끝났는가?(적이 죽는 모션까지 포함) NoEnemy는 현재 선택할 수 있는 적이 없는가?(죽는 모션 포함 X)
 
-    public Enemy HitEnemy;
+    //public Enemy HitEnemy;
 
     public Enemy EnemyInfo;
     //public Arrow ArrowCursor;
@@ -87,6 +88,7 @@ public class EnemyManager : MonoBehaviour
     {
         if (spawnPosIndex >= enemySpawn.Length || !enemySpawn[spawnPosIndex])       // 나중에 배열 만들어서 gameObject가 아니라 bool값으로 바로 받아올 것.
             return false;
+        NoEnemy = EnemyList.Count == 0;
         EnemyData enemyData = FindEnemyData(enemyId);
         GameObject enemyObject = Instantiate(enemyData.EnemyPrefab, enemySpawnPosition[spawnPosIndex], Quaternion.identity);
         Enemy enemy = enemyObject.GetComponent<Enemy>();
@@ -107,6 +109,7 @@ public class EnemyManager : MonoBehaviour
         {
             if (!enemySpawn[i]/*enemySpawnPosition[i].gameObject.activeSelf*/)
                 continue;
+            NoEnemy = EnemyList.Count == 0;
             enemyData = FindEnemyData(enemyId);
             enemyObject = Instantiate(enemyData.EnemyPrefab, enemySpawnPosition[i], Quaternion.identity);
             enemy = enemyObject.GetComponent<Enemy>();
@@ -124,6 +127,7 @@ public class EnemyManager : MonoBehaviour
     {
         if (!bossSpawn[spawnPosIndex]/*enemySpawnPosition[spawnPosIndex].gameObject.activeSelf*/)       // 나중에 배열 만들어서 gameObject가 아니라 bool값으로 바로 받아올 것.
             return false;
+        NoEnemy = EnemyList.Count == 0;
         EnemyData enemyData = FindEnemyData(enemyId);
         GameObject enemyObject = Instantiate(enemyData.EnemyPrefab, bossSpawnPosition[spawnPosIndex], Quaternion.identity);
         Enemy enemy = enemyObject.GetComponent<Enemy>();
@@ -144,6 +148,7 @@ public class EnemyManager : MonoBehaviour
         {
             if (!bossSpawn[i]/*enemySpawnPosition[i].gameObject.activeSelf*/)
                 continue;
+            NoEnemy = EnemyList.Count == 0;
             enemyData = FindEnemyData(enemyId);
             enemyObject = Instantiate(enemyData.EnemyPrefab, bossSpawnPosition[i], Quaternion.identity);
             enemy = enemyObject.GetComponent<Enemy>();
@@ -158,14 +163,14 @@ public class EnemyManager : MonoBehaviour
     }
 
 
-    public async UniTask<bool> KillEnemyCheck(Enemy enemy, UniTask task)
+    public async UniTask KillEnemyCheck(Enemy enemy, UniTask task)
     {
         EnemyList.Remove(enemy);
         EnemyDict.Remove(enemy.gameObject.GetInstanceID());
-        bool noEnemy = EnemyList.Count == 0;
+        /*bool noEnemy */NoEnemy = EnemyList.Count == 0;
         await task;
         enemySpawn[enemy.spawnPosIdx] = true;
-        return noEnemy;
+        //return noEnemy;
     }
 
     public EnemyData FindEnemyData(int id)   // ID 값으로 적 데이터 가져오기

@@ -178,14 +178,15 @@ public class ItemAbility
 
     async UniTask SingleAttackAB(UseItem item)
     {
-        await item.TargetEnemy.TakeDamage(item.Data.Damage);        // 이 전 단계에서 null 검사를 하기 때문에 ?. 할 필요 없음.
+        await item.TargetEnemy.TakeDamage(item.Data.Damage, InGameManager.Instance.Player);        // 이 전 단계에서 null 검사를 하기 때문에 ?. 할 필요 없음.
         item.Target(null);                                         // missing 체크를 위한 거였으나.. 안 되나..??
     }
     async UniTask MultiAttackAB(UseItem item)
     {
+        Player player = InGameManager.Instance.Player;
         int enemyCount = EnemyManager.Instance.EnemyList.Count;
         await UniTask.WhenAll(Enumerable.Range(0, enemyCount).
-            Select(i => EnemyManager.Instance.EnemyList[(enemyCount - 1) - i].TakeDamage(item.Data.Damage)));
+            Select(i => EnemyManager.Instance.EnemyList[(enemyCount - 1) - i].TakeDamage(item.Data.Damage, player)));
     }
     //async UniTask ContinuousSinglettackAB(Card card, float delay)
     //{

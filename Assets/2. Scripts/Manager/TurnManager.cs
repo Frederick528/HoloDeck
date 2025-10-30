@@ -242,7 +242,7 @@ public class TurnManager : MonoBehaviour
     {
         CurTurnType = TurnType.Enemy;
         //BattleManager.Instance.HitEntity.Item2 = null;
-        EnemyManager.Instance.HitEnemy = null;
+        //EnemyManager.Instance.HitEnemy = null;
 
         foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
         {
@@ -288,10 +288,9 @@ public class TurnManager : MonoBehaviour
     public async UniTask EndBattle()         // 리팩토링 필요해보임.
     {
         InBattle = false;
-        EnemyManager.Instance.HitEnemy = null;
+        //EnemyManager.Instance.HitEnemy = null;
         InGameManager.Instance.Player.StartOrEndBattle(InBattle);
         CancelSource.Cancel();
-        InGameManager.Instance.AbilityEventQueue.QueueClear();
 
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Battle, false);
         //OnAddCard = null;

@@ -57,14 +57,21 @@ public class EventQueue
         if (_queue.Count == 0)
         {
             _isPending = false;
-            if (!EnemyManager.Instance.MapClear)
-                InGameButtonManager.Instance.TurnEndBtnInvert(!_isPending);
+            //if (!EnemyManager.Instance.MapClear)
+            //    InGameButtonManager.Instance.TurnEndBtnInvert(!_isPending);
             //if (InGameManager.Instance.player.CurHolo == 0)           // 강제 턴종은 포션이나 스킬 효과를 못 쓰게 만드므로 그냥 제거
             //    TurnManager.Instance.EndTurn().Forget();
             return;
         }
 
         _isPending = true;      // 턴매니저에 있는 로딩과는 느낌이 다름.
+        if (EnemyManager.Instance.NoEnemy)
+        {
+            QueueClear();
+            Debug.Log("AAA");
+            return;
+        }
+        //Debug.Log("카드 실행");
         InGameButtonManager.Instance.TurnEndBtnInvert(!_isPending);
         if (_queue.Peek() is Card cardEvent)
         {
@@ -114,7 +121,7 @@ public class EventQueue
         //gameEvent.Invoke();
     }
 
-    public void QueueClear()        // 큐에 있는 능력들로 적이 다 죽었다고 판단되면, 더 이상 카드를 못 쓰기 때문에 사실상 필요없음. 그래도 혹시 모르니깐..
+    public void QueueClear() 
     {
         //_isPending = false;         // Ability를 Action으로 할 경우에는 사용해야 함.
         int count = _queue.Count;
@@ -125,8 +132,9 @@ public class EventQueue
                 _queue.Dequeue();
 
                 CardManager.Instance.CardInQueue(card, false);
+                CardManager.Instance.PutDownCard(card).Forget();
 
-                QueueClearCard(card)/*.Forget()*/;
+                //QueueClearCard(card)/*.Forget()*/;
             }
             else if (_queue.Peek() is Item item)
             {
@@ -142,6 +150,8 @@ public class EventQueue
             }
             //--i;
         }
+        //CardManager.Instance.ResetSetting();
+        CardManager.Instance.HandCardSort();
         _isPending = false;
         //_queue.Clear();
     }
@@ -150,6 +160,7 @@ public class EventQueue
     {
         //await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay);
         //CardManager.Instance.FailedUseCard(card);
+        //CardManager.Instance.PutDownCard(card).Forget();
         card.AfterCardAbility(true).Forget();
     }
 

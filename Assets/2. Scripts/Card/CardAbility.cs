@@ -15,98 +15,203 @@ public class CardAbility
     //int _endTask;
     //int _checkTask;
     CancellationTokenSource _cts;
+
+    Action _cardImmediately;
+    Func<UniTask> _cardTask;
+    Func<UniTask<bool>?> _conditionTask;
+
+    Player _player;
     public void SetCardAbility(Card card)
     {
-        card.SetUseConditions(null);          // 능력과 조건문은 초기화 해줘야 함. 능력은 모두 초기화 시키지만, 조건문은 일부 초기화가 안 되서 오류가 발생하는 경우 존재.
+        _player = InGameManager.Instance.Player;
+        SettingImmediately(card);
+
         if (card.Data.HasSimpleCondition)
         {
             SettingCondition(card);
         }
+
         if (card.Data.IsSimpleAB)
         {
             SettingSimpleAB(card);
         }
         else
         {
-            switch (card.Data.ID)
-            {
-                case 105:
-                    //card.UseConditions = () => UniTask.Create(async () =>
-                    //{
-                    //    CardManager.Instance.SetCardState(1);
-                    //    await UniTask.CompletedTask;        // 사실 없어도 됨.
-                    //    return true;
-
-                    //});
-                    card.SetCardTask(() => UniTask.Create(async () =>
-                    {
-                        CardManager.Instance.SetCardState(1);
-                        await AddCardEvent(card, 0.5f,
-                            (0, () => DrawAB(card)),
-                            (1, () => ConfirmedDiscardAB())
-                        );
-                        //await ConfirmedDiscardAB();
-                    }));
-                    break;
-                case 503:
-                    card.SetCardTask(() => UniTask.Create(async () =>
-                    {
-                        await DelayTask(0.5f);
-                        InGameManager.Instance.Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), card.Data.Cost);
-                    }));
-                    break;
-                case 801:
-                    card.SetCardTask(() => UniTask.Create(async () =>
-                    {
-                        await AddCardEvent(card, 0.5f,
-                            (0, async () =>
-                            {
-                                card.Data.Count = card.Data.Cost;
-                                await SingleAttackAB(card, InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _));
-                            })
-                        );
-                        //await DelayTask(0.5f);
-                        //card.Data.Count = card.Data.Cost;
-                        //await SingleAttackAB(card, true);
-                    }));
-                    break;
-                default:
-                    card.SetCardTask(() => UniTask.CompletedTask);
-                    break;
-            }
+            SettingCardAB(card);
         }
+        card.SetCardImmediately(_cardImmediately);
+        card.SetCardTask(_cardTask);
+        card.SetUseConditions(_conditionTask);
+        //if (!_firstInitialize)
+        //{
+        //    _firstInitialize = true;
+        //    _player = InGameManager.Instance.Player;
+        //    if (card.Data.HasSimpleCondition)
+        //    {
+        //        SettingCondition(card);
+        //    }
+        //    if (card.Data.IsSimpleAB)
+        //    {
+        //        SettingSimpleAB(card);
+        //    }
+        //    else
+        //    {
+        //        switch (card.Data.ID)
+        //        {
+        //            case 105:
+        //                //card.UseConditions = () => UniTask.Create(async () =>
+        //                //{
+        //                //    CardManager.Instance.SetCardState(1);
+        //                //    await UniTask.CompletedTask;        // 사실 없어도 됨.
+        //                //    return true;
+
+        //                //});
+        //                _cardTask = () => UniTask.Create(async () =>
+        //                {
+        //                    CardManager.Instance.SetCardState(1);
+        //                    await AddCardEvent(card, 0.5f,
+        //                        (0, () => DrawAB(card)),
+        //                        (1, () => ConfirmedDiscardAB())
+        //                    );
+        //                    //await ConfirmedDiscardAB();
+        //                });
+        //                break;
+        //            case 503:
+        //                _cardTask = () => UniTask.Create(async () =>
+        //                {
+        //                    await DelayTask(0.5f);
+        //                    _player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), card.Data.Cost);
+        //                });
+        //                break;
+        //            case 801:
+        //                _cardTask = () => UniTask.Create(async () =>
+        //                {
+        //                    await AddCardEvent(card, 0.5f,
+        //                        (0, async () =>
+        //                        {
+        //                            card.Data.Count = card.Data.Cost;
+        //                            await SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _));
+        //                        }
+        //                    )
+        //                    );
+        //                    //await DelayTask(0.5f);
+        //                    //card.Data.Count = card.Data.Cost;
+        //                    //await SingleAttackAB(card, true);
+        //                });
+        //                break;
+        //            default:
+        //                _cardTask = () => UniTask.CompletedTask;
+        //                break;
+        //        }
+        //    }
+        //    card.SetCardTask(_cardTask);
+        //    card.SetUseConditions(_conditionTask);
+        //}
+        //card.SetUseConditions(null);          // 능력과 조건문은 초기화 해줘야 함. 능력은 모두 초기화 시키지만, 조건문은 일부 초기화가 안 되서 오류가 발생하는 경우 존재.
+        //if (card.Data.HasSimpleCondition)
+        //{
+        //    SettingCondition(card);
+        //}
+        //if (card.Data.IsSimpleAB)
+        //{
+        //    SettingSimpleAB(card);
+        //}
+        //else
+        //{
+        //    switch (card.Data.ID)
+        //    {
+        //        case 105:
+        //            //card.UseConditions = () => UniTask.Create(async () =>
+        //            //{
+        //            //    CardManager.Instance.SetCardState(1);
+        //            //    await UniTask.CompletedTask;        // 사실 없어도 됨.
+        //            //    return true;
+
+        //            //});
+        //            card.SetCardTask(() => UniTask.Create(async () =>
+        //            {
+        //                CardManager.Instance.SetCardState(1);
+        //                await AddCardEvent(card, 0.5f,
+        //                    (0, () => DrawAB(card)),
+        //                    (1, () => ConfirmedDiscardAB())
+        //                );
+        //                //await ConfirmedDiscardAB();
+        //            }));
+        //            break;
+        //        case 503:
+        //            card.SetCardTask(() => UniTask.Create(async () =>
+        //            {
+        //                await DelayTask(0.5f);
+        //                _player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), card.Data.Cost);
+        //            }));
+        //            break;
+        //        case 801:
+        //            card.SetCardTask(() => UniTask.Create(async () =>
+        //            {
+        //                await AddCardEvent(card, 0.5f,
+        //                    (0, async () =>
+        //                    {
+        //                        card.Data.Count = card.Data.Cost;
+        //                        await SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _));
+        //                    })
+        //                );
+        //                //await DelayTask(0.5f);
+        //                //card.Data.Count = card.Data.Cost;
+        //                //await SingleAttackAB(card, true);
+        //            }));
+        //            break;
+        //        default:
+        //            card.SetCardTask(() => UniTask.CompletedTask);
+        //            break;
+        //    }
+        //}
         //return cardActTask;
+    }
+    void SettingImmediately(Card card)
+    {
+        switch (card.Data.ID)
+        {
+            case 105:
+                _cardImmediately = () =>
+                {
+                    CardManager.Instance.SetCardState(1);
+                };
+                break;
+            default:
+                _cardImmediately = null ;
+                break;
+        }
     }
 
     void SettingCondition(Card card)
     {
-        Func<UniTask<bool>?> uniTaskCondition = null;
+        //Func<UniTask<bool>?> uniTaskCondition = null;
         if (card.Data.Discard > 0)
         {
-            uniTaskCondition = () => UniTask.Create(async () =>
+            _conditionTask = () => UniTask.Create(async () =>
             {
                 return await ConditionDiscardAB();
             });
         }
         else if (card.Data.Remove > 0)
         {
-            uniTaskCondition = () => UniTask.Create(async () =>
+            _conditionTask = () => UniTask.Create(async () =>
             {
                 return await ConditionRemoveAB();
             });
         }
-        card.SetUseConditions(uniTaskCondition);
+        //card.SetUseConditions(uniTaskCondition);
     }
 
     void SettingSimpleAB(Card card, float delay = 0.3f)
     {
-        Func<UniTask> uniTaskAB = null;
-        bool critical = InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _);
+        //Func<UniTask> uniTaskAB = null;
+        bool critical = _player.GetStatusEffect(StatusEffect.UseCritical, out _);
         switch (card.Data.CardTag)
         {
             case CardTag.SingleAttack:
                 if (card.Data.Shield > 0 || card.Data.Draw > 0)
-                    uniTaskAB = () => UniTask.Create(async () =>
+                    _cardTask = () => UniTask.Create(async () =>
                     {
                         await AddCardEvent(card, delay,
                             (0, () => SingleAttackAB(card, critical)),
@@ -115,7 +220,7 @@ public class CardAbility
                         );
                     });
                 else
-                    uniTaskAB = () => UniTask.Create(async () =>
+                    _cardTask = () => UniTask.Create(async () =>
                     {
                         await AddCardEvent(card, delay,
                             (0, () => SingleAttackAB(card, critical))
@@ -124,7 +229,7 @@ public class CardAbility
                 break;
             case CardTag.MultiAttack:
                 if (card.Data.Shield > 0 || card.Data.Draw > 0)
-                    uniTaskAB = () => UniTask.Create(async () =>
+                    _cardTask = () => UniTask.Create(async () =>
                     {
                         await AddCardEvent(card, delay,
                              (0, () => MultiAttackAB(card, critical)),
@@ -133,7 +238,7 @@ public class CardAbility
                          );
                     });
                 else
-                    uniTaskAB = () => UniTask.Create(async () =>
+                    _cardTask = () => UniTask.Create(async () =>
                     {
                         await AddCardEvent(card, delay,
                              (0, () => MultiAttackAB(card, critical))
@@ -141,7 +246,7 @@ public class CardAbility
                     });
                 break;
             case CardTag.Skill:
-                uniTaskAB = () => UniTask.Create(async () =>
+                _cardTask = () => UniTask.Create(async () =>
                 {
                     await AddCardEvent(card, delay,
                              (0, () => ShieldAB(card)),
@@ -150,8 +255,48 @@ public class CardAbility
                 });
                 break;
         }
-        card.SetCardTask(uniTaskAB);
+        //card.SetCardTask(uniTaskAB);
 
+    }
+
+    void SettingCardAB(Card card)
+    {
+        switch (card.Data.ID)
+        {
+            case 105:
+                _cardTask = () => UniTask.Create(async () =>
+                {
+                    //CardManager.Instance.SetCardState(1);
+                    await AddCardEvent(card, 0.5f,
+                        (0, () => DrawAB(card)),
+                        (1, () => ConfirmedDiscardAB())
+                    );
+                });
+                break;
+            case 503:
+                _cardTask = () => UniTask.Create(async () =>
+                {
+                    await DelayTask(0.5f);
+                    _player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), card.Data.Cost);
+                });
+                break;
+            case 801:
+                _cardTask = () => UniTask.Create(async () =>
+                {
+                    await AddCardEvent(card, 0.5f,
+                        (0, async () =>
+                        {
+                            card.Data.Count = card.Data.Cost;
+                            await SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _));
+                        }
+                    )
+                    );
+                });
+                break;
+            default:
+                _cardTask = () => UniTask.CompletedTask;
+                break;
+        }
     }
 
     async UniTask PlayCardEvent(Card card, SortedDictionary<int, List<Func<UniTask>>> cardEvent, float delay)
@@ -197,10 +342,10 @@ public class CardAbility
             {
                 case CardTag.SingleAttack:
                     card.Target(null);
-                    InGameManager.Instance.Player.CheckCritical();
+                    _player.CheckCritical();
                     break;
                 case CardTag.MultiAttack:
-                    InGameManager.Instance.Player.CheckCritical();
+                    _player.CheckCritical();
                     break;
                 case CardTag.Skill:
                     break;
@@ -252,7 +397,7 @@ public class CardAbility
                                 PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(enemy.transform.position, Quaternion.identity, Vector3.one))
                                 , UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: _cts.Token)
                                 );
-                            //await enemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical));
+                            //await enemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, critical));
                         }
                     }));
                 }
@@ -336,7 +481,7 @@ public class CardAbility
     //        //                        , UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: _cts.Token)
     //        //                        );
     //        //                    //await UniTask.WaitUntil(() => card.CardUseTiming);
-    //        //                    await enemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical));
+    //        //                    await enemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, critical));
     //        //                }
     //        //            }));
     //        //        }
@@ -387,7 +532,7 @@ public class CardAbility
     {
         //await CheckTaskOrder(card, order);
 
-        //bool critical = InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _);
+        //bool critical = _player.GetStatusEffect(StatusEffect.UseCritical, out _);
 
 
         //if (card.Data.Effect != null && _isFirstOrder)
@@ -405,7 +550,7 @@ public class CardAbility
         //    await UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: _cts.Token);
         //}
 
-        bool killEnemy = await card.TargetEnemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical));
+        bool killEnemy = await card.TargetEnemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, critical), _player);
         if (killEnemy)
         {
             //Debug.Log(_cts);
@@ -461,8 +606,8 @@ public class CardAbility
         //        //        await UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: cts.Token);
         //        //    }
         //        //}
-        //        //damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
-        //        if (await card.TargetEnemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical)))
+        //        //damage = _player.CheckCritical(card.Data.Damage);
+        //        if (await card.TargetEnemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, critical)))
         //        {
         //            Debug.Log(++_endTask);
         //            //i = card.Data.Count;
@@ -477,7 +622,7 @@ public class CardAbility
         //_cts.Cancel();
         //_cts.Dispose();
         //card.Target(null);
-        //InGameManager.Instance.Player.CheckCritical();
+        //_player.CheckCritical();
         //await CheckTaskCount(card).SuppressCancellationThrow();
         //await CheckAllEndTask();
 
@@ -492,9 +637,9 @@ public class CardAbility
         //    Debug.Log(--_startTask);
         //    return;
         //}
-        //bool critical = InGameManager.Instance.Player.CheckCritical();
-        //bool critical = InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _);
-        //int damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
+        //bool critical = _player.CheckCritical();
+        //bool critical = _player.GetStatusEffect(StatusEffect.UseCritical, out _);
+        //int damage = _player.CheckCritical(card.Data.Damage);
 
 
         var enemyList = EnemyManager.Instance.EnemyList.ToList();
@@ -503,10 +648,10 @@ public class CardAbility
         {
             if (enemy != null)
             {
-                await enemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical));
+                await enemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, critical), _player);
             }
         }));
-        if (EnemyManager.Instance.EnemyList.Count == 0)
+        if (EnemyManager.Instance.NoEnemy) // 여긴 InBattle로 체크 안 함. InBattle은 적 죽는 모션 끝나는 것까지 기다려야 함. (+클리어 판정이 아닌, 현재 필드에 남아있는 적이 없다는 뜻)
         {
             _cts.Cancel();
             _cts.Dispose();
@@ -537,7 +682,7 @@ public class CardAbility
         //    {
         //        if (enemy != null)
         //        {
-        //            await enemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical));
+        //            await enemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, critical));
         //        }
         //    }));
         //    Debug.Log(++_endTask);
@@ -587,7 +732,7 @@ public class CardAbility
         //        {
         //            if (enemy != null)
         //            {
-        //                await enemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical));
+        //                await enemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, critical));
         //            }
         //        }));
         //        Debug.Log(++_endTask);
@@ -604,7 +749,7 @@ public class CardAbility
         //                , UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: _cts.Token)
         //                );
         //            //await UniTask.WaitUntil(() => card.CardUseTiming);
-        //            await enemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical));
+        //            await enemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, critical));
         //        }
         //    }));
 
@@ -650,11 +795,11 @@ public class CardAbility
         //                {
         //                    await UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: _cts.Token);
         //                }
-        //                await enemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical));
+        //                await enemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, critical));
         //            }
         //            else if (enemy != null)
         //            {
-        //                await enemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical));
+        //                await enemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, critical));
         //            }
         //        }));
 
@@ -665,7 +810,7 @@ public class CardAbility
         ////    .Select(async j =>
         ////    {
         ////        await PoolManager.Instance.GetEffect(card.Data.Effect, EnemyManager.Instance.EnemyList[(enemyCount - 1) - j].transform.position, Quaternion.identity);
-        ////        await EnemyManager.Instance.EnemyList[(enemyCount - 1) - j].TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical));
+        ////        await EnemyManager.Instance.EnemyList[(enemyCount - 1) - j].TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, critical));
 
         ////    }));
 
@@ -693,18 +838,18 @@ public class CardAbility
         ////            {
         ////                await UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: cts.Token);
         ////            }
-        ////            await enemy.TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical));
+        ////            await enemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, critical));
         ////        }
         ////    }));
-        ////    //damage = InGameManager.Instance.Player.CheckCritical(card.Data.Damage);
+        ////    //damage = _player.CheckCritical(card.Data.Damage);
         ////    //enemyCount = EnemyManager.Instance.EnemyList.Count;
         ////    //await UniTask.WhenAll(Enumerable.Range(0, enemyCount).
-        ////    //    Select(j => EnemyManager.Instance.EnemyList[(enemyCount - 1) - j].TakeDamage(InGameManager.Instance.Player.CheckCriticalDamage(card.Data.Damage, critical))));
+        ////    //    Select(j => EnemyManager.Instance.EnemyList[(enemyCount - 1) - j].TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, critical))));
         ////}
         ///
         //_cts.Cancel();
         //_cts.Dispose();
-        //InGameManager.Instance.Player.CheckCritical();
+        //_player.CheckCritical();
         //await CheckTaskCount(card).SuppressCancellationThrow();
         //await CheckAllEndTask();
 
@@ -741,7 +886,7 @@ public class CardAbility
         //    await UniTask.WaitUntil(() => card.CardUseTiming);
         //}
         // 쉴드가 다른 공격, 드로우에 비해 시간이 짧아서 같이 쓰려면 무조건 이펙트가 있어야 함. 안 그러면 순서가 이상해질 수 있음.
-        await InGameManager.Instance.Player.Shield(card.Data.Shield);
+        await _player.Shield(card.Data.Shield);
         //Debug.Log(++_endTask);
         //for (int i = 1; i < card.Data.Count; ++i)
         //{
@@ -774,7 +919,7 @@ public class CardAbility
         //    {
         //        await DelayTask(delay);
         //    }
-        //    await InGameManager.Instance.Player.Shield(card.Data.Shield);
+        //    await _player.Shield(card.Data.Shield);
         //    Debug.Log(++_endTask);
         //}
         //await CheckTaskCount(card).SuppressCancellationThrow();
@@ -844,11 +989,11 @@ public class CardAbility
     //}
     //async UniTask ShieldAB(Card card)
     //{
-    //    await InGameManager.Instance.player.Shield(card.Data.Shield);
+    //    await _player.Shield(card.Data.Shield);
     //    //if (!card.Enhanced)
-    //    //    InGameManager.Instance.player.Shield(card.Data.Shield);
+    //    //    _player.Shield(card.Data.Shield);
     //    //else
-    //    //    InGameManager.Instance.player.Shield(card.Data.EnhancedDefence);
+    //    //    _player.Shield(card.Data.EnhancedDefence);
     //}
 
     async UniTask ConfirmedDiscardAB()
@@ -859,7 +1004,7 @@ public class CardAbility
         OutGameUIManager.Instance.RemoveOpenUIOrder(InGameUIManager.CanvasName.SelectedCard.ToString());        // 강제 조건확인이라 뒤로가기를 미리 막음.
         await UniTask.Create(async () =>
         {
-            await InGameButtonManager.Instance.DiscardButton.OnClickAsync();
+            await InGameButtonManager.Instance.DiscardButton.OnClickAsync(cancellationToken: TurnManager.Instance.CancelSource.Token).SuppressCancellationThrow();
             CardManager.Instance.ThrowAwaySelectedCard().Forget();
         });
         InGameButtonManager.Instance.SetActiveDiscardCancelBtn(true);
@@ -883,13 +1028,21 @@ public class CardAbility
             CardManager.Instance.ReturnSelectedCard();
             discarded = false;
         });
-        var task3 = UniTask.Create(async () =>
+        //var task3 = UniTask.Create(async () =>
+        //{
+        //    // 예전에 창이 바뀌는 경우 취소로 받아왔는데, 이게 의미가 있는 거였던가..?
+        //    await UniTask.WaitUntil(() => !InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf, cancellationToken: cts.Token);
+        //    CardManager.Instance.ReturnSelectedCard();
+        //    discarded = false;
+        //});
+        var task4 = UniTask.Create(async () =>
         {
-            await UniTask.WaitUntil(() => !InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf, cancellationToken: cts.Token);
+            // 버리는 와중에 전투가 끝나면(전투 bool이 변경되면) 초기화
+            await UniTask.WaitUntil(() => !TurnManager.Instance.InBattle, cancellationToken: cts.Token);
             CardManager.Instance.ReturnSelectedCard();
             discarded = false;
         });
-        await UniTask.WhenAny(task1, task2, task3);
+        await UniTask.WhenAny(task1, task2, /*task3,*/ task4);
         cts.Cancel();
         //await UniTask.WhenAny(
         //    UniTask.Create(async () =>
@@ -920,7 +1073,7 @@ public class CardAbility
         CardManager.Instance.ChangeRemove(true);
         await UniTask.Create(async () =>
         {
-            await InGameButtonManager.Instance.DiscardButton.OnClickAsync();
+            await InGameButtonManager.Instance.DiscardButton.OnClickAsync(cancellationToken: TurnManager.Instance.CancelSource.Token).SuppressCancellationThrow();
             CardManager.Instance.ThrowAwaySelectedCard().Forget();
         });
         InGameButtonManager.Instance.SetActiveDiscardCancelBtn(true);
@@ -970,3 +1123,5 @@ public class CardAbility
         await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token);
     }
 }
+
+

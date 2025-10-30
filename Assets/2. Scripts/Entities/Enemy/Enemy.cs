@@ -102,13 +102,13 @@ public abstract class Enemy : Entity
         player = InGameManager.Instance.Player;
         EnemySubScribe();
     }
-    public override async UniTask<bool> TakeDamage(int dmg, bool isHit = true)
+    public override async UniTask<bool> TakeDamage(int dmg, Entity attacker = null)
     {
         //if (isHit)
         //{
         //    BattleManager.Instance.HitEntity.Item1 = player;
         //}
-        if (!await base.TakeDamage(dmg, isHit))
+        if (!await base.TakeDamage(dmg, attacker))
         {
             return false;
         }
@@ -153,37 +153,37 @@ public abstract class Enemy : Entity
     //    return damage;
     //}
 
-    public virtual void CheckIfDead(int damage, int count, bool isHit = true)
-    {
-        int resistDamage = damage;
-        if (isHit && ApplyStatusEffect(StatusEffect.Protect, out int amount))
-        {
-            if (damage > amount)
-            {
-                resistDamage = damage - amount;      // BeforeTakeDamage로 얻을 _shield 양만큼 빼서 계산.
-            }
-            else
-            {
-                resistDamage = 0;
-            }
-        }
-        //int resistDamage = ResistDamage(damage);
-        if (((CurHP.Value + CurShield.Value) - (resistDamage * count)) <= 0)
-        {
-            _col2D.enabled = false;
-            CanClear = true;
-            foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
-            {
-                if (!enemy.CanClear)
-                {
-                    //EnemyManager.Instance.MapClear = false;
-                    return;
-                }
-            }
-            EnemyManager.Instance.MapClear = true;
-            CardManager.Instance.SetCardState(1);       // Over
-        }
-    }
+    //public virtual void CheckIfDead(int damage, int count, bool isHit = true)
+    //{
+    //    int resistDamage = damage;
+    //    if (isHit && ApplyStatusEffect(StatusEffect.Protect, out int amount))
+    //    {
+    //        if (damage > amount)
+    //        {
+    //            resistDamage = damage - amount;      // BeforeTakeDamage로 얻을 _shield 양만큼 빼서 계산.
+    //        }
+    //        else
+    //        {
+    //            resistDamage = 0;
+    //        }
+    //    }
+    //    //int resistDamage = ResistDamage(damage);
+    //    if (((CurHP.Value + CurShield.Value) - (resistDamage * count)) <= 0)
+    //    {
+    //        _col2D.enabled = false;
+    //        CanClear = true;
+    //        foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
+    //        {
+    //            if (!enemy.CanClear)
+    //            {
+    //                //EnemyManager.Instance.MapClear = false;
+    //                return;
+    //            }
+    //        }
+    //        EnemyManager.Instance.MapClear = true;
+    //        CardManager.Instance.SetCardState(1);       // Over
+    //    }
+    //}
 
     public async UniTaskVoid KillEnemy()        // 클리어 체크도 같이 함.
     {
@@ -194,7 +194,7 @@ public abstract class Enemy : Entity
 
         // 자기 드랍템을 상자에 넣는 코드 필요.
 
-        bool clear = await EnemyManager.Instance.KillEnemyCheck(this, base.DieAnimation(true));
+        /*bool clear = */await EnemyManager.Instance.KillEnemyCheck(this, base.DieAnimation(true));
         
         //EnemyManager.Instance.enemySpawnPosition[spawnPos].gameObject.SetActive(true);      // 에너미 자리로 클리어 확인을 하기 때문에 적 죽는 모션 기다린 후, 자리 삭제  // 자리는 나중에 배열로 만들고 코드상으로만 확인하도록 변경
         if (player.ApplyStatusEffect(StatusEffect.CoinGained, out int coinGain))
@@ -207,7 +207,7 @@ public abstract class Enemy : Entity
             InGameManager.Instance.ChangeCoinValue((enemyData.DropCoin));
             GameManager.Instance.AddGoods((int)(enemyData.DropCoin * 0.5f));
         }
-        if (clear)
+        if (EnemyManager.Instance.NoEnemy)
         {
             ClearCheck();
         }
@@ -237,14 +237,14 @@ public abstract class Enemy : Entity
     {
         await AttackAnimation(true);
         //BattleManager.Instance.HitEntity.Item2 = this;
-        EnemyManager.Instance.HitEnemy = this;
+        //EnemyManager.Instance.HitEnemy = this;
         //int criticalDamage = CheckCritical(damage);
         if (ApplyStatusEffect(StatusEffect.Thievery, out int amount) )
         {
             enemyData.DropCoin += -InGameManager.Instance.ChangeCoinValue(-amount);
         }
 
-        await player.TakeDamage(damage);
+        await player.TakeDamage(damage, this);
 
         //Critical(_criticalChance.Value);
     }
@@ -517,7 +517,7 @@ public abstract class Enemy : Entity
 
     public async UniTask PlayPattern()
     {
-        if (_nextPattern == null) await UniTask.CompletedTask;
+        //if (_nextPattern == null) await UniTask.CompletedTask;
         _nextActImg.gameObject.SetActive(false);
         RemoveStatusEffect((StatusEffect.Attack, StatusEffectType.Information));
         //RemoveStatusEffect((StatusEffect.GetCritical, StatusEffectType.Information));
@@ -532,7 +532,7 @@ public abstract class Enemy : Entity
         //{
         //    await pattern();
         //}
-        if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
+        if (!TurnManager.Instance.InBattle)
             return;
         _nextPattern.Clear();
     }

@@ -133,9 +133,9 @@ public class Player : Entity
         //AddHealPower(GameManager.Instance.AddHealPower);
     }
 
-    public async override UniTask<bool> TakeDamage(int dmg, bool isHit = true)
+    public async override UniTask<bool> TakeDamage(int dmg, Entity attacker = null)
     {
-        if (!await base.TakeDamage(dmg, isHit))
+        if (!await base.TakeDamage(dmg, attacker))
         {
             return false;
         }

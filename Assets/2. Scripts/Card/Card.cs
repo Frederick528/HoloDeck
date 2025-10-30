@@ -52,6 +52,8 @@ public class Card : MonoBehaviour
 
     public CardAbility CardAbility = new();
 
+    public Action ImmediatelyUseCard { get; private set; }
+
     public Func<UniTask<bool>?> UseConditions { get; private set; }
 
     //public Action<Card> CardAction { get; private set; }
@@ -169,15 +171,19 @@ public class Card : MonoBehaviour
 
         //CardTask = CardAbility.SetCardTaskAbility(Data.ID);
     }
+    public void SetCardImmediately(Action action)
+    {
+        this.ImmediatelyUseCard = action;
+    }
 
     public void SetCardTask(Func<UniTask> cardTask)
     {
-        CardTask = cardTask;
+        this.CardTask = cardTask;
     }
 
     public void SetUseConditions(Func<UniTask<bool>?> condition)
     {
-        UseConditions = condition;
+        this.UseConditions = condition;
     }
 
     public async UniTask<bool> CheckUseConditions()
