@@ -63,6 +63,27 @@ public class SettingMap
     //[SerializeField] GameObject shopCanvas;
     //[SerializeField] GameObject shopenlargePanel;
     //[SerializeField] GameObject shopPanel;
+    public async UniTask EnterChapter(Map map, bool changeScene)
+    {
+        await map.stageContext.LoadTransition(map.stage, changeScene);
+
+        _mapManager.PrevStage = null;       // Load는 층(챕터)이 바뀌기 때문에 이전 스테이지가 없음.
+        _mapManager.currStage = map;
+    }
+    public void CheckBtnActivated(Map map)
+    {
+        if (!map.cleared)
+        {
+            ShowMapBtn.SetActive(false);
+
+        }
+        else
+        {
+            ShowMapBtn.SetActive(true);
+        }
+        PreviousChapterBtn.SetActive(false);
+        NextChapterBtn.SetActive(false);
+    }
     public void Start(bool isEndBoss = false)
     {
         if (MapTr == null)
@@ -108,6 +129,7 @@ public class SettingMap
         //validMapList.Add(posArr[startMapPosition.x, startMapPosition.y]);
         //availableMapList.Add(posArr[startMapPosition.x, startMapPosition.y]);
 
+        // 랜덤 맵에서 랜덤 방향으로 맵 생성
         while (!MapCountCheck())
         {
             int randMapIdx = Random.Range(0, availableMapList.Count - 1);
@@ -115,10 +137,12 @@ public class SettingMap
             Vector3Int arrPosition = new Vector3Int(availableMapList[randMapIdx].array_Position.x, availableMapList[randMapIdx].array_Position.y, 0);
             MakeMapArray(arrPosition);
         }
+        // 제작된 맵을 기준으로 거리 계산(너비깊이탐색)
         FindMapDistanceQueue(startMapPosition);
 
+        // 맵 리스트 정렬(거리순으로)
         SortMapList(validMapList);
-
+        //정렬된 리스트 기준으로 stage 셋팅
         SettingStage();
 
         _mapManager.SetupStart(direction4, Maps);
@@ -440,23 +464,24 @@ public class SettingMap
             //    ShowMapBtn.SetActive(false);
             //}
             _mapManager.canMove = false;
-            ShowMapBtn.SetActive(false);
-            //NextChapterBtn.SetActive(false);
         }
-        else
-        {
-            //if (stage.State == Map.StageState.Boss/* && GameManager.Instance.NowChapterLV <= 2*/)
-            //{
-            //    NextChapterBtn.SetActive(true);
-            //}
-            //else
-            //{
-            //    NextChapterBtn.SetActive(false);
-            //}
-            ShowMapBtn.SetActive(true);
-        }
-        PreviousChapterBtn.SetActive(false);
-        NextChapterBtn.SetActive(false);
+        //    ShowMapBtn.SetActive(false);
+        //    //NextChapterBtn.SetActive(false);
+        //}
+        //else
+        //{
+        //    //if (stage.State == Map.StageState.Boss/* && GameManager.Instance.NowChapterLV <= 2*/)
+        //    //{
+        //    //    NextChapterBtn.SetActive(true);
+        //    //}
+        //    //else
+        //    //{
+        //    //    NextChapterBtn.SetActive(false);
+        //    //}
+        //    ShowMapBtn.SetActive(true);
+        //}
+        //PreviousChapterBtn.SetActive(false);
+        //NextChapterBtn.SetActive(false);
 
         //// 떠나려는 방에 보상이 떴는데, 그 보상을 받지 않고 떠난다면, 잠시 해당 스테이지 보상을 숨김. 
         //if (_mapManager.currStage.rewardBox != -1 && (_mapManager.currStage.ChangedItem || !_mapManager.currStage.rewarded))
@@ -474,14 +499,17 @@ public class SettingMap
         //// 보상과 상관없이 EnlargePanel와 RewardCanvas는 새로운 방에 들어갈 때마다 숨김 처리.
         //InGameUIManager.Instance.MoveMap();
 
-        if (_mark != null)
-        {
-            _mark.transform.localPosition = stage.transform.localPosition + _markDefaultPos * _mapManager.MapScale;
-        }
 
-        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
-        // 방 입장 코드 추가
-        await stage.stageContext.Transition(stage.stage);
+        if (stage != _mapManager.currStage)
+        {
+            if (_mark != null)
+            {
+                _mark.transform.localPosition = stage.transform.localPosition + _markDefaultPos * _mapManager.MapScale;
+            }
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
+            // 방 입장 코드 추가
+            await stage.stageContext.Transition(stage.stage);
+        } 
 
         // 들어간 방에 보상이 떴었는데, 예전에 보상을 받지 않았다면, 그 보상을 다시 시각화함.
         //if (stage.rewardBox != -1 && (stage.ChangedItem || !stage.rewarded))
@@ -510,15 +538,16 @@ public class SettingMap
                 map.LookingStage(direction4, Maps);
 
             _mapManager.canMove = false;
-            ShowMapBtn.SetActive(false);
+        }
+        //    ShowMapBtn.SetActive(false);
 
-        }
-        else
-        {
-            ShowMapBtn.SetActive(true);
-        }
-        PreviousChapterBtn.SetActive(false);
-        NextChapterBtn.SetActive(false);
+        //}
+        //else
+        //{
+        //    ShowMapBtn.SetActive(true);
+        //}
+        //PreviousChapterBtn.SetActive(false);
+        //NextChapterBtn.SetActive(false);
 
         // Load 같은 경우에는 모든 보상 UI를 끄기 때문에 밑에 코드는 필요없음.
         //// 떠나려는 방에 보상이 떴는데, 그 보상을 받지 않고 떠난다면, 잠시 해당 스테이지 보상을 숨김. 
@@ -614,7 +643,6 @@ public class SettingMap
     //    }
     //}
 
-    //더 나은 알고리즘
     public void FindMapDistanceQueue(Vector3Int currentPos)
     {
         int _distance = 0;
@@ -640,7 +668,7 @@ public class SettingMap
 
     public void SortMapList(List<MapInfo> root)
     {
-        root.Sort(delegate (MapInfo A, MapInfo B)
+        root.Sort((MapInfo A, MapInfo B) =>
         {
             if (A.distance > B.distance)
                 return 1;
@@ -760,6 +788,8 @@ public class SettingMap
 
         int treasureIdx = Random.Range(1, validMapList.Count-1);
         int shopIdx = Random.Range(1, validMapList.Count-1);
+
+        //리스트 복사 후 해당 리스트에서 제거하는 방식으로 변경할지 고민 중
         while (treasureIdx == shopIdx)
         {
             shopIdx = Random.Range(1, validMapList.Count - 1);

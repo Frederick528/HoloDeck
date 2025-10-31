@@ -265,16 +265,19 @@ public class GameManager : MonoBehaviour
         if (lobby && InGameUIManager.Instance)
         {
             CancellationTokenSource cts = new CancellationTokenSource();
-            UniTask.Create(async () =>
-            {
-                await UniTask.WaitForSeconds(2f);
-                if (!cts.IsCancellationRequested)
-                {
-                    cts.Cancel();
-                    cts.Dispose();
-                }
-            }).Forget();
-            await UniTask.WaitUntil(() => InGameUIManager.Instance.EndLoad, PlayerLoopTiming.Update, cts.Token).SuppressCancellationThrow();
+            var task1 = UniTask.WaitForSeconds(2f);
+            //{
+            //    await UniTask.WaitForSeconds(2f);
+            //    if (!cts.IsCancellationRequested)
+            //    {
+            //        cts.Cancel();
+            //        cts.Dispose();
+            //    }
+            //});
+            var task2 = UniTask.WaitUntil(() => InGameUIManager.Instance.EndLoad, PlayerLoopTiming.Update, cts.Token);
+            await UniTask.WhenAny(
+                task1, task2
+                ).SuppressCancellationThrow();
             if (!cts.IsCancellationRequested)
             {
                 cts.Cancel();

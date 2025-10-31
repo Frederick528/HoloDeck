@@ -1,7 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MapManager : MonoBehaviour
 {
@@ -97,6 +96,7 @@ public class MapManager : MonoBehaviour
         SetMapSize();
         bool isEndBoss = GameManager.Instance.NowChapterLV == 4;
         _settingMap.Start(isEndBoss);
+        currStage.stageContext.ImmediateTransition(currStage.stage);
         //ShowAllMap();
     }
 
@@ -321,9 +321,12 @@ public class MapManager : MonoBehaviour
         SetMapSize();
         bool isEndBoss = GameManager.Instance.NowChapterLV == 4;
         _settingMap.Start(isEndBoss);
-        
-        InGameManager.Instance.Player.EnterChapterDoor(null, changeScene).Forget();
-        
+        await _settingMap.EnterChapter(currStage, changeScene);
+        ClearStage().Forget();
+
+
+        //InGameManager.Instance.Player.EnterChapterDoor(null, changeScene).Forget();
+
         //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false);          // 방 생성 후, 몇몇 UI 비활성화 (상자)
         //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);               // 방 생성 후, 몇몇 UI 비활성화 (상점 보상)
         //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);                // 방 생성 후, 몇몇 UI 비활성화 (맵)
@@ -349,7 +352,8 @@ public class MapManager : MonoBehaviour
         }
         else if (currStage.State == Map.StageState.Start)
         {
-            ShowPreviousDoor(true);
+            ShowPreviousDoor(false);
+            ShowPreviousDoor(true);     // 껐다가 켜주는 이유는 1스테이지일 경우, true가 리턴되어 false만 되고, 그 외에는 켜져야하기 때문
             ShowNextDoor(false);
         }
         currStage.ClearMap();
@@ -371,6 +375,7 @@ public class MapManager : MonoBehaviour
         }
         else if (currStage.State == Map.StageState.Start)
         {
+            ShowPreviousDoor(false);
             ShowPreviousDoor(true);
             ShowNextDoor(false);
         }
@@ -385,6 +390,7 @@ public class MapManager : MonoBehaviour
 
     public void ShowPreviousDoor(bool isShow)
     {
+        if (isShow && GameManager.Instance.NowChapterLV <= 1) return;
         _settingMap.PreviousChapterBtn.SetActive(isShow);
     }
 
@@ -477,6 +483,13 @@ public class MapManager : MonoBehaviour
         }
     }
 
+    public void EnterStage(Map map)
+    {
+        PrevStage = currStage;
+        currStage = map;
+        ShowReward(map);
+        _settingMap.CheckBtnActivated(map);
+    }
     public void SetupStart(List<Vector3Int> direction4, List<Map> maps)
     {
         // 시작 장소 활성화 코드 5줄
@@ -485,7 +498,8 @@ public class MapManager : MonoBehaviour
         //currStage.img.color = Color.white;
         currStage.LightMap(true);
         currStage.LookingStage(direction4, maps);
-        ClearStage().Forget();
+        //Debug.Log(currStage.stageContext.ImmediateTransition(currStage.stage));
+        //currStage.stageContext
     }
 
     // Enemy와 Boss에서 사용되며, 사용시 방 보상 획득 가능

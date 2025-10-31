@@ -1,8 +1,5 @@
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class StageContext
 {
@@ -16,14 +13,19 @@ public class StageContext
     {
         _map = map;
     }
+    // 움직임 없이 해당 맵으로 바로 이동(처음 스타트 또는 계속하기 등에서 사용할 예정)
+    public void ImmediateTransition(IStage stage)
+    {
+        MapManager.Instance.EnterStage(_map);
+        CurrentStage = stage;
+        CurrentStage.Enter(_map);
+    }
     public async UniTask Transition()
     {
         Action action = () =>
         {
-            MapManager.Instance.PrevStage = MapManager.Instance.currStage;
-            MapManager.Instance.currStage = _map;
+            MapManager.Instance.EnterStage(_map);
             CurrentStage.Enter(_map);
-            MapManager.Instance.ShowReward(_map);
         };
         await InGameManager.Instance.Player.ExitAndEnterStage(action);
         //await InGameManager.Instance.Player.ExitAndEnterStage();
@@ -33,11 +35,9 @@ public class StageContext
     {
         Action action = () =>
         {
-            MapManager.Instance.PrevStage = MapManager.Instance.currStage;
-            MapManager.Instance.currStage = _map;
+            MapManager.Instance.EnterStage(_map);
             CurrentStage = stage;
             CurrentStage.Enter(_map);
-            MapManager.Instance.ShowReward(_map);
         };
         await InGameManager.Instance.Player.ExitAndEnterStage(action);
         //await InGameManager.Instance.Player.ExitAndEnterStage();
@@ -49,11 +49,9 @@ public class StageContext
     {
         Action action = () =>
         {
-            MapManager.Instance.PrevStage = MapManager.Instance.currStage;
-            MapManager.Instance.currStage = _map;
+            MapManager.Instance.EnterStage(_map);
             CurrentStage = stage;
             CurrentStage.Enter(_map);
-            MapManager.Instance.ShowReward(_map);
         };
         await InGameManager.Instance.Player.EnterChapterDoor(action, changeScene);
     }

@@ -11,7 +11,11 @@ public class StartStage : MonoBehaviour, IStage
         if (!_map)
             _map = map;
         print("Start");
-        if (_map.cleared)
+        if (!map.cleared)
+        {
+            MapManager.Instance.ClearStage(_map).Forget();
+        }
+        else
         {
             MapManager.Instance.ShowPreviousDoor(true);
         }

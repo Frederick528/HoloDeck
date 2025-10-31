@@ -228,7 +228,6 @@ public class Player : Entity
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);               // 방 생성 후, 몇몇 UI 비활성화 (상점 보상)
         //MapManager.Instance.HideReward(MapManager.Instance.currStage);
 
-        print(MapManager.Instance.currStage.State);
         if (changeScene)
         {
             await GameManager.Instance.ChangeScene();
