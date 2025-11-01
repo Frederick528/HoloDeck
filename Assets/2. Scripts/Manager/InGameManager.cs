@@ -506,7 +506,7 @@ public class InGameManager : MonoBehaviour
         }
         //print(AbilityEventQueue._queue.Count);
 
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
         //if (Input.GetKeyDown(KeyCode.Space))
         //{
         //    TurnManager.OnAddCard?.Invoke();
@@ -679,6 +679,6 @@ public class InGameManager : MonoBehaviour
             foreach (var enemy in EnemyManager.Instance.EnemyList)
                 enemy.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), 1);
         }
-#endif
+//#endif
     }
 }
