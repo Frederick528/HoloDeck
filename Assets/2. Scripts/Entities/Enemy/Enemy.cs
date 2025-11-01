@@ -229,7 +229,7 @@ public abstract class Enemy : Entity
         //if (spawn == EnemyManager.Instance.enemySpawnPosition.Count)
         MapManager.Instance.ClearStage().Forget();
         MapManager.Instance.RewardStage();
-        MapManager.Instance.currStage.DropLootBox();
+        //MapManager.Instance.currStage.DropLootBox();
         ItemManager.Instance.Charge(1);
     }
 
@@ -361,8 +361,9 @@ public abstract class Enemy : Entity
                 //GetStatusEffect(StatusEffect.ATKUp, out int addATK);
                 damage = value + AttackPower.Value;
                 //_nextActText.text = _checkRepeat > 1 ? $"{damage}*{_checkRepeat--}" : damage.ToString();
-                await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token);
-                await Attack(CheckCriticalDamage(damage, critical));
+                await UniTask.WaitForSeconds(delay/*, cancellationToken: TurnManager.Instance.CancelSource.Token*/);
+                if (this.CurHP.Value > 0)
+                    await Attack(CheckCriticalDamage(damage, critical));
                 //await Attack(CheckCriticalDamage(multiple, critical));
                 //await Attack(Mathf.RoundToInt(criticalDamage * multiple));
             }
@@ -416,8 +417,9 @@ public abstract class Enemy : Entity
             //await Shield(value);         // 여기 부분 고쳐야 함.
             for (int i = repeat; i > 0; --i)
             {
-                await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token);
-                await Shield(value);
+                await UniTask.WaitForSeconds(delay/*, cancellationToken: TurnManager.Instance.CancelSource.Token*/);
+                if (this.CurHP.Value > 0)
+                    await Shield(value);
             }
         }));
 
@@ -471,8 +473,9 @@ public abstract class Enemy : Entity
             //await Heal(value);
             for (int i = repeat; i > 0; --i)
             {
-                await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token);
-                await Heal(value);
+                await UniTask.WaitForSeconds(delay/*, cancellationToken: TurnManager.Instance.CancelSource.Token*/);
+                if (this.CurHP.Value > 0)
+                    await Heal(value);
             }
         }));
 

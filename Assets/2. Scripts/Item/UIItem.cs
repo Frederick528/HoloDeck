@@ -67,7 +67,7 @@ public class UIItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                     if (_curCharge == -1)
                     {
                         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.ItemReward, false);
-                        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, true);
+                        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, true);
                     }
                 });
 

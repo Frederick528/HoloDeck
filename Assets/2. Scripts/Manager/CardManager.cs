@@ -130,7 +130,7 @@ public class CardManager : MonoBehaviour
         if (GetCardData == null) return;
         AddDeck(GetCardData, EAddDeck.Main);
         MapManager.Instance.GetReward();
-        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, true);
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, true);
     }
 
     public void SetupStartCardDeck()   // 시작할 때, 메인덱을 설정하는 함수 (게임 시작 이후에는 사용하지 않음.)

@@ -35,8 +35,9 @@ public class Elite1 : Enemy
 
         _nextPattern.Add(async () => await UniTask.Create(async () =>
         {
-            await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token);
-            AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), value, 2);
+            await UniTask.WaitForSeconds(delay/*, cancellationToken: TurnManager.Instance.CancelSource.Token*/);
+            if (this.CurHP.Value > 0)
+                AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), value, 2);
         }));
 
         //_nextPattern = () => UniTask.Create(async () =>

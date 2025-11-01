@@ -55,8 +55,9 @@ public class EndBoss : Enemy
         //}
         _nextPattern.Add(async () => await UniTask.Create(async () =>
         {
-            await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token);
-            player.RemoveStatusEffect(player.GetRandomStatusEffect());
+            await UniTask.WaitForSeconds(delay/*, cancellationToken: TurnManager.Instance.CancelSource.Token*/);
+            if (this.CurHP.Value > 0)
+                player.RemoveStatusEffect(player.GetRandomStatusEffect());
         }));
         //_nextPattern = () => UniTask.Create(async () =>
         //{
