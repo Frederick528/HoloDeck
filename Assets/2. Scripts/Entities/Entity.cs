@@ -56,9 +56,9 @@ public abstract class Entity : MonoBehaviour
     public ReactiveProperty<int> _curHP = new();
     public ReactiveProperty<int> _shield = new();
 
-    public ReactiveProperty<int> MaxHP = new();
-    public ReactiveProperty<int> CurHP = new();
-    public ReactiveProperty<int> CurShield = new();
+    public ReactiveProperty<int> MaxHP { get; private set; } = new();
+    public ReactiveProperty<int> CurHP { get; private set; } = new();
+    public ReactiveProperty<int> CurShield { get; private set; } = new();
 
     public ReactiveProperty<int> AttackPower { get; private set; } = new();
     public ReactiveProperty<int> DefensePower { get; private set; } = new();
@@ -523,7 +523,7 @@ public abstract class Entity : MonoBehaviour
 
     public void OnChildMouseExit()
     {
-        EnemyManager.Instance.EnemyInfo = null;     // 따로 에너미만 받기 귀찮아서 그냥 모든 마우스Exit에서 받음.
+        EnemyManager.Instance.EnemyInfo = null;     // 일단은 모든 마우스Exit에서 받음.
         canvas.sortingOrder = 0;
         _statusDescWindow.gameObject.SetActive(false);
     }
@@ -750,7 +750,7 @@ public abstract class Entity : MonoBehaviour
                 CriticalDamage.Value += amount;
                 break;
             case StatusEffect.UseCritical:      // 적 개체 한정
-                if (GetStatusEffect(StatusEffect.Attack, out _))
+                if (GetStatusEffect(StatusEffect.Attack, out _))        // Attack은 공격을 하겠다는 설명이기에 플레이어는 얻어서는 안됨.
                 {
                     ChangeStatusEffectDesc((StatusEffect.Attack,StatusEffectType.Information));
                 }

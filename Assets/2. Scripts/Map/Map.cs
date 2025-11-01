@@ -115,7 +115,7 @@ public class Map : MonoBehaviour
     public int RandomPattern = -1;
 
     public int rewardBox { get; private set; } = -1;
-    public bool LootBox { get; /*private*/ set; } = false;
+    public bool LootBox { get; private set; } = false;
     public enum BoxType
     {
         Treasure, Common, Rare, Epic, Legendary, Boss, Drop
@@ -381,7 +381,8 @@ public class Map : MonoBehaviour
         //{
 
         //}
-        else
+        // 드랍템이 하나도 없으면
+        else if (LootBox && false)
         {
             LootBox = false;
             //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false, (int)Map.BoxType.Drop);
@@ -398,7 +399,7 @@ public class Map : MonoBehaviour
             rewardBox = (int)BoxType.Treasure;
             //MapManager.Instance.rewardCanvas.GetChild(rewardBox).gameObject.SetActive(true);
             //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, rewardBox);
-            MapManager.Instance.ShowBox(rewardBox, false);
+            MapManager.Instance.ShowBox(rewardBox, true);
             // 캐릭터별로 보상이 바뀌는 코드 넣어야 함.
             ItemReward[0] = InGameManager.Instance.RandomItem()/*Random.Range(0, 6)*/;     // 나중에 중복은 제외하는 코드로 변경해야 함.
             ItemReward[1] = InGameManager.Instance.RandomItem()/*Random.Range(0, 6)*/;
