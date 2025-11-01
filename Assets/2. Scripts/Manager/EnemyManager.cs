@@ -88,7 +88,6 @@ public class EnemyManager : MonoBehaviour
     {
         if (spawnPosIndex >= enemySpawn.Length || !enemySpawn[spawnPosIndex])       // 나중에 배열 만들어서 gameObject가 아니라 bool값으로 바로 받아올 것.
             return false;
-        NoEnemy = EnemyList.Count == 0;
         EnemyData enemyData = FindEnemyData(enemyId);
         GameObject enemyObject = Instantiate(enemyData.EnemyPrefab, enemySpawnPosition[spawnPosIndex], Quaternion.identity);
         Enemy enemy = enemyObject.GetComponent<Enemy>();
@@ -96,6 +95,7 @@ public class EnemyManager : MonoBehaviour
         EnemyDict.Add(enemyObject.GetInstanceID(), enemy);
         enemy.SetupEnemy(enemyData, spawnPosIndex);
         enemySpawn[spawnPosIndex] = false;
+        NoEnemy = EnemyList.Count == 0;
         //enemySpawnPosition[spawnPosIndex].gameObject.SetActive(false);
         return true;
     }
@@ -109,7 +109,6 @@ public class EnemyManager : MonoBehaviour
         {
             if (!enemySpawn[i]/*enemySpawnPosition[i].gameObject.activeSelf*/)
                 continue;
-            NoEnemy = EnemyList.Count == 0;
             enemyData = FindEnemyData(enemyId);
             enemyObject = Instantiate(enemyData.EnemyPrefab, enemySpawnPosition[i], Quaternion.identity);
             enemy = enemyObject.GetComponent<Enemy>();
@@ -117,6 +116,7 @@ public class EnemyManager : MonoBehaviour
             EnemyDict.Add(enemyObject.GetInstanceID(), enemy);
             enemy.SetupEnemy(enemyData, i);
             enemySpawn[i] = false;
+            NoEnemy = EnemyList.Count == 0;
             //enemySpawnPosition[i].gameObject.SetActive(false);
             return true;
         }
@@ -127,7 +127,6 @@ public class EnemyManager : MonoBehaviour
     {
         if (!bossSpawn[spawnPosIndex]/*enemySpawnPosition[spawnPosIndex].gameObject.activeSelf*/)       // 나중에 배열 만들어서 gameObject가 아니라 bool값으로 바로 받아올 것.
             return false;
-        NoEnemy = EnemyList.Count == 0;
         EnemyData enemyData = FindEnemyData(enemyId);
         GameObject enemyObject = Instantiate(enemyData.EnemyPrefab, bossSpawnPosition[spawnPosIndex], Quaternion.identity);
         Enemy enemy = enemyObject.GetComponent<Enemy>();
@@ -135,6 +134,7 @@ public class EnemyManager : MonoBehaviour
         EnemyDict.Add(enemyObject.GetInstanceID(), enemy);
         enemy.SetupEnemy(enemyData, spawnPosIndex);
         bossSpawn[spawnPosIndex] = false;
+        NoEnemy = EnemyList.Count == 0;
         //enemySpawnPosition[spawnPosIndex].gameObject.SetActive(false);
         return true;
     }
@@ -148,7 +148,6 @@ public class EnemyManager : MonoBehaviour
         {
             if (!bossSpawn[i]/*enemySpawnPosition[i].gameObject.activeSelf*/)
                 continue;
-            NoEnemy = EnemyList.Count == 0;
             enemyData = FindEnemyData(enemyId);
             enemyObject = Instantiate(enemyData.EnemyPrefab, bossSpawnPosition[i], Quaternion.identity);
             enemy = enemyObject.GetComponent<Enemy>();
@@ -156,6 +155,7 @@ public class EnemyManager : MonoBehaviour
             EnemyDict.Add(enemyObject.GetInstanceID(), enemy);
             enemy.SetupEnemy(enemyData, i);
             bossSpawn[i] = false;
+            NoEnemy = EnemyList.Count == 0;
             //enemySpawnPosition[i].gameObject.SetActive(false);
             return true;
         }
