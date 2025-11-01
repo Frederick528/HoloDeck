@@ -39,6 +39,7 @@ public class CardManager : MonoBehaviour
     public Transform CardSpawnPoint;
     public Transform CardDummyTr;
     public Transform WatingCardTr;
+    public Transform PlayingCardTr;
 
     //[SerializeField] Transform Deck;    // 소환된 덱 카드들
 
@@ -95,6 +96,7 @@ public class CardManager : MonoBehaviour
         CardSpawnPoint = InGameManager.Instance.PlayerTr.Find("CardSpawnPoint");
         CardDummyTr = InGameManager.Instance.PlayerTr.Find("CardDummy");
         WatingCardTr = InGameManager.Instance.PlayerTr.Find("WatingCard");
+        PlayingCardTr = InGameManager.Instance.PlayerTr.Find("PlayingCard");
         myCardLeft = InGameManager.Instance.PlayerTr.Find("MyCardLeft");
         myCardRight = InGameManager.Instance.PlayerTr.Find("MyCardRight");
         isUseCard.Subscribe((canUse) =>
@@ -590,6 +592,24 @@ public class CardManager : MonoBehaviour
         }
         else
         {
+            if (_usedCard != null)
+            {
+                if (_usedCard.Data.Discard > 0 && _selectedCards.Count == _usedCard.Data.Discard)
+                {
+                    Card returnCard = _selectedCards[0];
+                    returnCard.Selected = false;
+                    _selectedCards.RemoveAt(0);
+                }
+            }
+            else
+            {
+                if (NowPlayedCard.Data.Discard > 0 && _selectedCards.Count == NowPlayedCard.Data.Discard)
+                {
+                    Card returnCard = _selectedCards[0];
+                    returnCard.Selected = false;
+                    _selectedCards.RemoveAt(0);
+                }
+            }
             card.Selected = true;
             _selectedCards.Add(card);
             SetSelectedCardsOrder(_selectedCards);
@@ -602,11 +622,11 @@ public class CardManager : MonoBehaviour
         //{
         //    // 카드 효과가 버리기일 경우, 위 상황에서는 바로 버리기 가능해야 함. 반대로 카드조건이 버리기일 경우, 불가능.
         //}
-        if (_usedCard != null)      // 카드 조건이 버리기인 경우
+        if (_usedCard != null)      // 카드 조건이 버리기인 경우   (조건일 경우)
         {
             if (_usedCard.Data.Discard > 0)
             {
-                if (_selectedCards.Count == _usedCard.Data.Discard)
+                if (_selectedCards.Count == _usedCard.Data.Discard)     // 몇 개일 때 사용 가능
                 {
                     InGameButtonManager.Instance.DiscardBtnInvert(true);
                 }
@@ -615,13 +635,13 @@ public class CardManager : MonoBehaviour
                     InGameButtonManager.Instance.DiscardBtnInvert(false);
                 }
             }
-            else if (_usedCard.Data.Discard == 0)
+            else if (_usedCard.Data.Discard == 0)                       // 버려도 되고 안 버려도 됨.
             {
                 InGameButtonManager.Instance.DiscardBtnInvert(true);
             }
             else
             {
-                if (_selectedCards.Count >= -_usedCard.Data.Discard)
+                if (_selectedCards.Count >= -_usedCard.Data.Discard)        // 몇 개 이상부터 사용 가능
                 {
                     InGameButtonManager.Instance.DiscardBtnInvert(true);
                 }
@@ -635,7 +655,7 @@ public class CardManager : MonoBehaviour
         {
             if (NowPlayedCard.Data.Discard > 0)
             {
-                if (_selectedCards.Count == NowPlayedCard.Data.Discard)
+                if (_selectedCards.Count == NowPlayedCard.Data.Discard)     // 위와 동일
                 {
                     InGameButtonManager.Instance.DiscardBtnInvert(true);
                 }
@@ -781,7 +801,7 @@ public class CardManager : MonoBehaviour
 
         //SetOriginOrder();
         //CardAlignment();
-
+        playedCard.MoveTransform(new PRS(PlayingCardTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.CardAlignmentDelay);
         bool endBattle = await playedCard.UseTask().SuppressCancellationThrow();
         //if (endBattle)
         //{

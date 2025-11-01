@@ -16,7 +16,7 @@ public class Arrow : MonoBehaviour
     public int ArrowNodeNum;
 
     [Tooltip("The scale multiplier for arrow nodes")]
-    public float scaleFactor = 1f;
+    public float scaleFactor = 1.2f;
 
     [Tooltip("The arrow renderer list")]
     public List<SpriteRenderer> arrowRenderer = new();

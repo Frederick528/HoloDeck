@@ -472,7 +472,7 @@ public class Card : MonoBehaviour
             return false;
         }
 
-        MoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale * 0.8f), true, CardUtils.CardAlignmentDelay);
+        //MoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale * 0.8f), true, CardUtils.CardAlignmentDelay);
         if (!await CheckUseConditions())
         {
             Target(null);

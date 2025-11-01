@@ -60,14 +60,14 @@ public class CardAbility
         {
             _conditionTask = () => UniTask.Create(async () =>
             {
-                return await ConditionDiscardAB();
+                return await ConditionDiscardAB(card);
             });
         }
         else if (card.Data.Remove > 0)
         {
             _conditionTask = () => UniTask.Create(async () =>
             {
-                return await ConditionRemoveAB();
+                return await ConditionRemoveAB(card);
             });
         }
         //card.SetUseConditions(uniTaskCondition);
@@ -139,7 +139,7 @@ public class CardAbility
                     //CardManager.Instance.SetCardState(1);
                     await AddCardEvent(card, 0.5f,
                         (0, () => DrawAB(card)),
-                        (1, () => ConfirmedDiscardAB())
+                        (1, () => ConfirmedDiscardAB(card))
                     );
                 });
                 break;
@@ -331,8 +331,10 @@ public class CardAbility
     }
 
 
-    async UniTask ConfirmedDiscardAB()
+    async UniTask ConfirmedDiscardAB(Card card)
     {
+        card.MoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale * 0.8f), true, CardUtils.CardAlignmentDelay);
+
         InGameButtonManager.Instance.DiscardBtnInvert(false);
         InGameButtonManager.Instance.SetActiveDiscardCancelBtn(false);
         CardManager.Instance.ChangeDiscard(true);
@@ -345,8 +347,9 @@ public class CardAbility
         InGameButtonManager.Instance.SetActiveDiscardCancelBtn(true);
         CardManager.Instance.ChangeDiscard(false);
     }
-    async UniTask<bool> ConditionDiscardAB()
+    async UniTask<bool> ConditionDiscardAB(Card card)
     {
+        card.MoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale * 0.8f), true, CardUtils.CardAlignmentDelay);
         bool discarded = false;
         InGameButtonManager.Instance.DiscardBtnInvert(false);
         CardManager.Instance.ChangeDiscard(true);
@@ -363,13 +366,12 @@ public class CardAbility
             CardManager.Instance.ReturnSelectedCard();
             discarded = false;
         });
-        //var task3 = UniTask.Create(async () =>
-        //{
-        //    // 예전에 창이 바뀌는 경우 취소로 받아왔는데, 이게 의미가 있는 거였던가..?
-        //    await UniTask.WaitUntil(() => !InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf, cancellationToken: cts.Token);
-        //    CardManager.Instance.ReturnSelectedCard();
-        //    discarded = false;
-        //});
+        var task3 = UniTask.Create(async () =>
+        {
+            await UniTask.WaitUntil(() => !InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf, cancellationToken: cts.Token);
+            CardManager.Instance.ReturnSelectedCard();
+            discarded = false;
+        });
         var task4 = UniTask.Create(async () =>
         {
             // 버리는 와중에 전투가 끝나면(전투 bool이 변경되면) 초기화
@@ -377,7 +379,7 @@ public class CardAbility
             CardManager.Instance.ReturnSelectedCard();
             discarded = false;
         });
-        await UniTask.WhenAny(task1, task2, /*task3,*/ task4);
+        await UniTask.WhenAny(task1, task2, task3, task4);
         cts.Cancel();
         
         CardManager.Instance.ChangeDiscard(false);
@@ -385,8 +387,9 @@ public class CardAbility
 
     }
 
-    async UniTask ConfirmedRemoveAB()
+    async UniTask ConfirmedRemoveAB(Card card)
     {
+        card.MoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale * 0.8f), true, CardUtils.CardAlignmentDelay);
         InGameButtonManager.Instance.DiscardBtnInvert(false);
         InGameButtonManager.Instance.SetActiveDiscardCancelBtn(false);
         CardManager.Instance.ChangeRemove(true);
@@ -398,8 +401,9 @@ public class CardAbility
         InGameButtonManager.Instance.SetActiveDiscardCancelBtn(true);
         CardManager.Instance.ChangeDiscard(false);
     }
-    async UniTask<bool> ConditionRemoveAB()
+    async UniTask<bool> ConditionRemoveAB(Card card)
     {
+        card.MoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale * 0.8f), true, CardUtils.CardAlignmentDelay);
         bool removed = false;
         InGameButtonManager.Instance.DiscardBtnInvert(false);
         CardManager.Instance.ChangeRemove(true);
