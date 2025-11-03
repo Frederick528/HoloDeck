@@ -172,7 +172,6 @@ public class MapManager : MonoBehaviour
     {
         if (!show)
         {
-            _boxesTop[idx].localRotation = Quaternion.identity;
             if (idx == (int)Map.BoxType.Treasure)
             {
                 InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.ItemReward, false);
@@ -190,6 +189,7 @@ public class MapManager : MonoBehaviour
         }
         else
         {
+            _boxesTop[idx].localRotation = Quaternion.identity;
             if (idx != (int)Map.BoxType.Drop)
                 CurShowBoxIdx = idx;
         }

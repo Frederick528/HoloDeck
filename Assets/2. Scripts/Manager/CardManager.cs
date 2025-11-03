@@ -962,7 +962,7 @@ public class CardManager : MonoBehaviour
             card.ImmediatelyUseCard?.Invoke();
             card.MoveTransform(new PRS(WatingCardTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.CardAlignmentDelay);
             _enQueuedCardCount++;
-            if (_enQueuedCardCount > 0)
+            if (_enQueuedCardCount > 1)
             {
                 card.CardOrder.SetOriginOrder(++_waitedCardOrder);
             }

@@ -93,6 +93,8 @@ public abstract class Entity : MonoBehaviour
     Color _purple = new Color(0.294f, 0f, 0.509f); // 딥 퍼플 (#4B0082)
     Color _teal = new Color(0f, 0.502f, 0.502f); // 청록색 (#008080)
 
+    Color _red = new Color(0.85f, 0f, 0f); // 빨간색 (#FF0000)
+
 
     //private void Awake()    // start로 할 경우, Subscribe가 실행되지 않음. Awake로 하면 위험할 것 같아서 일단 함수로 빼고 자식 오브젝트에서 Start로 호출
     //{
@@ -274,7 +276,7 @@ public abstract class Entity : MonoBehaviour
         TMP_Text textEffect = PoolManager.Instance.GetText(/*out TMP_Text textEffect*/);
         textEffect.transform.position = transform.position;
         textEffect.transform.localScale = Vector3.one;
-        textEffect.color = value < 0 ? Color.red : Color.green;
+        textEffect.color = value < 0 ?_red : Color.green;
         Vector3 dir = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0).normalized;
         textEffect.text = value < 0 ? value.ToString() : $"+{value}";
         float elapsedTime = 0;

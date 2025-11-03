@@ -126,9 +126,9 @@ public class InGameButtonManager : MonoBehaviour
         ShopManager.Instance.BuyCardIdx(idx);
     }
 
-    public void Pause(bool isOn)
+    public void Option()
     {
-        GameManager.Instance.Pause(isOn);
+        OutGameUIManager.Instance.SetActiveCanvas(OutGameUIManager.CanvasName.Option, !OutGameUIManager.Instance.OutGameCanvas(OutGameUIManager.CanvasName.Option).gameObject.activeSelf);
     }
 
     public void SetViewDeck(int deckIdx)
