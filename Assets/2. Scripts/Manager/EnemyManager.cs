@@ -74,6 +74,16 @@ public class EnemyManager : MonoBehaviour
         // 이후 스테이터스 창을 닫고 싶은데, 순서 문제로 안 닫힘. 나중에 좀 더 보충.
     }
 
+    public bool CheckAllEnemyDead()
+    {
+        for (int i = 0; i < enemySpawn.Length; ++i)
+        {
+            if (!enemySpawn[i])     // 소환이 불가능하면(!false = true) false 반환
+                return false;
+        }
+        return true;
+    }
+
     public void CanEnemySpawn(bool canSpawn)
     {
         Array.Fill(enemySpawn, canSpawn);

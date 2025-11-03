@@ -207,7 +207,7 @@ public abstract class Enemy : Entity
             InGameManager.Instance.ChangeCoinValue((enemyData.DropCoin));
             GameManager.Instance.AddGoods((int)(enemyData.DropCoin * 0.5f));
         }
-        if (EnemyManager.Instance.NoEnemy)
+        if (EnemyManager.Instance.CheckAllEnemyDead())
         {
             ClearCheck();
         }
