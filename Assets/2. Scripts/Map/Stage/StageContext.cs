@@ -45,7 +45,7 @@ public class StageContext
         //CurrentStage.Enter(_map);
     }
 
-    public async UniTask LoadTransition(IStage stage, bool changeScene)
+    public async UniTask LoadTransition(IStage stage, bool changeScene, bool isNext)
     {
         Action action = () =>
         {
@@ -53,6 +53,6 @@ public class StageContext
             CurrentStage = stage;
             CurrentStage.Enter(_map);
         };
-        await InGameManager.Instance.Player.EnterChapterDoor(action, changeScene);
+        await InGameManager.Instance.Player.EnterChapterDoor(action, changeScene, isNext);
     }
 }

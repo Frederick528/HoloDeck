@@ -207,7 +207,7 @@ public class InGameButtonManager : MonoBehaviour
                 MapManager.Instance.SaveChapter(GameManager.Instance.NowChapterLV);
                 if (MapManager.Instance.IsSaveChapter[++GameManager.Instance.NowChapterLV])
                 {
-                    MapManager.Instance.LoadChapter(GameManager.Instance.NowChapterLV, false, true).Forget();
+                    MapManager.Instance.LoadChapter(GameManager.Instance.NowChapterLV, true, true).Forget();
                 }
                 else
                 {
@@ -245,12 +245,12 @@ public class InGameButtonManager : MonoBehaviour
             case 2:
             case 3:
                 MapManager.Instance.SaveChapter(GameManager.Instance.NowChapterLV);
-                MapManager.Instance.LoadChapter(--GameManager.Instance.NowChapterLV, true).Forget();
+                MapManager.Instance.LoadChapter(--GameManager.Instance.NowChapterLV, false).Forget();
                 break;
             case 4:
                 MapManager.Instance.SaveChapter(GameManager.Instance.NowChapterLV);
                 //ChangeScene(--GameManager.Instance.NowChapterLV);
-                MapManager.Instance.LoadChapter(--GameManager.Instance.NowChapterLV, true, true).Forget();
+                MapManager.Instance.LoadChapter(--GameManager.Instance.NowChapterLV, false, true).Forget();
                 break;
             default:
                 MapManager.Instance.SaveChapter(GameManager.Instance.NowChapterLV);

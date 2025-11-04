@@ -28758,6 +28758,7 @@ MonoBehaviour:
   Player: {fileID: 0}
   PauseInt: 0
   ShowStatus: 0
+  CurrentLoadAsyncCount: 0
 --- !u!1 &1760813469
 GameObject:
   m_ObjectHideFlags: 0

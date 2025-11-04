@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.EventSystems;
@@ -46,6 +47,11 @@ public class InGameManager : MonoBehaviour
     public int PauseInt;
     public bool ShowStatus;
 
+    public int CurrentLoadAsyncCount = 0;
+
+    AsyncOperationHandle<GameObject> _playerHandle;
+    GameObject _playerObj;
+
     //public int NowChapterLV = 1;
 
     //GameObject[] _camera;
@@ -57,6 +63,7 @@ public class InGameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            LoadAsync().Forget();
             //transform.SetParent(null);
             //DontDestroyOnLoad(_camera[0]);
             GameManager.Instance.AddInGameDontDestroy(Camera.main.gameObject);
@@ -105,6 +112,53 @@ public class InGameManager : MonoBehaviour
         //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     }
 
+    public void StartLoadAsync(bool isStart)
+    {
+        if (isStart)
+        {
+            CurrentLoadAsyncCount++;
+        }
+        else
+        {
+            CurrentLoadAsyncCount--;
+        }
+    }
+
+    public async UniTask LoadAsync()
+    {
+        StartLoadAsync(true);
+        string playerName = "playerName";
+        switch (GameManager.Instance.PlayerInt)
+        {
+            case 0:
+                playerName = "PicoChan";
+                break;
+            case 1:
+                playerName = "Muryotaisu";
+                break;
+        }
+        _playerHandle = Addressables.LoadAssetAsync<GameObject>(playerName + ".prefab");
+
+
+        await _playerHandle.ToUniTask();
+
+        // 성공 여부 확인
+        if (_playerHandle.Status == AsyncOperationStatus.Succeeded)
+        {
+            Debug.Log("인게임 매니저 모든 에셋 로드 성공!");
+            StartLoadAsync(false);
+            _playerObj = _playerHandle.Result;
+            await AllLoadAsync();
+            SpawnPlayer(_playerObj);
+        }
+        else
+        {
+            Debug.LogWarning("하나 이상의 에셋 로드 실패");
+        }
+
+
+    }
+
     public void SpawnPlayer(int idx)
     {
         string playerName = "playerName";
@@ -138,7 +192,30 @@ public class InGameManager : MonoBehaviour
         CardManager.Instance.SetupStartCardDeck();
         Player.SpawnPlayer();
     }
-    public AsyncOperationHandle<GameObject> LoadAsync()
+
+    public async UniTask AllLoadAsync()
+    {
+        CancellationTokenSource cts = new CancellationTokenSource();
+        var task1 = UniTask.WaitForSeconds(10f);
+        //{
+        //    await UniTask.WaitForSeconds(2f);
+        //    if (!cts.IsCancellationRequested)
+        //    {
+        //        cts.Cancel();
+        //        cts.Dispose();
+        //    }
+        //});
+        var task2 = UniTask.WaitUntil(() => CurrentLoadAsyncCount == 0, PlayerLoopTiming.Update, cts.Token);
+        await UniTask.WhenAny(
+            task1, task2
+            ).SuppressCancellationThrow();
+        if (!cts.IsCancellationRequested)
+        {
+            cts.Cancel();
+            cts.Dispose();
+        }
+    }
+    public AsyncOperationHandle<GameObject> PlayerLoadAsync()
     {
         string playerName = "playerName";
         switch (GameManager.Instance.PlayerInt)
@@ -482,6 +559,60 @@ public class InGameManager : MonoBehaviour
     //    Time.timeScale = pause ? 0 : 1;
     //    //Physics2D.autoSyncTransforms = pause ? true : false;      // 정지상태에서 카드를 사용하는 경우에는 필요함. 근데, 지금은 따로 필요없음.
     //}
+    public void FastMode(bool isFast)
+    {
+        _fastMode = isFast;
+        //if (GameManager.Instance.OutFastMode != _fastMode)
+        //    OutGameUIManager.Instance.FastMode();
+
+        if (_fastMode)
+        {
+            _slowMode = false;
+            if(GameManager.Instance.PauseNum == 0)
+            {
+                Time.timeScale = 3f;
+            }
+        }
+        else
+        {
+            if (GameManager.Instance.PauseNum == 0)
+            {
+                Time.timeScale = 1f;
+            }
+        }
+    }
+    public void SlowMode(bool isSlow)
+    {
+        _slowMode = isSlow;
+        if (_slowMode)
+        {
+            _fastMode = false;
+            //if (GameManager.Instance.OutFastMode)
+            //{
+            //    OutGameUIManager.Instance.FastMode();
+            //}
+            if (GameManager.Instance.PauseNum == 0)
+            {
+                Time.timeScale = 0.25f;
+            }
+        }
+        else
+        {
+            if (GameManager.Instance.PauseNum == 0)
+            {
+                Time.timeScale = 1f;
+            }
+        }
+    }
+
+    public bool GetFast()
+    {
+        return _fastMode;
+    }
+    public bool GetSlow()
+    {
+        return _slowMode;
+    }
 
     void Update()
     {
@@ -553,15 +684,17 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
-            _fastMode = !_fastMode;
-            if (_fastMode)
-                _slowMode = false;
+            FastMode(!_fastMode);
+            //_fastMode = !_fastMode;
+            //if (_fastMode)
+            //    _slowMode = false;
         }
         if (Input.GetKeyDown(KeyCode.RightShift))
         {
-            _slowMode = !_slowMode;
-            if (_slowMode)
-                _fastMode = false;
+            SlowMode(!_slowMode);
+            //_slowMode = !_slowMode;
+            //if (_slowMode)
+            //    _fastMode = false;
         }
         if (Input.GetKeyDown(KeyCode.M))
         {
@@ -689,5 +822,13 @@ public class InGameManager : MonoBehaviour
                 enemy.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), 1);
         }
 //#endif
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance != this) return; 
+        _playerObj = null;
+        if (_playerHandle.IsValid())
+            Addressables.Release(_playerHandle);
     }
 }

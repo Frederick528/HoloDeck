@@ -101,6 +101,8 @@ public class InGameUIManager : MonoBehaviour
 
     bool _showStatus;
 
+    List<AsyncOperationHandle<GameObject>> handles = new();
+
     private void Awake()
     {
         _canvasTr = GameObject.Find("InGameCanvases").transform;
@@ -111,22 +113,7 @@ public class InGameUIManager : MonoBehaviour
             //Destroy(transform.root.gameObject);
             return;
         }
-        //if (Instance == null)
-        //{
-        //    Instance = this;
-        //    //transform.SetParent(null);
-        //    _canvas.gameObject.name = "InGameCanvasesDontDestroy";
-        //    GameManager.Instance.AddInGameDontDestroy(_canvas.gameObject);
-        //    GameManager.Instance.AddInGameDontDestroy(transform.root.gameObject);
-        //    //DontDestroyOnLoad(_canvas.gameObject);
-        //    //DontDestroyOnLoad(transform.root.gameObject);
-        //}
-        //else
-        //{
-        //    Destroy(_canvas.gameObject);
-        //    Destroy(transform.root.gameObject);
-        //    return;
-        //}
+
 
         Instance = this;
         _canvasTr.gameObject.name = "InGameCanvasesDontDestroy";
@@ -141,46 +128,9 @@ public class InGameUIManager : MonoBehaviour
             _canvasDict.Add((int)canvasNamesArray[i], _canvasTr.GetChild(i) as RectTransform);
         }
 
-        //Addressables.LoadAssetAsync<GameObject>("UICardImg.prefab").Completed += (op) =>
-        //{
-        //    if (op.Status != AsyncOperationStatus.Succeeded)
-        //    {
-        //        Debug.LogError("UICardImg null");
-        //    }
-        //    else
-        //    {
-        //        _uiCard = op.Result.GetComponent<UICard>();
-        //    }
-        //    Addressables.Release(op);
-
-        //};
-        //Addressables.LoadAssetAsync<GameObject>("StatusEffect.prefab").Completed += (op) =>
-        //{
-        //    if (op.Status != AsyncOperationStatus.Succeeded)
-        //    {
-        //        Debug.LogError("StatusEffect null");
-        //    }
-        //    else
-        //    {
-        //        StatusEffectPrefab = op.Result;
-        //    }
-        //    Addressables.Release(op);
-
-        //};
-        //Addressables.LoadAssetAsync<GameObject>("StatusEffectDesc.prefab").Completed += (op) =>
-        //{
-        //    if (op.Status != AsyncOperationStatus.Succeeded)
-        //    {
-        //        Debug.LogError("StatusEffectDesc null");
-        //    }
-        //    else
-        //    {
-        //        StatusEffectDescPrefab = op.Result;
-        //    }
-        //    Addressables.Release(op);
-
-        //};
+        
         LoadAsync().Forget();
+
 
         _cardEnlargePanel = Canvas(CanvasName.CardReward).Find("CardEnlargePanel") as RectTransform;
         UICard enlargeRewardCard = _cardEnlargePanel.Find("UICard").GetComponent<UICard>();
@@ -376,41 +326,39 @@ public class InGameUIManager : MonoBehaviour
     //}
     public async UniTask LoadAsync()
     {
-        var handle1 = Addressables.LoadAssetAsync<GameObject>("UICardImg.prefab");
-        var handle2 = Addressables.LoadAssetAsync<GameObject>("StatusEffect.prefab");
-        var handle3 = Addressables.LoadAssetAsync<GameObject>("StatusEffectDesc.prefab");
+        InGameManager.Instance.StartLoadAsync(true);
+        handles.Add(Addressables.LoadAssetAsync<GameObject>("UICardImg.prefab"));
+        handles.Add(Addressables.LoadAssetAsync<GameObject>("StatusEffect.prefab"));
+        handles.Add(Addressables.LoadAssetAsync<GameObject>("StatusEffectDesc.prefab"));
 
-        var playerHandle = InGameManager.Instance.LoadAsync();
+        //var playerHandle = InGameManager.Instance.LoadAsync();
 
         // 전부 기다림
         await UniTask.WhenAll(
-            handle1.ToUniTask(),
-            handle2.ToUniTask(),
-            handle3.ToUniTask(),
-            playerHandle.ToUniTask()
+            handles[0].ToUniTask(),
+            handles[1].ToUniTask(),
+            handles[2].ToUniTask()/*,*/
+            //playerHandle.ToUniTask()
         );
 
         // 성공 여부 확인
-        if (handle1.Status == AsyncOperationStatus.Succeeded &&
-            handle2.Status == AsyncOperationStatus.Succeeded &&
-            handle3.Status == AsyncOperationStatus.Succeeded &&
-            playerHandle.Status == AsyncOperationStatus.Succeeded)
+        if (handles[0].Status == AsyncOperationStatus.Succeeded &&
+            handles[1].Status == AsyncOperationStatus.Succeeded &&
+            handles[2].Status == AsyncOperationStatus.Succeeded/* &&*/
+            //playerHandle.Status == AsyncOperationStatus.Succeeded
+            )
         {
-            Debug.Log("모든 에셋 로드 성공!");
-            _uiCard = handle1.Result.GetComponent<UICard>();
-            StatusEffectPrefab = handle2.Result;
-            StatusEffectDescPrefab = handle3.Result;
-            InGameManager.Instance.SpawnPlayer(playerHandle.Result);
-            EndLoad = true;
+            Debug.Log("인게임 UI매니저 모든 에셋 로드 성공!");
+            _uiCard = handles[0].Result.GetComponent<UICard>();
+            StatusEffectPrefab = handles[1].Result;
+            StatusEffectDescPrefab = handles[2].Result;
+            //InGameManager.Instance.SpawnPlayer(playerHandle.Result);
+            InGameManager.Instance.StartLoadAsync(false);
         }
         else
         {
             Debug.LogWarning("하나 이상의 에셋 로드 실패");
         }
-
-        Addressables.Release(handle1);
-        Addressables.Release(handle2);
-        Addressables.Release(handle3);
         //InGameManager.Instance.ReleaseAddressable(playerHandle);
         //Addressables.Release(playerHandle);
 
@@ -829,5 +777,19 @@ public class InGameUIManager : MonoBehaviour
     public void SetDummyCount()
     {
         _dummyCount.text = CardManager.Instance.CardDummy.Count.ToString();
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance != this) return;
+        _uiCard = null;
+        StatusEffectPrefab = null;
+        StatusEffectDescPrefab = null;
+        for (int i = 0; i < handles.Count; ++i)
+        {
+            if (handles[i].IsValid())
+                Addressables.Release(handles[i]);
+        }
+        handles.Clear();
     }
 }

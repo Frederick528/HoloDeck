@@ -37,6 +37,8 @@ public class GameManager : MonoBehaviour
     public (int, int) ScreenWH = (1920, 1080);
     public bool FullScreen = false;
 
+    //public bool OutFastMode = false;
+
     //public bool IsSceneChange;
 
     //public int OnUINum;
@@ -151,6 +153,19 @@ public class GameManager : MonoBehaviour
             return;
         }
         //if (_selectAbility && _option) return;
+        if (InGame && !pause)
+        {
+            if (InGameManager.Instance.GetFast())
+            {
+                Time.timeScale = 0.25f;
+                return;
+            }
+            else if (InGameManager.Instance.GetSlow())
+            {
+                Time.timeScale = 3f;
+                return;
+            }
+        }
         Time.timeScale = pause ? 0 : 1;
         //Physics2D.autoSyncTransforms = pause ? true : false;      // 정지상태에서 카드를 사용하는 경우에는 필요함. 근데, 지금은 따로 필요없음.
     }
@@ -231,16 +246,19 @@ public class GameManager : MonoBehaviour
     public async UniTaskVoid ChangeScene(int idx)
     {
         bool lobby = NowChapterLV == 0;
-        if (idx == 0 && SceneManager.GetActiveScene().buildIndex == idx) return;
+        if (idx == 0 && lobby) return;
         //IsSceneChange = true;
         if(lobby || idx == 0)
+        {
             await OutGameUIManager.Instance.FadeOut(0.55f);
+        }
         switch (idx)
         {
             case 0:
                 DestroyAllInGameDontDestroyObjects();
                 NowChapterLV = idx;       // 로비
                 await SceneManager.LoadSceneAsync(idx);
+
                 //SceneManager.LoadScene(idx);
                 break;
             case 1:
@@ -262,27 +280,31 @@ public class GameManager : MonoBehaviour
                 //SceneManager.LoadScene(0);
                 break;
         }
-        if (lobby && InGameUIManager.Instance)
+        if (lobby && InGame)
         {
-            CancellationTokenSource cts = new CancellationTokenSource();
-            var task1 = UniTask.WaitForSeconds(2f);
+            await InGameManager.Instance.AllLoadAsync();
+            //InGameManager.Instance.FastMode(OutFastMode);
+
+
+            //CancellationTokenSource cts = new CancellationTokenSource();
+            //var task1 = UniTask.WaitForSeconds(2f);
+            ////{
+            ////    await UniTask.WaitForSeconds(2f);
+            ////    if (!cts.IsCancellationRequested)
+            ////    {
+            ////        cts.Cancel();
+            ////        cts.Dispose();
+            ////    }
+            ////});
+            //var task2 = UniTask.WaitUntil(() => InGameManager.Instance.CurrentLoadAsyncCount == 0, PlayerLoopTiming.Update, cts.Token);
+            //await UniTask.WhenAny(
+            //    task1, task2
+            //    ).SuppressCancellationThrow();
+            //if (!cts.IsCancellationRequested)
             //{
-            //    await UniTask.WaitForSeconds(2f);
-            //    if (!cts.IsCancellationRequested)
-            //    {
-            //        cts.Cancel();
-            //        cts.Dispose();
-            //    }
-            //});
-            var task2 = UniTask.WaitUntil(() => InGameUIManager.Instance.EndLoad, PlayerLoopTiming.Update, cts.Token);
-            await UniTask.WhenAny(
-                task1, task2
-                ).SuppressCancellationThrow();
-            if (!cts.IsCancellationRequested)
-            {
-                cts.Cancel();
-                cts.Dispose();
-            }
+            //    cts.Cancel();
+            //    cts.Dispose();
+            //}
         }
         if (idx == 0)
         {

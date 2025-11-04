@@ -203,7 +203,7 @@ public class Player : Entity
         animator.SetBool(_battleAnimBool, isBattleStart);
     }
 
-    public async UniTask EnterChapterDoor(Action isEnter = null, bool changeScene = false)
+    public async UniTask EnterChapterDoor(Action isEnter = null, bool changeScene = false, bool isNext = true)
     {
         Quaternion defaultRot = animator.transform.rotation;
         Vector3 defaultPos = animator.transform.localPosition;
@@ -212,7 +212,19 @@ public class Player : Entity
         animator.Play(_runningAnim);
         animator.SetBool(_enterAnimBool, true);
         await RotationTask(0.2f, defaultRot, Quaternion.Euler(defaultRot.x, 90, defaultRot.z));
-        await MoveTask(0.45f, defaultPos, new Vector3(4, 0));
+        Vector3 moveDistance;
+        float moveTime;
+        if (isNext)
+        {
+            moveDistance = new Vector3(6, 0);
+            moveTime = 0.65f;
+        }
+        else
+        {
+            moveDistance = new Vector3(3, 0);
+            moveTime = 0.35f;
+        }
+        await MoveTask(moveTime, defaultPos, moveDistance);
         animator.SetBool(_enterAnimBool, false);
         await RotationTask(0.2f, Quaternion.Euler(defaultRot.x, 90, defaultRot.z), Quaternion.identity);
         await OutGameUIManager.Instance.FadeOut(0.55f);

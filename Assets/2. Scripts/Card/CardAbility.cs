@@ -24,6 +24,10 @@ public class CardAbility
         {
             SettingCondition(card);
         }
+        else
+        {
+            _conditionTask = null;
+        }
 
         if (card.Data.IsSimpleAB)
         {
@@ -73,7 +77,7 @@ public class CardAbility
         //card.SetUseConditions(uniTaskCondition);
     }
 
-    void SettingSimpleAB(Card card, float delay = 0.3f)
+    void SettingSimpleAB(Card card, float delay = 0.5f)
     {
         //Func<UniTask> uniTaskAB = null;
         bool critical = _player.GetStatusEffect(StatusEffect.UseCritical, out _);
@@ -182,6 +186,7 @@ public class CardAbility
                 if (i != 0)
                 {
                     isStart = false;
+                    delay = delay * 0.75f;
                 }
                 await DelayTask(delay);
                 await SpawnEffect(card, isStart);
@@ -227,11 +232,12 @@ public class CardAbility
             await UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: _cts.Token);
             return;
         }
+        Quaternion effectAngle = Quaternion.Euler(new Vector3(-5,0,0));
         switch (card.Data.CardTag)
         {
             case CardTag.SingleAttack:
                 await UniTask.WhenAny(
-                    PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(card.TargetEnemy.transform.position, Quaternion.identity, Vector3.one))
+                    PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(card.TargetEnemy.transform.position, effectAngle, Vector3.one))
                     , UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: _cts.Token)
                     );
                 break;
@@ -239,7 +245,7 @@ public class CardAbility
                 if (card.AllEnemies)
                 {
                     await UniTask.WhenAny(
-                        PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(EnemyManager.Instance.EnemyCenterSpawnPos, Quaternion.identity, Vector3.one * 3))
+                        PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(EnemyManager.Instance.EnemyCenterSpawnPos, effectAngle, Vector3.one * 2.5f))
                         , UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: _cts.Token)
                         );
                 }
@@ -250,7 +256,7 @@ public class CardAbility
                         if (enemy != null)
                         {
                             await UniTask.WhenAny(
-                                PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(enemy.transform.position, Quaternion.identity, Vector3.one))
+                                PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(enemy.transform.position, effectAngle, Vector3.one))
                                 , UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: _cts.Token)
                                 );
                             //await enemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, critical));
@@ -263,7 +269,7 @@ public class CardAbility
         }
     }
 
-    async UniTask AddCardEvent(Card card, float delay = 0.3f, params (int, Func<UniTask>)[] taskOrder)
+    async UniTask AddCardEvent(Card card, float delay = 0.5f, params (int, Func<UniTask>)[] taskOrder)
     {
         var cardEventDict = new SortedDictionary<int, List<Func<UniTask>>>();
         foreach (var (order, effectTask) in taskOrder)

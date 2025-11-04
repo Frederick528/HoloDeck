@@ -63,27 +63,27 @@ public class SettingMap
     //[SerializeField] GameObject shopCanvas;
     //[SerializeField] GameObject shopenlargePanel;
     //[SerializeField] GameObject shopPanel;
-    public async UniTask EnterChapter(Map map, bool changeScene)
-    {
-        await map.stageContext.LoadTransition(map.stage, changeScene);
+    //public async UniTask EnterChapter(Map map, bool changeScene, bool isNext)     // 중복이었음.
+    //{
+    //    await map.stageContext.LoadTransition(map.stage, changeScene, isNext);
 
-        _mapManager.PrevStage = null;       // Load는 층(챕터)이 바뀌기 때문에 이전 스테이지가 없음.
-        _mapManager.currStage = map;
-    }
-    public void CheckBtnActivated(Map map)
-    {
-        if (!map.cleared)
-        {
-            ShowMapBtn.SetActive(false);
+    //    _mapManager.PrevStage = null;       // Load는 층(챕터)이 바뀌기 때문에 이전 스테이지가 없음.
+    //    _mapManager.currStage = map;
+    //}
+    //public void CheckBtnActivated(Map map)
+    //{
+    //    if (!map.cleared)
+    //    {
+    //        ShowMapBtn.SetActive(false);
 
-        }
-        else
-        {
-            ShowMapBtn.SetActive(true);
-        }
-        PreviousChapterBtn.SetActive(false);
-        NextChapterBtn.SetActive(false);
-    }
+    //    }
+    //    else
+    //    {
+    //        ShowMapBtn.SetActive(true);
+    //    }
+    //    PreviousChapterBtn.SetActive(false);
+    //    NextChapterBtn.SetActive(false);
+    //}
     public void Start(bool isEndBoss = false)
     {
         if (MapTr == null)
@@ -523,7 +523,7 @@ public class SettingMap
         //}
     }
 
-    public async UniTask LoadStage(Map map, bool changeScene)
+    public async UniTask LoadStage(Map map, bool changeScene, bool isNext)
     {
         if (_mapManager.StopMove)
             return;
@@ -567,7 +567,7 @@ public class SettingMap
 
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
 
-        await map.stageContext.LoadTransition(map.stage, changeScene);
+        await map.stageContext.LoadTransition(map.stage, changeScene, isNext);
 
         _mapManager.PrevStage = null;       // Load는 층(챕터)이 바뀌기 때문에 이전 스테이지가 없음.
         _mapManager.currStage = map;

@@ -1,6 +1,8 @@
 ﻿using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class MapManager : MonoBehaviour
 {
@@ -33,6 +35,12 @@ public class MapManager : MonoBehaviour
     //public GameObject LowTierBox;
     //public GameObject HighTierBox;
 
+    GameObject _redPortal;
+    GameObject _greenPortal;
+
+    AsyncOperationHandle<GameObject> _redHandle;
+    AsyncOperationHandle<GameObject> _greenHandle;
+
     SettingMap _settingMap;
 
     [SerializeField] GameObject _mapPrefab;
@@ -45,6 +53,7 @@ public class MapManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            LoadAsync().Forget();
             _settingMap = new(this);
             GameObject boxObj = GameObject.Find("Boxes");
             if (boxObj != null)
@@ -158,13 +167,37 @@ public class MapManager : MonoBehaviour
     //}
 
 
-    public void HideBox()
+    public async UniTask LoadAsync()
     {
+        InGameManager.Instance.StartLoadAsync(true);
+        _redHandle = Addressables.LoadAssetAsync<GameObject>("RedPortal.prefab");
+        _greenHandle = Addressables.LoadAssetAsync<GameObject>("GreenPortal.prefab");
 
-    }
 
-    public void ShowBox()
-    {
+        await UniTask.WhenAll(
+            _redHandle.ToUniTask(),
+            _greenHandle.ToUniTask()
+            ); 
+
+        // 성공 여부 확인
+        if (_redHandle.Status == AsyncOperationStatus.Succeeded &&
+            _greenHandle.Status == AsyncOperationStatus.Succeeded)
+        {
+            Debug.Log("맵매니저 모든 에셋 로드 성공!");
+            _redPortal = Instantiate(_redHandle.Result);
+            _redPortal.SetActive(false);
+            _greenPortal = Instantiate(_greenHandle.Result);
+            _greenPortal.SetActive(false);
+            InGameManager.Instance.StartLoadAsync(false);
+        }
+        else
+        {
+            Debug.LogWarning("하나 이상의 에셋 로드 실패");
+        }
+
+        GameManager.Instance.AddInGameDontDestroy(_redPortal);
+        GameManager.Instance.AddInGameDontDestroy(_greenPortal);
+
 
     }
 
@@ -276,7 +309,7 @@ public class MapManager : MonoBehaviour
         _settingMap.SaveChapter(chapterLV);
     }
 
-    public async UniTaskVoid LoadChapter(int chapterLV, bool previous = false, bool changeScene = false)
+    public async UniTaskVoid LoadChapter(int chapterLV, bool isNext = true, bool changeScene = false)
     {
         //if (OutGameUIManager.Instance && !previous)
         //{
@@ -302,7 +335,7 @@ public class MapManager : MonoBehaviour
         //{
         //    await MoveStage(_settingMap.Maps[0]);
         //}
-        LoadStage(previous, changeScene).Forget();
+        LoadStage(isNext, changeScene).Forget();
         //if (OutGameUIManager.Instance)
         //{
         //    print("AA");
@@ -321,8 +354,9 @@ public class MapManager : MonoBehaviour
         SetMapSize();
         bool isEndBoss = GameManager.Instance.NowChapterLV == 4;
         _settingMap.Start(isEndBoss);
-        await _settingMap.EnterChapter(currStage, changeScene);
-        ClearStage().Forget();
+        LoadStage(true, changeScene).Forget();
+        //await _settingMap.EnterChapter(currStage, changeScene, true);
+        //ClearStage().Forget();
 
 
         //InGameManager.Instance.Player.EnterChapterDoor(null, changeScene).Forget();
@@ -386,12 +420,16 @@ public class MapManager : MonoBehaviour
     public void ShowNextDoor(bool isShow)
     {
         _settingMap.NextChapterBtn.SetActive(isShow);
+        if (_redPortal == null) return;
+        _redPortal.SetActive(isShow);
     }
 
     public void ShowPreviousDoor(bool isShow)
     {
         if (isShow && GameManager.Instance.NowChapterLV <= 1) return;
         _settingMap.PreviousChapterBtn.SetActive(isShow);
+        if (_greenPortal == null) return;
+        _greenPortal.SetActive(isShow);
     }
 
     public async UniTask MovePrevStage()
@@ -427,17 +465,17 @@ public class MapManager : MonoBehaviour
             canMove = true;
     }
 
-    public async UniTask LoadStage(bool isPrevious, bool changeScene)
+    public async UniTask LoadStage(bool isNext, bool changeScene)
     {
-        if (isPrevious)
+        if (isNext)
         {
-            print("isPrevious");
-            await _settingMap.LoadStage(_settingMap.Maps[CreateMapCnt - 1], changeScene);
+            print("isNext");
+            await _settingMap.LoadStage(_settingMap.Maps[0], changeScene, isNext);
         }
         else
         {
-            print(isPrevious);
-            await _settingMap.LoadStage(_settingMap.Maps[0], changeScene);
+            print("isPrevious");
+            await _settingMap.LoadStage(_settingMap.Maps[CreateMapCnt - 1], changeScene, isNext);
         }
         if (currStage.cleared)
             canMove = true;
@@ -488,7 +526,18 @@ public class MapManager : MonoBehaviour
         PrevStage = currStage;
         currStage = map;
         ShowReward(map);
-        _settingMap.CheckBtnActivated(map);
+
+        if (!map.cleared)
+        {
+            _settingMap.ShowMapBtn.SetActive(false);
+
+        }
+        else
+        {
+            _settingMap.ShowMapBtn.SetActive(true);
+        }
+        ShowPreviousDoor(false);
+        ShowNextDoor(false);
     }
     public void SetupStart(List<Vector3Int> direction4, List<Map> maps)
     {
@@ -562,5 +611,16 @@ public class MapManager : MonoBehaviour
     public GameObject MarkInstantiate(Transform parent)
     {
         return Instantiate(_markPrefab, parent);
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance != this) return;
+        _redPortal = null;
+        _greenPortal = null;
+        if (_redHandle.IsValid())
+            Addressables.Release(_redHandle);
+        if (_greenHandle.IsValid())
+            Addressables.Release(_greenHandle);
     }
 }

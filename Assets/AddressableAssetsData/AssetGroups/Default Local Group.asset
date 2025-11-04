@@ -41,6 +41,14 @@ MonoBehaviour:
     m_Address: Muryotaisu.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 13c990b8270c70b4c9f196019286028c
+    m_Address: GreenPortal.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 52c7d057cba585641bb68312c10d7791
+    m_Address: RedPortal.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 8ddab990de4121140909e54570afce17, type: 2}
   m_SchemaSet:
