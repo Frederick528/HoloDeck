@@ -36,6 +36,11 @@ public abstract class Enemy : Entity
         EnemyManager.Instance.EnemyInfo = this;
         return true;
     }
+    public override void OnChildMouseExit()
+    {
+        base.OnChildMouseExit();
+        EnemyManager.Instance.EnemyInfo = null;
+    }
     //void OnMouseEnter()
     //{
     //    if (CardManager.Instance.isSingleTarget)
@@ -642,48 +647,48 @@ public abstract class Enemy : Entity
 
     }
 
-    protected override void AddStatusEffectDesc((StatusEffect, StatusEffectType) statusEffect, StringBuilder sb, (int, int) info)
+    protected override void AddStatusEffectDesc((StatusEffect effect, StatusEffectType type) statusEffect, StringBuilder sb, (int amount, int duration) info)
     {
-        switch (statusEffect.Item1)
+        switch (statusEffect.effect)
         {
             case StatusEffect.Attack:
                 if (GetStatusEffect(StatusEffect.UseCritical, out _))
                 {
                     if (_checkRepeat > 1)
                     {
-                        int damagePerHit = info.Item1 / _checkRepeat;
-                        sb.Replace("{n}", $"<color=green>{info.Item1} + 치명타 피해({(CheckCriticalDamage(damagePerHit, true) - damagePerHit)*_checkRepeat}) </color>");
+                        int damagePerHit = info.amount / _checkRepeat;
+                        sb.Replace("{n}", $"<color=green>{info.amount} + 치명타 피해({(CheckCriticalDamage(damagePerHit, true) - damagePerHit)*_checkRepeat}) </color>");
                     }
                     else
                     {
-                        sb.Replace("{n}", $"<color=green>{info.Item1} + 치명타 피해({CheckCriticalDamage(info.Item1, true) - info.Item1}) </color>");
+                        sb.Replace("{n}", $"<color=green>{info.amount} + 치명타 피해({CheckCriticalDamage(info.amount, true) - info.amount}) </color>");
                     }
                 }
                 else
-                    sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
+                    sb.Replace("{n}", $"<color=green>{info.amount}</color>");
                 break;
             case StatusEffect.Defense:
-                sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
+                sb.Replace("{n}", $"<color=green>{info.amount}</color>");
                 break;
             case StatusEffect.Heal:
-                sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
+                sb.Replace("{n}", $"<color=green>{info.amount}</color>");
                 break;
         }
         base.AddStatusEffectDesc(statusEffect, sb, info);
     }
 
-    protected override string ChangeInformationLV((StatusEffect, StatusEffectType) statusEffect, (int, int) info)
+    protected override string ChangeInformationLV((StatusEffect effect, StatusEffectType type) statusEffect, (int amount, int duration) info)
     {
-        if (statusEffect.Item1 == StatusEffect.Attack && GetStatusEffect(StatusEffect.UseCritical, out _))
+        if (statusEffect.effect == StatusEffect.Attack && GetStatusEffect(StatusEffect.UseCritical, out _))
         {
             if (_checkRepeat > 1)
             {
                 int damagePerHit = info.Item1 / _checkRepeat;
-                return $"LV: <color=green>{info.Item1} + {(CheckCriticalDamage(damagePerHit, true) - damagePerHit) * _checkRepeat} </color>";
+                return $"LV: <color=green>{info.amount} + {(CheckCriticalDamage(damagePerHit, true) - damagePerHit) * _checkRepeat} </color>";
             }
             else
             {
-                return $"LV: <color=green>{info.Item1} + {CheckCriticalDamage(info.Item1, true) - info.Item1} </color>";
+                return $"LV: <color=green>{info.amount} + {CheckCriticalDamage(info.amount, true) - info.amount} </color>";
             }
         }
         return base.ChangeInformationLV(statusEffect, info);

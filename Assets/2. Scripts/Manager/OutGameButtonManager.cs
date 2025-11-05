@@ -16,6 +16,10 @@ public class OutGameButtonManager : MonoBehaviour
     //{
     //    GameManager.Instance.ESC();
     //}
+    public void FastMode()
+    {
+        GameManager.Instance.FastMode();
+    }
 
     public void ChangeScene(int idx)
     {

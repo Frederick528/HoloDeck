@@ -32,9 +32,6 @@ public class InGameManager : MonoBehaviour
 
     public EventQueue AbilityEventQueue = new();                // 나중에 BattleManager로 이동
 
-    bool _fastMode;
-    bool _slowMode;
-
     public StatusEffectSO SESO;
     public CardSO CardSO;
     [SerializeField] ItemSO _itemSO;
@@ -559,72 +556,18 @@ public class InGameManager : MonoBehaviour
     //    Time.timeScale = pause ? 0 : 1;
     //    //Physics2D.autoSyncTransforms = pause ? true : false;      // 정지상태에서 카드를 사용하는 경우에는 필요함. 근데, 지금은 따로 필요없음.
     //}
-    public void FastMode(bool isFast)
-    {
-        _fastMode = isFast;
-        //if (GameManager.Instance.OutFastMode != _fastMode)
-        //    OutGameUIManager.Instance.FastMode();
-
-        if (_fastMode)
-        {
-            _slowMode = false;
-            if(GameManager.Instance.PauseNum == 0)
-            {
-                Time.timeScale = 3f;
-            }
-        }
-        else
-        {
-            if (GameManager.Instance.PauseNum == 0)
-            {
-                Time.timeScale = 1f;
-            }
-        }
-    }
-    public void SlowMode(bool isSlow)
-    {
-        _slowMode = isSlow;
-        if (_slowMode)
-        {
-            _fastMode = false;
-            //if (GameManager.Instance.OutFastMode)
-            //{
-            //    OutGameUIManager.Instance.FastMode();
-            //}
-            if (GameManager.Instance.PauseNum == 0)
-            {
-                Time.timeScale = 0.25f;
-            }
-        }
-        else
-        {
-            if (GameManager.Instance.PauseNum == 0)
-            {
-                Time.timeScale = 1f;
-            }
-        }
-    }
-
-    public bool GetFast()
-    {
-        return _fastMode;
-    }
-    public bool GetSlow()
-    {
-        return _slowMode;
-    }
 
     void Update()
     {
-        if (_fastMode && GameManager.Instance.PauseNum == 0)
-        {
-            Time.timeScale = 3f;
-        }
-        else if (_slowMode && GameManager.Instance.PauseNum == 0)
-        {
-            Time.timeScale = 0.25f;
-        }
-        else { Time.timeScale = GameManager.Instance.PauseNum != 0 ? 0 : 1; }
+        //if (_fastMode && GameManager.Instance.PauseNum == 0)
+        //{
+        //    Time.timeScale = 3f;
+        //}
+        //else if (_slowMode && GameManager.Instance.PauseNum == 0)
+        //{
+        //    Time.timeScale = 0.25f;
+        //}
+        //else { Time.timeScale = GameManager.Instance.PauseNum != 0 ? 0 : 1; }
 
 
         if (Input.GetMouseButtonDown(1))
@@ -684,14 +627,14 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
-            FastMode(!_fastMode);
+            GameManager.Instance.FastMode();
             //_fastMode = !_fastMode;
             //if (_fastMode)
             //    _slowMode = false;
         }
         if (Input.GetKeyDown(KeyCode.RightShift))
         {
-            SlowMode(!_slowMode);
+            GameManager.Instance.SlowMode();
             //_slowMode = !_slowMode;
             //if (_slowMode)
             //    _fastMode = false;

@@ -29,7 +29,7 @@ public class OutGameUIManager : MonoBehaviour
 
     Image _fadeImage;
 
-    //GameObject _fastCheck;
+    GameObject _fastCheck;
 
     (RectTransform, bool)[] _optionContent;
 
@@ -81,7 +81,7 @@ public class OutGameUIManager : MonoBehaviour
             _optionContent[i].Item2 = false;
         }
         _optionScrollRect = _canvasDict[(int)CanvasName.Option].GetComponentInChildren<ScrollRect>();
-        //_fastCheck = FindTransform.ContinueFindChildUIByName(_optionContent[0].Item1, "Check").gameObject;
+        _fastCheck = FindTransform.ContinueFindChildUIByName(_optionContent[0].Item1, "Check").gameObject;
 
         SettingCanResolution();
     }
@@ -224,16 +224,10 @@ public class OutGameUIManager : MonoBehaviour
         return _canvasDict[(int)canvasName];
     }
 
-    //public void FastMode()
-    //{
-    //    GameManager.Instance.OutFastMode = !GameManager.Instance.OutFastMode;
-    //    _fastCheck.SetActive(GameManager.Instance.OutFastMode);
-    //    if (InGameManager.Instance != null)
-    //    {
-    //        if (GameManager.Instance.OutFastMode != InGameManager.Instance.GetFast())
-    //            InGameManager.Instance.FastMode(GameManager.Instance.OutFastMode);
-    //    }
-    //}
+    public void CheckFastMode()
+    {
+        _fastCheck.SetActive(GameManager.Instance.GetFast());
+    }
 
     void OnEnable()
     {

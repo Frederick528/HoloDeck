@@ -42,6 +42,8 @@ public class GameManager : MonoBehaviour
     //public bool IsSceneChange;
 
     //public int OnUINum;
+    bool _fastMode;
+    bool _slowMode;
 
     bool _isESCPause = false;
     // Start is called before the first frame update
@@ -133,6 +135,63 @@ public class GameManager : MonoBehaviour
         Screen.SetResolution(width, height, FullScreen);
     }
 
+    public void FastMode()
+    {
+        _fastMode = !_fastMode;
+        //if (GameManager.Instance.OutFastMode != _fastMode)
+        //    OutGameUIManager.Instance.FastMode();
+        OutGameUIManager.Instance.CheckFastMode();
+
+        if (_fastMode)
+        {
+            _slowMode = false;
+            if (PauseNum == 0 && InGame)
+            {
+                Time.timeScale = 2f;
+            }
+        }
+        else
+        {
+            if (PauseNum == 0 && InGame)
+            {
+                Time.timeScale = 1f;
+            }
+        }
+    }
+    public void SlowMode()
+    {
+        _slowMode = !_slowMode;
+        if (_slowMode)
+        {
+            _fastMode = false;
+            OutGameUIManager.Instance.CheckFastMode();
+            //if (GameManager.Instance.OutFastMode)
+            //{
+            //    OutGameUIManager.Instance.FastMode();
+            //}
+            if (PauseNum == 0 && InGame)
+            {
+                Time.timeScale = 0.25f;
+            }
+        }
+        else
+        {
+            if (PauseNum == 0 && InGame)
+            {
+                Time.timeScale = 1f;
+            }
+        }
+    }
+
+    public bool GetFast()
+    {
+        return _fastMode;
+    }
+    public bool GetSlow()
+    {
+        return _slowMode;
+    }
+
     public void ESC(bool esc)
     {
         _isESCPause = esc;
@@ -155,14 +214,14 @@ public class GameManager : MonoBehaviour
         //if (_selectAbility && _option) return;
         if (InGame && !pause)
         {
-            if (InGameManager.Instance.GetFast())
+            if (_fastMode)
             {
-                Time.timeScale = 0.25f;
+                Time.timeScale = 2f;
                 return;
             }
-            else if (InGameManager.Instance.GetSlow())
+            else if (_slowMode)
             {
-                Time.timeScale = 3f;
+                Time.timeScale = 0.25f;
                 return;
             }
         }
@@ -250,6 +309,7 @@ public class GameManager : MonoBehaviour
         //IsSceneChange = true;
         if(lobby || idx == 0)
         {
+            Time.timeScale = PauseNum!=0 ? 0 : 1;
             await OutGameUIManager.Instance.FadeOut(0.55f);
         }
         switch (idx)
@@ -283,6 +343,19 @@ public class GameManager : MonoBehaviour
         if (lobby && InGame)
         {
             await InGameManager.Instance.AllLoadAsync();
+            if (_fastMode)
+            {
+                Time.timeScale = 2f;
+            }
+            else if (_slowMode)
+            {
+                Time.timeScale = 0.25f;
+            }
+            else
+            {
+                Time.timeScale = 1f;
+
+            }
             //InGameManager.Instance.FastMode(OutFastMode);
 
 
