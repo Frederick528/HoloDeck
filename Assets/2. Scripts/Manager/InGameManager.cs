@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using UniRx;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.EventSystems;
@@ -44,7 +45,7 @@ public class InGameManager : MonoBehaviour
     public int PauseInt;
     public bool ShowStatus;
 
-    public int CurrentLoadAsyncCount = 0;
+    //public int CurrentLoadAsyncCount = 0;
 
     AsyncOperationHandle<GameObject> _playerHandle;
     GameObject _playerObj;
@@ -109,21 +110,21 @@ public class InGameManager : MonoBehaviour
         //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     }
 
-    public void StartLoadAsync(bool isStart)
-    {
-        if (isStart)
-        {
-            CurrentLoadAsyncCount++;
-        }
-        else
-        {
-            CurrentLoadAsyncCount--;
-        }
-    }
+    //public void StartLoadAsync(bool isStart)
+    //{
+    //    if (isStart)
+    //    {
+    //        CurrentLoadAsyncCount++;
+    //    }
+    //    else
+    //    {
+    //        CurrentLoadAsyncCount--;
+    //    }
+    //}
 
     public async UniTask LoadAsync()
     {
-        StartLoadAsync(true);
+        GameManager.Instance.StartLoadAsync(true);
         string playerName = "playerName";
         switch (GameManager.Instance.PlayerInt)
         {
@@ -143,9 +144,10 @@ public class InGameManager : MonoBehaviour
         if (_playerHandle.Status == AsyncOperationStatus.Succeeded)
         {
             Debug.Log("인게임 매니저 모든 에셋 로드 성공!");
-            StartLoadAsync(false);
+            GameManager.Instance.StartLoadAsync(false);
             _playerObj = _playerHandle.Result;
-            await AllLoadAsync();
+            //await GameManager.Instance.IsAsyncLoadComplete.Where(isAllComplete => isAllComplete).ToUniTask(cancellationToken: this.GetCancellationTokenOnDestroy());
+            await UniRxExtensions.AwaitTrueAsync(GameManager.Instance.IsAsyncLoadComplete, this.GetCancellationTokenOnDestroy());
             SpawnPlayer(_playerObj);
         }
         else
@@ -190,28 +192,28 @@ public class InGameManager : MonoBehaviour
         Player.SpawnPlayer();
     }
 
-    public async UniTask AllLoadAsync()
-    {
-        CancellationTokenSource cts = new CancellationTokenSource();
-        var task1 = UniTask.WaitForSeconds(10f);
-        //{
-        //    await UniTask.WaitForSeconds(2f);
-        //    if (!cts.IsCancellationRequested)
-        //    {
-        //        cts.Cancel();
-        //        cts.Dispose();
-        //    }
-        //});
-        var task2 = UniTask.WaitUntil(() => CurrentLoadAsyncCount == 0, PlayerLoopTiming.Update, cts.Token);
-        await UniTask.WhenAny(
-            task1, task2
-            ).SuppressCancellationThrow();
-        if (!cts.IsCancellationRequested)
-        {
-            cts.Cancel();
-            cts.Dispose();
-        }
-    }
+    //public async UniTask AllLoadAsync()
+    //{
+    //    CancellationTokenSource cts = new CancellationTokenSource();
+    //    var task1 = UniTask.WaitForSeconds(10f, cancellationToken: cts.Token);
+    //    //{
+    //    //    await UniTask.WaitForSeconds(2f);
+    //    //    if (!cts.IsCancellationRequested)
+    //    //    {
+    //    //        cts.Cancel();
+    //    //        cts.Dispose();
+    //    //    }
+    //    //});
+    //    var task2 = UniTask.WaitUntil(() => CurrentLoadAsyncCount == 0, PlayerLoopTiming.Update, cts.Token);
+    //    await UniTask.WhenAny(
+    //        task1, task2
+    //        );
+    //    if (!cts.IsCancellationRequested)
+    //    {
+    //        cts.Cancel();
+    //        cts.Dispose();
+    //    }
+    //}
     public AsyncOperationHandle<GameObject> PlayerLoadAsync()
     {
         string playerName = "playerName";

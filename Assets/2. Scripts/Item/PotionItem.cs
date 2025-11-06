@@ -37,7 +37,7 @@ public class PotionItem : UseItem
     }
     public async override UniTask UseTask()
     {
-        if (Data.ItemCanUse == ItemCanUse.OnlyBattle && !TurnManager.Instance.InBattle)        // 사용 중 배틀이 끝나는 경우
+        if (Data.ItemCanUse == ItemCanUse.OnlyBattle && !TurnManager.Instance.InBattle.Value)        // 사용 중 배틀이 끝나는 경우
         {
             ItemManager.Instance.HavePotionItem[BtnIdx] = true;
             return;

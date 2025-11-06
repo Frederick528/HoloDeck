@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -246,27 +247,31 @@ public class OutGameUIManager : MonoBehaviour
 
     public async UniTask FadeIn(float fadeDuration)
     {
-        float time = 0f;
-        while (time < fadeDuration)
-        {
-            time += Time.deltaTime;
-            _fadeImage.color = new Color(0, 0, 0, Mathf.Lerp(1f, 0f, time / fadeDuration));
-            await UniTask.Yield();
-        }
+        _fadeImage.color = new Color(0, 0, 0, 1f);
+        await _fadeImage.DOFade(0f, fadeDuration);
+        //float time = 0f;
+        //while (time < fadeDuration)
+        //{
+        //    time += Time.deltaTime;
+        //    _fadeImage.color = new Color(0, 0, 0, Mathf.Lerp(1f, 0f, time / fadeDuration));
+        //    await UniTask.Yield();
+        //}
 
-        _fadeImage.color = new Color(0, 0, 0, 0f); // 완전히 밝아짐
+        //_fadeImage.color = new Color(0, 0, 0, 0f); // 완전히 밝아짐
         SetActiveCanvas(CanvasName.Fade, false);
     }
     public async UniTask FadeOut(float fadeDuration)
     {
         SetActiveCanvas(CanvasName.Fade, true);
-        float time = 0f;
-        while (time < fadeDuration)
-        {
-            time += Time.deltaTime;
-            _fadeImage.color = new Color(0, 0, 0, Mathf.Lerp(0f, 1f, time / fadeDuration));
-            await UniTask.Yield();
-        }
+        _fadeImage.color = new Color(0, 0, 0, 0f);
+        await _fadeImage.DOFade(1f, fadeDuration);
+        //float time = 0f;
+        //while (time < fadeDuration)
+        //{
+        //    time += Time.deltaTime;
+        //    _fadeImage.color = new Color(0, 0, 0, Mathf.Lerp(0f, 1f, time / fadeDuration));
+        //    await UniTask.Yield();
+        //}
     }
 
 }

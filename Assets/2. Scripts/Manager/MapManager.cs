@@ -46,7 +46,7 @@ public class MapManager : MonoBehaviour
     [SerializeField] GameObject _mapPrefab;
     [SerializeField] GameObject _markPrefab;
 
-    bool _onLoaded;
+    //bool _onLoaded;
 
     void Awake()
     {
@@ -100,7 +100,7 @@ public class MapManager : MonoBehaviour
 
     private void Start()
     {
-        if (_onLoaded) return;
+        //if (_onLoaded) return;
         PrevStage = null;
         SetMapSize();
         bool isEndBoss = GameManager.Instance.NowChapterLV == 4;
@@ -169,7 +169,7 @@ public class MapManager : MonoBehaviour
 
     public async UniTask LoadAsync()
     {
-        InGameManager.Instance.StartLoadAsync(true);
+        GameManager.Instance.StartLoadAsync(true);
         _redHandle = Addressables.LoadAssetAsync<GameObject>("RedPortal.prefab");
         _greenHandle = Addressables.LoadAssetAsync<GameObject>("GreenPortal.prefab");
 
@@ -188,7 +188,7 @@ public class MapManager : MonoBehaviour
             _redPortal.SetActive(false);
             _greenPortal = Instantiate(_greenHandle.Result);
             _greenPortal.SetActive(false);
-            InGameManager.Instance.StartLoadAsync(false);
+            GameManager.Instance.StartLoadAsync(false);
         }
         else
         {
@@ -315,7 +315,7 @@ public class MapManager : MonoBehaviour
         //{
         //    await OutGameUIManager.Instance.FadeOut(0.55f);
         //}
-        if (TurnManager.Instance.InBattle)
+        if (TurnManager.Instance.InBattle.Value)
             await TurnManager.Instance.EndBattle();
         //PrevStage = null;
         
@@ -347,7 +347,7 @@ public class MapManager : MonoBehaviour
     {
         //if (OutGameUIManager.Instance)
         //    await OutGameUIManager.Instance.FadeOut(0.55f);
-        if (TurnManager.Instance.InBattle)
+        if (TurnManager.Instance.InBattle.Value)
             await TurnManager.Instance.EndBattle();
 
         PrevStage = null;
@@ -436,7 +436,7 @@ public class MapManager : MonoBehaviour
     {
         if (PrevStage == null) return;
 
-        if (/*!StopMove*/TurnManager.Instance.InBattle)
+        if (/*!StopMove*/TurnManager.Instance.InBattle.Value)
             await TurnManager.Instance.EndBattle();
         await _settingMap.MoveStage(PrevStage);
 
@@ -447,7 +447,7 @@ public class MapManager : MonoBehaviour
     public async UniTask MoveStage(Map stage)
     {
         if (stage == null) return;
-        if (/*!StopMove*/TurnManager.Instance.InBattle)
+        if (/*!StopMove*/TurnManager.Instance.InBattle.Value)
             await TurnManager.Instance.EndBattle();
         await _settingMap.MoveStage(stage);
 
@@ -457,7 +457,7 @@ public class MapManager : MonoBehaviour
 
     public async UniTask MoveBossStage()
     {
-        if (TurnManager.Instance.InBattle)
+        if (TurnManager.Instance.InBattle.Value)
             await TurnManager.Instance.EndBattle();
         await _settingMap.MoveStage(_settingMap.Maps[CreateMapCnt - 1]);
 

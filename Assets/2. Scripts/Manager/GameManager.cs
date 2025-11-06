@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using UniRx;
 using UnityEngine;
@@ -46,6 +47,12 @@ public class GameManager : MonoBehaviour
     bool _slowMode;
 
     bool _isESCPause = false;
+
+    private ReactiveProperty<int> _curInGameAsyncLoad = new(0);
+
+    public IReadOnlyReactiveProperty<bool> IsAsyncLoadComplete { get; private set; }
+    //public int CurrentLoadAsyncCount = 0;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -53,6 +60,9 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             OutGameRootObj = transform.root.gameObject;
+            IsAsyncLoadComplete = _curInGameAsyncLoad
+                                .Select(count => count == 0) // int를 bool로 변환
+                                .ToReadOnlyReactiveProperty(); // IObservable<bool>을 RP<bool>로 변환
             DontDestroyOnLoad(OutGameRootObj);
         }
         else
@@ -340,9 +350,26 @@ public class GameManager : MonoBehaviour
                 //SceneManager.LoadScene(0);
                 break;
         }
+        if (idx == 0)
+        {
+            _curInGameAsyncLoad.Value = 0;
+            ResolutionSetting(Camera.main);
+            await OutGameUIManager.Instance.FadeIn(0.75f);
+        }
+        if (lobby)
+        {
+
+            if (!await AllLoadAsync())
+            {
+                DestroyAllInGameDontDestroyObjects();
+                NowChapterLV = 0;       // 로비
+                await SceneManager.LoadSceneAsync(0);
+            }
+            await OutGameUIManager.Instance.FadeIn(0.75f);
+        }
+        //IsSceneChange = false;
         if (lobby && InGame)
         {
-            await InGameManager.Instance.AllLoadAsync();
             if (_fastMode)
             {
                 Time.timeScale = 2f;
@@ -379,13 +406,47 @@ public class GameManager : MonoBehaviour
             //    cts.Dispose();
             //}
         }
-        if (idx == 0)
+    }
+    public void StartLoadAsync(bool isStart)
+    {
+        if (isStart)
         {
-            ResolutionSetting(Camera.main);
+            ++_curInGameAsyncLoad.Value;
         }
-        if (lobby || idx == 0)
-            await OutGameUIManager.Instance.FadeIn(0.75f);
-        //IsSceneChange = false;
+        else
+        {
+            --_curInGameAsyncLoad.Value;
+        }
+        //print(_curInGameAsyncLoad);
+    }
+    public async UniTask<bool> AllLoadAsync()
+    {
+        CancellationTokenSource cts = new CancellationTokenSource();
+        bool isEnter = true;
+        var task1 = UniTask.Create(async () =>
+        {
+            await UniTask.WaitForSeconds(30f, ignoreTimeScale: true, cancellationToken: cts.Token);
+            isEnter = false;
+        });
+        //print(IsAsyncLoadComplete.Value);
+        //var task2 = _curInGameAsyncLoad.Where(isTrue => isTrue == 0).Do(isTrue => Debug.Log(isTrue)).ToUniTask();
+        //print(task2);
+        //print(_curInGameAsyncLoad.Value = 0);
+        //print(IsAsyncLoadComplete.Value);
+        //print(task2);
+        var task2 = UniRxExtensions.AwaitTrueAsync(IsAsyncLoadComplete, cts.Token);
+        //var task2 = UniTask.WaitUntil(() => IsAsyncLoadComplete.Value, cancellationToken: cts.Token);
+        //var task2 = IsAsyncLoadComplete.Where(isAllComplete => isAllComplete).ToUniTask(cancellationToken: cts.Token);
+        await UniTask.WhenAny(
+            task1, task2
+            );
+        print("S");
+        if (!cts.IsCancellationRequested)
+        {
+            cts.Cancel();
+            cts.Dispose();
+        }
+        return isEnter;
     }
 
     public async UniTask ChangeScene()

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using TMPro;
+using UniRx;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -31,6 +32,8 @@ public class Card : MonoBehaviour
     [SerializeField] TMP_Text _descText;
     [SerializeField] TMP_Text _tagText;
     [SerializeField] SpriteRenderer _outline;
+    private Tween curOutlineTween;
+
 
     public PRS OriginPRS;
     public Order CardOrder;
@@ -64,6 +67,10 @@ public class Card : MonoBehaviour
     public bool Enhanced = false;
 
     public Enemy TargetEnemy { get; private set; } = null;        // 카드 사용 시, 타겟에너미를 받아옴. (나중에 큐에서 체크하기 위함.)
+
+    private ReactiveProperty<bool> _isCardUseTiming = new();
+
+    public IReadOnlyReactiveProperty<bool> IsCardUseTiming => _isCardUseTiming;
 
     public bool CardUseTiming { get; private set; }
     public bool RepeatEffect { get; private set; }
@@ -332,9 +339,22 @@ public class Card : MonoBehaviour
         TargetEnemy = enemy;
     }
 
-    public void TurnOnOutline(bool isOn)
+    public async UniTask TurnOnOutline(bool isOn)
     {
-        _outline.gameObject.SetActive(isOn);
+        if (isOn)
+        {
+            curOutlineTween?.Kill();
+            _outline.material.SetFloat("_Thickness", 0.9f);
+            _outline.gameObject.SetActive(true);
+            curOutlineTween = _outline.material.DOFloat(1f, "_Thickness", 0.3f).SetUpdate(true);
+        }
+        else
+        {
+            curOutlineTween?.Kill();
+            curOutlineTween = _outline.material.DOFloat(0.9f, "_Thickness", 0.5f).SetUpdate(true);
+            await curOutlineTween.ToUniTask(cancellationToken: TurnManager.Instance.CancelSource.Token).SuppressCancellationThrow();
+            _outline.gameObject.SetActive(false);
+        }
     }
 
     public async UniTask TaskMoveTransform(PRS prs, bool battleCancel, float dotweenTime = 0)
@@ -385,12 +405,14 @@ public class Card : MonoBehaviour
 
     public void CardTiming()
     {
-        CardUseTiming = true;
+        //CardUseTiming = true;
+        _isCardUseTiming.Value = true;
     }
 
     public void UseTimingReset()
     {
-        CardUseTiming = false;
+        //CardUseTiming = false;
+        _isCardUseTiming.Value = false;
     }
 
     public async UniTaskVoid WaitUnblock(float waitTime)

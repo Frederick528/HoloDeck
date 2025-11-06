@@ -782,7 +782,7 @@ public class CardManager : MonoBehaviour
 
     public async UniTask PlayedCard(Card playedCard)
     {
-        if (!TurnManager.Instance.InBattle)
+        if (!TurnManager.Instance.InBattle.Value)
         {
             playedCard.FailedUseCard();
             return;

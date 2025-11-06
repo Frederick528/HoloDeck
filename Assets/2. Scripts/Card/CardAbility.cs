@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
+using UniRx;
 
 public class CardAbility
 {
@@ -229,7 +230,9 @@ public class CardAbility
         card.UseTimingReset();
         if (!start && !card.RepeatEffect)
         {
-            await UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: _cts.Token);
+            await UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, _cts.Token);
+            //await card.IsCardUseTiming.Where(timing => timing).ToUniTask(cancellationToken: _cts.Token);
+            //await UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: _cts.Token);
             return;
         }
         Quaternion effectAngle = Quaternion.Euler(new Vector3(-5,0,0));
@@ -238,7 +241,8 @@ public class CardAbility
             case CardTag.SingleAttack:
                 await UniTask.WhenAny(
                     PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(card.TargetEnemy.transform.position, effectAngle, Vector3.one))
-                    , UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: _cts.Token)
+                    , UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, _cts.Token)
+                    //, card.IsCardUseTiming.Where(timing => timing).ToUniTask(cancellationToken: _cts.Token)
                     );
                 break;
             case CardTag.MultiAttack:
@@ -246,7 +250,8 @@ public class CardAbility
                 {
                     await UniTask.WhenAny(
                         PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(EnemyManager.Instance.EnemyCenterSpawnPos, effectAngle, Vector3.one * 2.5f))
-                        , UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: _cts.Token)
+                        , UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, _cts.Token)
+                        //, card.IsCardUseTiming.Where(timing => timing).ToUniTask(cancellationToken: _cts.Token)
                         );
                 }
                 else
@@ -257,7 +262,8 @@ public class CardAbility
                         {
                             await UniTask.WhenAny(
                                 PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(enemy.transform.position, effectAngle, Vector3.one))
-                                , UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: _cts.Token)
+                                , UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, _cts.Token)
+                                //, card.IsCardUseTiming.Where(timing => timing).ToUniTask(cancellationToken: _cts.Token)
                                 );
                             //await enemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, critical));
                         }
@@ -381,7 +387,8 @@ public class CardAbility
         var task4 = UniTask.Create(async () =>
         {
             // 버리는 와중에 전투가 끝나면(전투 bool이 변경되면) 초기화
-            await UniTask.WaitUntil(() => !TurnManager.Instance.InBattle, cancellationToken: cts.Token);
+            //await UniTask.WaitUntil(() => !TurnManager.Instance.InBattle, cancellationToken: cts.Token);
+            await TurnManager.Instance.InBattle.Where(inBattle => !inBattle).ToUniTask(cancellationToken: cts.Token);
             CardManager.Instance.ReturnSelectedCard();
             discarded = false;
         });

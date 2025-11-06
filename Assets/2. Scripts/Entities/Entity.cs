@@ -43,18 +43,20 @@ public abstract class Entity : MonoBehaviour
 
     SendAnimEvent _animEvent;
 
-    bool _isAtk;
-    bool _isDied;
+    //bool _isAtk;
+    //bool _isDied;
 
     protected Animator animator;
     readonly int _hitAnim = Animator.StringToHash("Hit");
     readonly int _attackAnim = Animator.StringToHash("Attack");
     readonly int _dieAnim = Animator.StringToHash("Die");
 
+    ReactiveProperty<bool> _isAtk = new();
+    ReactiveProperty<bool> _isDied = new();
 
-    public ReactiveProperty<int> _maxHP = new();
-    public ReactiveProperty<int> _curHP = new();
-    public ReactiveProperty<int> _shield = new();
+    ReactiveProperty<int> _maxHP = new();
+    ReactiveProperty<int> _curHP = new();
+    ReactiveProperty<int> _shield = new();
 
     public ReactiveProperty<int> MaxHP { get; private set; } = new();
     public ReactiveProperty<int> CurHP { get; private set; } = new();
@@ -242,7 +244,7 @@ public abstract class Entity : MonoBehaviour
 
     public void AtkAnimtiming()
     {
-        _isAtk = true;
+        _isAtk.Value = true;
     }
 
     public virtual async UniTask AttackAnimation(bool checkAtkTiming = false)
@@ -259,12 +261,14 @@ public abstract class Entity : MonoBehaviour
             var timeoutTask = UniTask.WaitForSeconds(1f, cancellationToken: cts.Token);
 
             // UniTask.WaitUntil을 사용하여 조건 충족 대기
-            var waitUntilTask = UniTask.WaitUntil(() => _isAtk, cancellationToken: cts.Token);
+            //var waitUntilTask = UniTask.WaitUntil(() => _isAtk, cancellationToken: cts.Token);
+            //var waitUntilTask = _isAtk.Where(isAtk => isAtk == true).ToUniTask(cancellationToken: cts.Token);
+            var waitUntilTask = UniRxExtensions.AwaitTrueAsync(_isAtk, cts.Token);
 
             // 둘 중 먼저 완료되는 작업에 대한 처리
             await UniTask.WhenAny(waitUntilTask, timeoutTask);
             //await UniTask.WaitUntil(() => { f += Time.deltaTime; return _isAtk; }/*, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token*/);    // 공격하는 모션 중에는 게임이 끝나지 않을 것
-            _isAtk = false;
+            _isAtk.Value = false;
             cts.Cancel();
             cts.Dispose();
         }
@@ -294,7 +298,7 @@ public abstract class Entity : MonoBehaviour
 
     public void DieAnimEnd()
     {
-        _isDied = true;
+        _isDied.Value = true;
     }
 
     public virtual async UniTask DieAnimation(bool checkAnim = false)
@@ -312,7 +316,9 @@ public abstract class Entity : MonoBehaviour
             var timeoutTask = UniTask.WaitForSeconds(1f, cancellationToken: cts.Token);
 
             // UniTask.WaitUntil을 사용하여 조건 충족 대기
-            var waitUntilTask = UniTask.WaitUntil(() => _isDied, cancellationToken: cts.Token);
+            //var waitUntilTask = UniTask.WaitUntil(() => _isDied, cancellationToken: cts.Token);
+            //var waitUntilTask = _isDied.Where(isDied => isDied == true).ToUniTask(cancellationToken: cts.Token);
+            var waitUntilTask = UniRxExtensions.AwaitTrueAsync(_isDied, cts.Token);
 
             // 둘 중 먼저 완료되는 작업에 대한 처리
             await UniTask.WhenAny(waitUntilTask, timeoutTask);

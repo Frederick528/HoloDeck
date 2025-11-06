@@ -326,7 +326,7 @@ public class InGameUIManager : MonoBehaviour
     //}
     public async UniTask LoadAsync()
     {
-        InGameManager.Instance.StartLoadAsync(true);
+        GameManager.Instance.StartLoadAsync(true);
         handles.Add(Addressables.LoadAssetAsync<GameObject>("UICardImg.prefab"));
         handles.Add(Addressables.LoadAssetAsync<GameObject>("StatusEffect.prefab"));
         handles.Add(Addressables.LoadAssetAsync<GameObject>("StatusEffectDesc.prefab"));
@@ -353,7 +353,7 @@ public class InGameUIManager : MonoBehaviour
             StatusEffectPrefab = handles[1].Result;
             StatusEffectDescPrefab = handles[2].Result;
             //InGameManager.Instance.SpawnPlayer(playerHandle.Result);
-            InGameManager.Instance.StartLoadAsync(false);
+            GameManager.Instance.StartLoadAsync(false);
         }
         else
         {
@@ -424,7 +424,7 @@ public class InGameUIManager : MonoBehaviour
                     ShopManager.Instance.CloseShop();
                     break;
                 case CanvasName.ViewDeck:
-                    if (TurnManager.Instance.InBattle)      // 시간이 멈춰있어서 이거 말고 다르게 받아와도 될 듯
+                    if (TurnManager.Instance.InBattle.Value)      // 시간이 멈춰있어서 이거 말고 다르게 받아와도 될 듯
                     {
                         SetActiveCanvas(CanvasName.Battle, true);
                     }

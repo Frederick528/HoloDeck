@@ -540,7 +540,7 @@ public abstract class Enemy : Entity
         //{
         //    await pattern();
         //}
-        if (!TurnManager.Instance.InBattle)
+        if (!TurnManager.Instance.InBattle.Value)
             return;
         _nextPattern.Clear();
     }

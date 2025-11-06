@@ -16,8 +16,9 @@ public class TurnManager : MonoBehaviour
     {
         Instance = Instance != null ? Instance : this;
     }
-
-    public bool InBattle { get; private set; }
+    private ReactiveProperty<bool> _InBattle = new();
+    public IReadOnlyReactiveProperty<bool> InBattle => _InBattle;
+    //public bool InBattle { get; private set; }
 
     public TurnType CurTurnType;
 
@@ -270,8 +271,8 @@ public class TurnManager : MonoBehaviour
 
     public void StartBattle()       // 배틀 시작시, 덱 섞기 및 액션 추가
     {
-        InBattle = true;
-        InGameManager.Instance.Player.StartOrEndBattle(InBattle);
+        _InBattle.Value = true;
+        InGameManager.Instance.Player.StartOrEndBattle(_InBattle.Value);
         CancelSource = new();
 
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Battle, true);
@@ -287,9 +288,9 @@ public class TurnManager : MonoBehaviour
 
     public async UniTask EndBattle()         // 리팩토링 필요해보임.
     {
-        InBattle = false;
+        _InBattle.Value = false;
         //EnemyManager.Instance.HitEnemy = null;
-        InGameManager.Instance.Player.StartOrEndBattle(InBattle);
+        InGameManager.Instance.Player.StartOrEndBattle(_InBattle.Value);
         CancelSource.Cancel();
 
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Battle, false);
