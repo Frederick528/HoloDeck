@@ -635,21 +635,21 @@ public class InGameManager : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            foreach (var enemy in EnemyManager.Instance.EnemyList)
-                enemy.BaseThickness -= 0.0001f;
-        }
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            foreach (var enemy in EnemyManager.Instance.EnemyList)
-                enemy.BaseThickness += 0.0001f;
-        }
+        //if (Input.GetKeyDown(KeyCode.LeftArrow))
+        //{
+        //    foreach (var enemy in EnemyManager.Instance.EnemyList)
+        //        enemy.BaseThickness -= 0.0001f;
+        //}
+        //if (Input.GetKeyDown(KeyCode.RightArrow))
+        //{
+        //    foreach (var enemy in EnemyManager.Instance.EnemyList)
+        //        enemy.BaseThickness += 0.0001f;
+        //}
 
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            EnemyManager.Instance.TestSpawn().Forget();
-        }
+        //if (Input.GetKeyDown(KeyCode.Alpha0))
+        //{
+        //    EnemyManager.Instance.TestSpawn().Forget();
+        //}
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             CardManager.Instance.AddDeck(100, EAddDeck.Draw);

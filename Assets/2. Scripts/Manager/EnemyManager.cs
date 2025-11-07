@@ -62,7 +62,7 @@ public class EnemyManager : MonoBehaviour
         CanEnemySpawn(true);
         CanBossSpawn(true);
 
-        TestSpawn().Forget();
+        //TestSpawn().Forget();
     }
     public async UniTask TestSpawn()
     {

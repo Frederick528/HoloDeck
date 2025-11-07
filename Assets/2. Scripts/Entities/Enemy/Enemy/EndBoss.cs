@@ -10,7 +10,7 @@ public class EndBoss : Enemy
 
     void Start()
     {
-        BaseThickness = 1f;
+        BaseThickness = 0.8f;
         AddStatusEffect((StatusEffect.Vampire, StatusEffectType.Perpetual), 5);
         AddStatusEffect((StatusEffect.Immunity, StatusEffectType.UseAmountInfiniteDuration), 3);
         AddStatusEffect((StatusEffect.Berserker, StatusEffectType.Perpetual), 2);
