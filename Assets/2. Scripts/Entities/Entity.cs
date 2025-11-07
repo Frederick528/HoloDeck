@@ -602,13 +602,13 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
     {
         if (isTarget)
         {
-            OutlineMaterial.SetColor("_OutlineColor", HoverColor);
-            OutlineMaterial.SetFloat("_Thickness", HoverThickness);
+            OutlineMaterial?.SetColor("_OutlineColor", HoverColor);
+            OutlineMaterial?.SetFloat("_Thickness", HoverThickness);
         }
         else
         {
-            OutlineMaterial.SetColor("_OutlineColor", BaseColor);
-            OutlineMaterial.SetFloat("_Thickness", BaseThickness);
+            OutlineMaterial?.SetColor("_OutlineColor", BaseColor);
+            OutlineMaterial?.SetFloat("_Thickness", BaseThickness);
         }
     }
     void OnMouseEnter()

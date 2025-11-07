@@ -9,7 +9,7 @@ public class Elite2 : Enemy
 
     void Start()
     {
-        BaseThickness = 0.05f;
+        BaseThickness = 0.005f;
         AddStatusEffect((StatusEffect.Thievery, StatusEffectType.Perpetual), 15);
         //_nextActImg.transform.localPosition = new Vector3(0, 2.2f);
     }

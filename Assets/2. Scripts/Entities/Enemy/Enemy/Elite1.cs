@@ -10,7 +10,7 @@ public class Elite1 : Enemy
 
     void Start()
     {
-        BaseThickness = 0.04f;
+        BaseThickness = 0.003f;
         //_nextActImg.transform.localPosition = new Vector3(0, 2.2f);
     }
 
