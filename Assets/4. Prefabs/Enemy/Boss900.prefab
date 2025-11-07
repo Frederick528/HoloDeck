@@ -47,18 +47,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b36a8b4c22d2d514aa7a36a9fd7ffdc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHP:
-    value: 0
-  _curHP:
-    value: 0
-  _shield:
-    value: 0
-  MaxHP:
-    value: 0
-  CurHP:
-    value: 0
-  CurShield:
-    value: 0
   spawnPosIdx: 0
   CanClear: 0
 --- !u!61 &951340706938287107
@@ -369,6 +357,22 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1077356410, guid: c6cfc32748fb5004aa11a1be074b5c58, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1423454223, guid: c6cfc32748fb5004aa11a1be074b5c58, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1423454223, guid: c6cfc32748fb5004aa11a1be074b5c58, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1423454223, guid: c6cfc32748fb5004aa11a1be074b5c58, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1423454223, guid: c6cfc32748fb5004aa11a1be074b5c58, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}

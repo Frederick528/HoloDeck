@@ -126,7 +126,8 @@ public class InGameManager : MonoBehaviour
     {
         GameManager.Instance.StartLoadAsync(true);
         string playerName = "playerName";
-        switch (GameManager.Instance.PlayerInt)
+        int playerIdx = GameManager.Instance.PlayerInt;
+        switch (playerIdx)
         {
             case 0:
                 playerName = "PicoChan";
@@ -148,7 +149,7 @@ public class InGameManager : MonoBehaviour
             _playerObj = _playerHandle.Result;
             //await GameManager.Instance.IsAsyncLoadComplete.Where(isAllComplete => isAllComplete).ToUniTask(cancellationToken: this.GetCancellationTokenOnDestroy());
             await UniRxExtensions.AwaitTrueAsync(GameManager.Instance.IsAsyncLoadComplete, this.GetCancellationTokenOnDestroy());
-            SpawnPlayer(_playerObj);
+            SpawnPlayer(_playerObj, playerIdx);
         }
         else
         {
@@ -158,36 +159,18 @@ public class InGameManager : MonoBehaviour
 
     }
 
-    public void SpawnPlayer(int idx)
+    public void SpawnPlayer(GameObject player, int playerInt)
     {
-        string playerName = "playerName";
-        switch (idx)
+        Player = Instantiate(player, PlayerTr).GetComponentInChildren<Player>();
+        switch (playerInt)
         {
             case 0:
-                playerName = "PicoChan";
+                Player.BaseThickness = 0.0018f;
                 break;
             case 1:
-                playerName = "Muryotaisu";
+                Player.BaseThickness = 0.0012f;
                 break;
         }
-        Addressables.LoadAssetAsync<GameObject>(playerName+".prefab").Completed += (op) =>
-        {
-            if (op.Status != AsyncOperationStatus.Succeeded)
-            {
-                Debug.LogError("Player null");
-            }
-            else
-            {
-                Player = Instantiate(op.Result, PlayerTr).GetComponentInChildren<Player>(); ;
-                CardManager.Instance.SetupStartCardDeck();
-            }
-            Addressables.Release(op);
-
-        };
-    }
-    public void SpawnPlayer(GameObject player)
-    {
-        Player = Instantiate(player, PlayerTr).GetComponentInChildren<Player>(); ;
         CardManager.Instance.SetupStartCardDeck();
         Player.SpawnPlayer();
     }
@@ -214,25 +197,6 @@ public class InGameManager : MonoBehaviour
     //        cts.Dispose();
     //    }
     //}
-    public AsyncOperationHandle<GameObject> PlayerLoadAsync()
-    {
-        string playerName = "playerName";
-        switch (GameManager.Instance.PlayerInt)
-        {
-            case 0:
-                playerName = "PicoChan";
-                break;
-            case 1:
-                playerName = "Muryotaisu";
-                break;
-        }
-        return Addressables.LoadAssetAsync<GameObject>(playerName + ".prefab");
-    }
-
-    public void ReleaseAddressable(AsyncOperationHandle handle)
-    {
-        Addressables.Release(handle);
-    }
     void SettingRandomCardList()
     {
         for (int i = 0; i < 4; ++i)
@@ -656,17 +620,35 @@ public class InGameManager : MonoBehaviour
                     //EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
                 }
             }
+            else if (MapManager.Instance.currStage.State == Map.StageState.Start)
+            {
+                for (int i = EnemyManager.Instance.EnemyList.Count - 1; i >= 0; --i)
+                {
+                    //EnemyManager.Instance.EnemyList[i].CheckIfDead(9999, 1);
+                    EnemyManager.Instance.EnemyList[i].TakeDamage(9999).Forget();
+                    //EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
+                }
+            }
             else
             {
                 MapManager.Instance.ClearStage().Forget();
             }
         }
 
-
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            foreach (var enemy in EnemyManager.Instance.EnemyList)
+                enemy.BaseThickness -= 0.0001f;
+        }
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            foreach (var enemy in EnemyManager.Instance.EnemyList)
+                enemy.BaseThickness += 0.0001f;
+        }
 
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
-            CardManager.Instance.AddDeck(100, EAddDeck.Main);
+            EnemyManager.Instance.TestSpawn().Forget();
         }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {

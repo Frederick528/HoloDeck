@@ -103,6 +103,8 @@ public class InGameUIManager : MonoBehaviour
 
     List<AsyncOperationHandle<GameObject>> handles = new();
 
+    public Material ObjectOutlineMat;
+
     private void Awake()
     {
         _canvasTr = GameObject.Find("InGameCanvases").transform;
@@ -330,7 +332,6 @@ public class InGameUIManager : MonoBehaviour
         handles.Add(Addressables.LoadAssetAsync<GameObject>("UICardImg.prefab"));
         handles.Add(Addressables.LoadAssetAsync<GameObject>("StatusEffect.prefab"));
         handles.Add(Addressables.LoadAssetAsync<GameObject>("StatusEffectDesc.prefab"));
-
         //var playerHandle = InGameManager.Instance.LoadAsync();
 
         // 전부 기다림

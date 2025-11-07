@@ -12,7 +12,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-public abstract class Entity : MonoBehaviour
+public abstract class Entity : MonoBehaviour, IOnMouseEnter
 {
     //[SerializeField] protected SpriteRenderer entitySprite;
     //[SerializeField] protected Slider slider;   // 나중에 이미지로 변경
@@ -86,6 +86,78 @@ public abstract class Entity : MonoBehaviour
 
     int _numberOfStatusEffects = 0;
     int _numberOfInformation = 0;
+
+
+    Material _outlineMaterial;
+    Color _baseColor = Color.red;
+    Color _hoverColor = Color.green;
+    float _baseThickness = 0.001f;
+    float _hoverThickness;       // 그냥 색만 바꿀까 고민중
+
+
+    public Material OutlineMaterial
+    {
+        get { return this._outlineMaterial; }
+        set
+        {
+            this._outlineMaterial = value;
+        }
+    }
+    public Color BaseColor
+    {
+        get
+        {
+            return this._baseColor;
+        }
+        set
+        {
+            this._baseColor = value;
+            if (this._outlineMaterial != null)
+            {
+                this._outlineMaterial.SetColor("_OutlineColor", this._baseColor);
+            }
+
+        }
+    }
+
+    public Color HoverColor
+    {
+        get { return this._hoverColor; }
+        set
+        {
+            this._hoverColor = value;
+        }
+    }
+    public float BaseThickness
+    {
+        get
+        {
+            return this._baseThickness;
+        }
+        set
+        {
+            this._baseThickness = value;
+            if (this._outlineMaterial != null)
+            {
+                this._outlineMaterial.SetFloat("_Thickness", this._baseThickness);
+            }
+        }
+    }
+    public float HoverThickness
+    {
+        get
+        {
+            if (this._hoverThickness == 0)
+            {
+                this._hoverThickness = this._baseThickness;
+            }
+            return this._hoverThickness;
+        }
+        set
+        {
+            this._hoverThickness = value;
+        }
+    }
 
     Color _black = new Color(0f, 0f, 0f);      // 검은색 (#000000)
     Color _white = new Color(1f, 1f, 1f);      // 흰색 (#FFFFFF)
@@ -461,6 +533,12 @@ public abstract class Entity : MonoBehaviour
 
     protected void StartEntity()
     {
+        GetComponentAndTransform();
+        ToonOutline();
+    }
+
+    void GetComponentAndTransform()
+    {
         animator = transform.GetComponentInChildren<Animator>();
         _animEvent = transform.GetComponentInChildren<SendAnimEvent>();
         _animEvent.ParentEntity = this;
@@ -477,11 +555,11 @@ public abstract class Entity : MonoBehaviour
         _col2D = GetComponent<BoxCollider2D>();
 
         _statusEffectContent = FindTransform.ContinueFindChildUIByName(canvas.transform.Find("StatusEffect"), "Content");
-        
+
         _statusDescWindow = canvas.transform.Find("StatusEffectDesc");
         _statusDescWindow.GetComponent<ChildMouseHandler>().ParentEntity = this;
         _statusDescCol2D = _statusDescWindow.GetComponent<BoxCollider2D>();
-        
+
         _statusEffectDescContent = FindTransform.ContinueFindChildUIByName(_statusDescWindow, "Content");
 
         //StatusEffectAmountText = canvas.transform.Find("StatusEffect").GetComponentsInChildren<TMP_Text>(true);
@@ -501,18 +579,51 @@ public abstract class Entity : MonoBehaviour
         //    }
         //}
     }
+
+    void ToonOutline()
+    {
+        SkinnedMeshRenderer[] originalRenderers = GetComponentsInChildren<SkinnedMeshRenderer>();
+
+        if (originalRenderers.Length == 0) return;
+        OutlineMaterial = new Material(InGameUIManager.Instance.ObjectOutlineMat);
+
+        foreach (var originalRenderer in originalRenderers)
+        {
+            Material[] originalMaterials = originalRenderer.materials;
+            Material[] newMaterials = originalMaterials
+            .Concat(new Material[] { OutlineMaterial }) // 새 Material을 끝에 추가
+            .ToArray();
+
+            originalRenderer.materials = newMaterials;
+        }
+    }
+
+    void TargetOutline(bool isTarget)
+    {
+        if (isTarget)
+        {
+            OutlineMaterial.SetColor("_OutlineColor", HoverColor);
+            OutlineMaterial.SetFloat("_Thickness", HoverThickness);
+        }
+        else
+        {
+            OutlineMaterial.SetColor("_OutlineColor", BaseColor);
+            OutlineMaterial.SetFloat("_Thickness", BaseThickness);
+        }
+    }
     void OnMouseEnter()
     {
         BoolOnMouseEnter();
     }
 
-    protected virtual bool BoolOnMouseEnter()
+    public virtual bool BoolOnMouseEnter()
     {
-        if (_numberOfStatusEffects == 0 && _numberOfInformation == 0) return false;
         if (EventSystem.current.IsPointerOverGameObject())
             return false;
-        if (!Cursor.visible) return false;
         if (InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf) return false;
+        TargetOutline(true);
+        if (_numberOfStatusEffects == 0 && _numberOfInformation == 0) return false;
+        if (!Cursor.visible) return false;
         _statusEffectDescContent.localPosition = Vector3.zero;
         canvas.sortingOrder = 1;        // 이거 없으면 체력 UI에 가려짐
         if (_statusDescWindow.position.x > 6.8f/* && _statusDescWindow.localPosition.x > 0*/)
@@ -531,6 +642,7 @@ public abstract class Entity : MonoBehaviour
 
     public virtual void OnChildMouseExit()
     {
+        TargetOutline(false);
         canvas.sortingOrder = 0;
         _statusDescWindow.gameObject.SetActive(false);
     }

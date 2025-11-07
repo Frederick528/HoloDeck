@@ -47,18 +47,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ee657373c3b21d469c66ec29118cb68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHP:
-    value: 0
-  _curHP:
-    value: 0
-  _shield:
-    value: 0
-  MaxHP:
-    value: 0
-  CurHP:
-    value: 0
-  CurShield:
-    value: 0
   spawnPosIdx: 0
   CanClear: 0
 --- !u!61 &567178948273558934
@@ -153,6 +141,22 @@ PrefabInstance:
     - target: {fileID: 409566, guid: a3e7850e56f7e2d4a8cb9e150f10c835, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 473272, guid: a3e7850e56f7e2d4a8cb9e150f10c835, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 473272, guid: a3e7850e56f7e2d4a8cb9e150f10c835, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 473272, guid: a3e7850e56f7e2d4a8cb9e150f10c835, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 473272, guid: a3e7850e56f7e2d4a8cb9e150f10c835, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a3e7850e56f7e2d4a8cb9e150f10c835, type: 3}

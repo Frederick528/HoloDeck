@@ -1182,8 +1182,8 @@ SkinnedMeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: f974f43b29494b941906f0eb9d727614, type: 2}
-  - {fileID: 2100000, guid: b025e7212b95566479c77e8be2cc07ef, type: 2}
-  - {fileID: 2100000, guid: 878aefd75248a2046904bc20188aeef8, type: 2}
+  - {fileID: 2100000, guid: 5e872a77c77f19c44bb0e97eeae17721, type: 2}
+  - {fileID: 2100000, guid: 9309d0c4eee1c2c449c9a5975b19b8c6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3396,18 +3396,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9dbe01f98b814c4db41c046fb87c429, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHP:
-    value: 0
-  _curHP:
-    value: 0
-  _shield:
-    value: 0
-  MaxHP:
-    value: 0
-  CurHP:
-    value: 0
-  CurShield:
-    value: 0
 --- !u!61 &3567756569159866137
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -27,7 +27,7 @@ public abstract class Enemy : Entity
 
     //public bool Death;
 
-    protected override bool BoolOnMouseEnter()
+    public override bool BoolOnMouseEnter()
     {
         if (!base.BoolOnMouseEnter())
         {

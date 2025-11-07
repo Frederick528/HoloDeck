@@ -61,6 +61,19 @@ public class EnemyManager : MonoBehaviour
         bossSpawn = new bool[bossSpawnPosition.Length];
         CanEnemySpawn(true);
         CanBossSpawn(true);
+
+        TestSpawn().Forget();
+    }
+    public async UniTask TestSpawn()
+    {
+        await UniRxExtensions.AwaitTrueAsync(GameManager.Instance.IsAsyncLoadComplete, this.GetCancellationTokenOnDestroy());
+        SpawnEnemy(900);
+        SpawnEnemy(901);
+        SpawnEnemy(1000);
+        foreach (var enemy in EnemyList)
+        {
+            enemy.NextPattern();
+        }
     }
 
     public void CheckEnemy(Transform targetEnemy)
@@ -99,6 +112,8 @@ public class EnemyManager : MonoBehaviour
         if (spawnPosIndex >= enemySpawn.Length || !enemySpawn[spawnPosIndex])       // 나중에 배열 만들어서 gameObject가 아니라 bool값으로 바로 받아올 것.
             return false;
         EnemyData enemyData = FindEnemyData(enemyId);
+        if (enemyData == null)
+            return false;
         GameObject enemyObject = Instantiate(enemyData.EnemyPrefab, enemySpawnPosition[spawnPosIndex], Quaternion.identity);
         Enemy enemy = enemyObject.GetComponent<Enemy>();
         EnemyList.Add(enemy);
@@ -120,6 +135,8 @@ public class EnemyManager : MonoBehaviour
             if (!enemySpawn[i]/*enemySpawnPosition[i].gameObject.activeSelf*/)
                 continue;
             enemyData = FindEnemyData(enemyId);
+            if (enemyData == null)
+                return false;
             enemyObject = Instantiate(enemyData.EnemyPrefab, enemySpawnPosition[i], Quaternion.identity);
             enemy = enemyObject.GetComponent<Enemy>();
             EnemyList.Add(enemy);

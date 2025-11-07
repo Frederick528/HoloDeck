@@ -28097,6 +28097,7 @@ MonoBehaviour:
   EventImage: {fileID: 0}
   EventText: {fileID: 0}
   EndLoad: 0
+  ObjectOutlineMat: {fileID: 2100000, guid: 8ecba23eab1d90446b2a4b7b277652b5, type: 2}
 --- !u!1 &1710784785
 GameObject:
   m_ObjectHideFlags: 0
@@ -28825,7 +28826,6 @@ MonoBehaviour:
   Player: {fileID: 0}
   PauseInt: 0
   ShowStatus: 0
-  CurrentLoadAsyncCount: 0
 --- !u!1 &1760813469
 GameObject:
   m_ObjectHideFlags: 0

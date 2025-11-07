@@ -10,6 +10,7 @@ public class Boss1 : Enemy
 
     void Start()
     {
+        BaseThickness = 2f;
         //_nextActImg.transform.localPosition = new Vector3(0, 2.5f);
     }
 

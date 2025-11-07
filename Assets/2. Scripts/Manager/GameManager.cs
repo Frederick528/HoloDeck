@@ -261,7 +261,8 @@ public class GameManager : MonoBehaviour
     {
         foreach (GameObject obj in InGameDontDestroyObjects)
         {
-            Destroy(obj);
+            if (obj != null)
+                Destroy(obj);
         }
         InGameDontDestroyObjects.Clear();
 
@@ -440,7 +441,6 @@ public class GameManager : MonoBehaviour
         await UniTask.WhenAny(
             task1, task2
             );
-        print("S");
         if (!cts.IsCancellationRequested)
         {
             cts.Cancel();
