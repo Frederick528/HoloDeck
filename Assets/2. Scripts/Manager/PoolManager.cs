@@ -26,11 +26,12 @@ public class PoolManager : MonoBehaviour
     //[SerializeField] Transform HandCard;
     int _setActiveUICard;
 
-
     public IObjectPool<Card> CardPool { get; private set; }
     public IObjectPool<TMP_Text> TextPool { get; private set; }
     public IObjectPool<UICard> UICardPool { get; private set; }
     public Dictionary<GameObject, IObjectPool<GameObject>> EffectPool = new Dictionary<GameObject, IObjectPool<GameObject>>();
+
+    public GameObject CurCardEffect;
 
     private void Awake()
     {
@@ -194,6 +195,7 @@ public class PoolManager : MonoBehaviour
         GameObject instance = EffectPool[prefab].Get();
         instance.transform.SetPositionAndRotation(prs.pos, prs.rot);
         instance.transform.localScale = prs.scale;
+        CurCardEffect = instance;       // 사용 확정 아니라서 일단 그냥 이런 식으로 씀. 확정되면 위코드인 GamoObject instance필요 없음.
 
         // 2. 파티클 시스템의 재생 시간을 가져옴
         var ps = instance.GetComponent<ParticleSystem>();
@@ -221,5 +223,6 @@ public class PoolManager : MonoBehaviour
             // 풀을 못찾는 경우 파괴
             Destroy(instance);
         }
+        CurCardEffect = null;
     }
 }

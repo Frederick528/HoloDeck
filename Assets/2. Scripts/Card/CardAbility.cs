@@ -181,23 +181,54 @@ public class CardAbility
         {
             _cts = new CancellationTokenSource();
 
+            Animator animator = null;
+            ParticleSystem particleSystem = null;
+
             bool isStart = true;
             for (int i = 0; i < card.Data.Count; i++) // 카드 횟수만큼 반복
             {
                 if (i != 0)
                 {
                     isStart = false;
-                    delay = delay * 0.75f;
+                    float originalDelay = delay;
+                    delay = originalDelay * 0.75f;
                 }
-                await DelayTask(delay);
+                if (isStart || card.RepeatEffect)
+                {
+                    await DelayTask(delay);
+                }
                 await SpawnEffect(card, isStart);
+
+                if (PoolManager.Instance.CurCardEffect != null)
+                {
+                    if (isStart)
+                    {
+                        animator = PoolManager.Instance.CurCardEffect.GetComponent<Animator>();
+                        particleSystem = PoolManager.Instance.CurCardEffect.GetComponent<ParticleSystem>();
+                       
+                    }
+                    if (card.Data.Count > 1 &&!card.RepeatEffect)
+                    {
+                        animator.speed = 0f;
+                        particleSystem.Pause(true);
+                    }
+                }
                 foreach (var eventTask in cardEvent) // 0, 1, 2... 순서대로 실행
                 {
                     var tasksToRun = eventTask.Value.Select(func => func()).ToList();
                     await UniTask.WhenAll(tasksToRun).SuppressCancellationThrow(); // 동시 실행 및 대기
                 }
+
+                if (PoolManager.Instance.CurCardEffect != null)
+                {
+                    animator.speed = 1f;
+                    particleSystem.Play(true);
+                }
+
                 if (_cts.IsCancellationRequested)
+                {
                     break;
+                }
             }
 
             switch (card.Data.CardTag)
@@ -220,19 +251,18 @@ public class CardAbility
         });
     }
 
-    async UniTask SpawnEffect(Card card, bool start = true)
+    async UniTask SpawnEffect(Card card, bool isStart = true)
     {
         if (card.Data.Effect == null)
         {
             //await DelayTask(0.5f);
             return;
         }
-        card.UseTimingReset();
-        if (!start && !card.RepeatEffect)
+        if (!isStart && !card.RepeatEffect)
         {
+            // 반복 카드인데 이펙트를 반복하지 않고, 첫 스타트도 아닌 경우, => 원본 이펙트에서 공격 타이밍만 받는다는 뜻
+            card.UseTimingReset();
             await UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, _cts.Token);
-            //await card.IsCardUseTiming.Where(timing => timing).ToUniTask(cancellationToken: _cts.Token);
-            //await UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: _cts.Token);
             return;
         }
         Vector3 originEffectAngle = card.Data.Effect.transform.eulerAngles;

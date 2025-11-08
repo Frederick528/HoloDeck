@@ -635,11 +635,11 @@ public abstract class Enemy : Entity
                 {
                     if (_checkRepeat > 1)
                     {
-                        _nextActText.text = $"{damagePerHit}*{_checkRepeat}<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}*{_checkRepeat}</color>";
+                        _nextActText.text = $"{damagePerHit}*{_checkRepeat}\n<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}*{_checkRepeat}</color>";
                     }
                     else
                     {
-                        _nextActText.text = $"{attack}<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}</color>";
+                        _nextActText.text = $"{attack}\n<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}</color>";
                     }
                 }
             }
