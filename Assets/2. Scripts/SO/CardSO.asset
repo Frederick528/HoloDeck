@@ -13,16 +13,36 @@ MonoBehaviour:
   m_Name: CardSO
   m_EditorClassIdentifier: 
   CardSprites:
-  - {fileID: 21300000, guid: 333b7c667071587429495f9d7a0e30ab, type: 3}
-  - {fileID: 21300000, guid: 4ce8264444c6f514389a17a43b7c06a2, type: 3}
+  - {fileID: 21300000, guid: 2456dd2824f5ec540830760922f5bac6, type: 3}
+  - {fileID: 21300000, guid: ec86d6f89a48d0d449119c616f32f583, type: 3}
   - {fileID: 21300000, guid: 2ffcd72a8c70b27429cc6e7f23e4a444, type: 3}
-  - {fileID: 21300000, guid: 196654c1199bc374382e8a9cb436bb23, type: 3}
-  - {fileID: 21300000, guid: a1db32974a8af034ebc447482b88d69d, type: 3}
+  - {fileID: 21300000, guid: d5dc1ddefe5b3454eb070dd7b494e2e2, type: 3}
+  - {fileID: 21300000, guid: c46d83f2b73aaa141bd5015819342d81, type: 3}
   - {fileID: 21300000, guid: 266b7e5ca77291344a77afdfb7b76ba6, type: 3}
+  - {fileID: 21300000, guid: 1458237dbb3c6d54f8fe9d39c0175d00, type: 3}
+  - {fileID: 21300000, guid: 8a96b38c76be79946a150249547b07bc, type: 3}
+  - {fileID: 21300000, guid: 25126c248902e8347a4a2f96259cb92b, type: 3}
+  - {fileID: 21300000, guid: 030d61925e2f98f4d86e171153ec39e1, type: 3}
+  - {fileID: 21300000, guid: b066c869b51f9384fa8ac9cce36b4648, type: 3}
+  - {fileID: 21300000, guid: 03e6f50b7a998ed46a4c3f9f8cb0855e, type: 3}
+  - {fileID: 21300000, guid: 6413fdcb28068ab40b769338e81c9d97, type: 3}
+  - {fileID: 21300000, guid: 8ec5b52b09d90074a83d61c1334190f9, type: 3}
+  - {fileID: 21300000, guid: 5da22e1981071ba458c1a6b6946fede1, type: 3}
   - {fileID: 21300000, guid: 2a55f3707f768cf4a9be99b452df73e2, type: 3}
+  - {fileID: 21300000, guid: 26c4e76602f1d3c49a68537b2dee29f9, type: 3}
+  - {fileID: 21300000, guid: 8e7baf79a2c165045af45603a5dee6c4, type: 3}
+  - {fileID: 21300000, guid: 0f182fb2863faa7449e020de33b77e68, type: 3}
   CardEffects:
+  - {fileID: 2715471840370901047, guid: df9374346b76e444dbbb2b019de4da25, type: 3}
+  - {fileID: 2965222256817593503, guid: a164e676dbbd6e54587237e619372c98, type: 3}
   - {fileID: 8974203713140315807, guid: 709b0bd6b0b625249a98409dd7a87343, type: 3}
+  - {fileID: 6823302871133167919, guid: 3138a83bedbd6ad4481ba0b061da2eb6, type: 3}
+  - {fileID: 1171201465392465800, guid: 4aa9f30a28a77224ba84b2a2c334c71b, type: 3}
+  - {fileID: 358637981425055526, guid: 8eb503696b886e04faff8fc0f480d473, type: 3}
+  - {fileID: 1171201465392465800, guid: d0c28677f730d7c47b974e49c230a877, type: 3}
   - {fileID: 8974203713140315807, guid: c0e63d685aed24d47aef3d8a8063c162, type: 3}
+  - {fileID: 7478731271839673279, guid: 4d3c8045dd8857a4b8d34c2361c61045, type: 3}
+  - {fileID: 7131401307255788800, guid: 4d9a3b35b3bc07649b697df7fb497b6d, type: 3}
   - {fileID: 8378648546881499446, guid: 867c572a5be680d42a042d2349f10143, type: 3}
   Cards:
   - Name: Name100
@@ -36,8 +56,8 @@ MonoBehaviour:
     Remove: 0
     Price: 5
     Descript: After discarding {Discard} cards, {Damage} Damage
-    Sprite: {fileID: 21300000, guid: 333b7c667071587429495f9d7a0e30ab, type: 3}
-    Effect: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: 2456dd2824f5ec540830760922f5bac6, type: 3}
+    Effect: {fileID: 2715471840370901047, guid: df9374346b76e444dbbb2b019de4da25, type: 3}
     IsSimpleAB: 1
     HasSimpleCondition: 1
     CardTag: 0
@@ -55,8 +75,8 @@ MonoBehaviour:
     Descript: '{Damage} Damage
 
       {Draw} Draw'
-    Sprite: {fileID: 21300000, guid: 4ce8264444c6f514389a17a43b7c06a2, type: 3}
-    Effect: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: ec86d6f89a48d0d449119c616f32f583, type: 3}
+    Effect: {fileID: 2965222256817593503, guid: a164e676dbbd6e54587237e619372c98, type: 3}
     IsSimpleAB: 1
     HasSimpleCondition: 0
     CardTag: 0
@@ -89,7 +109,7 @@ MonoBehaviour:
     Remove: 0
     Price: 15
     Descript: '{Draw} Draw'
-    Sprite: {fileID: 21300000, guid: 196654c1199bc374382e8a9cb436bb23, type: 3}
+    Sprite: {fileID: 21300000, guid: d5dc1ddefe5b3454eb070dd7b494e2e2, type: 3}
     Effect: {fileID: 0}
     IsSimpleAB: 1
     HasSimpleCondition: 0
@@ -106,7 +126,7 @@ MonoBehaviour:
     Remove: 0
     Price: 5
     Descript: '{Shield} Shield'
-    Sprite: {fileID: 21300000, guid: a1db32974a8af034ebc447482b88d69d, type: 3}
+    Sprite: {fileID: 21300000, guid: c46d83f2b73aaa141bd5015819342d81, type: 3}
     Effect: {fileID: 0}
     IsSimpleAB: 1
     HasSimpleCondition: 0
@@ -140,7 +160,7 @@ MonoBehaviour:
     Remove: 0
     Price: 5
     Descript: After discarding {Discard} card, {Shield} Shield
-    Sprite: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: 1458237dbb3c6d54f8fe9d39c0175d00, type: 3}
     Effect: {fileID: 0}
     IsSimpleAB: 1
     HasSimpleCondition: 1
@@ -159,8 +179,8 @@ MonoBehaviour:
     Descript: '{Damage} Damage
 
       {Shield} Shield'
-    Sprite: {fileID: 0}
-    Effect: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: 8a96b38c76be79946a150249547b07bc, type: 3}
+    Effect: {fileID: 6823302871133167919, guid: 3138a83bedbd6ad4481ba0b061da2eb6, type: 3}
     IsSimpleAB: 1
     HasSimpleCondition: 0
     CardTag: 0
@@ -176,8 +196,8 @@ MonoBehaviour:
     Remove: 0
     Price: 0
     Descript: '{Damage} Damage * Target''s Status Count'
-    Sprite: {fileID: 0}
-    Effect: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: 25126c248902e8347a4a2f96259cb92b, type: 3}
+    Effect: {fileID: 1171201465392465800, guid: 4aa9f30a28a77224ba84b2a2c334c71b, type: 3}
     IsSimpleAB: 0
     HasSimpleCondition: 0
     CardTag: 0
@@ -193,7 +213,7 @@ MonoBehaviour:
     Remove: 0
     Price: 20
     Descript: '{Damage} Damage * {Count}'
-    Sprite: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: 030d61925e2f98f4d86e171153ec39e1, type: 3}
     Effect: {fileID: 0}
     IsSimpleAB: 1
     HasSimpleCondition: 0
@@ -214,7 +234,7 @@ MonoBehaviour:
       {Shield} Shield
 
       {Draw} Draw'
-    Sprite: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: b066c869b51f9384fa8ac9cce36b4648, type: 3}
     Effect: {fileID: 0}
     IsSimpleAB: 1
     HasSimpleCondition: 0
@@ -231,8 +251,8 @@ MonoBehaviour:
     Remove: 0
     Price: 30
     Descript: All {Damage} Damage * {Count}
-    Sprite: {fileID: 0}
-    Effect: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: 03e6f50b7a998ed46a4c3f9f8cb0855e, type: 3}
+    Effect: {fileID: 7478731271839673279, guid: 4d3c8045dd8857a4b8d34c2361c61045, type: 3}
     IsSimpleAB: 1
     HasSimpleCondition: 0
     CardTag: 1
@@ -248,7 +268,7 @@ MonoBehaviour:
     Remove: 0
     Price: 60
     Descript: Get X ATK UP in this Battle
-    Sprite: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: 6413fdcb28068ab40b769338e81c9d97, type: 3}
     Effect: {fileID: 0}
     IsSimpleAB: 0
     HasSimpleCondition: 0
@@ -265,8 +285,8 @@ MonoBehaviour:
     Remove: 0
     Price: 40
     Descript: '{Damage} Damage'
-    Sprite: {fileID: 0}
-    Effect: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: 8ec5b52b09d90074a83d61c1334190f9, type: 3}
+    Effect: {fileID: 358637981425055526, guid: 8eb503696b886e04faff8fc0f480d473, type: 3}
     IsSimpleAB: 1
     HasSimpleCondition: 0
     CardTag: 0
@@ -282,8 +302,8 @@ MonoBehaviour:
     Remove: 0
     Price: 40
     Descript: '{Damage} Damage * X'
-    Sprite: {fileID: 0}
-    Effect: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: 5da22e1981071ba458c1a6b6946fede1, type: 3}
+    Effect: {fileID: 1171201465392465800, guid: d0c28677f730d7c47b974e49c230a877, type: 3}
     IsSimpleAB: 0
     HasSimpleCondition: 0
     CardTag: 0
@@ -323,8 +343,8 @@ MonoBehaviour:
     Remove: 0
     Price: 105
     Descript: All {Damage} Damage * {Count}
-    Sprite: {fileID: 0}
-    Effect: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: 26c4e76602f1d3c49a68537b2dee29f9, type: 3}
+    Effect: {fileID: 7131401307255788800, guid: 4d9a3b35b3bc07649b697df7fb497b6d, type: 3}
     IsSimpleAB: 1
     HasSimpleCondition: 0
     CardTag: 1
@@ -340,7 +360,7 @@ MonoBehaviour:
     Remove: 0
     Price: 200
     Descript: '{Damage} Damage'
-    Sprite: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: 8e7baf79a2c165045af45603a5dee6c4, type: 3}
     Effect: {fileID: 8378648546881499446, guid: 867c572a5be680d42a042d2349f10143, type: 3}
     IsSimpleAB: 1
     HasSimpleCondition: 0
@@ -357,7 +377,7 @@ MonoBehaviour:
     Remove: 0
     Price: 150
     Descript: '{Draw} Draw'
-    Sprite: {fileID: 0}
+    Sprite: {fileID: 21300000, guid: 0f182fb2863faa7449e020de33b77e68, type: 3}
     Effect: {fileID: 0}
     IsSimpleAB: 1
     HasSimpleCondition: 0

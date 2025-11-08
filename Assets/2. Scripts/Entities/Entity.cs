@@ -598,7 +598,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         }
     }
 
-    void TargetOutline(bool isTarget)
+    public void TargetOutline(bool isTarget)
     {
         if (isTarget)
         {
@@ -621,9 +621,9 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         if (EventSystem.current.IsPointerOverGameObject())
             return false;
         if (InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf) return false;
-        TargetOutline(true);
-        if (_numberOfStatusEffects == 0 && _numberOfInformation == 0) return false;
         if (!Cursor.visible) return false;
+        TargetOutline(true);        // 커서 꺼져있을 때 => 전투용 화살표 커서를 사용할 때, 이건 그냥 배틀매니저에서 켜주기로 함.
+        if (_numberOfStatusEffects == 0 && _numberOfInformation == 0) return false;
         _statusEffectDescContent.localPosition = Vector3.zero;
         canvas.sortingOrder = 1;        // 이거 없으면 체력 UI에 가려짐
         if (_statusDescWindow.position.x > 6.8f/* && _statusDescWindow.localPosition.x > 0*/)

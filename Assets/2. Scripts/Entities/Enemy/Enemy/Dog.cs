@@ -9,7 +9,7 @@ public class Dog : Enemy
 
     void Start()
     {
-        BaseThickness = 0.005f;
+        BaseThickness = 0.007f;
         //EnemySubScribe();
         //_nextActImg.transform.localPosition = new Vector3(0, 1.8f);
 

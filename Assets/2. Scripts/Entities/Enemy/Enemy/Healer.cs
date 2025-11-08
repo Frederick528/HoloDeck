@@ -10,7 +10,7 @@ public class Healer : Enemy
 
     void Start()
     {
-        BaseThickness = 0.005f;
+        BaseThickness = 0.01f;
         //EnemySubScribe();
         AddStatusEffect((StatusEffect.Reflection, StatusEffectType.Perpetual), 3);
         AddStatusEffect((StatusEffect.Protect, StatusEffectType.Perpetual), 1);

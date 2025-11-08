@@ -135,20 +135,25 @@ public class CardManager : MonoBehaviour
 
     public void SetupStartCardDeck()   // 시작할 때, 메인덱을 설정하는 함수 (게임 시작 이후에는 사용하지 않음.)
     {
-        int _startDeck = 6;     // 여기 밑 코드 변경해야 함. 캐릭터별로 얻는 카드와 카드 ID가 달라지기 때문에 switch로 구별.
+        foreach (CardData cd in InGameManager.Instance.CardSO.Cards)
+        {
+            if (cd.ID >= 10000) continue;   // 일단 강화 카드 제외
+            AddDeck(cd, EAddDeck.Main);
+        }
+        //int _startDeck = 6;     // 여기 밑 코드 변경해야 함. 캐릭터별로 얻는 카드와 카드 ID가 달라지기 때문에 switch로 구별.
         //for (int i = 0; i < _startDeck; i++)
         //    AddDeck(100 + i, EAddDeck.Main);
         //AddDeck(101, EAddDeck.Main);
         //AddDeck(101, EAddDeck.Main);
         //AddDeck(101, EAddDeck.Main);
-        AddDeck(503, EAddDeck.Main);
-        AddDeck(801, EAddDeck.Main);
-        AddDeck(802, EAddDeck.Main);
-        AddDeck(1001, EAddDeck.Main);
-        AddDeck(1002, EAddDeck.Main);
-        AddDeck(105, EAddDeck.Main);
-        AddDeck(105, EAddDeck.Main);
-        AddDeck(105, EAddDeck.Main);
+        //AddDeck(503, EAddDeck.Main);
+        //AddDeck(801, EAddDeck.Main);
+        //AddDeck(802, EAddDeck.Main);
+        //AddDeck(1001, EAddDeck.Main);
+        //AddDeck(1002, EAddDeck.Main);
+        //AddDeck(105, EAddDeck.Main);
+        //AddDeck(105, EAddDeck.Main);
+        //AddDeck(105, EAddDeck.Main);
     }
     public void AddDeck(CardData cardData, EAddDeck eAddDeck)       // 덱에 카드를 추가할 때 사용, 핸드로 카드를 가져올 때는 AddCard 함수 사용. (주로 데이터 자체가 이동할 때 사용) => 해결함 이제 그냥 써도 됨.
     {

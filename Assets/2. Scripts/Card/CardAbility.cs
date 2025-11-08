@@ -235,12 +235,14 @@ public class CardAbility
             //await UniTask.WaitUntil(() => card.CardUseTiming, cancellationToken: _cts.Token);
             return;
         }
-        Quaternion effectAngle = Quaternion.Euler(new Vector3(-5,0,0));
+        Vector3 originEffectAngle = card.Data.Effect.transform.eulerAngles;
+        originEffectAngle.x -= 5;
+        Quaternion effectAngle = Quaternion.Euler(originEffectAngle);
         switch (card.Data.CardTag)
         {
             case CardTag.SingleAttack:
                 await UniTask.WhenAny(
-                    PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(card.TargetEnemy.transform.position, effectAngle, Vector3.one))
+                    PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(card.TargetEnemy.transform.position + card.Data.Effect.transform.position, effectAngle, card.Data.Effect.transform.localScale))
                     , UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, _cts.Token)
                     //, card.IsCardUseTiming.Where(timing => timing).ToUniTask(cancellationToken: _cts.Token)
                     );
@@ -249,7 +251,7 @@ public class CardAbility
                 if (card.AllEnemies)
                 {
                     await UniTask.WhenAny(
-                        PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(EnemyManager.Instance.EnemyCenterSpawnPos, effectAngle, Vector3.one * 2.5f))
+                        PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(EnemyManager.Instance.EnemyCenterSpawnPos + card.Data.Effect.transform.position, effectAngle, card.Data.Effect.transform.localScale * 2.5f))
                         , UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, _cts.Token)
                         //, card.IsCardUseTiming.Where(timing => timing).ToUniTask(cancellationToken: _cts.Token)
                         );
@@ -261,7 +263,7 @@ public class CardAbility
                         if (enemy != null)
                         {
                             await UniTask.WhenAny(
-                                PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(enemy.transform.position, effectAngle, Vector3.one))
+                                PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(enemy.transform.position + card.Data.Effect.transform.position, effectAngle, card.Data.Effect.transform.localScale))
                                 , UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, _cts.Token)
                                 //, card.IsCardUseTiming.Where(timing => timing).ToUniTask(cancellationToken: _cts.Token)
                                 );
