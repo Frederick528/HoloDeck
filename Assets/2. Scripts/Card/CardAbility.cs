@@ -172,6 +172,21 @@ public class CardAbility
                     );
                 });
                 break;
+            case 108:
+                _cardTask = () => UniTask.Create(async () =>
+                {
+                    await AddCardEvent(card, 0.5f,
+                        (0, async() =>
+                        {
+                            int statusEffectCount = (card.TargetEnemy.CurStatusEffectList.Count() + card.TargetEnemy.CurStatusEffectPerpetualList.Count());
+                            card.Data.Damage += statusEffectCount;
+                            await SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _));
+                            card.Data.Damage -= statusEffectCount;
+                        }
+                    )
+                    );
+                });
+                break;
             case 503:
                 _cardTask = () => UniTask.Create(async () =>
                 {
