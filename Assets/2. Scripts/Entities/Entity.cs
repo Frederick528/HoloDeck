@@ -206,7 +206,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
     {
         if (attacker == null) { return; }
 
-        if (ApplyStatusEffect(StatusEffect.Vampire, out int vampire))
+        if (attacker.ApplyStatusEffect(StatusEffect.Vampire, out int vampire))
         {
             await attacker.Heal(vampire);
         }
@@ -293,9 +293,9 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         //if (stateInfo.IsName("Attack"))
         //animator.SetTrigger(_hitAnim);        // play를 해야 맞을 때마다 실행 가능
         animator.Play(_hitAnim, -1, 0);  // 타격 당하는 애니메이션 실행        => 공격 중에는 딜레이를 주거나 무시하는 코드가 필요할 듯.
+        await AfterTakeDamage(attacker);
         if (CurHP.Value > 0)
         {
-            await AfterTakeDamage(attacker);
             return false;
         }
 
@@ -404,19 +404,19 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
     {
         CurHP.Value = Mathf.Clamp(CurHP.Value + amount, 0, MaxHP.Value);
         TextEffect(amount).Forget();        // 텍스트 뜨는 건 1초 고정으로 하고 패턴 넘어가는 건 밑에서 적당히 정해줘야 보기 편할 듯
-        //await UniTask.WaitForSeconds(0.2f);
+        await UniTask.WaitForSeconds(0.2f);     // 일단 딜레이가 없으면 전체 공격일 때, 흡혈하자마자 반사딜 들어오면서 순서가 뒤죽박죽이 됨. 일단 딜레이 줘서 먼저 흡혈 후, 데미지 들어오도록 보이게만 함.
     }
 
     public virtual async UniTask Shield(int amount)
     {
         CurShield.Value += amount;
-        //await UniTask.WaitForSeconds(0.2f);
+        await UniTask.WaitForSeconds(0.2f);
     }
 
     public virtual async UniTask Shield()
     {
         CurShield.Value = _shield.Value;
-        //await UniTask.WaitForSeconds(0.2f);
+        await UniTask.WaitForSeconds(0.2f);
     }
 
     public bool CheckCritical(/*int damage*/)            // 공격 이후 크리티컬 효과 사용됨
@@ -669,7 +669,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
     public void ReduceStatusEffect((StatusEffect effect, StatusEffectType type) statusEffect, int amount = 0, int duration = 1)        // 턴 감소를 디폴트로 만듦.
     {
         (int getAmount, int getDuration) info = CurStatusEffectDict[statusEffect.effect][statusEffect.type];
-        if (info.getAmount - duration > 0 && info.getDuration - amount > 0)           // 감소된 값이 둘 다 양수 => 무한 지속은 기본 음수라서 제외하고, 나머지만 적용됨.
+        if (info.getDuration - duration > 0 && info.getAmount - amount > 0)           // 감소된 값이 둘 다 양수 => 무한 지속은 기본 음수라서 제외하고, 나머지만 적용됨.
         {
             CurStatusEffectDict[statusEffect.effect][statusEffect.type] = (info.getAmount - amount, info.getDuration - duration);
 

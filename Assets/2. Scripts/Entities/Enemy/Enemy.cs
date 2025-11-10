@@ -318,12 +318,12 @@ public abstract class Enemy : Entity
             if (addPattern)
             {
                 _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
-                _nextActText.text = (repeat > 1 ? $"{damage}*{repeat}<color=green>+{CheckCriticalDamage(damage, true)-damage}*{repeat}" : $"{CheckCriticalDamage(damage, true)}</color>") + "/" + _nextActText.text;
+                _nextActText.text = (repeat > 1 ? $"{damage}*{repeat}\n<color=green>+{CheckCriticalDamage(damage, true)-damage}*{repeat}" : $"{CheckCriticalDamage(damage, true)}</color>") + "/" + _nextActText.text;
             }
             else
             {
                 _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
-                _nextActText.text = (repeat > 1 ? $"{damage}*{repeat}<color=green>+{CheckCriticalDamage(damage, true)-damage}*{repeat}" : $"{CheckCriticalDamage(damage, true)}</color>");
+                _nextActText.text = (repeat > 1 ? $"{damage}*{repeat}\n<color=green>+{CheckCriticalDamage(damage, true)-damage}*{repeat}" : $"{CheckCriticalDamage(damage, true)}</color>");
             }
         }
         else
@@ -593,11 +593,11 @@ public abstract class Enemy : Entity
                     {
                         if (_checkRepeat > 1)
                         {
-                            _nextActText.text = $"{damagePerHit}*{_checkRepeat}<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}*{_checkRepeat}</color>";
+                            _nextActText.text = $"{damagePerHit}*{_checkRepeat}\n<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}*{_checkRepeat}</color>";
                         }
                         else
                         {
-                            _nextActText.text = $"{attack + atk.Current - atk.Previous}<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}</color>";
+                            _nextActText.text = $"{attack + atk.Current - atk.Previous}\n<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}</color>";
                         }
                     }
                     else

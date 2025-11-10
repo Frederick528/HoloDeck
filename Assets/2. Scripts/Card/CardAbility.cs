@@ -102,7 +102,7 @@ public class CardAbility
     void SettingSimpleAB(Card card, float delay = 0.5f)
     {
         //Func<UniTask> uniTaskAB = null;
-        bool critical = _player.GetStatusEffect(StatusEffect.UseCritical, out _);
+        //bool critical = _player.GetStatusEffect(StatusEffect.UseCritical, out _);
         switch (card.Data.CardTag)
         {
             case CardTag.SingleAttack:
@@ -110,7 +110,7 @@ public class CardAbility
                     _cardTask = () => UniTask.Create(async () =>
                     {
                         await AddCardEvent(card, delay,
-                            (0, () => SingleAttackAB(card, critical)),
+                            (0, () => SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _))),
                             (1, () => ShieldAB(card)),
                             (1, () => DrawAB(card))
                         );
@@ -119,7 +119,7 @@ public class CardAbility
                     _cardTask = () => UniTask.Create(async () =>
                     {
                         await AddCardEvent(card, delay,
-                            (0, () => SingleAttackAB(card, critical))
+                            (0, () => SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _)))
                         );
                     });
                 break;
@@ -128,7 +128,7 @@ public class CardAbility
                     _cardTask = () => UniTask.Create(async () =>
                     {
                         await AddCardEvent(card, delay,
-                             (0, () => MultiAttackAB(card, critical)),
+                             (0, () => MultiAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _))),
                              (1, () => ShieldAB(card)),
                              (1, () => DrawAB(card))
                          );
@@ -137,7 +137,7 @@ public class CardAbility
                     _cardTask = () => UniTask.Create(async () =>
                     {
                         await AddCardEvent(card, delay,
-                             (0, () => MultiAttackAB(card, critical))
+                             (0, () => MultiAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _)))
                          );
                     });
                 break;
