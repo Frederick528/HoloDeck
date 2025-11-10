@@ -404,19 +404,19 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
     {
         CurHP.Value = Mathf.Clamp(CurHP.Value + amount, 0, MaxHP.Value);
         TextEffect(amount).Forget();        // 텍스트 뜨는 건 1초 고정으로 하고 패턴 넘어가는 건 밑에서 적당히 정해줘야 보기 편할 듯
-        await UniTask.WaitForSeconds(0.2f);
+        //await UniTask.WaitForSeconds(0.2f);
     }
 
     public virtual async UniTask Shield(int amount)
     {
         CurShield.Value += amount;
-        await UniTask.WaitForSeconds(0.2f);
+        //await UniTask.WaitForSeconds(0.2f);
     }
 
     public virtual async UniTask Shield()
     {
         CurShield.Value = _shield.Value;
-        await UniTask.WaitForSeconds(0.2f);
+        //await UniTask.WaitForSeconds(0.2f);
     }
 
     public bool CheckCritical(/*int damage*/)            // 공격 이후 크리티컬 효과 사용됨

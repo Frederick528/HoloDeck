@@ -31,8 +31,6 @@ public class PoolManager : MonoBehaviour
     public IObjectPool<UICard> UICardPool { get; private set; }
     public Dictionary<GameObject, IObjectPool<GameObject>> EffectPool = new Dictionary<GameObject, IObjectPool<GameObject>>();
 
-    public GameObject CurCardEffect;
-
     private void Awake()
     {
         if (Instance == null)
@@ -193,13 +191,14 @@ public class PoolManager : MonoBehaviour
 
         // 1. 풀에서 이펙트 오브젝트를 가져옴
         GameObject instance = EffectPool[prefab].Get();
-        instance.transform.SetPositionAndRotation(prs.pos, prs.rot);
-        instance.transform.localScale = prs.scale;
-        CurCardEffect = instance;       // 사용 확정 아니라서 일단 그냥 이런 식으로 씀. 확정되면 위코드인 GamoObject instance필요 없음.
+        EffectManager.Instance.SetCurCardEffect(instance.GetComponent<ParticleSystem>(), prs);
+        //CurCardEffect.transform.SetPositionAndRotation(prs.pos, prs.rot);
+        //CurCardEffect.transform.localScale = prs.scale;
+        //CurCardEffect = instance;       // 사용 확정 아니라서 일단 그냥 이런 식으로 씀. 확정되면 위코드인 GamoObject instance필요 없음.
 
         // 2. 파티클 시스템의 재생 시간을 가져옴
-        var ps = instance.GetComponent<ParticleSystem>();
-        if (ps == null)
+        //var ps = instance.GetComponent<ParticleSystem>();
+        if (EffectManager.Instance.GetCurCardEffect() == null)
         {
             // 파티클이 없다면 그냥 반납 처리
             EffectPool[prefab].Release(instance);
@@ -207,12 +206,16 @@ public class PoolManager : MonoBehaviour
         }
 
         // 3. 파티클 재생 시간만큼 기다린 후 자동으로 반납하는 코루틴 시작
-        await ReleaseEffect(prefab, instance, ps.main.duration);        // duration이랑 공격 타이밍 비교해서 딜 넣기.
+        await ReleaseEffect(prefab, instance);        // duration이랑 공격 타이밍 비교해서 딜 넣기.
     }
 
-    private async UniTask ReleaseEffect(GameObject prefab, GameObject instance, float delay)
+    private async UniTask ReleaseEffect(GameObject prefab, GameObject instance)
     {
-        await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token).SuppressCancellationThrow();
+        while (EffectManager.Instance.IsAlivingEffect() && TurnManager.Instance.InBattle.Value)
+        {
+            await UniTask.Yield();
+        }
+        //await UniTask.WaitForSeconds(delay, cancellationToken: TurnManager.Instance.CancelSource.Token).SuppressCancellationThrow();
 
         if (prefab != null && EffectPool.ContainsKey(prefab))
         {
@@ -223,6 +226,6 @@ public class PoolManager : MonoBehaviour
             // 풀을 못찾는 경우 파괴
             Destroy(instance);
         }
-        CurCardEffect = null;
+        EffectManager.Instance.SetCurCardEffect(null, null);
     }
 }

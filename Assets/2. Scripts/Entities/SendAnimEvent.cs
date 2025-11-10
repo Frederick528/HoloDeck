@@ -21,11 +21,31 @@ public class SendAnimEvent : MonoBehaviour
         ParentEntity.AtkAnimtiming();
     }
 
+    void OnShieldTiming()
+    {
+
+    }
+
+    void OnHealTiming()
+    {
+
+    }
+
     void OnCardUseTiming()
     {
         if (CardManager.Instance.NowPlayedCard)
         {
             CardManager.Instance.NowPlayedCard.CardTiming();
         }
+    }
+
+    void StartAnim()
+    {
+
+    }
+
+    void EndAnim()
+    {
+
     }
 }

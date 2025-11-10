@@ -85,7 +85,9 @@ public class UICard : MonoBehaviour
             case CardTag.MultiAttack:
                 _tagText.text = "Attack";
                 break;
-            case CardTag.Skill:
+            case CardTag.SkillTargetMe:
+            case CardTag.SkillTargetEnemy:
+            case CardTag.SkillTargetTotal:
                 _tagText.text = "Skill";
                 break;
         }

@@ -7,7 +7,9 @@ public enum CardTag
 {
     SingleAttack,
     MultiAttack,
-    Skill
+    SkillTargetMe,
+    SkillTargetEnemy,
+    SkillTargetTotal
 }
 public enum CardRarity
 {
