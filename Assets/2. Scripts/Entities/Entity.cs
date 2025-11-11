@@ -54,9 +54,9 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
     ReactiveProperty<bool> _isAtk = new();
     ReactiveProperty<bool> _isDied = new();
 
-    ReactiveProperty<int> _maxHP = new();
-    ReactiveProperty<int> _curHP = new();
-    ReactiveProperty<int> _shield = new();
+    //ReactiveProperty<int> _maxHP = new();
+    //ReactiveProperty<int> _curHP = new();
+    //ReactiveProperty<int> _shield = new();
 
     public ReactiveProperty<int> MaxHP { get; private set; } = new();
     public ReactiveProperty<int> CurHP { get; private set; } = new();
@@ -413,11 +413,11 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         await UniTask.WaitForSeconds(0.2f);
     }
 
-    public virtual async UniTask Shield()
-    {
-        CurShield.Value = _shield.Value;
-        await UniTask.WaitForSeconds(0.2f);
-    }
+    //public virtual async UniTask Shield()
+    //{
+    //    CurShield.Value = _shield.Value;
+    //    await UniTask.WaitForSeconds(0.2f);
+    //}
 
     public bool CheckCritical(/*int damage*/)            // 공격 이후 크리티컬 효과 사용됨
     {

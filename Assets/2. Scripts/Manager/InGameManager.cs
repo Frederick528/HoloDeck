@@ -162,6 +162,9 @@ public class InGameManager : MonoBehaviour
     public void SpawnPlayer(GameObject player, int playerInt)
     {
         Player = Instantiate(player, PlayerTr).GetComponentInChildren<Player>();
+        CardManager.Instance.SetupStartCardDeck();
+        Player.SpawnPlayer();
+        Player.BaseColor = Color.blue;
         switch (playerInt)
         {
             case 0:
@@ -171,8 +174,6 @@ public class InGameManager : MonoBehaviour
                 Player.BaseThickness = 0.0012f;
                 break;
         }
-        CardManager.Instance.SetupStartCardDeck();
-        Player.SpawnPlayer();
     }
 
     //public async UniTask AllLoadAsync()

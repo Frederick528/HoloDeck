@@ -20,7 +20,6 @@ using UnityEngine.Pool;
 //}
 public class Card : MonoBehaviour
 {
-    public IObjectPool<Tuple<GameObject, Card>> CardPool { get; set; }
 
     [SerializeField] SpriteRenderer _card;
     [SerializeField] SpriteRenderer _character;
@@ -38,8 +37,8 @@ public class Card : MonoBehaviour
     public PRS OriginPRS;
     public Order CardOrder;
     //private Animator _anim;
-
-    public CardData DefaultData = null;
+    CardData _defaultData = null;
+    public CardData DefaultData => _defaultData;
     //string _defaultDesc = null;
     public CardData Data { get; private set; }
     public string Desc;
@@ -89,13 +88,16 @@ public class Card : MonoBehaviour
     //    //    CardManager.Instance.sortBtn.interactable = false;
     //    //Destroy(a);
     //}
-
+    public void SetDefaultDate(CardData data)
+    {
+        _defaultData = data;
+    }
     public void Setup(CardData data)
     {
         CardOrder = GetComponent<Order>();
         //_boxCollider2 = GetComponent<BoxCollider2D>();
 
-        DefaultData = data;
+        SetDefaultDate(data);
         Data = DefaultData.Clone();
         
         //StringBuilder sb = new StringBuilder(_defaultData.Descript);
@@ -211,11 +213,11 @@ public class Card : MonoBehaviour
         //UniTask uniTask = UniTask.Create(() => CardTask);
         //await CardAbility.SetCardAbility(this);     // 다른 방식이 있는지 찾아봐야할 듯
         await CardTask();
-        if (Data.Damage != 0)
+        if (DefaultData.Damage != 0)
         {
             InGameManager.Instance.Player.ApplyStatusEffect(StatusEffect.ATKUp, out _);     // 공격 이후 공격력 감소 효과 적용되는 경우
         }
-        if (Data.Shield != 0)
+        if (DefaultData.Shield != 0)        // 기존 데이터값에서 쉴드값이 0이 아닌 경우 -> 방어 관련 카드라는 뜻
         {
             InGameManager.Instance.Player.ApplyStatusEffect(StatusEffect.DEFUp, out _);     // 마찬가지
         }
