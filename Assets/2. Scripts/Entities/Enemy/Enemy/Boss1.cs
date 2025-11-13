@@ -25,8 +25,8 @@ public class Boss1 : Enemy
                 break;
             case 2:     // 중복 패턴일 경우, 가장 아래에 있는 함수가 가장 먼저 실행됨.
                 HealPattern(_defaultEnemyData.Damage);
-                DefensePattern(_defaultEnemyData.Damage, 1, true);
-                AttackPattern(_defaultEnemyData.Damage, 1, true);
+                DefensePattern(_defaultEnemyData.Damage, true);
+                AttackPattern(_defaultEnemyData.Damage, true);
                 //SpecialPattern(enemyData.Damage);
                 //_nextPattern = () => UniTask.Create(async () =>
                 //{

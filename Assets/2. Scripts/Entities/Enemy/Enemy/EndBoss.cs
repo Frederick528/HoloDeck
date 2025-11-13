@@ -30,7 +30,7 @@ public class EndBoss : Enemy
                 //DefensePattern(enemyData.Damage, 1, true);
                 //HealPattern(enemyData.Damage, 1, true);
                 AttackPattern(_defaultEnemyData.Damage);
-                SpecialPattern(1,1,true);
+                SpecialPattern(1,true);
                 //_nextPattern = () => UniTask.Create(async () =>
                 //{
                 //    await Attack(enemyData.Damage / 2);
@@ -40,7 +40,7 @@ public class EndBoss : Enemy
         }
     }
 
-    protected override void SpecialPattern(int value, int repeat = 1, bool addPattern = false, float delay = 0.3F)
+    protected override void SpecialPattern(int value, bool addPattern = false, float delay = 0.3F)
     {
         _specialDesc = "해당 적은 당신의 상태 효과 중 1개를 랜덤하게 제거 할 예정입니다";
 
@@ -68,6 +68,6 @@ public class EndBoss : Enemy
            
         //});
         //AddStatusEffect((StatusEffect.GetCritical, StatusEffectType.Information), _criticalChance.Value * repeat);
-        base.SpecialPattern(value, repeat, addPattern, delay);
+        base.SpecialPattern(value, addPattern, delay);
     }
 }

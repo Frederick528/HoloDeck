@@ -290,15 +290,32 @@ public abstract class Enemy : Entity
 
     public abstract void NextPattern();
 
-    protected virtual void AttackPattern(int value, int repeat = 1, bool addPattern = false, float delay = 0.3f)
+    protected void SetRepeat(int repeat = 1)
     {
         _checkRepeat = repeat;
+    }
+
+    protected virtual void AttackPattern(int value, /*int repeat = 1, */bool addPattern = false, float delay = 0.3f)
+    {
+        //_checkRepeat = repeat;
         //GetStatusEffect(StatusEffect.ATKUp, out int addATK);      // 어택 파워 값으로 바로 확인 가능
         int damage = value + AttackPower.Value;
         //RemoveStatusEffect((_nextPattern.Item1, StatusEffectType.Information));       턴을 1턴으로 만들어서 굳이 제거 안 해도 됨.
+        if (addPattern)
+        {
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+            //_nextActText.text = (_checkRepeat > 1 ? $"{damage}*{_checkRepeat}" : damage.ToString()) + "/" + _nextActText.text;
+            //_nextPattern.Add(func);
+        }
+        else
+        {
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
+
+            //_nextActText.text = _checkRepeat > 1 ? $"{damage}*{_checkRepeat}" : damage.ToString();
+        }
         //if (!GetStatusEffect(StatusEffect.UseCritical, out _))        // 크리티컬 터지면 에너지 회복 안 됨
             //AddStatusEffect((StatusEffect.GetCritical, StatusEffectType.Information), _criticalChance.Value);     // 치명타 획득 확률을 원래 보여줬는데, 그냥 우클릭으로 확인하게 하고, 전투 중에 확인 할 수 없게 변경
-        AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), damage * repeat);
+        AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), damage/* * repeat*/);
         //AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), Mathf.RoundToInt(enemyData.Damage * multiple * repeat));
 
         //string valueText = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
@@ -313,45 +330,31 @@ public abstract class Enemy : Entity
         //        await Attack(Mathf.RoundToInt(enemyData.Damage * multiple));
         //    }
         //});
-        if (GetStatusEffect(StatusEffect.UseCritical, out _))
-        {
-            if (addPattern)
-            {
-                _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
-                _nextActText.text = (repeat > 1 ? $"{damage}*{repeat}\n<color=green>+{CheckCriticalDamage(damage, true)-damage}*{repeat}" : $"{CheckCriticalDamage(damage, true)}</color>") + "/" + _nextActText.text;
-            }
-            else
-            {
-                _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
-                _nextActText.text = (repeat > 1 ? $"{damage}*{repeat}\n<color=green>+{CheckCriticalDamage(damage, true)-damage}*{repeat}" : $"{CheckCriticalDamage(damage, true)}</color>");
-            }
-        }
-        else
-        {
-            if (addPattern)
-            {
-                _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
-                _nextActText.text = (repeat > 1 ? $"{damage}*{repeat}" : damage.ToString()) + "/" + _nextActText.text;
-            }
-            else
-            {
-                _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
-                _nextActText.text = repeat > 1 ? $"{damage}*{repeat}" : damage.ToString();
-            }
-        }
-        //if (addPattern)
+        //if (GetStatusEffect(StatusEffect.UseCritical, out _))
         //{
-        //    _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
-        //    _nextActText.text = (repeat > 1 ? $"{damage}*{repeat}" : damage.ToString()) + "/" + _nextActText.text;
-        //    //_nextPattern.Add(func);
+        //    if (addPattern)
+        //    {
+        //        _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+        //        _nextActText.text = (_checkRepeat > 1 ? $"{damage}*{_checkRepeat}\n<color=green>+{CheckCriticalDamage(damage, true)-damage}*{_checkRepeat}" : $"{CheckCriticalDamage(damage, true)}</color>") + "/" + _nextActText.text;
+        //    }
+        //    else
+        //    {
+        //        _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
+        //        _nextActText.text = (_checkRepeat > 1 ? $"{damage}*{_checkRepeat}\n<color=green>+{CheckCriticalDamage(damage, true)-damage}*{_checkRepeat}" : $"{CheckCriticalDamage(damage, true)}</color>");
+        //    }
         //}
         //else
         //{
-        //    _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
-
-        //    _nextActText.text = repeat > 1 ? $"{damage}*{repeat}" : damage.ToString();
-        //    //_nextActText.text = repeat > 1 ? $"{Mathf.RoundToInt(enemyData.Damage * multiple)}*{repeat}" : (Mathf.RoundToInt(enemyData.Damage * multiple)).ToString();
-        //    //_nextPattern.Add(func);
+        //    if (addPattern)
+        //    {
+        //        _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+        //        _nextActText.text = (_checkRepeat > 1 ? $"{damage}*{_checkRepeat}" : damage.ToString()) + "/" + _nextActText.text;
+        //    }
+        //    else
+        //    {
+        //        _nextActImg.sprite = EnemyManager.Instance.NextActImg(0);
+        //        _nextActText.text = _checkRepeat > 1 ? $"{damage}*{_checkRepeat}" : damage.ToString();
+        //    }
         //}
 
         _nextPattern.Add(async () => await UniTask.Create(async () =>
@@ -361,7 +364,7 @@ public abstract class Enemy : Entity
             //if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
             //    return;
             //await Attack(Mathf.RoundToInt(enemyData.Damage * multiple));         // 여기 부분 고쳐야 함.
-            for (int i = repeat; i > 0; --i)
+            for (int i = _checkRepeat; i > 0; --i)
             {
                 //GetStatusEffect(StatusEffect.ATKUp, out int addATK);
                 damage = value + AttackPower.Value;
@@ -385,11 +388,22 @@ public abstract class Enemy : Entity
         //    }
         //});
     }
-    protected virtual void DefensePattern(int value, int repeat = 1, bool addPattern = false, float delay = 0.3f)
+    protected virtual void DefensePattern(int value, bool addPattern = false, float delay = 0.3f)
     {
-        _checkRepeat = repeat;
+        if (addPattern)
+        {
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+            //_nextActText.text = (_checkRepeat > 1 ? $"{value}*{_checkRepeat}" : value.ToString()) + "/" + _nextActText.text;
+            //_nextPattern = (Func<UniTask>)Delegate.Combine(func, _nextPattern);
+        }
+        else
+        {
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(1);
+            //_nextActText.text = _checkRepeat > 1 ? $"{value}*{_checkRepeat}" : value.ToString();
+        }
+        //_checkRepeat = repeat;
         //RemoveStatusEffect((_nextPattern.Item1, StatusEffectType.Information));
-        AddStatusEffect((StatusEffect.Defense, StatusEffectType.Information), value * repeat);
+        AddStatusEffect((StatusEffect.Defense, StatusEffectType.Information), value);
 
         //Func<UniTask> func = async () => await UniTask.Create(async () =>
         //{
@@ -402,25 +416,13 @@ public abstract class Enemy : Entity
         //    }
         //});
 
-        if (addPattern)
-        {
-            _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
-            _nextActText.text = (repeat > 1 ? $"{value}*{repeat}" : value.ToString()) + "/" + _nextActText.text;
-            //_nextPattern = (Func<UniTask>)Delegate.Combine(func, _nextPattern);
-        }
-        else
-        {
-            _nextActImg.sprite = EnemyManager.Instance.NextActImg(1);
-            _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
-            //_nextPattern = func;
-        }
 
         _nextPattern.Add(async () => await UniTask.Create(async () =>
         {
             //if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
             //    return;
             //await Shield(value);         // 여기 부분 고쳐야 함.
-            for (int i = repeat; i > 0; --i)
+            for (int i = _checkRepeat; i > 0; --i)
             {
                 await UniTask.WaitForSeconds(delay/*, cancellationToken: TurnManager.Instance.CancelSource.Token*/);
                 if (this.CurHP.Value > 0)
@@ -439,11 +441,22 @@ public abstract class Enemy : Entity
         //    }
         //});
     }
-    protected virtual void HealPattern(int value, int repeat = 1, bool addPattern = false, float delay = 0.3f)
+    protected virtual void HealPattern(int value, bool addPattern = false, float delay = 0.3f)
     {
-        _checkRepeat = repeat;
+        if (addPattern)
+        {
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+            //_nextActText.text = (_checkRepeat > 1 ? $"{value}*{_checkRepeat}" : value.ToString()) + "/" + _nextActText.text;
+            //_nextPattern = (Func<UniTask>)Delegate.Combine(func, _nextPattern);
+        }
+        else
+        {
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(2);
+            //_nextActText.text = _checkRepeat > 1 ? $"{value}*{_checkRepeat}" : value.ToString();
+        }
+        //_checkRepeat = repeat;
         //RemoveStatusEffect((_nextPattern.Item1, StatusEffectType.Information));
-        AddStatusEffect((StatusEffect.Heal, StatusEffectType.Information), value * repeat);
+        AddStatusEffect((StatusEffect.Heal, StatusEffectType.Information), value);
 
         //string valueText = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
 
@@ -458,25 +471,13 @@ public abstract class Enemy : Entity
         //    }
         //});
 
-        if (addPattern)
-        {
-            _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
-            _nextActText.text = (repeat > 1 ? $"{value}*{repeat}" : value.ToString()) + "/" + _nextActText.text;
-            //_nextPattern = (Func<UniTask>)Delegate.Combine(func, _nextPattern);
-        }
-        else
-        {
-            _nextActImg.sprite = EnemyManager.Instance.NextActImg(2);
-            _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
-            //_nextPattern = func;
-        }
 
         _nextPattern.Add(async () => await UniTask.Create(async () =>
         {
             //if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
             //    return;
             //await Heal(value);
-            for (int i = repeat; i > 0; --i)
+            for (int i = _checkRepeat; i > 0; --i)
             {
                 await UniTask.WaitForSeconds(delay/*, cancellationToken: TurnManager.Instance.CancelSource.Token*/);
                 if (this.CurHP.Value > 0)
@@ -496,22 +497,23 @@ public abstract class Enemy : Entity
         //});
     }
 
-    protected virtual void SpecialPattern(int value, int repeat = 1, bool addPattern = false, float delay = 0.3f)
+    protected virtual void SpecialPattern(int value, bool addPattern = false, float delay = 0.3f)
     {
-        _checkRepeat = repeat;
-        AddStatusEffect((StatusEffect.Special, StatusEffectType.Information), value * repeat);
-
         if (addPattern)
         {
-            _nextActText.text = (repeat > 1 ? $"{value}*{repeat}" : value.ToString()) + "/" + _nextActText.text;
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+            //_nextActText.text = (_checkRepeat > 1 ? $"{value}*{_checkRepeat}" : value.ToString()) + "/" + _nextActText.text;
             //_nextPattern += func;
         }
         else
         {
-            _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
-            //_nextPattern = func;
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(4);
+            //_nextActText.text = _checkRepeat > 1 ? $"{value}*{_checkRepeat}" : value.ToString();
         }
-        _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+        //_checkRepeat = repeat;
+        AddStatusEffect((StatusEffect.Special, StatusEffectType.Information), value);
+
+        //_nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
         //_nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
 
     }
@@ -575,76 +577,116 @@ public abstract class Enemy : Entity
         AttackPower.Pairwise().Subscribe(atk =>
         {
             enemyData.Damage = _defaultEnemyData.Damage + atk.Current;
-            if (GetStatusEffect(StatusEffect.Attack, out int attack))
-            {
-                if ((atk.Current - atk.Previous) >= 0)
-                {
-                    AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), (atk.Current - atk.Previous) * _checkRepeat);
-                }
-                else
-                {
-                    ReduceStatusEffect((StatusEffect.Attack, StatusEffectType.Information), (atk.Current - atk.Previous) * _checkRepeat, 0);
-                }
-                //AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), (atk.Current - atk.Previous) * _checkRepeat);
-                if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
-                {
-                    int damagePerHit = attack / _checkRepeat + atk.Current - atk.Previous;
-                    if (GetStatusEffect(StatusEffect.UseCritical, out _))
-                    {
-                        if (_checkRepeat > 1)
-                        {
-                            _nextActText.text = $"{damagePerHit}*{_checkRepeat}\n<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}*{_checkRepeat}</color>";
-                        }
-                        else
-                        {
-                            _nextActText.text = $"{attack + atk.Current - atk.Previous}\n<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}</color>";
-                        }
-                    }
-                    else
-                    {
-                        if (_checkRepeat > 1)
-                        {
-                            _nextActText.text = $"{damagePerHit}*{_checkRepeat}";
-                        }
-                        else
-                        {
-                            _nextActText.text = $"{attack + atk.Current - atk.Previous}";
-                        }
-                    }
-                }
-            }
+            //if (GetStatusEffect(StatusEffect.Attack, out int attack))
+            //{
+            //    if ((atk.Current - atk.Previous) >= 0)
+            //    {
+            //        AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), (atk.Current - atk.Previous) * _checkRepeat);
+            //    }
+            //    else
+            //    {
+            //        ReduceStatusEffect((StatusEffect.Attack, StatusEffectType.Information), (atk.Current - atk.Previous) * _checkRepeat, 0);
+            //    }
+            //    //AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), (atk.Current - atk.Previous) * _checkRepeat);
+            //    if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+            //    {
+            //        int damagePerHit = attack / _checkRepeat + atk.Current - atk.Previous;
+            //        if (GetStatusEffect(StatusEffect.UseCritical, out _))
+            //        {
+            //            if (_checkRepeat > 1)
+            //            {
+            //                _nextActText.text = $"{damagePerHit}*{_checkRepeat}\n<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}*{_checkRepeat}</color>";
+            //            }
+            //            else
+            //            {
+            //                _nextActText.text = $"{attack + atk.Current - atk.Previous}\n<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}</color>";
+            //            }
+            //        }
+            //        else
+            //        {
+            //            if (_checkRepeat > 1)
+            //            {
+            //                _nextActText.text = $"{damagePerHit}*{_checkRepeat}";
+            //            }
+            //            else
+            //            {
+            //                _nextActText.text = $"{attack + atk.Current - atk.Previous}";
+            //            }
+            //        }
+            //    }
+            //}
         }).AddTo(this);
 
-        _curCritical.Pairwise().Subscribe(critical =>
+        //_curCritical.Pairwise().Subscribe(critical =>
+        //{
+        //    if (GetStatusEffect(StatusEffect.Attack, out int attack) && _nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+        //    {
+        //        int damagePerHit = attack / _checkRepeat;
+        //        if (critical.Previous >= _useCritical.Value && critical.Current < _useCritical.Value)
+        //        {
+        //            if (_checkRepeat > 1)
+        //            {
+        //                _nextActText.text = $"{damagePerHit}*{_checkRepeat}";
+        //            }
+        //            else
+        //            {
+        //                _nextActText.text = $"{attack}";
+        //            }
+        //        }
+        //        else if (critical.Previous < _useCritical.Value && critical.Current >= _useCritical.Value)
+        //        {
+        //            if (_checkRepeat > 1)
+        //            {
+        //                _nextActText.text = $"{damagePerHit}*{_checkRepeat}\n<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}*{_checkRepeat}</color>";
+        //            }
+        //            else
+        //            {
+        //                _nextActText.text = $"{attack}\n<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}</color>";
+        //            }
+        //        }
+        //    }
+        //}).AddTo(this);
+
+    }
+
+    public override void ReduceStatusEffect((StatusEffect effect, StatusEffectType type) statusEffect, int amount = 0, int duration = 1)
+    {
+        switch (statusEffect.effect)
         {
-            if (GetStatusEffect(StatusEffect.Attack, out int attack) && _nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
-            {
-                int damagePerHit = attack / _checkRepeat;
-                if (critical.Previous >= _useCritical.Value && critical.Current < _useCritical.Value)
-                {
-                    if (_checkRepeat > 1)
-                    {
-                        _nextActText.text = $"{damagePerHit}*{_checkRepeat}";
-                    }
-                    else
-                    {
-                        _nextActText.text = $"{attack}";
-                    }
-                }
-                else if (critical.Previous < _useCritical.Value && critical.Current >= _useCritical.Value)
-                {
-                    if (_checkRepeat > 1)
-                    {
-                        _nextActText.text = $"{damagePerHit}*{_checkRepeat}\n<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}*{_checkRepeat}</color>";
-                    }
-                    else
-                    {
-                        _nextActText.text = $"{attack}\n<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}</color>";
-                    }
-                }
-            }
-        }).AddTo(this);
+            case StatusEffect.Attack:
+                amount *= _checkRepeat;
+                break;
+            case StatusEffect.Defense:
+                amount *= _checkRepeat;
+                break;
+            case StatusEffect.Heal:
+                amount *= _checkRepeat;
+                break;
+            case StatusEffect.Special:
+                amount *= _checkRepeat;
+                break;
+        }
+        base.ReduceStatusEffect(statusEffect, amount, duration);
+    }
 
+    public override void AddStatusEffect((StatusEffect effect, StatusEffectType type) statusEffect, int amount, int duration = 1)
+    {
+        switch (statusEffect.effect)
+        {
+            case StatusEffect.Attack:
+                amount *= _checkRepeat;
+                break;
+            case StatusEffect.Defense:
+                amount *= _checkRepeat;
+                break;
+            case StatusEffect.Heal:
+                amount *= _checkRepeat;
+                break;
+            case StatusEffect.Special:
+                amount *= _checkRepeat;
+                break;
+        }
+        base.AddStatusEffect(statusEffect, amount, duration);
     }
 
     protected override void AddStatusEffectDesc((StatusEffect effect, StatusEffectType type) statusEffect, StringBuilder sb, (int amount, int duration) info)
@@ -658,22 +700,78 @@ public abstract class Enemy : Entity
                     {
                         int damagePerHit = info.amount / _checkRepeat;
                         sb.Replace("{n}", $"<color=green>{info.amount} + 치명타 피해({(CheckCriticalDamage(damagePerHit, true) - damagePerHit)*_checkRepeat}) </color>");
+                        if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+                            _nextActText.text = $"{damagePerHit}*{_checkRepeat}\n<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}*{_checkRepeat}</color>";
+                        else
+                        {
+                            _nextActText.text = "?";
+                        }
                     }
                     else
                     {
                         sb.Replace("{n}", $"<color=green>{info.amount} + 치명타 피해({CheckCriticalDamage(info.amount, true) - info.amount}) </color>");
+                        if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+                            _nextActText.text = $"{info.amount}\n<color=green>+{CheckCriticalDamage(info.amount, true) - info.amount}</color>";
+                        else
+                        {
+                            _nextActText.text = "?";
+                        }
                     }
                 }
                 else
+                {
                     sb.Replace("{n}", $"<color=green>{info.amount}</color>");
+                    if (_checkRepeat > 1)
+                    {
+                        int damagePerHit = info.amount / _checkRepeat;
+                        if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+                            _nextActText.text = $"{damagePerHit}*{_checkRepeat}";
+                        else
+                        {
+                            _nextActText.text = "?";
+                        }
+                    }
+                    else
+                    {
+                        if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+                            _nextActText.text = $"{info.amount}";
+                        else
+                        {
+                            _nextActText.text = "?";
+                        }
+                    }
+                }
                 break;
             case StatusEffect.Defense:
                 sb.Replace("{n}", $"<color=green>{info.amount}</color>");
+                if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+                    _nextActText.text = $"{info.amount}";
+                else
+                {
+                    _nextActText.text = "?";
+                }
                 break;
             case StatusEffect.Heal:
                 sb.Replace("{n}", $"<color=green>{info.amount}</color>");
+                if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+                    _nextActText.text = $"{info.amount}";
+                else
+                {
+                    _nextActText.text = "?";
+                }
+                break;
+            case StatusEffect.Special:
+                sb.Replace("{n}", $"<color=green>{info.amount}</color>");
+                if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+                    _nextActText.text = $"{info.amount}";
+                else
+                {
+                    _nextActText.text = "?";
+                }
                 break;
         }
+
+
         base.AddStatusEffectDesc(statusEffect, sb, info);
     }
 

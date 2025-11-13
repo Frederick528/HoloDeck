@@ -101,7 +101,7 @@ public class OutGameUIManager : MonoBehaviour
         HashSet<string> options = new HashSet<string>();
         int currentResolutionIndex = 0;
 
-        for (int i = 0; i < resolutions.Length; i++)
+        for (int i = resolutions.Length - 1; i >= 0; i--)
         {
             // "너비 x 높이" 형태의 문자열 생성
             string option = resolutions[i].width + " x " + resolutions[i].height;
@@ -111,7 +111,7 @@ public class OutGameUIManager : MonoBehaviour
             if (resolutions[i].width == Screen.currentResolution.width &&
                 resolutions[i].height == Screen.currentResolution.height)
             {
-                currentResolutionIndex = i;
+                currentResolutionIndex = resolutions.Length - 1 - i;
             }
         }
 
@@ -122,7 +122,7 @@ public class OutGameUIManager : MonoBehaviour
         // 드롭다운 값이 변경될 때 호출될 함수 연결
         resolutionDropdown.onValueChanged.AddListener((resolutionIndex) =>
         {
-            Resolution selectedResolution = resolutions[resolutionIndex];
+            Resolution selectedResolution = resolutions[resolutions.Length - 1 - resolutionIndex];
             GameManager.Instance.ResolutionSetting(Camera.main, selectedResolution.width, selectedResolution.height);
         });
     }

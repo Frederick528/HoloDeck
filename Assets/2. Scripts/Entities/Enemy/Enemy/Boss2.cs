@@ -20,7 +20,7 @@ public class Boss2 : Enemy
         switch (turn)
         {
             case 1:
-                AttackPattern(_defaultEnemyData.Damage);
+                AttackPattern(_defaultEnemyData.Damage * 2);
                 break;
             case 2:
                 AttackPattern(_defaultEnemyData.Damage);

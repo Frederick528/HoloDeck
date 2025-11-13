@@ -30,7 +30,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
     /// <summary>
     /// 0 = amount, 1 = duration
     /// </summary>
-    public List<TMP_Text[]> StatusEffectText = new();
+    public List<(TMP_Text amount, TMP_Text duration)> StatusEffectText = new();
 
     Transform _statusEffectDescContent;
     Transform _statusDescWindow;
@@ -38,7 +38,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
     /// <summary>
     /// 0 = desc, 1 = duration
     /// </summary>
-    public List<TMP_Text[]> StatusEffectDescText = new();
+    public List<(TMP_Text desc, TMP_Text duration)> StatusEffectDescText = new();
     //public List<TMP_Text> StatusEffectDurationText;
 
     SendAnimEvent _animEvent;
@@ -616,14 +616,16 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         BoolOnMouseEnter();
     }
 
+
+
     public virtual bool BoolOnMouseEnter()
     {
         if (EventSystem.current.IsPointerOverGameObject())
             return false;
         if (InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf) return false;
         if (!Cursor.visible) return false;
-        TargetOutline(true);        // 커서 꺼져있을 때 => 전투용 화살표 커서를 사용할 때, 이건 그냥 배틀매니저에서 켜주기로 함.
         if (_numberOfStatusEffects == 0 && _numberOfInformation == 0) return false;
+        TargetOutline(true);        // 커서 꺼져있을 때 => 전투용 화살표 커서를 사용할 때, 이건 그냥 배틀매니저에서 켜주기로 함.
         _statusEffectDescContent.localPosition = Vector3.zero;
         canvas.sortingOrder = 1;        // 이거 없으면 체력 UI에 가려짐
         if (_statusDescWindow.position.x > 6.8f/* && _statusDescWindow.localPosition.x > 0*/)
@@ -666,8 +668,9 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
     //    if (statusEffectTypeDict. == StatusEffectType.InfiniteDuration || statusEffect.Item2 == StatusEffectType.UseAmountInfiniteDuration)
     //        return;
     //}
-    public void ReduceStatusEffect((StatusEffect effect, StatusEffectType type) statusEffect, int amount = 0, int duration = 1)        // 턴 감소를 디폴트로 만듦.
+    public virtual void ReduceStatusEffect((StatusEffect effect, StatusEffectType type) statusEffect, int amount = 0, int duration = 1)        // 턴 감소를 디폴트로 만듦.
     {
+
         (int getAmount, int getDuration) info = CurStatusEffectDict[statusEffect.effect][statusEffect.type];
         if (info.getDuration - duration > 0 && info.getAmount - amount > 0)           // 감소된 값이 둘 다 양수 => 무한 지속은 기본 음수라서 제외하고, 나머지만 적용됨.
         {
@@ -708,17 +711,19 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                     break;
             }
 
-            // 제거되는 경우, 추가 효과가 필요한 녀석들 (기본 스탯은 밑에서 전부 처리)
-            switch (statusEffect.effect)
-            {
-                case StatusEffect.UseCritical:
-                    if (GetStatusEffect(StatusEffect.Attack, out _))
-                    {
-                        ChangeStatusEffectDesc((StatusEffect.Attack, StatusEffectType.Information));
-                        //AddStatusEffect((StatusEffect.GetCritical, StatusEffectType.Information), _criticalChance.Value);
-                    }
-                    break;
-            }
+            //// 제거되는 경우, 추가 효과가 필요한 녀석들 (기본 스탯은 밑에서 전부 처리)
+            //switch (statusEffect.effect)
+            //{
+            //    case StatusEffect.UseCritical:
+            //        if (GetStatusEffect(StatusEffect.Attack, out _))
+            //        {
+            //            ChangeStatusEffectDesc((StatusEffect.Attack, StatusEffectType.Information));
+            //            //AddStatusEffect((StatusEffect.GetCritical, StatusEffectType.Information), _criticalChance.Value);
+            //        }
+            //        break;
+            //}
+
+
             //if (statusEffect.Item2 == StatusEffectType.InfiniteDuration || statusEffect.Item2 == StatusEffectType.UseAmountInfiniteDuration)
             //{
             //    if (info.Item1 - amount > 0)
@@ -753,6 +758,13 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                 break;
             case StatusEffect.ATKUp:
                 AttackPower.Value -= amount;
+                if (this is Enemy)
+                {
+                    if (GetStatusEffect(StatusEffect.Attack, out _))        // Attack은 공격을 하겠다는 설명이기에 플레이어는 얻어서는 안됨.
+                    {
+                        ReduceStatusEffect((StatusEffect.Attack, StatusEffectType.Information), amount, 0);
+                    }
+                }
                 break;
             case StatusEffect.DEFUp:
                 DefensePower.Value -= amount;
@@ -767,15 +779,18 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                 CriticalDamage.Value -= amount;
                 break;
             case StatusEffect.UseCritical:      // 적 개체 한정
-                if (GetStatusEffect(StatusEffect.Attack, out _))
+                if (this is Enemy)
                 {
-                    ChangeStatusEffectDesc((StatusEffect.Attack, StatusEffectType.Information));
+                    if (GetStatusEffect(StatusEffect.Attack, out _))
+                    {
+                        ReduceStatusEffect((StatusEffect.Attack, StatusEffectType.Information), 0, 0);
+                    }
                 }
                 break;
         }
     }
 
-    public void AddStatusEffect((StatusEffect effect, StatusEffectType type) statusEffect, int amount, int duration = 1)
+    public virtual void AddStatusEffect((StatusEffect effect, StatusEffectType type) statusEffect, int amount, int duration = 1)
     {
         switch (statusEffect.type)
         {
@@ -790,7 +805,10 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                 break;
         }
 
-        if (amount == 0 || duration == 0) return;
+        if (statusEffect.type != StatusEffectType.Information)
+        {
+            if (amount == 0 || duration == 0) return;
+        }
 
         if (!CurStatusEffectDict.ContainsKey(statusEffect.effect))
         {
@@ -838,6 +856,10 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                         CurStatusEffectDict[statusEffect.effect][statusEffect.type] = (info.amount + amount, info.duration + duration);
                         ChangeStatusEffectDesc(statusEffect);
                         break;
+                    //case StatusEffectType.Information:
+                    //    CurStatusEffectDict[statusEffect.effect][statusEffect.type] = (amount, duration);
+                    //    ChangeStatusEffectDesc(statusEffect);
+                    //    break;
                     default:
                         CurStatusEffectDict[statusEffect.effect][statusEffect.type] = (
                                     info.amount + amount,
@@ -855,6 +877,14 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                 break;
             case StatusEffect.ATKUp:
                 AttackPower.Value += amount;
+                if (this is Enemy)
+                {
+                    if (GetStatusEffect(StatusEffect.Attack, out _))        // Attack은 공격을 하겠다는 설명이기에 플레이어는 얻어서는 안됨.
+                    {
+                        AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), amount, 0);
+                        //ChangeStatusEffectDesc((StatusEffect.Attack, StatusEffectType.Information));
+                    }
+                }
                 break;
             case StatusEffect.DEFUp:
                 DefensePower.Value += amount;
@@ -869,12 +899,16 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                 CriticalDamage.Value += amount;
                 break;
             case StatusEffect.UseCritical:      // 적 개체 한정
-                if (GetStatusEffect(StatusEffect.Attack, out _))        // Attack은 공격을 하겠다는 설명이기에 플레이어는 얻어서는 안됨.
+                if (this is Enemy)
                 {
-                    ChangeStatusEffectDesc((StatusEffect.Attack,StatusEffectType.Information));
+                    if (GetStatusEffect(StatusEffect.Attack, out _))        // Attack은 공격을 하겠다는 설명이기에 플레이어는 얻어서는 안됨.
+                    {
+                        AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), 0, 0);
+                    }
                 }
                 break;
         }
+
         //else if (info.Item2 == -1)     // 상태효과 지속시간이 없는 경우(계속 유지)
         //{
         //    if (info.Item1 == 0)
@@ -1147,32 +1181,32 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
     {
         (int amount, int duration) info = CurStatusEffectDict[statusEffect.effect][statusEffect.type];
 
-        if (StatusEffectText[StatusEffectTextIdx[statusEffect]] != null)
+        if (StatusEffectText[StatusEffectTextIdx[statusEffect]] != (null, null))
         {
-            StatusEffectText[StatusEffectTextIdx[statusEffect]][0].text = info.amount.ToString();
+            StatusEffectText[StatusEffectTextIdx[statusEffect]].amount.text = info.amount.ToString();
         }
 
         switch (statusEffect.type)
         {
             case StatusEffectType.InfiniteDuration:
             case StatusEffectType.UseAmountInfiniteDuration:
-                StatusEffectText[StatusEffectTextIdx[statusEffect]][1].text = "∞";
-                StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.amount}</color> / 지속시간: <color=yellow>∞</color>";
+                StatusEffectText[StatusEffectTextIdx[statusEffect]].duration.text = "∞";
+                StatusEffectDescText[StatusEffectTextIdx[statusEffect]].duration.text = $"LV: <color=green>{info.amount}</color> / 지속시간: <color=yellow>∞</color>";
                 break;
             case StatusEffectType.Perpetual:
             case StatusEffectType.UseAmountPerpetual:
-                StatusEffectText[StatusEffectTextIdx[statusEffect]][1].text = null;
-                StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.amount}</color>"/* / 지속시간: <color=yellow>∞</color>"*/;
+                StatusEffectText[StatusEffectTextIdx[statusEffect]].duration.text = null;
+                StatusEffectDescText[StatusEffectTextIdx[statusEffect]].duration.text = $"LV: <color=green>{info.amount}</color>"/* / 지속시간: <color=yellow>∞</color>"*/;
                 break;
             case StatusEffectType.Information:
-                StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = ChangeInformationLV(statusEffect, info);
+                StatusEffectDescText[StatusEffectTextIdx[statusEffect]].duration.text = ChangeInformationLV(statusEffect, info);
                 //if (statusEffect.Item1 == StatusEffect.Attack && GetStatusEffect(StatusEffect.UseCritical, out _))
                 //    StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1} + {Mathf.RoundToInt((CriticalDamage.Value - 100) * 0.01f * info.Item1 + 0.0001f)} </color>";
                 //else
                 //    StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1}</color>";
                 break;
             default:
-                StatusEffectText[StatusEffectTextIdx[statusEffect]][1].text = info.duration.ToString();
+                StatusEffectText[StatusEffectTextIdx[statusEffect]].duration.text = info.duration.ToString();
                 string color;
                 if (info.duration > 5)
                 {
@@ -1186,7 +1220,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                 {
                     color = "red";
                 }
-                StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.amount}</color> / 지속시간: <color={color}>{info.duration}</color>";
+                StatusEffectDescText[StatusEffectTextIdx[statusEffect]].duration.text = $"LV: <color=green>{info.amount}</color> / 지속시간: <color={color}>{info.duration}</color>";
                 break;
         }
         //if (statusEffect.Item2 == StatusEffectType.InfiniteDuration || statusEffect.Item2 == StatusEffectType.UseAmountInfiniteDuration)
@@ -1212,12 +1246,15 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         //    }
         //    StatusEffectDescText[StatusEffectTextIdx[statusEffect]][1].text = $"LV: <color=green>{info.Item1}</color> / 지속시간: <color={color}>{info.Item2}</color>";
         //}
-        float descHeight = StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].preferredHeight;
+        float descHeight = StatusEffectDescText[StatusEffectTextIdx[statusEffect]].desc.preferredHeight;
 
         string desc = InGameManager.Instance.SESO.SEDatas[(int)statusEffect.effect].Descript;        // 애도 나중에는 딕셔너리로 바꿔야 하려나
         if (string.IsNullOrWhiteSpace(desc))
         {
-            StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text = _specialDesc.Replace("{n}", $"<color=green>{info.amount}</color>"); ;
+            StringBuilder sb = new(_specialDesc);
+            AddStatusEffectDesc(statusEffect, sb, info);
+            //StatusEffectDescText[StatusEffectTextIdx[statusEffect]].desc.text = _specialDesc.Replace("{n}", $"<color=green>{info.amount}</color>"); ;
+            StatusEffectDescText[StatusEffectTextIdx[statusEffect]].desc.text = sb.ToString();
         }
         else
         {
@@ -1241,7 +1278,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
             //        sb.Replace("{n}", $"<color=green>{info.Item1}</color>");
             //        break;
             //}
-            StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text = sb.ToString();
+            StatusEffectDescText[StatusEffectTextIdx[statusEffect]].desc.text = sb.ToString();
         }
         //StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text = InGameManager.Instance.SESO.SEDatas[(int)statusEffect.Item1].Descript.Replace("{n}", $"<color=green>{info.Item1}</color>");
 
@@ -1250,10 +1287,10 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
             case StatusEffectType.UseAmountTurnDuration:
             case StatusEffectType.UseAmountInfiniteDuration:
             case StatusEffectType.UseAmountPerpetual:
-                StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text += " <size=10><color=yellow>(능력 발동 시, 값이 감소되며, 0이 될 경우 사라잡니다.)</color></size>";
+                StatusEffectDescText[StatusEffectTextIdx[statusEffect]].desc.text += " <size=10><color=yellow>(능력 발동 시, 값이 감소되며, 0이 될 경우 사라잡니다.)</color></size>";
                 break;
             case StatusEffectType.DurationIsAmount:
-                StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text += " <size=10><color=yellow>(지속시간과 값이 같습니다.)</color></size>";
+                StatusEffectDescText[StatusEffectTextIdx[statusEffect]].desc.text += " <size=10><color=yellow>(지속시간과 값이 같습니다.)</color></size>";
                 break;
         }
         switch (statusEffect.type)
@@ -1264,7 +1301,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
             //    break;
             case StatusEffectType.Perpetual:
             case StatusEffectType.UseAmountPerpetual:
-                StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text += " <size=10><color=red>(해당 상태 효과는 버프 제거로 사라지지 않습니다.)</color></size>";
+                StatusEffectDescText[StatusEffectTextIdx[statusEffect]].desc.text += " <size=10><color=red>(해당 상태 효과는 버프 제거로 사라지지 않습니다.)</color></size>";
                 break;
         }
         //if (statusEffect.Item2 == StatusEffectType.UseAmountTurnDuration || statusEffect.Item2 == StatusEffectType.UseAmountInfiniteDuration)
@@ -1280,19 +1317,24 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
             _statusDescWindow.gameObject.SetActive(true);           // 켰다가 꺼야 텍스트 크기 가져올 수 있음.. 나중에 좀 고치고 싶음.
             _statusDescWindow.gameObject.SetActive(false);
         }
-        if (descHeight == StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].GetPreferredValues().y)        // GetPreferredValues가 좀 더 정확한 값을 가져옴.
+        if (descHeight == StatusEffectDescText[StatusEffectTextIdx[statusEffect]].desc.GetPreferredValues().y)        // GetPreferredValues가 좀 더 정확한 값을 가져옴.
         {
             return;
         }
-        RectTransform rectTransform = StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].transform.parent.GetComponent<RectTransform>();
+        RectTransform rectTransform = StatusEffectDescText[StatusEffectTextIdx[statusEffect]].desc.transform.parent.GetComponent<RectTransform>();
         Vector2 newSize = rectTransform.sizeDelta;
-        newSize.y = 30 + StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].preferredHeight;
+        newSize.y = 30 + StatusEffectDescText[StatusEffectTextIdx[statusEffect]].desc.preferredHeight;
         rectTransform.sizeDelta = newSize;
 
+    }
+    void TwoTextsAddList(List<(TMP_Text,TMP_Text)> list, TMP_Text[] texts)
+    {
+        list.Add((texts[0], texts[1]));
     }
 
     protected virtual void AddStatusEffectDesc((StatusEffect effect, StatusEffectType type) statusEffect, StringBuilder sb, (int amount, int duration) info)
     {
+        // 예전에는 치명타 관련 내용을 시각화했기 떄문에 필요했으나, 지금은 시각화하지 않으므로, 플레이어에게는 크게 필요없을 수도 있음.
         sb.Replace("{CriticalChance}", $"<color=green>{_criticalChance}</color>");
         sb.Replace("{CriticalDamage}", $"<color=green>{CriticalDamage}</color>");
         sb.Replace("{n}", $"<color=green>{info.amount}</color>");
@@ -1338,28 +1380,30 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                     default:
                         break;
                 }
-                StatusEffectText.Add(effect.GetComponentsInChildren<TMP_Text>());
+                TwoTextsAddList(StatusEffectText, effect.GetComponentsInChildren<TMP_Text>());
+                //StatusEffectText.Add((effect.GetComponentsInChildren<TMP_Text>()[0], effect.GetComponentsInChildren<TMP_Text>()[1]));
 
             }
             else
             {
-                StatusEffectText.Add(null);
+                StatusEffectText.Add((null, null));
             }
             //var texts = Instantiate(InGameUIManager.Instance.StatusEffectDescPrefab, _statusEffectDescContent).GetComponentsInChildren<TMP_Text>();
             //StatusEffectDurationText.Add(texts[0]);
             //StatusEffectDescText.Add(texts[1]);
-            StatusEffectDescText.Add(Instantiate(InGameUIManager.Instance.StatusEffectDescPrefab, _statusEffectDescContent).GetComponentsInChildren<TMP_Text>());
+            TwoTextsAddList(StatusEffectDescText, Instantiate(InGameUIManager.Instance.StatusEffectDescPrefab, _statusEffectDescContent).GetComponentsInChildren<TMP_Text>());
+            //StatusEffectDescText.Add(Instantiate(InGameUIManager.Instance.StatusEffectDescPrefab, _statusEffectDescContent).GetComponentsInChildren<TMP_Text>());
         }
 
 
-        StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].transform.parent.gameObject.SetActive(isOn);         // 설명창 내용
+        StatusEffectDescText[StatusEffectTextIdx[statusEffect]].desc.transform.parent.gameObject.SetActive(isOn);         // 설명창 내용
         switch (statusEffect.type)
         {
             case StatusEffectType.Information:
                 //StatusEffectText[StatusEffectTextIdx[statusEffect]][0].transform.parent.gameObject.SetActive(false);
                 if (isOn)
                 {
-                    StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].transform.parent.SetAsFirstSibling();        // 정보 내용은 desc가 가장 위로 올라오게 함. 대신 상태 효과 개수는 변경되지 않고, 정보 값 변경
+                    StatusEffectDescText[StatusEffectTextIdx[statusEffect]].desc.transform.parent.SetAsFirstSibling();        // 정보 내용은 desc가 가장 위로 올라오게 함. 대신 상태 효과 개수는 변경되지 않고, 정보 값 변경
                     ++_numberOfInformation;
                 }
                 else
@@ -1372,11 +1416,11 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
             case StatusEffectType.DurationIsAmount:
             case StatusEffectType.UseAmountInfiniteDuration:
             case StatusEffectType.UseAmountTurnDuration:
-                StatusEffectText[StatusEffectTextIdx[statusEffect]][0].transform.parent.gameObject.SetActive(isOn);             // 체력바 하단 내용
+                StatusEffectText[StatusEffectTextIdx[statusEffect]].amount.transform.parent.gameObject.SetActive(isOn);             // 체력바 하단 내용
                 if (isOn)
                 {
-                    StatusEffectText[StatusEffectTextIdx[statusEffect]][0].transform.parent.SetAsLastSibling();
-                    StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].transform.parent.SetAsLastSibling();
+                    StatusEffectText[StatusEffectTextIdx[statusEffect]].amount.transform.parent.SetAsLastSibling();
+                    StatusEffectDescText[StatusEffectTextIdx[statusEffect]].desc.transform.parent.SetAsLastSibling();
                     CurStatusEffectList.Add(statusEffect);
                     ++_numberOfStatusEffects;
                 }
@@ -1388,11 +1432,11 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                 break;
             case StatusEffectType.Perpetual:
             case StatusEffectType.UseAmountPerpetual:
-                StatusEffectText[StatusEffectTextIdx[statusEffect]][0].transform.parent.gameObject.SetActive(isOn);             // 체력바 하단 내용
+                StatusEffectText[StatusEffectTextIdx[statusEffect]].amount.transform.parent.gameObject.SetActive(isOn);             // 체력바 하단 내용
                 if (isOn)
                 {
-                    StatusEffectText[StatusEffectTextIdx[statusEffect]][0].transform.parent.SetAsLastSibling();
-                    StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].transform.parent.SetAsLastSibling();
+                    StatusEffectText[StatusEffectTextIdx[statusEffect]].amount.transform.parent.SetAsLastSibling();
+                    StatusEffectDescText[StatusEffectTextIdx[statusEffect]].desc.transform.parent.SetAsLastSibling();
                     CurStatusEffectPerpetualList.Add(statusEffect);
                     ++_numberOfStatusEffects;
                 }

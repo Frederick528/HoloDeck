@@ -21,16 +21,18 @@ public class Elite1 : Enemy
         switch (turn)
         {
             case 1:
-                AttackPattern(_defaultEnemyData.Damage, 2);
+                SetRepeat(2);
+                AttackPattern(_defaultEnemyData.Damage);
                 break;
             case 2:
+                SetRepeat();
                 SpecialPattern(3);
                 turn = 0;
                 break;
         }
     }
 
-    protected override void SpecialPattern(int value, int repeat = 1, bool addPattern = false, float delay = 0.3f)
+    protected override void SpecialPattern(int value, bool addPattern = false, float delay = 0.3f)
     {
         _specialDesc = "해당 적은 공격력을 {n}만큼 2턴동안 얻습니다.";
 
@@ -46,6 +48,6 @@ public class Elite1 : Enemy
         //    await UniTask.WaitForSeconds(delay, false, PlayerLoopTiming.Update, TurnManager.Instance.CancelSource.Token);
         //    AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), value, 2);
         //});
-        base.SpecialPattern(value, repeat, addPattern, delay);
+        base.SpecialPattern(value, addPattern, delay);
     }
 }
