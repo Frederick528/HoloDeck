@@ -509,7 +509,11 @@ public class MapManager : MonoBehaviour
         {
             //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, map.rewardBox);
             ShowBox(map.rewardBox, true);
-            if (map.rewardBox != 0)       // 보물은 한 스테이지에 한 개이기 때문에 UI를 변경할 필요 없음. (만약 여러 개가 된다면, 해당 맵에 있는 보물 정보로 UI 수정하는 거 추가해야 함.)
+            if (map.rewardBox == 0)
+            {
+                InGameUIManager.Instance.ShowRewardItem(map.ItemReward);
+            }
+            else
             {
                 InGameUIManager.Instance.ShowRewardCard(map.CardReward);
             }
@@ -584,7 +588,7 @@ public class MapManager : MonoBehaviour
         currStage.DropTreasureBox(changed);
     }
 
-    public void ChangedUseItem(ItemData itemData, int idx)
+    public void ChangedUseItem(ChargeItemBase itemData, int idx)
     {
         currStage.ChangedUseItem(itemData, idx);
     }

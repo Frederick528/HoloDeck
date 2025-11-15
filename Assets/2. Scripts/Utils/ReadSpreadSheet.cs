@@ -397,101 +397,206 @@ public class ReadSpreadSheet : MonoBehaviour
     void SetItemSO()
     {
         string[] rows = _dataItemGS.Split("\n");
-        ItemSO.Items = new ItemData[rows.Length];
+        //ItemSO.Items = new ItemBase[rows.Length];
         //_cardSO.CardSprites = new Sprite[rows.Length];
         //SystemIOFileLoad();
         ItemSO.PassiveID.x = -1;
         ItemSO.ActiveID.x = -1;
         ItemSO.PotionID.x = -1;
-        int i = 0;
+        //int pa = 0;
+        //int ac = 0;
+        //int po = 0;
         foreach (string row in rows)
         {
             string[] cells = row.Split("\t");
-            ItemData data = new()
-            {
-                ID = ConvertInt32(cells[0]),
-                Name = LineBreakStr(cells[1]),
-                ItemTag = (ItemTag)Enum.Parse(typeof(ItemTag), cells[cells.Length-2]),
-                ItemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), cells[cells.Length-1])
-                //MaxCharge = ConvertInt32(cells[2]),
-                //CurCharge = ConvertInt32(cells[3]),
-                //Damage = ConvertInt32(cells[4]),
-                //Shield = ConvertInt32(cells[5]),
-                //Draw = ConvertInt32(cells[6]),
-                //Heal = ConvertInt32(cells[7]),
-                //Duration = ConvertInt32(cells[8]),
-                //Price = ConvertInt32(cells[9]),
-                //Descript = LineBreakStr(cells[10]),
-            };
-            switch (data.ItemTag)
+            ItemTag itemTag = (ItemTag)Enum.Parse(typeof(ItemTag), cells[cells.Length - 2]);
+
+            switch (itemTag)
             {
                 case ItemTag.Passive:
+
+                    ItemBase passiveData = new()
+                    {
+                        ID = ConvertInt32(cells[0]),
+                        Name = LineBreakStr(cells[1]),
+                        ItemTag = itemTag,
+                        ItemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), cells[cells.Length - 1]),
+                        Price = ConvertInt32(cells[2]),
+                        Descript = LineBreakStr(cells[3])
+                    };
                     if (ItemSO.PassiveID.x == -1)
                     {
-                        ItemSO.PassiveID.x = data.ID;
+                        ItemSO.PassiveID.x = passiveData.ID;
                     }
-                    ItemSO.PassiveID.y = data.ID;
-
-                    data.Price = ConvertInt32(cells[2]);
-                    data.Descript = LineBreakStr(cells[3]);
-
+                    ItemSO.PassiveID.y = passiveData.ID;
+                    try
+                    {
+                        passiveData.Sprite = Array.Find(ItemSO.ItemSprites, x => x.name == passiveData.ID.ToString());
+                    }
+                    catch (UnassignedReferenceException)
+                    {
+                        passiveData.Sprite = null;
+                        Debug.Log("스프라이트가 없습니다.");
+                    }
+                    ItemSO.PassiveItems.Add(passiveData);
                     break;
                 case ItemTag.Active:
+                    ChargeItemBase activeData = new()
+                    {
+                        ID = ConvertInt32(cells[0]),
+                        Name = LineBreakStr(cells[1]),
+                        ItemTag = itemTag,
+                        ItemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), cells[cells.Length - 1]),
+                        MaxCharge = ConvertInt32(cells[2]),
+                        Damage = ConvertInt32(cells[3]),
+                        Shield = ConvertInt32(cells[4]),
+                        Draw = ConvertInt32(cells[5]),
+                        Heal = ConvertInt32(cells[6]),
+                        Duration = ConvertInt32(cells[7]),
+                        Price = ConvertInt32(cells[8]),
+                        Descript = LineBreakStr(cells[9]),
+                        AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[10])),
+                        ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[11])),
+                        StartCharge = NullTrueBool(cells[12])
+                    };
                     if (ItemSO.ActiveID.x == -1)
                     {
-                        ItemSO.ActiveID.x = data.ID;
+                        ItemSO.ActiveID.x = activeData.ID;
                     }
-                    ItemSO.ActiveID.y = data.ID;
-
-                    data.MaxCharge = ConvertInt32(cells[2]);
-                    data.Damage = ConvertInt32(cells[3]);
-                    data.Shield = ConvertInt32(cells[4]);
-                    data.Draw = ConvertInt32(cells[5]);
-                    data.Heal = ConvertInt32(cells[6]);
-                    data.Duration = ConvertInt32(cells[7]);
-                    data.Price = ConvertInt32(cells[8]);
-                    data.Descript = LineBreakStr(cells[9]);
-                    data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[10]));
-                    data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[11]));
-                    data.StartCharge = NullTrueBool(cells[12]);
-
+                    ItemSO.ActiveID.y = activeData.ID;
+                    try
+                    {
+                        activeData.Sprite = Array.Find(ItemSO.ItemSprites, x => x.name == activeData.ID.ToString());
+                    }
+                    catch (UnassignedReferenceException)
+                    {
+                        activeData.Sprite = null;
+                        Debug.Log("스프라이트가 없습니다.");
+                    }
+                    ItemSO.ActiveItems.Add(activeData);
                     break;
                 case ItemTag.Potion:
+                    UseItemBase potionData = new()
+                    {
+                        ID = ConvertInt32(cells[0]),
+                        Name = LineBreakStr(cells[1]),
+                        ItemTag = itemTag,
+                        ItemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), cells[cells.Length - 1]),
+                        Damage = ConvertInt32(cells[2]),
+                        Shield = ConvertInt32(cells[3]),
+                        Draw = ConvertInt32(cells[4]),
+                        Heal = ConvertInt32(cells[5]),
+                        Duration = ConvertInt32(cells[6]),
+                        Price = ConvertInt32(cells[7]),
+                        Descript = LineBreakStr(cells[8]),
+                        AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[9])),
+                        ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[10]))
+                    };
                     if (ItemSO.PotionID.x == -1)
                     {
-                        ItemSO.PotionID.x = data.ID;
+                        ItemSO.PotionID.x = potionData.ID;
                     }
-                    ItemSO.PotionID.y = data.ID;
-
-                    data.Damage = ConvertInt32(cells[2]);
-                    data.Shield = ConvertInt32(cells[3]);
-                    data.Draw = ConvertInt32(cells[4]);
-                    data.Heal = ConvertInt32(cells[5]);
-                    data.Duration = ConvertInt32(cells[6]);
-                    data.Price = ConvertInt32(cells[7]);
-                    data.Descript = LineBreakStr(cells[8]);
-                    data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[9]));
-                    data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[10]));
-
+                    ItemSO.PotionID.y = potionData.ID;
+                    try
+                    {
+                        potionData.Sprite = Array.Find(ItemSO.ItemSprites, x => x.name == potionData.ID.ToString());
+                    }
+                    catch (UnassignedReferenceException)
+                    {
+                        potionData.Sprite = null;
+                        Debug.Log("스프라이트가 없습니다.");
+                    }
+                    ItemSO.PotionItems.Add(potionData);
+                    break;
+                default:
+                    Debug.Log("아이템 태그 오류");
                     break;
             }
+            //ItemBase data = new()
+            //{
+            //    ID = ConvertInt32(cells[0]),
+            //    Name = LineBreakStr(cells[1]),
+            //    ItemTag = (ItemTag)Enum.Parse(typeof(ItemTag), cells[cells.Length-2]),
+            //    ItemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), cells[cells.Length-1])
+            //    //MaxCharge = ConvertInt32(cells[2]),
+            //    //CurCharge = ConvertInt32(cells[3]),
+            //    //Damage = ConvertInt32(cells[4]),
+            //    //Shield = ConvertInt32(cells[5]),
+            //    //Draw = ConvertInt32(cells[6]),
+            //    //Heal = ConvertInt32(cells[7]),
+            //    //Duration = ConvertInt32(cells[8]),
+            //    //Price = ConvertInt32(cells[9]),
+            //    //Descript = LineBreakStr(cells[10]),
+            //};
+            //switch (data.ItemTag)
+            //{
+            //    case ItemTag.Passive:
+            //        if (ItemSO.PassiveID.x == -1)
+            //        {
+            //            ItemSO.PassiveID.x = data.ID;
+            //        }
+            //        ItemSO.PassiveID.y = data.ID;
+
+            //        data.Price = ConvertInt32(cells[2]);
+            //        data.Descript = LineBreakStr(cells[3]);
+
+            //        break;
+            //    case ItemTag.Active:
+            //        if (ItemSO.ActiveID.x == -1)
+            //        {
+            //            ItemSO.ActiveID.x = data.ID;
+            //        }
+            //        ItemSO.ActiveID.y = data.ID;
+
+            //        data.MaxCharge = ConvertInt32(cells[2]);
+            //        data.Damage = ConvertInt32(cells[3]);
+            //        data.Shield = ConvertInt32(cells[4]);
+            //        data.Draw = ConvertInt32(cells[5]);
+            //        data.Heal = ConvertInt32(cells[6]);
+            //        data.Duration = ConvertInt32(cells[7]);
+            //        data.Price = ConvertInt32(cells[8]);
+            //        data.Descript = LineBreakStr(cells[9]);
+            //        data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[10]));
+            //        data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[11]));
+            //        data.StartCharge = NullTrueBool(cells[12]);
+
+            //        break;
+            //    case ItemTag.Potion:
+            //        if (ItemSO.PotionID.x == -1)
+            //        {
+            //            ItemSO.PotionID.x = data.ID;
+            //        }
+            //        ItemSO.PotionID.y = data.ID;
+
+            //        data.Damage = ConvertInt32(cells[2]);
+            //        data.Shield = ConvertInt32(cells[3]);
+            //        data.Draw = ConvertInt32(cells[4]);
+            //        data.Heal = ConvertInt32(cells[5]);
+            //        data.Duration = ConvertInt32(cells[6]);
+            //        data.Price = ConvertInt32(cells[7]);
+            //        data.Descript = LineBreakStr(cells[8]);
+            //        data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[9]));
+            //        data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[10]));
+
+            //        break;
+            //}
             //if (data.ItemTag != ItemTag.Passive)
             //{
             //    data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[13]));
             //    data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[14]));
             //}
 
-            try
-            {
-                data.Sprite = Array.Find(ItemSO.ItemSprites, x => x.name == data.ID.ToString());
-            }
-            catch (UnassignedReferenceException)
-            {
-                data.Sprite = null;
-                Debug.Log("스프라이트가 없습니다.");
-            }
-            ItemSO.Items[i] = data;
-            ++i;
+            //try
+            //{
+            //    data.Sprite = Array.Find(ItemSO.ItemSprites, x => x.name == data.ID.ToString());
+            //}
+            //catch (UnassignedReferenceException)
+            //{
+            //    data.Sprite = null;
+            //    Debug.Log("스프라이트가 없습니다.");
+            //}
+            //ItemSO.Items[i] = data;
+            //++i;
         }
         Debug.Log("Item Load End");
 #if UNITY_EDITOR

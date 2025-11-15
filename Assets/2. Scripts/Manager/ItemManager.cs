@@ -69,33 +69,33 @@ public class ItemManager : MonoBehaviour
         InGameButtonManager.Instance.ActiveItemButton.onClick.AddListener(() =>
         {
             if (_activeItem.Data == null) return;
-            if (_activeItem.Data.ItemCanUse == ItemCanUse.Anytime)
+            if (_activeItem.ItemCanUse == ItemCanUse.Anytime)
             {
-                if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+                if (_activeItem.CurCharge >= _activeItem.MaxCharge)
                 {
                     UseActiveItem();
                 }
             }
-            else if (_activeItem.Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player)      // Arrow Cursor 쓰는 것들을 의미함.
+            else if (_activeItem.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player)      // Arrow Cursor 쓰는 것들을 의미함.
             {
-                if (_activeItem.Data.AttackType == AttackType.None)
+                if (_activeItem.AttackType == AttackType.None)
                 {
-                    if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+                    if (_activeItem.CurCharge >= _activeItem.MaxCharge)
                     {
                         UseActiveItem();
                     }
                 }
-                else if (_activeItem.Data.AttackType == AttackType.Multi)
+                else if (_activeItem.AttackType == AttackType.Multi)
                 {
-                    if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+                    if (_activeItem.CurCharge >= _activeItem.MaxCharge)
                     {
                         //_activeItem.CheckEnemyDead();
                         UseActiveItem();
                     }
                 }
-                else if (_activeItem.Data.AttackType == AttackType.Single)
+                else if (_activeItem.AttackType == AttackType.Single)
                 {
-                    if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+                    if (_activeItem.CurCharge >= _activeItem.MaxCharge)
                     {
                         _arrowIdx = 1;
                         BattleManager.Instance.SetActiveArrowCursor(true, _arrowIdx);
@@ -111,13 +111,13 @@ public class ItemManager : MonoBehaviour
             {
                 _clickedPotionIdx = i;
                 if (!HavePotionItem[_clickedPotionIdx]) { return; }
-                if (_potionItem[i].Data.ItemCanUse == ItemCanUse.Anytime)
+                if (_potionItem[i].ItemCanUse == ItemCanUse.Anytime)
                 {
                     UsePotionItem();
                 }
-                else if (_potionItem[i].Data.ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player)      // Arrow Cursor가 쓰이거나 전투 관련을 의미함.
+                else if (_potionItem[i].ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player)      // Arrow Cursor가 쓰이거나 전투 관련을 의미함.
                 {
-                    if (_potionItem[i].Data.AttackType == AttackType.Single)
+                    if (_potionItem[i].AttackType == AttackType.Single)
                     {
                         _arrowIdx = 2;
                         BattleManager.Instance.SetActiveArrowCursor(true, _arrowIdx);
@@ -194,9 +194,9 @@ public class ItemManager : MonoBehaviour
     //    }
     //}
 
-    public (ItemData, int)? GetItem(ItemData itemData, int value = -1)
+    public (ChargeItemBase, int)? GetItem(ItemBase itemData, int value = -1)
     {
-        (ItemData, int)? changedItem = null;
+        (ChargeItemBase, int)? changedItem = null;
         //Item item = new();
         //item.Setup(InGameManager.Instance.FindItemData(id));
         switch (itemData.ItemTag)
@@ -205,10 +205,10 @@ public class ItemManager : MonoBehaviour
                 GetPassiveItem(itemData);
                 break;
             case ItemTag.Active:
-                changedItem = ChanageActiveItem(itemData, value);
+                changedItem = ChanageActiveItem((ChargeItemBase)itemData, value);
                 break;
             case ItemTag.Potion:
-                ChangePotionItem(itemData);
+                ChangePotionItem((UseItemBase)itemData);
                 break;
         }
         itemDict[itemData.ID] = true;
@@ -324,7 +324,7 @@ public class ItemManager : MonoBehaviour
     //            break;
     //    }
     //}
-    public void GetPassiveItem(ItemData itemData)
+    public void GetPassiveItem(ItemBase itemData)
     {
         Item passiveItem = Instantiate(_passiveItemPrefab, _passiveTransform);
         passiveItem.Setup(itemData);
@@ -334,24 +334,26 @@ public class ItemManager : MonoBehaviour
             InGameButtonManager.Instance.SetActiveTurnPassiveBtn(true);
         }
     }
-    public (ItemData, int)? ChanageActiveItem(ItemData itemData, int value)       // 아이템 체인지하는 코드 추가해야 함.
+    public (ChargeItemBase, int)? ChanageActiveItem(ChargeItemBase itemData, int value)       // 아이템 체인지하는 코드 추가해야 함.
     {
-        (ItemData, int)? changedItem = null;
+        (ChargeItemBase, int)? changedItem = null;
         if (HaveActiveItem)
         {
-            changedItem = (_activeItem.Data, _activeItem.CurCharge);
-            _activeItem.Setup(itemData, value);
+            changedItem = (_activeItem.GetDefaultData<ChargeItemBase>(), _activeItem.CurCharge);
+            _activeItem.Setup(itemData);
+            _activeItem.LoadCharge(value);
             //MapManager.Instance.ChangedUseItem(data, curCharge);
             //changed = true;
         }
         else
         {
             _activeItemChargeImgae.gameObject.SetActive(true);
-            _activeItem.Setup(itemData, value);
+            _activeItem.Setup(itemData);
+            _activeItem.LoadCharge(value);
         }
         //ButtonManager.Instance.ActiveItemButton.onClick.RemoveAllListeners();
-        _activeItemChargeImgae.fillAmount = (float)_activeItem.CurCharge / _activeItem.Data.MaxCharge;
-        _activeItemChargeText.text = $"{_activeItem.CurCharge} / {_activeItem.Data.MaxCharge}";
+        _activeItemChargeImgae.fillAmount = (float)_activeItem.CurCharge / _activeItem.MaxCharge;
+        _activeItemChargeText.text = $"{_activeItem.CurCharge} / {_activeItem.MaxCharge}";
         HaveActiveItem = true;
         //ButtonManager.Instance.ActiveItemButton.onClick.AddListener(() =>
         //{
@@ -392,7 +394,7 @@ public class ItemManager : MonoBehaviour
         return changedItem;
     }
 
-    public void ChangePotionItem(ItemData itemData)        // 다 차있으면 바꾸는 코드 필요
+    public void ChangePotionItem(UseItemBase itemData)        // 다 차있으면 바꾸는 코드 필요
     {
         for (int i = 0; i < HavePotionItem.Length; ++i)
         {
@@ -435,7 +437,7 @@ public class ItemManager : MonoBehaviour
     public void UseActiveItem()
     {
         InGameManager.Instance.AbilityEventQueue.Enqueue(_activeItem);
-        Charge(-_activeItem.Data.MaxCharge);
+        Charge(-_activeItem.MaxCharge);
     }
 
     public void UsePotionItem()
@@ -448,10 +450,10 @@ public class ItemManager : MonoBehaviour
     {
         if (!HaveActiveItem) return;
 
-        _activeItem.CurCharge = Mathf.Clamp(_activeItem.CurCharge + value, 0, _activeItem.Data.MaxCharge);
+        _activeItem.CurCharge = Mathf.Clamp(_activeItem.CurCharge + value, 0, _activeItem.MaxCharge);
 
-        _activeItemChargeImgae.fillAmount = (float)_activeItem.CurCharge / _activeItem.Data.MaxCharge;
-        _activeItemChargeText.text = $"{_activeItem.CurCharge} / {_activeItem.Data.MaxCharge}";
+        _activeItemChargeImgae.fillAmount = (float)_activeItem.CurCharge / _activeItem.MaxCharge;
+        _activeItemChargeText.text = $"{_activeItem.CurCharge} / {_activeItem.MaxCharge}";
         //_activeItemChargeText.text = _activeItem.CurCharge.ToString();
     }
 
@@ -473,7 +475,7 @@ public class ItemManager : MonoBehaviour
         switch (_arrowIdx)
         {
             case 1:
-                if (_activeItem.CurCharge >= _activeItem.Data.MaxCharge)
+                if (_activeItem.CurCharge >= _activeItem.MaxCharge)
                 {
                     _activeItem.Target(enemy);
                     //_activeItem.CheckEnemyDead();

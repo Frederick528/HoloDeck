@@ -23,11 +23,11 @@ MonoBehaviour:
   - {fileID: 5656774337708926583, guid: aefc403e9689b5f4c944277408b7af98, type: 3}
   - {fileID: 567178948273558935, guid: b22ba3771d8bd9d46bfe961ff2480809, type: 3}
   EnemyNextAct:
-  - {fileID: 21300000, guid: c890dd06d4a350946ab11e4778bf47d8, type: 3}
-  - {fileID: 21300000, guid: b11f9c52da2945740b5078d84177a9ab, type: 3}
-  - {fileID: 21300000, guid: c3aab7237df394c4890e647a4ae580ea, type: 3}
-  - {fileID: 21300000, guid: cdec13907ffc75749ab2ed436bec6b14, type: 3}
-  - {fileID: 21300000, guid: 7184252199212cf4a9288a2a2d70dee1, type: 3}
+  - {fileID: 21300000, guid: d31e0f15092fcfb47bd6e1a8defa5cbc, type: 3}
+  - {fileID: 21300000, guid: 9b7afa97fe210a147a93161c718e2b89, type: 3}
+  - {fileID: 21300000, guid: 907b479847733014ab085dde25847da4, type: 3}
+  - {fileID: 21300000, guid: 910f5ac75c6f0ac448d3ef72a3777211, type: 3}
+  - {fileID: 21300000, guid: af265b2fbc97a2045ac7f630d1214705, type: 3}
   EnemyDatas:
   - Name: Slime100
     ID: 100

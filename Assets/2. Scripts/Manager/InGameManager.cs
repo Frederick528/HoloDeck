@@ -24,11 +24,11 @@ public class InGameManager : MonoBehaviour
     //List<CardData> _popRandomCardList = new();
 
 
-    public Dictionary<int, ItemData> ItemDatas { get; private set; } = new Dictionary<int, ItemData>();     // 나중에 ItemManager로 이동
+    public Dictionary<int, ItemBase> ItemDatas { get; private set; } = new Dictionary<int, ItemBase>();     // 나중에 ItemManager로 이동
     public Vector2Int PassiveID { get; private set; }
     public Vector2Int ActiveID { get; private set; }
     public Vector2Int PotionID { get; private set; }
-    List<ItemData>[] _randomItemList = new List<ItemData>[3];
+    List<ItemBase>[] _randomItemList = new List<ItemBase>[3];
     //List<ItemData> _popRandomItemList = new();
 
     public EventQueue AbilityEventQueue = new();                // 나중에 BattleManager로 이동
@@ -365,9 +365,9 @@ public class InGameManager : MonoBehaviour
         }
         //_popRandomCardList.Clear();
     }
-    public ItemData ItemSwapAndPop(int listIdx, int randomIdx)
+    public ItemBase ItemSwapAndPop(int listIdx, int randomIdx)
     {
-        ItemData randomItem = null;
+        ItemBase randomItem = null;
         if (_randomItemList[listIdx].Count > 1)
         {
             (_randomItemList[listIdx][randomIdx], _randomItemList[listIdx][^1]) = (_randomItemList[listIdx][^1], _randomItemList[listIdx][randomIdx]);
@@ -387,10 +387,10 @@ public class InGameManager : MonoBehaviour
         }
         return randomItem;
     }
-    public ItemData RandomItem()     // Potion은 따로 만들 것.
+    public ItemBase RandomItem()     // Potion은 따로 만들 것.
     {
         int probability = Random.Range(1, 3);
-        ItemData randomItem;
+        ItemBase randomItem;
         if (probability == 1)
         {
             randomItem = ItemSwapAndPop(0, Random.Range(0, _randomItemList[0].Count));
@@ -417,12 +417,12 @@ public class InGameManager : MonoBehaviour
         }
         
     }
-    public void ReturnRandomItem(ItemData[] itemDatas)
+    public void ReturnRandomItem(ItemBase[] itemDatas)
     {
-        foreach (ItemData itemData in itemDatas/*_popRandomItemList*/)       // _popRandomItemList로 했으나, 카드와 다르게 아이템은 안 먹은 경우에는 다른 방에서 뜨면 안 되고, 2가지 이상의 방에서 아이템이 떴는데, 한 곳에서 먹으면, ReturnRandomItem()을 실행하기 때문에 그냥 현재 방에 있는 Item들을 리턴하는 코드로 변경.
+        foreach (ItemBase itemData in itemDatas/*_popRandomItemList*/)       // _popRandomItemList로 했으나, 카드와 다르게 아이템은 안 먹은 경우에는 다른 방에서 뜨면 안 되고, 2가지 이상의 방에서 아이템이 떴는데, 한 곳에서 먹으면, ReturnRandomItem()을 실행하기 때문에 그냥 현재 방에 있는 Item들을 리턴하는 코드로 변경.
         {
             if (itemData == null) return;
-            if (ItemManager.Instance.itemDict.ContainsKey(itemData.ID) && ItemManager.Instance.itemDict[itemData.ID]) continue;
+            if (ItemManager.Instance.itemDict.TryGetValue(itemData.ID, out bool value) && value) continue;
             if (itemData.ItemTag == ItemTag.Potion)
             {
                 _randomItemList[2].Add(itemData);
@@ -454,18 +454,32 @@ public class InGameManager : MonoBehaviour
         //return _cardSO.Cards.Find(x => x.ID == ID);
         //return Array.Find(_cardSO.Cards, x => x.ID == ID);
     }
-    public ItemData FindItemData(int id)   // ID 값으로 데이터 가져오기
+    public ItemBase FindItemData(int id)   // ID 값으로 데이터 가져오기
     {
-        //ItemData itemData;
-        if (ItemDatas.TryGetValue(id, out ItemData itemData))
+        if (ItemDatas.TryGetValue(id, out ItemBase itemData))
         {
             return itemData;
         }
         else
         {
-            itemData = Array.Find(_itemSO.Items, x => x.ID == id);
-            ItemDatas.Add(id, itemData);
-            return itemData;
+            if (_itemSO.PassiveID.x <= id && id <= _itemSO.PassiveID.y)
+            {
+                itemData = _itemSO.PassiveItems.Find(x => x.ID == id);
+            }
+            else if (_itemSO.ActiveID.x <= id && id <= _itemSO.ActiveID.y)
+            {
+                itemData = _itemSO.ActiveItems.Find(x => x.ID == id);
+            }
+            else if (_itemSO.PotionID.x <= id && id <= _itemSO.PotionID.y)
+            {
+                itemData = _itemSO.PotionItems.Find(x => x.ID == id);
+            }
+            if (itemData != null)
+            {
+                ItemDatas.Add(id, itemData);
+                return itemData;
+            }
+            return null;
         }
         //return _cardSO.Cards.Find(x => x.ID == ID);
         //return Array.Find(_cardSO.Cards, x => x.ID == ID);
@@ -703,7 +717,9 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.P))
         {
-            ItemManager.Instance.GetItem(FindItemData(1));
+            ItemManager.Instance.GetItem(FindItemData(100));
+            ItemManager.Instance.GetItem(FindItemData(101));
+            ItemManager.Instance.GetItem(FindItemData(102));
         }
         if (Input.GetKeyDown(KeyCode.B))
         {

@@ -8,7 +8,12 @@ using UnityEngine.EventSystems;
 public class PotionItem : UseItem
 {
     public int BtnIdx = -1;
-    public override void Setup(ItemData data)
+
+    //public PotionItem(int damage, int shield, int draw, int heal, int duration, AttackType attackType, ItemCanUse itemCanUse) : base(damage, shield, draw, heal, duration, attackType, itemCanUse)
+    //{
+    //}
+
+    public override void Setup<T>(T data)
     {
         //_defaultData = data;
         //Data = _defaultData;
@@ -16,11 +21,11 @@ public class PotionItem : UseItem
 
         StringBuilder sb = new StringBuilder(_defaultData.Descript);
 
-        sb.Replace("{Damage}", (_defaultData.Damage).ToString());
-        sb.Replace("{Shield}", (_defaultData.Shield).ToString());
-        sb.Replace("{Draw}", (_defaultData.Draw).ToString());
-        sb.Replace("{Heal}", (_defaultData.Heal).ToString());
-        sb.Replace("{Duration}", (_defaultData.Duration).ToString());
+        sb.Replace("{Damage}", (Damage).ToString());
+        sb.Replace("{Shield}", (Shield).ToString());
+        sb.Replace("{Draw}", (Draw).ToString());
+        sb.Replace("{Heal}", (Heal).ToString());
+        sb.Replace("{Duration}", (Duration).ToString());
 
         //_defaultDesc = sb.ToString();
         Desc = sb.ToString();
@@ -37,7 +42,7 @@ public class PotionItem : UseItem
     }
     public async override UniTask UseTask()
     {
-        if (Data.ItemCanUse == ItemCanUse.OnlyBattle && !TurnManager.Instance.InBattle.Value)        // 사용 중 배틀이 끝나는 경우
+        if (ItemCanUse == ItemCanUse.OnlyBattle && !TurnManager.Instance.InBattle.Value)        // 사용 중 배틀이 끝나는 경우
         {
             ItemManager.Instance.HavePotionItem[BtnIdx] = true;
             return;

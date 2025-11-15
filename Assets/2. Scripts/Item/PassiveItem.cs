@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PassiveItem : Item
 {
-    public override void Setup(ItemData data)
+    public override void Setup<T>(T data)
     {
         base.Setup(data);
         //_defaultDesc = _defaultData.Descript;

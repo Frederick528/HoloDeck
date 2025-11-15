@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -15,7 +16,7 @@ public class UIItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     RectTransform _textRect;
     RectTransform _bgRect;
 
-    ItemData _itemData;
+    ItemBase _itemData;
 
     int _curCharge = -1;
 
@@ -38,7 +39,7 @@ public class UIItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     //    }
     //}
 
-    public void Setup(ItemData itemData, int idx)
+    public void Setup(ItemBase itemData, int idx)
     {
         if (!_image)
         {
@@ -51,12 +52,12 @@ public class UIItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             {
                 _itemBtn.onClick.AddListener(() =>
                 {
-                    (ItemData, int)? changeditem = ItemManager.Instance.GetItem(_itemData, _curCharge);
+                    (ChargeItemBase data, int curChargeValue)? changeditem = ItemManager.Instance.GetItem(_itemData, _curCharge);
                     InGameManager.Instance.ReturnRandomItem(MapManager.Instance.currStage.ItemReward);
                     if (changeditem != null)
                     {
-                        MapManager.Instance.ChangedUseItem(changeditem.Value.Item1, idx);       // 여기 SetUp 들어가 있음.
-                        _curCharge = changeditem.Value.Item2;
+                        MapManager.Instance.ChangedUseItem(changeditem.Value.data, idx);       // 여기 SetUp 들어가 있음.
+                        _curCharge = changeditem.Value.curChargeValue;
                         MapManager.Instance.GetReward(true);
                     }
                     else
@@ -86,19 +87,28 @@ public class UIItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         //    _bgRect.sizeDelta = Vector2.zero;
         //    return;
         //}
+        if (_itemData is ChargeItemBase chargeItem)
+        {
+            StringBuilder sb = new StringBuilder(chargeItem.Descript);
+            sb.Replace("{Damage}", (chargeItem.Damage).ToString());
+            sb.Replace("{Shield}", (chargeItem.Shield).ToString());
+            sb.Replace("{Draw}", (chargeItem.Draw).ToString());
+            sb.Replace("{Heal}", (chargeItem.Heal).ToString());
+            _text.text = $"ActiveItem\n[{chargeItem.MaxCharge}Charge]\n{sb}";
+        }
         switch (_itemData.ItemTag)
         {
             case ItemTag.Passive:
                 _text.text = "PassiveItem\n" + _itemData.Descript;
                 break;
-            case ItemTag.Active:
-                StringBuilder sb = new StringBuilder(_itemData.Descript);
-                sb.Replace("{Damage}", (_itemData.Damage).ToString());
-                sb.Replace("{Shield}", (_itemData.Shield).ToString());
-                sb.Replace("{Draw}", (_itemData.Draw).ToString());
-                sb.Replace("{Heal}", (_itemData.Heal).ToString());
-                _text.text = $"ActiveItem\n[{_itemData.MaxCharge}Charge]\n{sb}";
-                break;
+            //case ItemTag.Active:
+            //    StringBuilder sb = new StringBuilder(_itemData.Descript);
+            //    sb.Replace("{Damage}", (_itemData.Damage).ToString());
+            //    sb.Replace("{Shield}", (_itemData.Shield).ToString());
+            //    sb.Replace("{Draw}", (_itemData.Draw).ToString());
+            //    sb.Replace("{Heal}", (_itemData.Heal).ToString());
+            //    _text.text = $"ActiveItem\n[{_itemData.MaxCharge}Charge]\n{sb}";
+            //    break;
         }
         // 텍스트의 크기를 가져와서 배경 이미지 크기 설정 (_textRectWidth = 처음 정해준 width 길이, _text.preferredHeight 줄바꿈 되는만큼의 길이)
         _backgroundImage.gameObject.SetActive(true);        // 텍스트 자동줄바꿈 계산을 위해 활성화해야함. 그런데, UIItem은 캔버스도 켜야되기 때문에 설명배경창뿐만 아니라 UIManager에서 추가로 캔버스를 껐다킴.

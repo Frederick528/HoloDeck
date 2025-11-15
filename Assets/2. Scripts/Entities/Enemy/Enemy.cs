@@ -303,7 +303,7 @@ public abstract class Enemy : Entity
         //RemoveStatusEffect((_nextPattern.Item1, StatusEffectType.Information));       턴을 1턴으로 만들어서 굳이 제거 안 해도 됨.
         if (addPattern)
         {
-            _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(4);
             //_nextActText.text = (_checkRepeat > 1 ? $"{damage}*{_checkRepeat}" : damage.ToString()) + "/" + _nextActText.text;
             //_nextPattern.Add(func);
         }
@@ -392,7 +392,7 @@ public abstract class Enemy : Entity
     {
         if (addPattern)
         {
-            _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(4);
             //_nextActText.text = (_checkRepeat > 1 ? $"{value}*{_checkRepeat}" : value.ToString()) + "/" + _nextActText.text;
             //_nextPattern = (Func<UniTask>)Delegate.Combine(func, _nextPattern);
         }
@@ -445,7 +445,7 @@ public abstract class Enemy : Entity
     {
         if (addPattern)
         {
-            _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(4);
             //_nextActText.text = (_checkRepeat > 1 ? $"{value}*{_checkRepeat}" : value.ToString()) + "/" + _nextActText.text;
             //_nextPattern = (Func<UniTask>)Delegate.Combine(func, _nextPattern);
         }
@@ -501,13 +501,13 @@ public abstract class Enemy : Entity
     {
         if (addPattern)
         {
-            _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(4);
             //_nextActText.text = (_checkRepeat > 1 ? $"{value}*{_checkRepeat}" : value.ToString()) + "/" + _nextActText.text;
             //_nextPattern += func;
         }
         else
         {
-            _nextActImg.sprite = EnemyManager.Instance.NextActImg(4);
+            _nextActImg.sprite = EnemyManager.Instance.NextActImg(3);
             //_nextActText.text = _checkRepeat > 1 ? $"{value}*{_checkRepeat}" : value.ToString();
         }
         //_checkRepeat = repeat;
@@ -700,7 +700,7 @@ public abstract class Enemy : Entity
                     {
                         int damagePerHit = info.amount / _checkRepeat;
                         sb.Replace("{n}", $"<color=green>{info.amount} + 치명타 피해({(CheckCriticalDamage(damagePerHit, true) - damagePerHit)*_checkRepeat}) </color>");
-                        if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+                        if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(4))
                             _nextActText.text = $"{damagePerHit}*{_checkRepeat}\n<color=green>+{CheckCriticalDamage(damagePerHit, true) - damagePerHit}*{_checkRepeat}</color>";
                         else
                         {
@@ -710,7 +710,7 @@ public abstract class Enemy : Entity
                     else
                     {
                         sb.Replace("{n}", $"<color=green>{info.amount} + 치명타 피해({CheckCriticalDamage(info.amount, true) - info.amount}) </color>");
-                        if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+                        if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(4))
                             _nextActText.text = $"{info.amount}\n<color=green>+{CheckCriticalDamage(info.amount, true) - info.amount}</color>";
                         else
                         {
@@ -724,7 +724,7 @@ public abstract class Enemy : Entity
                     if (_checkRepeat > 1)
                     {
                         int damagePerHit = info.amount / _checkRepeat;
-                        if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+                        if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(4))
                             _nextActText.text = $"{damagePerHit}*{_checkRepeat}";
                         else
                         {
@@ -733,7 +733,7 @@ public abstract class Enemy : Entity
                     }
                     else
                     {
-                        if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+                        if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(4))
                             _nextActText.text = $"{info.amount}";
                         else
                         {
@@ -744,7 +744,7 @@ public abstract class Enemy : Entity
                 break;
             case StatusEffect.Defense:
                 sb.Replace("{n}", $"<color=green>{info.amount}</color>");
-                if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+                if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(4))
                     _nextActText.text = $"{info.amount}";
                 else
                 {
@@ -753,7 +753,7 @@ public abstract class Enemy : Entity
                 break;
             case StatusEffect.Heal:
                 sb.Replace("{n}", $"<color=green>{info.amount}</color>");
-                if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+                if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(4))
                     _nextActText.text = $"{info.amount}";
                 else
                 {
@@ -762,7 +762,7 @@ public abstract class Enemy : Entity
                 break;
             case StatusEffect.Special:
                 sb.Replace("{n}", $"<color=green>{info.amount}</color>");
-                if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(3))
+                if (_nextActImg.sprite != EnemyManager.Instance.NextActImg(4))
                     _nextActText.text = $"{info.amount}";
                 else
                 {

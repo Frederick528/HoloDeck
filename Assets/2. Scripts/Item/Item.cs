@@ -12,9 +12,9 @@ using UnityEngine.UI;
 
 public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    protected ItemData _defaultData = null;
+    protected ItemBase _defaultData = null;
     //protected string _defaultDesc = null;
-    public ItemData Data { get; protected set; } = null;
+    public ItemBase Data { get; protected set; } = null;
     public string Desc;
     protected ItemAbility _itemAbility = new();
 
@@ -41,6 +41,11 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     //{
     //    AdjustBackgroundSize();
     //}
+
+    public T GetDefaultData<T>() where T : ItemBase
+    {
+        return (T)_defaultData;
+    }
 
     public void AdjustBackgroundSize()
     {
@@ -85,7 +90,7 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         _backgroundImage.gameObject.SetActive(false);
     }
 
-    public virtual void Setup(ItemData data)
+    public virtual void Setup<T>(T data) where T : ItemBase
     {
         _defaultData = data;
         Data = _defaultData.Clone();

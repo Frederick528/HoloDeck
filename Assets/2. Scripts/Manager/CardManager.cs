@@ -300,6 +300,7 @@ public class CardManager : MonoBehaviour
             SetOriginOrder();
             CardAlignment();
             await PutDownCard(card);
+            SetCardState(2);    // 카드 사용 실패 시, 일단 드래고 가능하도록 다시 변경
 
             return false;
         }

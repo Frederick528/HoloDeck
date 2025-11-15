@@ -139,11 +139,11 @@ public class EventQueue
             else if (_queue.Peek() is Item item)
             {
                 _queue.Dequeue();
-                if (item.Data.ItemTag == ItemTag.Active)
+                if (item.Data is ChargeItemBase chargeItem)
                 {
-                    ItemManager.Instance.Charge(item.Data.MaxCharge);
+                    ItemManager.Instance.Charge(chargeItem.MaxCharge);
                 }
-                else if (item.Data.ItemTag == ItemTag.Potion)
+                else if (item.Data is UseItemBase useItem)
                 {
                     // 사용된 포션 위치를 다시 활성화 해야 함.
                 }

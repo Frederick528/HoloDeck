@@ -235,7 +235,6 @@ public class CardAbility
             float originalDelay = delay;
             for (int i = 0; i < card.Data.Count; i++) // 카드 횟수만큼 반복
             {
-                Debug.Log(delay);
                 if (i != 0)
                 {
                     isStart = false;

@@ -34,7 +34,7 @@ public class Map : MonoBehaviour
         bool _lootBox = false;
 
         CardData[] _cardReward = new CardData[4];
-        ItemData[] _itemReward = new ItemData[4];
+        ItemBase[] _itemReward = new ItemBase[4];
 
         Vector3Int _array_Position;
         List<Map> _aroundStage = new();
@@ -122,7 +122,7 @@ public class Map : MonoBehaviour
     }
 
     public CardData[] CardReward { get; private set; } = new CardData[4];
-    public ItemData[] ItemReward { get; private set; } = new ItemData[4];
+    public ItemBase[] ItemReward { get; private set; } = new ItemBase[4];
 
     //public IObjectPool<GameObject> MapPool { get; set; }
     public Button btn;
@@ -208,16 +208,17 @@ public class Map : MonoBehaviour
     }
     public void ResetMap()
     {
-        if (ItemReward[0] != null)
-        {
-            print("S");
-            if (!rewarded)
-            {
-                print("AAS");
-                InGameManager.Instance.ReturnRandomItem(ItemReward);
-            }
-            ItemReward = new ItemData[4];
-        }
+        //if (ItemReward[0] != null)
+        //{
+        //    print("S");
+        //    if (!rewarded)
+        //    {
+        //        print("AAS");
+        //        InGameManager.Instance.ReturnRandomItem(ItemReward);
+        //    }
+        //    ItemReward = new ItemBase[4];
+        //}
+        ItemReward = new ItemBase[4];
         visited = false;
         cleared = false;
         rewarded = false;
@@ -425,7 +426,7 @@ public class Map : MonoBehaviour
         }
     }
 
-    public void ChangedUseItem(ItemData itemData, int idx)
+    public void ChangedUseItem(ChargeItemBase itemData, int idx)
     {
         //ActiveItemCharge.Item1 = itemData;
         for (int i = 0; i < ItemReward.Length; i++)

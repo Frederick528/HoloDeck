@@ -12,16 +12,16 @@ public class ItemAbility
     {
         switch (item.Data.ID)
         {
-            case 1:
+            case 100:
                 TurnManager.Instance.AddStartCardCount(1);
                 break;
-            case 2:
+            case 101:
                 InGameManager.Instance.Player.AddMaxHealth(25);
                 break;
-            case 3:
+            case 102:
                 InGameManager.Instance.Player.AddMaxHolo(1);
                 break;
-            case 4:
+            case 103:
                 InGameUIManager.Instance.ChangeRewardCardCount(true);
                 break;
             //case 501:
@@ -178,7 +178,7 @@ public class ItemAbility
 
     async UniTask SingleAttackAB(UseItem item)
     {
-        await item.TargetEnemy.TakeDamage(item.Data.Damage, InGameManager.Instance.Player);        // 이 전 단계에서 null 검사를 하기 때문에 ?. 할 필요 없음.
+        await item.TargetEnemy.TakeDamage(item.GetDefaultData<UseItemBase>().Damage, InGameManager.Instance.Player);        // 이 전 단계에서 null 검사를 하기 때문에 ?. 할 필요 없음.
         item.Target(null);                                         // missing 체크를 위한 거였으나.. 안 되나..??
     }
     async UniTask MultiAttackAB(UseItem item)
@@ -186,7 +186,7 @@ public class ItemAbility
         Player player = InGameManager.Instance.Player;
         int enemyCount = EnemyManager.Instance.EnemyList.Count;
         await UniTask.WhenAll(Enumerable.Range(0, enemyCount).
-            Select(i => EnemyManager.Instance.EnemyList[(enemyCount - 1) - i].TakeDamage(item.Data.Damage, player)));
+            Select(i => EnemyManager.Instance.EnemyList[(enemyCount - 1) - i].TakeDamage(item.GetDefaultData<UseItemBase>().Damage, player)));
     }
     //async UniTask ContinuousSinglettackAB(Card card, float delay)
     //{
@@ -216,16 +216,16 @@ public class ItemAbility
 
     async UniTask ContinuousDrawAB(UseItem item)     // 드로우 같은 경우, 덱에 남아있는 카드를 확인하기 위해 Data.Count 값이 아닌 Data.Draw 값으로 얼마나 뽑을지 정함.
     {
-        await CardManager.Instance.DrawCard(item.Data.Draw);
+        await CardManager.Instance.DrawCard(item.GetDefaultData<UseItemBase>().Draw);
     }
     async UniTask ShieldAB(UseItem item)
     {
-        await InGameManager.Instance.Player.Shield(item.Data.Shield);
+        await InGameManager.Instance.Player.Shield(item.GetDefaultData<UseItemBase>().Shield);
     }
 
     async UniTask HealAB(UseItem item)
     {
-        await InGameManager.Instance.Player.Heal(item.Data.Heal);
+        await InGameManager.Instance.Player.Heal(item.GetDefaultData<UseItemBase>().Heal);
     }
 
     //async UniTask<bool> ConditionDiscardAB(int discardCnt)

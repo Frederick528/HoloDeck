@@ -624,7 +624,7 @@ public class InGameUIManager : MonoBehaviour
             _uiCards[i].Setup(/*InGameManager.Instance.FindCardData(reward[i])*/reward[i]);
         }
     }
-    public void ShowRewardItem(ItemData[] reward)
+    public void ShowRewardItem(ItemBase[] reward)
     {
         SetActiveCanvas(CanvasName.ItemReward, true);
         for (int i = 0; i < reward.Length; ++i)
