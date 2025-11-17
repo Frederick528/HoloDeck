@@ -415,11 +415,11 @@ public class InGameUIManager : MonoBehaviour
                 //    return;
                 case CanvasName.CardReward:
                     _cardEnlargePanel.gameObject.SetActive(false);
-                    MapManager.Instance.BoxOpen(false).Forget();
+                    MapManager.Instance.BoxOpen(false)/*.Forget()*/;
                     break;
                 case CanvasName.ItemReward:
                     _itemEnlargePanel.gameObject.SetActive(false);
-                    MapManager.Instance.BoxOpen(false).Forget();
+                    MapManager.Instance.BoxOpen(false)/*.Forget()*/;
                     break;
                 case CanvasName.Shop:
                     ShopManager.Instance.CloseShop();
@@ -438,7 +438,7 @@ public class InGameUIManager : MonoBehaviour
                 case CanvasName.Inventory:
                     if (_dropReward.gameObject.activeSelf)
                     {
-                        MapManager.Instance.DropBoxOpen(false).Forget();
+                        MapManager.Instance.DropBoxOpen(false)/*.Forget()*/;
                     }
                     _dropReward.gameObject.SetActive(false);
                     break;

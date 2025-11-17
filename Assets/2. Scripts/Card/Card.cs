@@ -1,15 +1,10 @@
 ﻿using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Text;
-using System.Threading;
 using TMPro;
 using UniRx;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Pool;
 
 //public struct CardData
 //{
@@ -55,6 +50,7 @@ public class Card : MonoBehaviour
     public CardAbility CardAbility = new();
 
     public Action ImmediatelyUseCard { get; private set; }
+    public Action FailureBeforeUseCard { get; private set; }
 
     public Func<UniTask<bool>?> UseConditions { get; private set; }
 
@@ -182,9 +178,10 @@ public class Card : MonoBehaviour
 
         //CardTask = CardAbility.SetCardTaskAbility(Data.ID);
     }
-    public void SetCardImmediately(Action action)
+    public void SetCardImmediately((Action immediately, Action failure)? action)
     {
-        this.ImmediatelyUseCard = action;
+        this.ImmediatelyUseCard = action?.immediately;
+        this.FailureBeforeUseCard = action?.failure;
     }
 
     public void SetCardTask(Func<UniTask> cardTask)

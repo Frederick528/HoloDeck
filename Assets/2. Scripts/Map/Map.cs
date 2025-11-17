@@ -287,8 +287,13 @@ public class Map : MonoBehaviour
             //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, true, rewardBox);
             MapManager.Instance.ShowBox(rewardBox, true);
             // 캐릭터별로 보상이 바뀌는 코드 넣어야 함.
-
-            CardReward = InGameManager.Instance.RandomCards(rewardBox, CardReward.Length);
+            int showCard = CardReward.Length;
+            if (!false)
+            {
+                showCard--;
+                // 유물 효과 적용
+            }
+            CardReward = InGameManager.Instance.RandomCards(rewardBox, showCard);
             //CardReward[0] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;     // 나중에 중복은 제외하는 코드로 변경해야 함.
             //CardReward[1] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;
             //CardReward[2] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;
@@ -353,7 +358,13 @@ public class Map : MonoBehaviour
             //}
             //if (rangeMin == rangeMax)
             //    return;
-            CardReward = InGameManager.Instance.RandomCards(rewardBox, CardReward.Length);
+            int showCard = CardReward.Length;
+            if (!false)
+            {
+                showCard--;
+                // 유물 효과 적용
+            }
+            CardReward = InGameManager.Instance.RandomCards(rewardBox, showCard);
             //CardReward[0] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;     // 나중에 중복은 제외하는 코드로 변경해야 함.
             //CardReward[1] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;
             //CardReward[2] = InGameManager.Instance.RandomCard(rewardBox);/*Random.Range(rangeMin, rangeMax)*/;

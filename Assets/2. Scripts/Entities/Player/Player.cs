@@ -1,10 +1,12 @@
 ﻿using Cysharp.Threading.Tasks;
+using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEngine;
 using UniRx;
-using System;
+using Unity.VisualScripting;
+using UnityEngine;
 
 public class Player : Entity
 {
@@ -228,16 +230,17 @@ public class Player : Entity
         animator.SetBool(_enterAnimBool, false);
         await RotationTask(0.2f, Quaternion.Euler(defaultRot.x, 90, defaultRot.z), Quaternion.identity);
         await OutGameUIManager.Instance.FadeOut(0.55f);
+        MapManager.Instance.HideLoadStage();
         //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false);          // 방 생성 후, 몇몇 UI 비활성화 (상자)
-        int? boxIdx = MapManager.Instance.CurShowBoxIdx;
-        if (boxIdx != null)
-        {
-            MapManager.Instance.ShowBox(boxIdx.Value, false);
-            MapManager.Instance.CurShowBoxIdx = null;
+        //int? boxIdx = MapManager.Instance.CurShowBoxIdx;
+        //if (boxIdx != null)
+        //{
+        //    MapManager.Instance.ShowBox(boxIdx.Value, false);
+        //    MapManager.Instance.CurShowBoxIdx = null;
 
-        }
-        MapManager.Instance.ShowBox((int)Map.BoxType.Drop, false);
-        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);               // 방 생성 후, 몇몇 UI 비활성화 (상점 보상)
+        //}
+        //MapManager.Instance.ShowBox((int)Map.BoxType.Drop, false);
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);               // 방 생성 후, 몇몇 UI 비활성화 (상점 보상)
         //MapManager.Instance.HideReward(MapManager.Instance.currStage);
 
         if (changeScene)
@@ -268,8 +271,8 @@ public class Player : Entity
         animator.SetBool(_enterAnimBool, true);
         await RotationTask(0.2f, defaultRot, Quaternion.Euler(defaultRot.x, -90, defaultRot.z));
         OutGameUIManager.Instance.FadeOut(0.35f).Forget();
-        MapManager.Instance.HideReward(MapManager.Instance.currStage);
         await MoveTask(0.45f, defaultPos, new Vector3(-4, 0));
+        MapManager.Instance.HideReward(MapManager.Instance.CurrStage);
         isEnter();
         animator.transform.rotation = Quaternion.Euler(defaultRot.x, 90, defaultRot.z);
         //await EnterStage(defaultPos);
@@ -314,6 +317,10 @@ public class Player : Entity
     public async UniTask MoveTask(float time, Vector3 startPos, Vector3 endPos)
     {
         animator.transform.localPosition = startPos;
+        await animator.transform
+            .DOLocalMove(endPos, time)
+            .SetEase(Ease.Linear)                   // 등속 이동
+            .AsyncWaitForCompletion();
         //float elapsedTime = 0f;
 
         //while (elapsedTime < time)
@@ -323,30 +330,34 @@ public class Player : Entity
         //    animator.transform.localPosition = Vector3.Lerp(animator.transform.localPosition, endPos, t);
         //    await UniTask.Yield(); // 다음 프레임으로 넘김
         //}
-        float moveSpeed = Vector3.Distance(animator.transform.localPosition, endPos) / time;
+        //float moveSpeed = Vector3.Distance(animator.transform.localPosition, endPos) / time;
 
-        while (Vector3.Distance(animator.transform.localPosition, endPos) > 0.01f)
-        {
-            animator.transform.localPosition = Vector3.MoveTowards(animator.transform.localPosition, endPos, moveSpeed * Time.deltaTime);
-            await UniTask.Yield(); // 다음 프레임으로 넘김
-        }
+        //while (Vector3.Distance(animator.transform.localPosition, endPos) > 0.01f)
+        //{
+        //    animator.transform.localPosition = Vector3.MoveTowards(animator.transform.localPosition, endPos, moveSpeed * Time.deltaTime);
+        //    await UniTask.Yield(); // 다음 프레임으로 넘김
+        //}
 
-        animator.transform.localPosition = endPos; // 정확한 위치 고정
+        //animator.transform.localPosition = endPos; // 정확한 위치 고정
     }
 
     public async UniTask RotationTask(float time, Quaternion startRot, Quaternion endRot)
     {
         animator.transform.localRotation = startRot;
-        float rotateSpeed = Quaternion.Angle(animator.transform.localRotation, endRot) / time;
+        await animator.transform
+            .DOLocalRotateQuaternion(endRot, time)
+            .SetEase(Ease.Linear)                   // 등속 회전
+            .AsyncWaitForCompletion();
+        //float rotateSpeed = Quaternion.Angle(animator.transform.localRotation, endRot) / time;
 
-        while (Quaternion.Angle(animator.transform.localRotation, endRot) > 0.1f)
-        {
+        //while (Quaternion.Angle(animator.transform.localRotation, endRot) > 0.1f)
+        //{
 
-            animator.transform.localRotation = Quaternion.RotateTowards(animator.transform.localRotation, endRot, rotateSpeed * Time.deltaTime);
-            await UniTask.Yield(); // 다음 프레임으로 넘김
-        }
+        //    animator.transform.localRotation = Quaternion.RotateTowards(animator.transform.localRotation, endRot, rotateSpeed * Time.deltaTime);
+        //    await UniTask.Yield(); // 다음 프레임으로 넘김
+        //}
 
-        animator.transform.localRotation = endRot; // 정확한 위치 고정
+        //animator.transform.localRotation = endRot; // 정확한 위치 고정
     }
 
 }

@@ -1,13 +1,9 @@
 ﻿using Cysharp.Threading.Tasks;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
 using UniRx;
 using UnityEngine.UI;
 using System;
 using TMPro;
-using UnityEngine.EventSystems;
 using System.Text;
 
 public abstract class Enemy : Entity
@@ -15,7 +11,7 @@ public abstract class Enemy : Entity
     public int spawnPosIdx;
     protected EnemyData _defaultEnemyData;
     protected EnemyData enemyData;
-    public bool CanClear = false;
+    //public bool CanClear = false;
     protected Player player;
 
     protected Image _nextActImg;

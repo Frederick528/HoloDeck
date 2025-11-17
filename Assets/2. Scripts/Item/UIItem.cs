@@ -53,7 +53,7 @@ public class UIItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 _itemBtn.onClick.AddListener(() =>
                 {
                     (ChargeItemBase data, int curChargeValue)? changeditem = ItemManager.Instance.GetItem(_itemData, _curCharge);
-                    InGameManager.Instance.ReturnRandomItem(MapManager.Instance.currStage.ItemReward);
+                    InGameManager.Instance.ReturnRandomItem(MapManager.Instance.CurrStage.ItemReward);
                     if (changeditem != null)
                     {
                         MapManager.Instance.ChangedUseItem(changeditem.Value.data, idx);       // 여기 SetUp 들어가 있음.

@@ -1,6 +1,7 @@
 ﻿//using System;
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class SettingMap
@@ -107,7 +108,7 @@ public class SettingMap
             CreatedMap();
         }
 
-        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);                // 방 생성 후, 몇몇 UI 비활성화 (맵)
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);                // 방 생성 후, 몇몇 UI 비활성화 (맵)
         //ShopManager.Instance.ChangeCardShop();
     }
 
@@ -500,13 +501,13 @@ public class SettingMap
         //InGameUIManager.Instance.MoveMap();
 
 
-        if (stage != _mapManager.currStage)
+        if (stage != _mapManager.CurrStage)
         {
             if (_mark != null)
             {
                 _mark.transform.localPosition = stage.transform.localPosition + _markDefaultPos * _mapManager.MapScale;
             }
-            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
+            _mapManager.CloseUIBeforeEnterStage();
             // 방 입장 코드 추가
             await stage.stageContext.Transition(stage.stage);
         } 
@@ -565,12 +566,11 @@ public class SettingMap
             _mark.transform.localPosition = map.transform.localPosition + _markDefaultPos * _mapManager.MapScale;
         }
 
-        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
 
         await map.stageContext.LoadTransition(map.stage, changeScene, isNext);
-
-        _mapManager.PrevStage = null;       // Load는 층(챕터)이 바뀌기 때문에 이전 스테이지가 없음.
-        _mapManager.currStage = map;
+        //_mapManager.PrevStage = null;       // Load는 층(챕터)이 바뀌기 때문에 이전 스테이지가 없음.
+        //_mapManager.CurrStage = map;
 
 
         //// 들어간 방에 보상이 떴었는데, 예전에 보상을 받지 않았다면, 그 보상을 다시 시각화함.

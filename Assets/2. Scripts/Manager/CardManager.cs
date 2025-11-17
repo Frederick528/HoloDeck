@@ -299,8 +299,8 @@ public class CardManager : MonoBehaviour
             _usedCard = null;
             SetOriginOrder();
             CardAlignment();
+            card.FailureBeforeUseCard?.Invoke();    // 카드 사용 실패 시, 즉시 실행했던 내용들 복구.
             await PutDownCard(card);
-            SetCardState(2);    // 카드 사용 실패 시, 일단 드래고 가능하도록 다시 변경
 
             return false;
         }
@@ -626,7 +626,7 @@ public class CardManager : MonoBehaviour
         }
         //if (HandCard.Count <= _usedCard.Data.Discard)
         //{
-        //    // 카드 효과가 버리기일 경우, 위 상황에서는 바로 버리기 가능해야 함. 반대로 카드조건이 버리기일 경우, 불가능.
+        //    // 카드 효과가 버리기일 경우, 위 상황에서는 바로 버리기 가능해야 함. 반대로 카드조건이 버리기일 경우 카드 사용될 때 실행
         //}
         if (_usedCard != null)      // 카드 조건이 버리기인 경우   (조건일 경우)
         {
@@ -1064,13 +1064,19 @@ public class CardManager : MonoBehaviour
     void PullCard()     // PushCard()보다 움직임 속도가 빨라야 함. 즉, dotweenTime 값은 더 작아야 함.
     {
         canPush = true;
-        foreach (Card card in HandCard)
-        {
-            if (card == _usedCard || card.Selected || card.IsEnqueued)
+        for (int i = HandCard.Count -1; i >= 0; --i) {
+            if (HandCard[i] == _usedCard || HandCard[i].Selected || HandCard[i].IsEnqueued)
                 continue;
-            card.transform.DOKill();            // 정렬 하는 코드 삭제
-            card.MoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay * 0.9f);
+            HandCard[i].transform.DOKill();            // 정렬 하는 코드 삭제
+            HandCard[i].MoveTransform(HandCard[i].OriginPRS, true, CardUtils.CardAlignmentDelay * 0.9f);
         }
+        //foreach (Card card in HandCard)
+        //{
+        //    if (card == _usedCard || card.Selected || card.IsEnqueued)
+        //        continue;
+        //    card.transform.DOKill();            // 정렬 하는 코드 삭제
+        //    card.MoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay * 0.9f);
+        //}
 
     }
     public void CardMouseDown(Card card)

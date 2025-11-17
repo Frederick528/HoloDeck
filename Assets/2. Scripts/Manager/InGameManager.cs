@@ -626,7 +626,7 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
-            if (MapManager.Instance.currStage.State == Map.StageState.Enemy || MapManager.Instance.currStage.State == Map.StageState.Boss)
+            if (MapManager.Instance.CurrStage.State == Map.StageState.Enemy || MapManager.Instance.CurrStage.State == Map.StageState.Boss)
             {
                 for (int i = EnemyManager.Instance.EnemyList.Count - 1; i >= 0; --i)
                 {
@@ -635,7 +635,7 @@ public class InGameManager : MonoBehaviour
                     //EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
                 }
             }
-            else if (MapManager.Instance.currStage.State == Map.StageState.Start)
+            else if (MapManager.Instance.CurrStage.State == Map.StageState.Start)
             {
                 for (int i = EnemyManager.Instance.EnemyList.Count - 1; i >= 0; --i)
                 {

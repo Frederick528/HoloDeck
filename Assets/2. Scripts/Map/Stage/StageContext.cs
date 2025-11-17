@@ -16,7 +16,7 @@ public class StageContext
     // 움직임 없이 해당 맵으로 바로 이동(처음 스타트 또는 계속하기 등에서 사용할 예정)
     public void ImmediateTransition(IStage stage)
     {
-        MapManager.Instance.EnterStage(_map);
+        MapManager.Instance.EnterChappter(_map);
         CurrentStage = stage;
         CurrentStage.Enter(_map);
     }
@@ -49,7 +49,7 @@ public class StageContext
     {
         Action action = () =>
         {
-            MapManager.Instance.EnterStage(_map);
+            MapManager.Instance.EnterChappter(_map);
             CurrentStage = stage;
             CurrentStage.Enter(_map);
         };

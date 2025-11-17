@@ -1,6 +1,4 @@
 ﻿using Cysharp.Threading.Tasks;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -698,7 +696,6 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                         amount = info.getAmount;
 
                         CurStatusEffectDict[statusEffect.effect][statusEffect.type] = (0, -1);
-
                         ActivateStatusEffect(statusEffect, false);
                     }
                     break;
@@ -1034,44 +1031,72 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
 
     public void RemoveStatusEffect()
     {
+        var typesToProcess = new List<StatusEffectType>
+        {
+            StatusEffectType.InfiniteDuration,          
+            StatusEffectType.TurnDuration,              
+            StatusEffectType.DurationIsAmount,          
+            StatusEffectType.UseAmountInfiniteDuration, 
+            StatusEffectType.UseAmountTurnDuration,     
+            //StatusEffectType.Perpetual,                 
+            //StatusEffectType.UseAmountPerpetual,        
+            //StatusEffectType.Information
+        };
         foreach (var dict in CurStatusEffectDict)
         {
-            (int amount, int duration) info;
-            if (dict.Value.TryGetValue(StatusEffectType.InfiniteDuration, out info))
+            foreach (StatusEffectType type in typesToProcess)
             {
-                if (info.amount != 0 && info.duration != 0)
+                if (dict.Value.TryGetValue(type, out var info) &&
+                    info.amount != 0 && info.duration != 0)
                 {
-                    ReduceStatusEffect((dict.Key, StatusEffectType.InfiniteDuration), info.amount, info.duration);
+                    ReduceStatusEffect((dict.Key, type), info.amount, info.duration);
                 }
             }
-            if (dict.Value.TryGetValue(StatusEffectType.TurnDuration, out info))
-            {
-                if (info.amount != 0 && info.duration != 0)
-                {
-                    ReduceStatusEffect((dict.Key, StatusEffectType.TurnDuration), info.amount, info.duration);
-                }
-            }
-            if (dict.Value.TryGetValue(StatusEffectType.DurationIsAmount, out info))
-            {
-                if (info.amount != 0 && info.duration != 0)
-                {
-                    ReduceStatusEffect((dict.Key, StatusEffectType.DurationIsAmount), info.amount, info.duration);
-                }
-            }
-            if (dict.Value.TryGetValue(StatusEffectType.UseAmountInfiniteDuration, out info))
-            {
-                if (info.amount != 0 && info.duration != 0)
-                {
-                    ReduceStatusEffect((dict.Key, StatusEffectType.UseAmountInfiniteDuration), info.amount, info.duration);
-                }
-            }
-            if (dict.Value.TryGetValue(StatusEffectType.UseAmountTurnDuration, out info))
-            {
-                if (info.amount != 0 && info.duration != 0)
-                {
-                    ReduceStatusEffect((dict.Key, StatusEffectType.UseAmountTurnDuration), info.amount, info.duration);
-                }
-            }
+            //foreach (var kvp in dict.Value.ToList())
+            //{
+            //    if (kvp.Key == StatusEffectType.Perpetual || kvp.Key == StatusEffectType.UseAmountPerpetual)
+            //        continue;
+            //    if (kvp.Value.amount != 0 && kvp.Value.duration != 0)
+            //    {
+            //        ReduceStatusEffect((dict.Key, kvp.Key), kvp.Value.amount, kvp.Value.duration);
+            //    }
+            //}
+            //(int amount, int duration) info;
+            //if (dict.Value.TryGetValue(StatusEffectType.InfiniteDuration, out info))
+            //{
+            //    if (info.amount != 0 && info.duration != 0)
+            //    {
+            //        ReduceStatusEffect((dict.Key, StatusEffectType.InfiniteDuration), info.amount, info.duration);
+            //    }
+            //}
+            //if (dict.Value.TryGetValue(StatusEffectType.TurnDuration, out info))
+            //{
+            //    if (info.amount != 0 && info.duration != 0)
+            //    {
+            //        ReduceStatusEffect((dict.Key, StatusEffectType.TurnDuration), info.amount, info.duration);
+            //    }
+            //}
+            //if (dict.Value.TryGetValue(StatusEffectType.DurationIsAmount, out info))
+            //{
+            //    if (info.amount != 0 && info.duration != 0)
+            //    {
+            //        ReduceStatusEffect((dict.Key, StatusEffectType.DurationIsAmount), info.amount, info.duration);
+            //    }
+            //}
+            //if (dict.Value.TryGetValue(StatusEffectType.UseAmountInfiniteDuration, out info))
+            //{
+            //    if (info.amount != 0 && info.duration != 0)
+            //    {
+            //        ReduceStatusEffect((dict.Key, StatusEffectType.UseAmountInfiniteDuration), info.amount, info.duration);
+            //    }
+            //}
+            //if (dict.Value.TryGetValue(StatusEffectType.UseAmountTurnDuration, out info))
+            //{
+            //    if (info.amount != 0 && info.duration != 0)
+            //    {
+            //        ReduceStatusEffect((dict.Key, StatusEffectType.UseAmountTurnDuration), info.amount, info.duration);
+            //    }
+            //}
 
             //var innerDict = dict.Value;
 
@@ -1523,30 +1548,64 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         //    }
         //}
 
+        var typesToProcess = new List<StatusEffectType>
+        {
+            //StatusEffectType.InfiniteDuration,
+            StatusEffectType.TurnDuration,
+            StatusEffectType.DurationIsAmount,
+            //StatusEffectType.UseAmountInfiniteDuration,
+            StatusEffectType.UseAmountTurnDuration,
+            //StatusEffectType.Perpetual,
+            //StatusEffectType.UseAmountPerpetual,
+            //StatusEffectType.Information
+        };
         foreach (var dict in CurStatusEffectDict)
         {
-            (int amount, int duration) info;
-            if (dict.Value.TryGetValue(StatusEffectType.TurnDuration, out info))
+            foreach (StatusEffectType type in typesToProcess)
             {
-                if (info.amount != 0 && info.duration != 0)
+                if (dict.Value.TryGetValue(type, out var info))
                 {
-                    ReduceStatusEffect((dict.Key, StatusEffectType.TurnDuration));
+                    if (info.amount == 0 || info.duration == 0)
+                    {
+                        continue;
+                    }
+                    switch (type)
+                    {
+                        case StatusEffectType.TurnDuration:
+                        case StatusEffectType.UseAmountTurnDuration:
+                            ReduceStatusEffect((dict.Key, type));
+                            break;
+
+                        case StatusEffectType.DurationIsAmount:
+                            ReduceStatusEffect((dict.Key, type), 1);
+                            break;
+                    }
                 }
             }
-            if (dict.Value.TryGetValue(StatusEffectType.DurationIsAmount, out info))
-            {
-                if (info.amount != 0 && info.duration != 0)
-                {
-                    ReduceStatusEffect((dict.Key, StatusEffectType.DurationIsAmount), 1);
-                }
-            }
-            if (dict.Value.TryGetValue(StatusEffectType.UseAmountTurnDuration, out info))
-            {
-                if (info.amount != 0 && info.duration != 0)
-                {
-                    ReduceStatusEffect((dict.Key, StatusEffectType.UseAmountTurnDuration));
-                }
-            }
+            //(int amount, int duration) info;
+            //if (dict.Value.TryGetValue(StatusEffectType.TurnDuration, out info))
+            //{
+            //    if (info.amount != 0 && info.duration != 0)
+            //    {
+            //        ReduceStatusEffect((dict.Key, StatusEffectType.TurnDuration));
+            //    }
+            //}
+            //if (dict.Value.TryGetValue(StatusEffectType.DurationIsAmount, out info))
+            //{
+            //    if (info.amount != 0 && info.duration != 0)
+            //    {
+            //        ReduceStatusEffect((dict.Key, StatusEffectType.DurationIsAmount), 1);
+            //    }
+            //}
+            //if (dict.Value.TryGetValue(StatusEffectType.UseAmountTurnDuration, out info))
+            //{
+            //    if (info.amount != 0 && info.duration != 0)
+            //    {
+            //        ReduceStatusEffect((dict.Key, StatusEffectType.UseAmountTurnDuration));
+            //    }
+            //}
+
+
             //if (dict.Value.TryGetValue(StatusEffectType.Information, out info))       // 직접 제거하기로 함.
             //{
             //    if (info.Item1 != 0 && info.Item2 != 0)
@@ -1600,55 +1659,88 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                 //        break;
                 //}
             }
-            (int amount, int duration) info;
+            var typesToProcess = new List<StatusEffectType>
+            {
+                //StatusEffectType.InfiniteDuration,
+                //StatusEffectType.TurnDuration,
+                //StatusEffectType.DurationIsAmount,
+                StatusEffectType.UseAmountInfiniteDuration,
+                StatusEffectType.UseAmountTurnDuration,
+                //StatusEffectType.Perpetual,
+                StatusEffectType.UseAmountPerpetual,
+                //StatusEffectType.Information
+            };
             bool once = false;
-            if (CurStatusEffectDict[statusEffect].TryGetValue(StatusEffectType.UseAmountTurnDuration, out info))
+            foreach (var type in typesToProcess)
             {
-                if (info.amount != 0 && info.duration != 0)
+                if (CurStatusEffectDict[statusEffect].TryGetValue(type, out var info))
                 {
-                    ReduceStatusEffect((statusEffect, StatusEffectType.UseAmountTurnDuration), 1, 0);
-                    //CurStatusEffect[statusEffect][StatusEffectType.UseAmountTurnDuration] = (--info.Item1, info.Item2);
-                    switch (statusEffect)
+                    if (once)
                     {
-                        case StatusEffect.Resurrection:
-                        case StatusEffect.Immunity:
-                            once = true;
-                            break;
+                        amount -= info.amount;
+                    }
+                    if (info.amount != 0 && info.duration != 0)
+                    {
+                        ReduceStatusEffect((statusEffect, type), 1, 0);
+                        switch (statusEffect)
+                        {
+                            case StatusEffect.Resurrection:
+                            case StatusEffect.Immunity:
+                                once = true;
+                                break;
+                        }
                     }
                 }
             }
-            if (CurStatusEffectDict[statusEffect].TryGetValue(StatusEffectType.UseAmountInfiniteDuration, out info))
-            {
-                if (once)       // 해당 상태효과가 1회 사용이고, 이미 turnduration에서 사용됐을 경우, 위에서 전부 더한 amount에 해당 값은 제외하는 코드 (그러나 1회 사용인 경우에는 amount값이 크게 중요하지 않아서 안 할 수도 있음.)
-                {
-                    amount -= info.amount;
-                }
-                else if (info.amount != 0 && info.duration != 0)
-                {
-                    ReduceStatusEffect((statusEffect, StatusEffectType.UseAmountInfiniteDuration), 1, 0);
-                    //CurStatusEffect[statusEffect][StatusEffectType.UseAmountInfiniteDuration] = (--info.Item1, info.Item2);       // 해당 타입은 무한 지속시간일 수가 없으므로, 그냥 -1 진행. 그러나, -2를 하게되는 경우에는 예외처리가 필요함.
-                    switch (statusEffect)
-                    {
-                        case StatusEffect.Resurrection:
-                        case StatusEffect.Immunity:
-                            once = true;
-                            break;
-                    }
-                }
-            }
+            //(int amount, int duration) info;
+            //if (CurStatusEffectDict[statusEffect].TryGetValue(StatusEffectType.UseAmountTurnDuration, out info))
+            //{
+            //    if (info.amount != 0 && info.duration != 0)
+            //    {
+            //        ReduceStatusEffect((statusEffect, StatusEffectType.UseAmountTurnDuration), 1, 0);
+            //        //CurStatusEffect[statusEffect][StatusEffectType.UseAmountTurnDuration] = (--info.Item1, info.Item2);
+            //        switch (statusEffect)
+            //        {
+            //            case StatusEffect.Resurrection:
+            //            case StatusEffect.Immunity:
+            //                once = true;
+            //                break;
+            //        }
+            //    }
+            //}
+            //if (CurStatusEffectDict[statusEffect].TryGetValue(StatusEffectType.UseAmountInfiniteDuration, out info))
+            //{
+            //    if (once)       // 해당 상태효과가 1회 사용이고, 이미 turnduration에서 사용됐을 경우, 위에서 전부 더한 amount에 해당 값은 제외하는 코드 (그러나 1회 사용인 경우에는 amount값이 크게 중요하지 않아서 안 할 수도 있음.)
+            //    {
+            //        amount -= info.amount;
+            //    }
+            //    else if (info.amount != 0 && info.duration != 0)
+            //    {
+            //        ReduceStatusEffect((statusEffect, StatusEffectType.UseAmountInfiniteDuration), 1, 0);
+            //        //CurStatusEffect[statusEffect][StatusEffectType.UseAmountInfiniteDuration] = (--info.Item1, info.Item2);       // 해당 타입은 무한 지속시간일 수가 없으므로, 그냥 -1 진행. 그러나, -2를 하게되는 경우에는 예외처리가 필요함.
+            //        switch (statusEffect)
+            //        {
+            //            case StatusEffect.Resurrection:
+            //            case StatusEffect.Immunity:
+            //                once = true;
+            //                break;
+            //        }
+            //    }
+            //}
 
-            if (CurStatusEffectDict[statusEffect].TryGetValue(StatusEffectType.UseAmountPerpetual, out info))
-            {
-                if (once)       // 해당 상태효과가 1회 사용이고, 이미 turnduration에서 사용됐을 경우, 위에서 전부 더한 amount에 해당 값은 제외하는 코드 (그러나 1회 사용인 경우에는 amount값이 크게 중요하지 않아서 안 할 수도 있음.)
-                {
-                    amount -= info.amount;
-                }
-                else if (info.amount != 0 && info.duration != 0)
-                {
-                    ReduceStatusEffect((statusEffect, StatusEffectType.UseAmountPerpetual), 1, 0);
-                    //CurStatusEffect[statusEffect][StatusEffectType.UseAmountInfiniteDuration] = (--info.Item1, info.Item2);       // 해당 타입은 무한 지속시간일 수가 없으므로, 그냥 -1 진행. 그러나, -2를 하게되는 경우에는 예외처리가 필요함.
-                }
-            }
+            //if (CurStatusEffectDict[statusEffect].TryGetValue(StatusEffectType.UseAmountPerpetual, out info))
+            //{
+            //    if (once)       // 해당 상태효과가 1회 사용이고, 이미 turnduration에서 사용됐을 경우, 위에서 전부 더한 amount에 해당 값은 제외하는 코드 (그러나 1회 사용인 경우에는 amount값이 크게 중요하지 않아서 안 할 수도 있음.)
+            //    {
+            //        amount -= info.amount;
+            //    }
+            //    else if (info.amount != 0 && info.duration != 0)
+            //    {
+            //        ReduceStatusEffect((statusEffect, StatusEffectType.UseAmountPerpetual), 1, 0);
+            //        //CurStatusEffect[statusEffect][StatusEffectType.UseAmountInfiniteDuration] = (--info.Item1, info.Item2);       // 해당 타입은 무한 지속시간일 수가 없으므로, 그냥 -1 진행. 그러나, -2를 하게되는 경우에는 예외처리가 필요함.
+            //    }
+            //}
+
             //amount = CurStatusEffect[statusEffect.Item1][statusEffect.Item2].Item1;
             //switch (statusEffect)       // 능력치는 UI에 띄우기 때문에 바로바로 적용되어야 함.
             //{

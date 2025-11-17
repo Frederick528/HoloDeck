@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -15,8 +16,8 @@ public class MapManager : MonoBehaviour
 
     public float MapScale = 1;
 
-    public Map PrevStage;
-    public Map currStage;
+    public Map PrevStage { get; private set; }
+    public Map CurrStage { get; private set; }
 
     public bool canMove;
     public bool StopMove;
@@ -70,15 +71,15 @@ public class MapManager : MonoBehaviour
                         {
                             case (int)Map.BoxType.Treasure:
                                 InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.ItemReward, true);
-                                BoxOpen(true).Forget();
+                                BoxOpen(true)/*.Forget()*/;
                                 break;
                             case (int)Map.BoxType.Drop:
                                 InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Inventory, true, 1);
-                                DropBoxOpen(true).Forget();
+                                DropBoxOpen(true)/*.Forget()*/;
                                 break;
                             default:
                                 InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.CardReward, true);
-                                BoxOpen(true).Forget();
+                                BoxOpen(true)/*.Forget()*/;
                                 break;
                         }
                     };
@@ -101,11 +102,11 @@ public class MapManager : MonoBehaviour
     private void Start()
     {
         //if (_onLoaded) return;
-        PrevStage = null;
+        //PrevStage = null;
         SetMapSize();
         bool isEndBoss = GameManager.Instance.NowChapterLV == 4;
         _settingMap.Start(isEndBoss);
-        currStage.stageContext.ImmediateTransition(currStage.stage);
+        CurrStage.stageContext.ImmediateTransition(CurrStage.stage);
         //ShowAllMap();
     }
 
@@ -228,7 +229,7 @@ public class MapManager : MonoBehaviour
         }
         _boxes[idx].gameObject.SetActive(show);
     }
-    public async UniTaskVoid DropBoxOpen(bool open)
+    public void DropBoxOpen(bool open)
     {
         if (_isDropBoxOpen == open)
         {
@@ -239,69 +240,89 @@ public class MapManager : MonoBehaviour
             return;
         _isDropBoxOpen = open;
         Quaternion targetAngle = open ? Quaternion.Euler(-60f, 0, 0) : Quaternion.identity;
-        Quaternion startAngle = _boxesTop[idx].localRotation;
-
-        float elapsed = 0f;
         float duration = 1f;
-        while (elapsed < duration)
-        {
-            await UniTask.Yield();
-            if (_isDropBoxOpen == open)
-            {
-                Quaternion currentRotation = Quaternion.Slerp(startAngle, targetAngle, elapsed / duration);
-                elapsed += Time.deltaTime;
-                //float t = Mathf.Clamp01(elapsed / duration);
-                //_boxesTop[idx].localEulerAngles = new Vector3(currentRotation, 0, 0);
-                _boxesTop[idx].localRotation = currentRotation;
-            }
-            else
-            {
-                return;
-            }
 
-        }
-        //_boxesTop[idx].localEulerAngles = new Vector3(targetAngle, 0, 0);
-        _boxesTop[idx].localRotation = targetAngle;
+        _boxesTop[idx].transform
+            .DOLocalRotateQuaternion(targetAngle, duration)
+            .SetEase(Ease.Linear);
+        //.AsyncWaitForCompletion();
+
+        //Quaternion targetAngle = open ? Quaternion.Euler(-60f, 0, 0) : Quaternion.identity;
+        //Quaternion startAngle = _boxesTop[idx].localRotation;
+
+        //float elapsed = 0f;
+        //float duration = 1f;
+        //while (elapsed < duration)
+        //{
+        //    await UniTask.Yield();
+        //    if (_isDropBoxOpen == open)
+        //    {
+        //        Quaternion currentRotation = Quaternion.Slerp(startAngle, targetAngle, elapsed / duration);
+        //        elapsed += Time.deltaTime;
+        //        //float t = Mathf.Clamp01(elapsed / duration);
+        //        //_boxesTop[idx].localEulerAngles = new Vector3(currentRotation, 0, 0);
+        //        _boxesTop[idx].localRotation = currentRotation;
+        //    }
+        //    else
+        //    {
+        //        return;
+        //    }
+
+        //}
+        ////_boxesTop[idx].localEulerAngles = new Vector3(targetAngle, 0, 0);
+        //_boxesTop[idx].localRotation = targetAngle;
     }
-    public async UniTaskVoid BoxOpen(bool open)
+    public void BoxOpen(bool open)
     {
         if (_isBoxOpen == open)
         {
             return;
         }
-        int idx = currStage.rewardBox;
+        int idx = CurrStage.rewardBox;
         if (!_boxes[idx].gameObject.activeSelf)
             return;
         _isBoxOpen = open;
         Quaternion targetAngle = open ? Quaternion.Euler(-130f, 0, 0) : Quaternion.identity;
-        Quaternion startAngle = _boxesTop[idx].localRotation;
-
-        float elapsed = 0f;
         float duration = 1f;
-        while (elapsed < duration)
-        {
-            await UniTask.Yield();
-            if (_isBoxOpen == open)
-            {
-                //float t = Mathf.Clamp01(elapsed / duration);
-                Quaternion currentRotation = Quaternion.Slerp(startAngle, targetAngle, elapsed / duration);
-                elapsed += Time.deltaTime;
-                //_boxesTop[idx].localEulerAngles = new Vector3(currentRotation, 0, 0);
-                _boxesTop[idx].localRotation = currentRotation;
-            }
-            else
-            {
-                return;
-            }
 
-        }
-        //_boxesTop[idx].localEulerAngles = new Vector3(targetAngle, 0, 0);
-        _boxesTop[idx].localRotation = targetAngle;
-        //if (_isBoxOpen == open)
+        _boxesTop[idx].transform
+            .DOLocalRotateQuaternion(targetAngle, duration)
+            .SetEase(Ease.Linear);
+            //.AsyncWaitForCompletion();
+
+        //Quaternion targetAngle = open ? Quaternion.Euler(-130f, 0, 0) : Quaternion.identity;
+        //Quaternion startAngle = _boxesTop[idx].localRotation;
+
+        //float elapsed = 0f;
+        //float duration = 1f;
+        //while (elapsed < duration)
         //{
-        //    transform.rotation = Quaternion.Euler(targetAngle, 0, 0);
-        //}
+        //    await UniTask.Yield();
+        //    if (_isBoxOpen == open)
+        //    {
+        //        //float t = Mathf.Clamp01(elapsed / duration);
+        //        Quaternion currentRotation = Quaternion.Slerp(startAngle, targetAngle, elapsed / duration);
+        //        elapsed += Time.deltaTime;
+        //        //_boxesTop[idx].localEulerAngles = new Vector3(currentRotation, 0, 0);
+        //        _boxesTop[idx].localRotation = currentRotation;
+        //    }
+        //    else
+        //    {
+        //        return;
+        //    }
 
+        //}
+        //_boxesTop[idx].localRotation = targetAngle;
+
+    }
+
+    public void CloseUIBeforeEnterStage()
+    {
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
+        if (CurrStage.State == Map.StageState.Shop)
+        {
+            ShopManager.Instance.CloseShop();
+        }
     }
 
     public void SaveChapter(int chapterLV)
@@ -318,14 +339,20 @@ public class MapManager : MonoBehaviour
         if (TurnManager.Instance.InBattle.Value)
             await TurnManager.Instance.EndBattle();
         //PrevStage = null;
-        
-        
-        
+
+        CloseUIBeforeEnterStage();
+        //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
+        //if (CurrStage.State == Map.StageState.Shop)
+        //{
+        //    ShopManager.Instance.CloseShop();
+        //}
+
         SetMapSize();
         _settingMap.LoadChapter(chapterLV);
         //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.RewardBox, false);          // 방 로드 후, 몇몇 UI 비활성화 (상자)
         //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);               // 방 로드 후, 몇몇 UI 비활성화 (상점 보상)
         //InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);                // 방 로드 후, 몇몇 UI 비활성화 (맵)
+        await LoadStage(isNext, changeScene);
         ShopManager.Instance.ChangeCardShop();
         //if (previous)
         //{
@@ -335,7 +362,6 @@ public class MapManager : MonoBehaviour
         //{
         //    await MoveStage(_settingMap.Maps[0]);
         //}
-        LoadStage(isNext, changeScene).Forget();
         //if (OutGameUIManager.Instance)
         //{
         //    print("AA");
@@ -343,14 +369,19 @@ public class MapManager : MonoBehaviour
         //}
     }
 
-    public async UniTask ResetChapter(bool changeScene = false)
+    public async UniTaskVoid ResetChapter(bool changeScene = false)
     {
         //if (OutGameUIManager.Instance)
         //    await OutGameUIManager.Instance.FadeOut(0.55f);
         if (TurnManager.Instance.InBattle.Value)
             await TurnManager.Instance.EndBattle();
 
-        PrevStage = null;
+        CloseUIBeforeEnterStage();
+        //if (CurrStage.State == Map.StageState.Shop)
+        //{
+        //    ShopManager.Instance.CloseShop();
+        //}
+        //PrevStage = null;
         SetMapSize();
         bool isEndBoss = GameManager.Instance.NowChapterLV == 4;
         _settingMap.Start(isEndBoss);
@@ -374,40 +405,40 @@ public class MapManager : MonoBehaviour
     public async UniTaskVoid ClearStage()
     {
         _settingMap.ShowMapBtn.SetActive(true);
-        if (currStage.State == Map.StageState.Enemy)
+        if (CurrStage.State == Map.StageState.Enemy)
         {
             await TurnManager.Instance.EndBattle();
         }
-        else if (currStage.State == Map.StageState.Boss)
+        else if (CurrStage.State == Map.StageState.Boss)
         {
             ShowNextDoor(true);
             ShowPreviousDoor(true);
             await TurnManager.Instance.EndBattle();
         }
-        else if (currStage.State == Map.StageState.Start)
+        else if (CurrStage.State == Map.StageState.Start)
         {
             ShowPreviousDoor(false);
             ShowPreviousDoor(true);     // 껐다가 켜주는 이유는 1스테이지일 경우, true가 리턴되어 false만 되고, 그 외에는 켜져야하기 때문
             ShowNextDoor(false);
         }
-        currStage.ClearMap();
+        CurrStage.ClearMap();
         canMove = true;
     }
 
     public async UniTaskVoid ClearStage(Map stage)
     {
         _settingMap.ShowMapBtn.SetActive(true);
-        if (currStage.State == Map.StageState.Enemy)
+        if (CurrStage.State == Map.StageState.Enemy)
         {
             await TurnManager.Instance.EndBattle();
         }
-        else if (currStage.State == Map.StageState.Boss)
+        else if (CurrStage.State == Map.StageState.Boss)
         {
             ShowNextDoor(true);
             ShowPreviousDoor(true);
             await TurnManager.Instance.EndBattle();
         }
-        else if (currStage.State == Map.StageState.Start)
+        else if (CurrStage.State == Map.StageState.Start)
         {
             ShowPreviousDoor(false);
             ShowPreviousDoor(true);
@@ -440,7 +471,7 @@ public class MapManager : MonoBehaviour
             await TurnManager.Instance.EndBattle();
         await _settingMap.MoveStage(PrevStage);
 
-        if (currStage.cleared)
+        if (CurrStage.cleared)
             canMove = true;
     }
 
@@ -451,7 +482,7 @@ public class MapManager : MonoBehaviour
             await TurnManager.Instance.EndBattle();
         await _settingMap.MoveStage(stage);
 
-        if (currStage.cleared)
+        if (CurrStage.cleared)
             canMove = true;
     }
 
@@ -461,7 +492,7 @@ public class MapManager : MonoBehaviour
             await TurnManager.Instance.EndBattle();
         await _settingMap.MoveStage(_settingMap.Maps[CreateMapCnt - 1]);
 
-        if (currStage.cleared)
+        if (CurrStage.cleared)
             canMove = true;
     }
 
@@ -477,8 +508,21 @@ public class MapManager : MonoBehaviour
             print("isPrevious");
             await _settingMap.LoadStage(_settingMap.Maps[CreateMapCnt - 1], changeScene, isNext);
         }
-        if (currStage.cleared)
+        if (CurrStage.cleared)
             canMove = true;
+    }
+
+    public void HideLoadStage()
+    {
+        // 방 로드 후, 몇몇 UI 비활성화
+        if (CurShowBoxIdx != null)
+        {
+            ShowBox(CurShowBoxIdx.Value, false);
+            CurShowBoxIdx = null;
+
+        }
+        ShowBox((int)Map.BoxType.Drop, false);
+        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Shop, false);
     }
 
     public void HideReward(Map map)
@@ -525,10 +569,29 @@ public class MapManager : MonoBehaviour
         }
     }
 
+    public void EnterChappter(Map map)
+    {
+        // 새로운 층으로 이동하기 때문에 PrevStage = null
+        PrevStage = null;
+        CurrStage = map;
+        ShowReward(map);
+
+        if (!map.cleared)
+        {
+            _settingMap.ShowMapBtn.SetActive(false);
+
+        }
+        else
+        {
+            _settingMap.ShowMapBtn.SetActive(true);
+        }
+        ShowPreviousDoor(false);
+        ShowNextDoor(false);
+    }
     public void EnterStage(Map map)
     {
-        PrevStage = currStage;
-        currStage = map;
+        PrevStage = CurrStage;
+        CurrStage = map;
         ShowReward(map);
 
         if (!map.cleared)
@@ -546,11 +609,11 @@ public class MapManager : MonoBehaviour
     public void SetupStart(List<Vector3Int> direction4, List<Map> maps)
     {
         // 시작 장소 활성화 코드 5줄
-        currStage = maps[0];
-        currStage.gameObject.SetActive(true);
+        CurrStage = maps[0];
+        CurrStage.gameObject.SetActive(true);
         //currStage.img.color = Color.white;
-        currStage.LightMap(true);
-        currStage.LookingStage(direction4, maps);
+        CurrStage.LightMap(true);
+        CurrStage.LookingStage(direction4, maps);
         //Debug.Log(currStage.stageContext.ImmediateTransition(currStage.stage));
         //currStage.stageContext
     }
@@ -558,15 +621,15 @@ public class MapManager : MonoBehaviour
     // Enemy와 Boss에서 사용되며, 사용시 방 보상 획득 가능
     public void RewardStage()
     {
-        if (currStage.State == Map.StageState.Enemy)
-            currStage.DropRewardBox();
-        else if (currStage.State == Map.StageState.Boss)
-            currStage.DropBossBox();
+        if (CurrStage.State == Map.StageState.Enemy)
+            CurrStage.DropRewardBox();
+        else if (CurrStage.State == Map.StageState.Boss)
+            CurrStage.DropBossBox();
     }
     public void GetReward(bool changed = false) // 메인박스 전용
     {
-        currStage.rewarded = true;
-        switch (currStage.State)
+        CurrStage.rewarded = true;
+        switch (CurrStage.State)
         {
             case Map.StageState.Enemy:
             case Map.StageState.Boss:
@@ -580,17 +643,17 @@ public class MapManager : MonoBehaviour
 
     public void GetLootItem()
     {
-        currStage.DropLootBox();
+        CurrStage.DropLootBox();
     }
 
     public void Treasure(bool changed)
     {
-        currStage.DropTreasureBox(changed);
+        CurrStage.DropTreasureBox(changed);
     }
 
     public void ChangedUseItem(ChargeItemBase itemData, int idx)
     {
-        currStage.ChangedUseItem(itemData, idx);
+        CurrStage.ChangedUseItem(itemData, idx);
     }
 
     public void ShowAllMap()

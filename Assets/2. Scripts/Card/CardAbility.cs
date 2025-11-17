@@ -1,6 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -11,7 +10,7 @@ public class CardAbility
 {
     CancellationTokenSource _cts;
 
-    Action _cardImmediately;
+    (Action _cardImmediately, Action _cardFailure)? _checkCard;  // 즉시 실행하는 코드 + 해당 카드가 실패했을 때 효과
     Func<UniTask> _cardTask;
     Func<UniTask<bool>?> _conditionTask;
 
@@ -51,7 +50,7 @@ public class CardAbility
         {
             SettingCardAB(card);
         }
-        card.SetCardImmediately(_cardImmediately);
+        card.SetCardImmediately(_checkCard);
         card.SetCardTask(_cardTask);
         card.SetUseConditions(_conditionTask);
     }
@@ -60,13 +59,16 @@ public class CardAbility
         switch (card.Data.ID)
         {
             case 105:
-                _cardImmediately = () =>
+                _checkCard = (_cardImmediately: () =>
                 {
                     CardManager.Instance.SetCardState(1);
-                };
+                }, _cardFailure: () =>
+                {
+                    CardManager.Instance.SetCardState(2);
+                });
                 break;
             default:
-                _cardImmediately = null ;
+                _checkCard = null;
                 break;
         }
     }
@@ -76,10 +78,13 @@ public class CardAbility
         //Func<UniTask<bool>?> uniTaskCondition = null;
         if (card.Data.Discard > 0)
         {
-            _cardImmediately = () =>
+            _checkCard = (_cardImmediately: () =>
             {
                 CardManager.Instance.SetCardState(1);
-            };
+            }, _cardFailure: () =>
+            {
+                CardManager.Instance.SetCardState(2);
+            });
             _conditionTask = () => UniTask.Create(async () =>
             {
                 return await ConditionDiscardAB(card);
@@ -87,10 +92,13 @@ public class CardAbility
         }
         else if (card.Data.Remove > 0)
         {
-            _cardImmediately = () =>
+            _checkCard = (_cardImmediately: () =>
             {
                 CardManager.Instance.SetCardState(1);
-            };
+            }, _cardFailure: () =>
+            {
+                CardManager.Instance.SetCardState(2);
+            });
             _conditionTask = () => UniTask.Create(async () =>
             {
                 return await ConditionRemoveAB(card);
@@ -413,6 +421,7 @@ public class CardAbility
     {
         
         // 쉴드가 다른 공격, 드로우에 비해 시간이 짧아서 같이 쓰려면 무조건 이펙트가 있어야 함. 안 그러면 순서가 이상해질 수 있음.
+        // -> 오더 순서 설정 이후, 괜찮아졌으나 그래도 같은 오더로 설정하면 이펙트가 있는 게 맞음. 확실하게 할 거면 1, 2, 3 순서대로 진행하게 변경해야함.
         await _player.Shield(card.Data.Shield);
         
     }
