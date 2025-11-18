@@ -13,18 +13,10 @@ public class MapInfo
         new Vector3Int( 0, -1, 0)        // up
     };
 
-    public string mapID;
-    public string mapName;
-    public string mapType;
-
     // 현재 방(개별)의 위치
     public Vector3Int array_Position;
-    // transform Pos
     public Vector3Int transform_Position;
-    //public Vector3Int parent_Position;
-    //public Vector3 mergeCenter_Position;
 
-    //public bool isValidMap;
     //너비 우선탐색 알고리즘에서 확인했는지 체크
     public bool isCheck = false;
     public int distance = -1;

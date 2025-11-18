@@ -1,7 +1,5 @@
-﻿//using System;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class SettingMap
@@ -125,7 +123,7 @@ public class SettingMap
 
         startMapPosition = new Vector3Int(_maxDistance.Item1, _maxDistance.Item2, 0);                        // 시작 좌표
 
-        posArr[startMapPosition.x, startMapPosition.y] = AddSingleMap(new MapInfo(), startMapPosition, "Single");
+        posArr[startMapPosition.x, startMapPosition.y] = AddMapInfo(new MapInfo(), startMapPosition);
         //posArr[startMapPosition.x, startMapPosition.y].distance = 0;
         //validMapList.Add(posArr[startMapPosition.x, startMapPosition.y]);
         //availableMapList.Add(posArr[startMapPosition.x, startMapPosition.y]);
@@ -175,7 +173,7 @@ public class SettingMap
         availableMapList.Clear();
 
         startMapPosition = new Vector3Int(0, 0, 0);
-        posArr[startMapPosition.x, startMapPosition.y] = AddSingleMap(new MapInfo(), startMapPosition, "Single");
+        posArr[startMapPosition.x, startMapPosition.y] = AddMapInfo(new MapInfo(), startMapPosition);
 
         while (!MapCountCheck())
         {
@@ -183,7 +181,7 @@ public class SettingMap
             Vector3Int move = arrPosition + new Vector3Int(1, 0, 0);
             availableMapList.Remove(posArr[arrPosition.x, arrPosition.y]);
 
-            posArr[move.x, move.y] = AddSingleMap(new MapInfo(), move, "Single");
+            posArr[move.x, move.y] = AddMapInfo(new MapInfo(), move);
         }
 
         for (int i = 0; i < validMapList.Count; ++i)
@@ -584,16 +582,13 @@ public class SettingMap
         //}
     }
 
-    public MapInfo AddSingleMap(MapInfo map, Vector3Int pos, string name)
+    public MapInfo AddMapInfo(MapInfo map, Vector3Int pos)
     {
         //MapInfo single = Map;
-        map.mapID = name + "(" + pos.x + ", " + pos.y + ", " + pos.z + ")";
-        map.mapName = name;
+        //map.mapID = name + "(" + pos.x + ", " + pos.y + ", " + pos.z + ")";
+        //map.mapName = name;
         map.array_Position = pos;
-        map.transform_Position = (pos - startMapPosition) * mapDistance/* + new Vector3Int(Screen.width/2, Screen.height/2)*/;
-        //single.parent_Position = pos;
-        map.mapType = "Single";
-        //map.isValidMap = true;
+        map.transform_Position = (pos - startMapPosition) * mapDistance;
         map.isCheck = false;
 
         validMapList.Add(map);
@@ -977,12 +972,12 @@ public class SettingMap
     public MapInfo SingleMap(MapInfo pos, string name)
     {
         MapInfo single = pos;
-        single.mapID = name + "(" + pos.array_Position.x + ", " + pos.array_Position.y + ", " + pos.array_Position.z + ")";
-        single.mapName = name;
+        //single.mapID = name + "(" + pos.array_Position.x + ", " + pos.array_Position.y + ", " + pos.array_Position.z + ")";
+        //single.mapName = name;
         single.array_Position = pos.array_Position;
         single.transform_Position = pos.array_Position - startMapPosition/* + new Vector3Int(Screen.width/2, Screen.height/2)*/;
         //single.mergeCenter_Position = pos.mergeCenter_Position;
-        single.mapType = pos.mapType;
+        //single.mapType = pos.mapType;
         single.distance = pos.distance;
 
         return single;
@@ -1087,7 +1082,7 @@ public class SettingMap
 
         Vector3Int move = start + direction;
 
-        posArr[move.x, move.y] = AddSingleMap(new MapInfo(), move, "Single");
+        posArr[move.x, move.y] = AddMapInfo(new MapInfo(), move);
         posArr[start.x, start.y].haveDirect.Remove(direction);
 
         //posArr[move.x, move.y].isValidMap = true;
