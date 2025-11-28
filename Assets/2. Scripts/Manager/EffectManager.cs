@@ -124,5 +124,6 @@ public class EffectManager : MonoBehaviour
                         );
                 break;
         }
+        card.UseTimingReset();
     }
 }
