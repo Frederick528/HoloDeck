@@ -92,6 +92,8 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
     float _baseThickness = 0.001f;
     float _hoverThickness;       // 그냥 색만 바꿀까 고민중
 
+    private CancellationTokenSource _closeCts;
+
 
     public Material OutlineMaterial
     {
@@ -614,6 +616,20 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         BoolOnMouseEnter();
     }
 
+    void OnMouseExit()
+    {
+        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        bool isOverWindow = _statusDescCol2D.OverlapPoint(mousePos);
+
+        if (!isOverWindow)
+        {
+            TargetOutline(false);
+            canvas.sortingOrder = 0;
+            _statusDescWindow.gameObject.SetActive(false);
+        }
+    }
+
 
 
     public virtual bool BoolOnMouseEnter()
@@ -642,9 +658,16 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
 
     public virtual void OnChildMouseExit()
     {
-        TargetOutline(false);
-        canvas.sortingOrder = 0;
-        _statusDescWindow.gameObject.SetActive(false);
+        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        bool isOverMonster = _col2D.OverlapPoint(mousePos);
+
+        if (!isOverMonster)
+        {
+            TargetOutline(false);
+            canvas.sortingOrder = 0;
+            _statusDescWindow.gameObject.SetActive(false);
+        }
     }
 
     //public void AddAndApplyStatusEffect((StatusEffect, StatusEffectType) statusEffect, int amount, int duration = 1)        // Add에 통합됨.

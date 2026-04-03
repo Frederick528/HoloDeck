@@ -15,6 +15,7 @@ public class TurnManager : MonoBehaviour
     void Awake()
     {
         Instance = Instance != null ? Instance : this;
+        CurTurnType = TurnType.Nobody;
     }
     private ReactiveProperty<bool> _InBattle = new();
     public IReadOnlyReactiveProperty<bool> InBattle => _InBattle;

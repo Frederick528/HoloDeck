@@ -48,7 +48,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnPosIdx: 0
-  CanClear: 0
 --- !u!61 &567178948273558934
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -207,14 +206,6 @@ PrefabInstance:
     - target: {fileID: 1149059102071689655, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}
       propertyPath: m_EffectDistance.x
       value: 0.01
-      objectReference: {fileID: 0}
-    - target: {fileID: 1762505047994620263, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}
-      propertyPath: m_Size.x
-      value: 700
-      objectReference: {fileID: 0}
-    - target: {fileID: 1762505047994620263, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}
-      propertyPath: m_Offset.x
-      value: -241
       objectReference: {fileID: 0}
     - target: {fileID: 3212883658074943696, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}
       propertyPath: m_Name

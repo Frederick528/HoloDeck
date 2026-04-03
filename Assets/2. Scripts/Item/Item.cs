@@ -49,6 +49,10 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void AdjustBackgroundSize()
     {
+        if (_bgRect == null)
+        {
+            Debug.LogError($"{gameObject.name}의 _bgRect가 비어있습니다! 이 로그를 클릭하세요.", gameObject);
+        }
         if (Desc == "")
         {
             _bgRect.sizeDelta = Vector2.zero;

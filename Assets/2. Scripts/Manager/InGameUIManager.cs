@@ -189,7 +189,8 @@ public class InGameUIManager : MonoBehaviour
 
         PassiveTransform = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "PassiveItem");
         ActiveTransform = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "ActiveItemButton");
-        PotionTransform = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "PotionItem");
+        //PotionTransform = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "PotionItem");
+        PotionTransform = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "ActionCard");
 
         _statusWindow = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "Status");
         _statusImg[0] = _statusWindow.Find("HPCircle").GetComponent<Image>();

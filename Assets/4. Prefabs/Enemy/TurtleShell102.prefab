@@ -48,7 +48,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnPosIdx: 0
-  CanClear: 0
 --- !u!61 &548080196766639340
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -82,6 +81,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4086410140833498803}
     m_Modifications:
+    - target: {fileID: 84965329842339266, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1082204604664343035, guid: 77a209086234a9d4d927c40f04ab97e0, type: 3}
       propertyPath: m_Value
       value: 1

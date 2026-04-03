@@ -110,33 +110,33 @@ public class ItemAbility
         switch (item.Data.ID)
         {
             case 501:
-                item.ItemTask = () => UniTask.Create(async () =>
+                item.ItemTask = async () =>
                 {
                     await DelayTask(0.5f);
                     await SingleAttackAB(item);
                     await DrawAB();
-                });
+                };
                 break;
             case 502:
-                item.ItemTask = () => UniTask.Create(async () =>
+                item.ItemTask = async () =>
                 {
                     await DelayTask(0.5f);
                     await ShieldAB(item);
-                });
+                };
                 break;
             case 503:
-                item.ItemTask = () => UniTask.Create(async () =>
+                item.ItemTask = async () =>
                 {
                     await DelayTask(0.5f);
                     await HealAB(item);
-                });
+                };
                 break;
             case 504:
-                item.ItemTask = () => UniTask.Create(async () =>
+                item.ItemTask = async () =>
                 {
                     await DelayTask(0.5f);
                     await ContinuousDrawAB(item);
-                });
+                };
                 break;
         }
     }
@@ -146,32 +146,32 @@ public class ItemAbility
         switch (item.Data.ID)
         {
             case 1001:
-                item.ItemTask = () => UniTask.Create(async () =>
+                item.ItemTask = async () =>
                 {
                     await DelayTask(0.5f);
                     await SingleAttackAB(item);
-                });
+                };
                 break;
             case 1002:
-                item.ItemTask = () => UniTask.Create(async () =>
+                item.ItemTask = async () =>
                 {
                     await DelayTask(0.5f);
                     InGameManager.Instance.ChangeCoinValue(20);
-                });
+                };
                 break;
             case 1003:
-                item.ItemTask = () => UniTask.Create(async () =>
+                item.ItemTask = async () =>
                 {
                     await DelayTask(0.5f);
                     await ShieldAB(item);
-                });
+                };
                 break;
             case 1004:
-                item.ItemTask = () => UniTask.Create(async () =>
+                item.ItemTask = async () =>
                 {
                     await DelayTask(0.5f);
                     await SingleAttackAB(item);
-                });
+                };
                 break;
         }
     }

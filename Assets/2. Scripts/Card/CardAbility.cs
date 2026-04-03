@@ -85,10 +85,7 @@ public class CardAbility
             {
                 CardManager.Instance.SetCardState(2);
             });
-            _conditionTask = () => UniTask.Create(async () =>
-            {
-                return await ConditionDiscardAB(card);
-            });
+            _conditionTask = () => ConditionDiscardAB(card);
         }
         else if (card.Data.Remove > 0)
         {
@@ -99,10 +96,7 @@ public class CardAbility
             {
                 CardManager.Instance.SetCardState(2);
             });
-            _conditionTask = () => UniTask.Create(async () =>
-            {
-                return await ConditionRemoveAB(card);
-            });
+            _conditionTask = () => ConditionRemoveAB(card);
         }
         //card.SetUseConditions(uniTaskCondition);
     }
@@ -115,48 +109,38 @@ public class CardAbility
         {
             case CardTag.SingleAttack:
                 if (card.Data.Shield > 0 || card.Data.Draw > 0)
-                    _cardTask = () => UniTask.Create(async () =>
-                    {
-                        await AddCardEvent(card, delay,
+                    _cardTask = () =>
+                        AddCardEvent(card, delay,
                             (0, () => SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _))),
                             (1, () => ShieldAB(card)),
                             (1, () => DrawAB(card))
                         );
-                    });
                 else
-                    _cardTask = () => UniTask.Create(async () =>
-                    {
-                        await AddCardEvent(card, delay,
+                    _cardTask = () => 
+                        AddCardEvent(card, delay,
                             (0, () => SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _)))
                         );
-                    });
                 break;
             case CardTag.MultiAttack:
                 if (card.Data.Shield > 0 || card.Data.Draw > 0)
-                    _cardTask = () => UniTask.Create(async () =>
-                    {
-                        await AddCardEvent(card, delay,
+                    _cardTask = () =>
+                        AddCardEvent(card, delay,
                              (0, () => MultiAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _))),
                              (1, () => ShieldAB(card)),
                              (1, () => DrawAB(card))
                          );
-                    });
                 else
-                    _cardTask = () => UniTask.Create(async () =>
-                    {
-                        await AddCardEvent(card, delay,
+                    _cardTask = () =>
+                        AddCardEvent(card, delay,
                              (0, () => MultiAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _)))
                          );
-                    });
                 break;
             case CardTag.SkillTargetMe:
-                _cardTask = () => UniTask.Create(async () =>
-                {
-                    await AddCardEvent(card, delay,
+                _cardTask = () =>
+                    AddCardEvent(card, delay,
                              (0, () => ShieldAB(card)),
                              (0, () => DrawAB(card))
                          );
-                });
                 break;
             default:
                 _cardTask = null;
@@ -171,34 +155,29 @@ public class CardAbility
         switch (card.Data.ID)
         {
             case 105:
-                _cardTask = () => UniTask.Create(async () =>
-                {
+                _cardTask = () =>
                     //CardManager.Instance.SetCardState(1);
-                    await AddCardEvent(card, 0.5f,
+                    AddCardEvent(card, 0.5f,
                         (0, () => DrawAB(card)),
                         (1, () => ConfirmedDiscardAB(card))
                     );
-                });
                 break;
             case 108:
-                _cardTask = () => UniTask.Create(async () =>
-                {
-                    await AddCardEvent(card, 0.5f,
+                _cardTask = () =>
+                    AddCardEvent(card, 0.5f,
                         (0, async() =>
-                        {
-                            int statusEffectCount = (card.TargetEnemy.CurStatusEffectList.Count() + card.TargetEnemy.CurStatusEffectPerpetualList.Count());
-                            card.Data.Damage += statusEffectCount;
-                            await SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _));
-                            card.Data.Damage -= statusEffectCount;
-                        }
-                    )
+                            {
+                                int statusEffectCount = (card.TargetEnemy.CurStatusEffectList.Count() + card.TargetEnemy.CurStatusEffectPerpetualList.Count());
+                                card.Data.Damage += statusEffectCount;
+                                await SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _));
+                                card.Data.Damage -= statusEffectCount;
+                            }
+                        )
                     );
-                });
                 break;
             case 503:
-                _cardTask = () => UniTask.Create(async () =>
-                {
-                    await AddCardEvent(card, 0.5f,
+                _cardTask = () =>
+                    AddCardEvent(card, 0.5f,
                         (0, () => {
                             _player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), card.Data.Cost);
                             return UniTask.CompletedTask;
@@ -207,20 +186,17 @@ public class CardAbility
                     //await DelayTask(0.5f);
                     //await SpawnEffect(card);
                     //_player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), card.Data.Cost);
-                });
                 break;
             case 801:
-                _cardTask = () => UniTask.Create(async () =>
-                {
-                    await AddCardEvent(card, 0.5f,
+                _cardTask = () =>
+                    AddCardEvent(card, 0.5f,
                         (0, async () =>
-                        {
-                            card.Data.Count = card.Data.Cost;
-                            await SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _));
-                        }
-                    )
+                            {
+                                card.Data.Count = card.Data.Cost;
+                                await SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _));
+                            }
+                        )
                     );
-                });
                 break;
             default:
                 _cardTask = () => UniTask.CompletedTask;

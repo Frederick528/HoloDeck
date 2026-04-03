@@ -84,6 +84,8 @@ public class CardManager : MonoBehaviour
     int _enQueuedCardCount;
     int _waitedCardOrder;
 
+    int _isDrawingCount = 0;
+
 
     private void Awake()
     {
@@ -101,7 +103,8 @@ public class CardManager : MonoBehaviour
         myCardRight = InGameManager.Instance.PlayerTr.Find("MyCardRight");
         isUseCard.Subscribe((canUse) =>
         {
-            SelectCard?.TurnOnOutline(canUse);
+            if (SelectCard == null) return;
+            SelectCard.TurnOnOutline(canUse).Forget();
             if (canUse)
             {
                 InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
@@ -395,7 +398,8 @@ public class CardManager : MonoBehaviour
 
     public async UniTask<Card> CardToDraw()
     {
-        if (HandCard.Count == 10) return null;
+        if (HandCard.Count + _isDrawingCount >= 10) return null;
+        _isDrawingCount++;
 
         if (DrawDeck.Count == 0)    // 뽑을 카드가 없으면 버려진 카드를 다시 불러오고, 덱 섞기. 이 경우에는 카드 뽑기가 0.5초 후 가능 (카드 버려지는 시간인 0.3초보단 높게 잡아야 함.)
         {
@@ -404,11 +408,15 @@ public class CardManager : MonoBehaviour
         }
 
         if (DrawDeck.Count == 0)    // 덱을 섞은 후에도 뽑을 카드가 없으면 리턴
+        {
+            _isDrawingCount--;
             return null;
+        }
 
         Card card = DrawDeck[0];
         DrawDeck.RemoveAt(0);
         InGameUIManager.Instance.SetDrawCount();
+        _isDrawingCount--;
         return card;
     }
 
@@ -485,20 +493,21 @@ public class CardManager : MonoBehaviour
     {
         for (int i = 0; i < count; ++i)
         {
-            Card drawCard = await CardToDraw();
-            if (drawCard == null)
-                break;
+            await DrawCard();
+            //Card drawCard = await CardToDraw();
+            //if (drawCard == null)
+            //    break;
 
-            HandCard.Add(drawCard);
+            //HandCard.Add(drawCard);
 
-            drawCard.WaitUnblock(CardUtils.CardAlignmentDelay).Forget();
-            //drawCard.BlockCard();
+            //drawCard.WaitUnblock(CardUtils.CardAlignmentDelay).Forget();
+            ////drawCard.BlockCard();
 
-            SetOriginOrder();
-            CardAlignment();
-            await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, cancellationToken: TurnManager.Instance.CancelSource.Token);
+            //SetOriginOrder();
+            //CardAlignment();
+            //await UniTask.WaitForSeconds(CardUtils.CardAlignmentDelay, cancellationToken: TurnManager.Instance.CancelSource.Token);
 
-            //drawCard.UnblockCard();
+            ////drawCard.UnblockCard();
         }
     }
 
