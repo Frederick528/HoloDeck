@@ -36,12 +36,12 @@ public class Elite1 : Enemy
     {
         _specialDesc = "해당 적은 공격력을 {n}만큼 2턴동안 얻습니다.";
 
-        _nextPattern.Add(async () => await UniTask.Create(async () =>
+        _nextPattern.Add(async () => 
         {
             await UniTask.WaitForSeconds(delay/*, cancellationToken: TurnManager.Instance.CancelSource.Token*/);
             if (this.CurHP.Value > 0)
                 AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), value, 2);
-        }));
+        });
 
         //_nextPattern = () => UniTask.Create(async () =>
         //{

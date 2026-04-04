@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
+using System.Linq;
 
 public class ItemManager : MonoBehaviour
 {
@@ -25,6 +26,12 @@ public class ItemManager : MonoBehaviour
     PotionItem[] _potionItem = new PotionItem[4];
     public bool[] HavePotionItem = new bool[4];
 
+    public PotionItem[] GetPotionItems() => _potionItem;
+
+    private RectTransform[] _cachedPotionRects;
+
+    public RectTransform[] GetPotionRects() => _cachedPotionRects;
+
     int _clickedPotionIdx;
 
     int _arrowIdx;
@@ -40,16 +47,20 @@ public class ItemManager : MonoBehaviour
     private void Awake()
     {
         Instance = Instance != null ? Instance : this;
-    }
-
-    private void Start()
-    {
         _passiveTransform = (RectTransform)FindTransform.ContinueFindChildUIByName(InGameUIManager.Instance.PassiveTransform, "PassiveContent");
         _activeItemChargeImgae = FindTransform.ContinueFindChildUIByName(InGameUIManager.Instance.ActiveTransform, "ChargeBar").GetComponent<Image>();
         _activeItemChargeText = FindTransform.ContinueFindChildUIByName(InGameUIManager.Instance.ActiveTransform, "ChargeText").GetComponent<TMP_Text>();
 
         _activeItem = InGameUIManager.Instance.ActiveTransform.GetComponent<ActiveItem>();
         _potionItem = InGameUIManager.Instance.PotionTransform.GetComponentsInChildren<PotionItem>();
+
+        _cachedPotionRects = _potionItem
+            .Select(item => item.GetComponent<RectTransform>())
+            .ToArray();
+    }
+
+    private void Start()
+    {
 
         _activeItem.ResetItem();
 

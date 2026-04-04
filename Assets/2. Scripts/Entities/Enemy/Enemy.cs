@@ -353,7 +353,7 @@ public abstract class Enemy : Entity
         //    }
         //}
 
-        _nextPattern.Add(async () => await UniTask.Create(async () =>
+        _nextPattern.Add(async () =>
         {
             //bool critical = CheckCritical();      // 공격하기 전에 크리티컬 확인
             bool critical = GetStatusEffect(StatusEffect.UseCritical, out _);      // 공격하기 전에 크리티컬 확인
@@ -372,7 +372,7 @@ public abstract class Enemy : Entity
                 //await Attack(Mathf.RoundToInt(criticalDamage * multiple));
             }
             CheckCritical();
-        }));
+        });
         //_nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
         //_nextPattern = () => UniTask.Create(async () =>
         //{
@@ -413,7 +413,7 @@ public abstract class Enemy : Entity
         //});
 
 
-        _nextPattern.Add(async () => await UniTask.Create(async () =>
+        _nextPattern.Add(async () =>
         {
             //if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
             //    return;
@@ -424,7 +424,7 @@ public abstract class Enemy : Entity
                 if (this.CurHP.Value > 0)
                     await Shield(value);
             }
-        }));
+        });
 
         //_nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
         //_nextPattern = () => UniTask.Create(async () =>
@@ -468,7 +468,7 @@ public abstract class Enemy : Entity
         //});
 
 
-        _nextPattern.Add(async () => await UniTask.Create(async () =>
+        _nextPattern.Add(async () =>
         {
             //if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested)
             //    return;
@@ -479,7 +479,7 @@ public abstract class Enemy : Entity
                 if (this.CurHP.Value > 0)
                     await Heal(value);
             }
-        }));
+        });
 
         //_nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
         //_nextPattern = () => UniTask.Create(async () =>

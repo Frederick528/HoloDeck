@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
     bool _slowMode;
 
     bool _isESCPause = false;
+    public bool GetIsEscPause() => _isESCPause;
 
     private ReactiveProperty<int> _curInGameAsyncLoad = new(0);
 

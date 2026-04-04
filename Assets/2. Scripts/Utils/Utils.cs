@@ -24,6 +24,8 @@ public class CardUtils
     public static float ThrowAwayCardDelay => 0.3f;
     public static float LoadCardDummyDelay => 0.4f;
     public static float CardAlignmentDelay => 0.3f;
+    public static float CardFastMoveDelay => 0.15f;
+    public static float NextCardUseDelay => 0.5f;
 }
 
 public enum EAddDeck

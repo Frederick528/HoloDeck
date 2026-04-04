@@ -1,14 +1,8 @@
 ﻿using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityEngine.ResourceManagement.ResourceLocations;
 
 public class ReadSpreadSheet : MonoBehaviour
 {
@@ -71,8 +65,10 @@ public class ReadSpreadSheet : MonoBehaviour
     {
         Debug.Log("Card Load Start");
         string address = "https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8";
-        string range = "A4:O";
-        string cardSheetID = "1809511646";
+        string range = "A4:P";
+        //string range = "A4:O";
+        string cardSheetID = "2055316414";
+        //string cardSheetID = "1809511646";
         string enhancedCardSheetID = "1928890928";
         using UnityWebRequest wwwC =
             //UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:Q&gid=0"))  // 0 = 원본, 1809511646 = 테스트용
@@ -84,7 +80,7 @@ public class ReadSpreadSheet : MonoBehaviour
         _dataCardGS = wwwC.downloadHandler.text;
 
         await wwwEC.SendWebRequest();
-        _dataCardGS += "\n" + wwwEC.downloadHandler.text;
+        //_dataCardGS += "\n" + wwwEC.downloadHandler.text;     강화 카드 구현 안 되서 일단 추가X
 
         if (wwwEC.isDone)
         {
@@ -166,13 +162,14 @@ public class ReadSpreadSheet : MonoBehaviour
                 Draw = ConvertInt32(cells[6]),
                 Discard = ConvertInt32(cells[7]),
                 Remove = ConvertInt32(cells[8]),
+                Hp = ConvertInt32(cells[9]),
                 //data.CardUseDelay = ConvertSingle(cells[7]);
-                Price = ConvertInt32(cells[9]),
-                Descript = LineBreakStr(cells[10]),
-                IsSimpleAB = NullTrueBool(cells[11]),
-                HasSimpleCondition = NullFalseBool(cells[12]),
-                CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[13]),
-                CardRarity = (CardRarity)Enum.Parse(typeof(CardRarity), cells[14])
+                Price = ConvertInt32(cells[10]),
+                Descript = LineBreakStr(cells[11]),
+                IsSimpleAB = NullTrueBool(cells[12]),
+                HasSimpleCondition = NullFalseBool(cells[13]),
+                CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[14]),
+                CardRarity = (CardRarity)Enum.Parse(typeof(CardRarity), cells[15])
             };
             data.Sprite = Array.Find(CardSO.CardSprites, x => x.name == data.ID.ToString());
             data.Effect = Array.Find(CardSO.CardEffects, x => x.name == data.ID.ToString());
@@ -633,16 +630,70 @@ public class ReadSpreadSheet : MonoBehaviour
     int ConvertInt32(string str)    // 구글스프레드시트는 엑셀 빈 칸을 ""로 가져오기 때문에 Convert.ToInt32가 에러가 뜸.
     {
         //int _value = Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
-        return Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
+        //return Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
+        if (string.IsNullOrWhiteSpace(str))
+            return 0;
+
+        // 2. 양끝 공백 및 보이지 않는 특수 문자 제거 (Trim)
+        string cleanStr = str.Trim();
+
+        // 3. TryParse로 안전하게 변환 시도
+        if (int.TryParse(cleanStr, out int result))
+        {
+            return result;
+        }
+        else
+        {
+            // 4. 숫자가 아닌 문자가 들어온 경우 (예: "데미지", "10A" 등)
+            // 디버깅을 위해 어떤 데이터에서 에러가 났는지 로그를 찍는 것이 좋습니다.
+            Debug.LogWarning($"숫자 변환 실패! 입력된 문자열: '{str}' (0으로 대체됨)");
+            return 0;
+        }
     }
 
     bool NullFalseBool(string str)
     {
-        return string.IsNullOrEmpty(str) ? false : bool.Parse(str);
+        if (string.IsNullOrWhiteSpace(str))
+            return false;
+
+        // 2. 앞뒤 공백 제거 및 대문자로 통일 (비교 편의성)
+        string cleanStr = str.Trim().ToUpper();
+
+        // 3. 숫자로 입력된 경우 처리 (1 = true, 0 = false)
+        if (cleanStr == "1" || cleanStr == "TRUE") return true;
+        if (cleanStr == "0" || cleanStr == "FALSE") return false;
+
+        // 4. 그 외의 경우 안전하게 TryParse 시도
+        if (bool.TryParse(cleanStr, out bool result))
+        {
+            return result;
+        }
+
+        // 5. 여기까지 왔다면 형식이 잘못된 것 (예: "안녕", "오류")
+        Debug.LogWarning($"부울 변환 실패! 입력된 문자열: '{str}' (false로 대체됨)");
+        return false;
     }
     bool NullTrueBool(string str)
     {
-        return string.IsNullOrEmpty(str) ? true : bool.Parse(str);
+        if (string.IsNullOrWhiteSpace(str))
+            return true;
+
+        // 2. 앞뒤 공백 제거 및 대문자로 통일 (비교 편의성)
+        string cleanStr = str.Trim().ToUpper();
+
+        // 3. 숫자로 입력된 경우 처리 (1 = true, 0 = false)
+        if (cleanStr == "1" || cleanStr == "TRUE") return true;
+        if (cleanStr == "0" || cleanStr == "FALSE") return false;
+
+        // 4. 그 외의 경우 안전하게 TryParse 시도
+        if (bool.TryParse(cleanStr, out bool result))
+        {
+            return result;
+        }
+
+        // 5. 여기까지 왔다면 형식이 잘못된 것 (예: "안녕", "오류")
+        Debug.LogWarning($"부울 변환 실패! 입력된 문자열: '{str}' (false로 대체됨)");
+        return false;
     }
 
     string ItemEnumCellCheck(string str)

@@ -6,13 +6,15 @@ using System.Threading;
 using UnityEngine;
 using UniRx;
 
-public class CardAbility
+public partial class CardAbility
 {
     CancellationTokenSource _cts;
 
+    //private Dictionary<string, Func<Card, UniTask>> _specialAbilityMap;
     (Action _cardImmediately, Action _cardFailure)? _checkCard;  // 즉시 실행하는 코드 + 해당 카드가 실패했을 때 효과
     Func<UniTask> _cardTask;
-    Func<UniTask<bool>?> _conditionTask;
+    //Func<UniTask<bool>?> _conditionTask;
+    private List<Func<UniTask<bool>>> _conditionTasks = new();
 
     Player _player;
     public void SetCardAbility(Card card)
@@ -24,27 +26,15 @@ public class CardAbility
         {
             SettingCondition(card);
         }
-        else
-        {
-            _conditionTask = null;
-        }
+        //else
+        //{
+        //    //_conditionTask = null;
+        //    _conditionTasks.Clear();
+        //}
 
         if (card.Data.IsSimpleAB)
         {
-            float delay;
-            switch (card.Data.ID)
-            {
-                case 502:
-                    delay = 0.2f;
-                    break;
-                case 1000:
-                    delay = 0.3f;
-                    break;
-                default:
-                    delay = 0.5f;
-                    break;
-            }
-            SettingSimpleAB(card, delay);
+            SettingSimpleAB(card);
         }
         else
         {
@@ -52,7 +42,8 @@ public class CardAbility
         }
         card.SetCardImmediately(_checkCard);
         card.SetCardTask(_cardTask);
-        card.SetUseConditions(_conditionTask);
+        //card.SetUseConditions(_conditionTask);
+        card.SetUseConditions(_conditionTasks);
     }
     void SettingImmediately(Card card)
     {
@@ -75,7 +66,13 @@ public class CardAbility
 
     void SettingCondition(Card card)
     {
+        _conditionTasks.Clear();
         //Func<UniTask<bool>?> uniTaskCondition = null;
+        if (card.Data.Hp < 0)
+        {
+            _conditionTasks.Add(() => ConditionHpCheck(card));
+        }
+
         if (card.Data.Discard > 0)
         {
             _checkCard = (_cardImmediately: () =>
@@ -85,9 +82,10 @@ public class CardAbility
             {
                 CardManager.Instance.SetCardState(2);
             });
-            _conditionTask = () => ConditionDiscardAB(card);
+            _conditionTasks.Add(() => ConditionDiscardAB(card));
         }
-        else if (card.Data.Remove > 0)
+
+        if (card.Data.Remove > 0)
         {
             _checkCard = (_cardImmediately: () =>
             {
@@ -96,56 +94,95 @@ public class CardAbility
             {
                 CardManager.Instance.SetCardState(2);
             });
-            _conditionTask = () => ConditionRemoveAB(card);
+            _conditionTasks.Add(() => ConditionRemoveAB(card));
         }
         //card.SetUseConditions(uniTaskCondition);
     }
 
-    void SettingSimpleAB(Card card, float delay = 0.5f)
+    void SettingSimpleAB(Card card)
     {
-        //Func<UniTask> uniTaskAB = null;
-        //bool critical = _player.GetStatusEffect(StatusEffect.UseCritical, out _);
+        var tasks = new List<(int order, Func<UniTask> effectTask)>();
+
         switch (card.Data.CardTag)
         {
             case CardTag.SingleAttack:
-                if (card.Data.Shield > 0 || card.Data.Draw > 0)
-                    _cardTask = () =>
-                        AddCardEvent(card, delay,
-                            (0, () => SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _))),
-                            (1, () => ShieldAB(card)),
-                            (1, () => DrawAB(card))
-                        );
-                else
-                    _cardTask = () => 
-                        AddCardEvent(card, delay,
-                            (0, () => SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _)))
-                        );
+                tasks.Add((0, () => SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _))));
                 break;
             case CardTag.MultiAttack:
-                if (card.Data.Shield > 0 || card.Data.Draw > 0)
-                    _cardTask = () =>
-                        AddCardEvent(card, delay,
-                             (0, () => MultiAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _))),
-                             (1, () => ShieldAB(card)),
-                             (1, () => DrawAB(card))
-                         );
-                else
-                    _cardTask = () =>
-                        AddCardEvent(card, delay,
-                             (0, () => MultiAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _)))
-                         );
-                break;
-            case CardTag.SkillTargetMe:
-                _cardTask = () =>
-                    AddCardEvent(card, delay,
-                             (0, () => ShieldAB(card)),
-                             (0, () => DrawAB(card))
-                         );
-                break;
-            default:
-                _cardTask = null;
+                tasks.Add((0, () => MultiAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _))));
                 break;
         }
+
+        if (card.Data.Hp != 0)
+        {
+            // 사용자님이 말씀하신 대로 음수면 0번 순서(공격과 동급), 양수면 2번 순서(유틸리티)
+            int hpOrder = card.Data.Hp < 0 ? 0 : 2;
+            tasks.Add((hpOrder, () => HpEffectAB(card)));
+        }
+
+        if (card.Data.Shield > 0)
+        {
+            tasks.Add((1, () => ShieldAB(card)));
+        }
+
+        // 5. 드로우 처리 (Order 2: 가장 마지막)
+        if (card.Data.Draw > 0)
+        {
+            tasks.Add((2, () => DrawAB(card)));
+        }
+
+        if (tasks.Count > 0)
+        {
+            // params 키워드 덕분에 ToArray()로 넘겨주면 됩니다.
+            _cardTask = () => AddCardEvent(card, tasks.ToArray());
+        }
+        else
+        {
+            _cardTask = null;
+        }
+        //Func<UniTask> uniTaskAB = null;
+        //bool critical = _player.GetStatusEffect(StatusEffect.UseCritical, out _);
+        //switch (card.Data.CardTag)
+        //{
+        //    case CardTag.SingleAttack:
+        //        if (card.Data.Shield > 0 || card.Data.Draw > 0)
+        //            _cardTask = () =>
+        //                AddCardEvent(card, delay,
+        //                    (0, () => SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _))),
+        //                    (1, () => ShieldAB(card)),
+        //                    (1, () => DrawAB(card))
+        //                );
+        //        else
+        //            _cardTask = () => 
+        //                AddCardEvent(card, delay,
+        //                    (0, () => SingleAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _)))
+        //                );
+        //        break;
+        //    case CardTag.MultiAttack:
+        //        if (card.Data.Shield > 0 || card.Data.Draw > 0)
+        //            _cardTask = () =>
+        //                AddCardEvent(card, delay,
+        //                     (0, () => MultiAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _))),
+        //                     (1, () => ShieldAB(card)),
+        //                     (1, () => DrawAB(card))
+        //                 );
+        //        else
+        //            _cardTask = () =>
+        //                AddCardEvent(card, delay,
+        //                     (0, () => MultiAttackAB(card, _player.GetStatusEffect(StatusEffect.UseCritical, out _)))
+        //                 );
+        //        break;
+        //    case CardTag.SkillTargetMe:
+        //        _cardTask = () =>
+        //            AddCardEvent(card, delay,
+        //                     (0, () => ShieldAB(card)),
+        //                     (0, () => DrawAB(card))
+        //                 );
+        //        break;
+        //    default:
+        //        _cardTask = null;
+        //        break;
+        //}
         //card.SetCardTask(uniTaskAB);
 
     }
@@ -157,14 +194,14 @@ public class CardAbility
             case 105:
                 _cardTask = () =>
                     //CardManager.Instance.SetCardState(1);
-                    AddCardEvent(card, 0.5f,
+                    AddCardEvent(card,
                         (0, () => DrawAB(card)),
                         (1, () => ConfirmedDiscardAB(card))
                     );
                 break;
             case 108:
                 _cardTask = () =>
-                    AddCardEvent(card, 0.5f,
+                    AddCardEvent(card,
                         (0, async() =>
                             {
                                 int statusEffectCount = (card.TargetEnemy.CurStatusEffectList.Count() + card.TargetEnemy.CurStatusEffectPerpetualList.Count());
@@ -177,7 +214,7 @@ public class CardAbility
                 break;
             case 503:
                 _cardTask = () =>
-                    AddCardEvent(card, 0.5f,
+                    AddCardEvent(card,
                         (0, () => {
                             _player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), card.Data.Cost);
                             return UniTask.CompletedTask;
@@ -189,7 +226,7 @@ public class CardAbility
                 break;
             case 801:
                 _cardTask = () =>
-                    AddCardEvent(card, 0.5f,
+                    AddCardEvent(card,
                         (0, async () =>
                             {
                                 card.Data.Count = card.Data.Cost;
@@ -204,86 +241,159 @@ public class CardAbility
         }
     }
 
-    async UniTask PlayCardEvent(Card card, SortedDictionary<int, List<Func<UniTask>>> cardEvent, float delay)
+    async UniTask PlayCardEvent(Card card, SortedDictionary<int, List<Func<UniTask>>> cardEvent)
     {
-        
-        await UniTask.Create(async () =>
+        _cts = new CancellationTokenSource();
+
+        //float originalDelay = delay;
+        for (int i = 0; i < card.Data.Count; i++) // 카드 횟수만큼 반복
         {
-            _cts = new CancellationTokenSource();
+            //if (i != 0)
+            //{
+            //    isStart = false;
+            //    delay = originalDelay * 0.75f;
+            //}
+            //if (isStart || card.RepeatEffect)
+            //{
+            //    await DelayTask(delay);
+            //}
 
-            Animator animator = null;
-            ParticleSystem particleSystem = null;
-            ParticleSystem.MainModule particleMain;
+            //await DelayTask(delay);
+            await EffectManager.Instance.SpawnEffect(card, i == 0, _cts.Token);
 
-            bool isStart = true;
-            float originalDelay = delay;
-            for (int i = 0; i < card.Data.Count; i++) // 카드 횟수만큼 반복
+            EffectManager.Instance.SlowSppedEffect(card);
+            //if (EffectManager.Instance.GetCurCardEffect() != null)
+            //{
+            //    //if (isStart)
+            //    //{
+            //    //    animator = EffectManager.Instance.GetCurCardEffect().GetComponent<Animator>();
+            //    //    particleSystem = EffectManager.Instance.GetCurCardEffect();
+            //    //    particleMain = particleSystem.main;
+
+            //    //}
+            //    if (card.Data.Count > 1 && !card.RepeatEffect)
+            //    {
+            //        animator.speed = 0.1f;
+            //        particleMain.simulationSpeed = 0.1f;
+            //    }
+            //}
+            foreach (var eventTask in cardEvent) // 0, 1, 2... 순서대로 실행
             {
-                if (i != 0)
-                {
-                    isStart = false;
-                    delay = originalDelay * 0.75f;
-                }
-                //if (isStart || card.RepeatEffect)
-                //{
-                //    await DelayTask(delay);
-                //}
-                await DelayTask(delay);
-                await EffectManager.Instance.SpawnEffect(card, isStart, _cts.Token);
-
-                if (EffectManager.Instance.GetCurCardEffect() != null)
-                {
-                    if (isStart)
-                    {
-                        animator = EffectManager.Instance.GetCurCardEffect().GetComponent<Animator>();
-                        particleSystem = EffectManager.Instance.GetCurCardEffect();
-                        particleMain = particleSystem.main;
-
-                    }
-                    if (card.Data.Count > 1 &&!card.RepeatEffect)
-                    {
-                        animator.speed = 0.1f;
-                        particleMain.simulationSpeed = 0.1f;
-                    }
-                }
-                foreach (var eventTask in cardEvent) // 0, 1, 2... 순서대로 실행
-                {
-                    var tasksToRun = eventTask.Value.Select(func => func()).ToList();
-                    await UniTask.WhenAll(tasksToRun).SuppressCancellationThrow(); // 동시 실행 및 대기
-                }
-
-                if (EffectManager.Instance.GetCurCardEffect() != null)
-                {
-                    animator.speed = 1f;
-                    particleMain.simulationSpeed = 1f;
-                    //particleSystem.Play(true);
-                }
-
-                if (_cts.IsCancellationRequested)
-                {
-                    break;
-                }
+                var tasksToRun = eventTask.Value.Select(func => func()).ToList();
+                await UniTask.WhenAll(tasksToRun).SuppressCancellationThrow(); // 동시 실행 및 대기
             }
 
-            switch (card.Data.CardTag)
+            EffectManager.Instance.OriginSpeedEffect();
+            //if (EffectManager.Instance.GetCurCardEffect() != null)
+            //{
+            //    animator.speed = 1f;
+            //    particleMain.simulationSpeed = 1f;
+            //    //particleSystem.Play(true);
+            //}
+
+            if (_cts.IsCancellationRequested)
             {
-                case CardTag.SingleAttack:
-                    card.Target(null);
-                    _player.CheckCritical();
-                    break;
-                case CardTag.MultiAttack:
-                    _player.CheckCritical();
-                    break;
-                //case CardTag.SkillTargetMe:
-                default:
-                    break;
+                break;
             }
-            if (!_cts.IsCancellationRequested)
-            {
-                _cts.Cancel();
-                _cts.Dispose();
-            }
-        });
+        }
+
+        switch (card.Data.CardTag)
+        {
+            case CardTag.SingleAttack:
+                card.Target(null);
+                _player.CheckCritical();
+                break;
+            case CardTag.MultiAttack:
+                _player.CheckCritical();
+                break;
+            //case CardTag.SkillTargetMe:
+            default:
+                break;
+        }
+        if (!_cts.IsCancellationRequested)
+        {
+            _cts.Cancel();
+            _cts.Dispose();
+        }
+
+        await UniTask.WaitForSeconds(CardUtils.NextCardUseDelay);
+        //await UniTask.Create(async () =>
+        //{
+        //    _cts = new CancellationTokenSource();
+
+        //    Animator animator = null;
+        //    ParticleSystem particleSystem = null;
+        //    ParticleSystem.MainModule particleMain;
+
+        //    bool isStart = true;
+        //    float originalDelay = delay;
+        //    for (int i = 0; i < card.Data.Count; i++) // 카드 횟수만큼 반복
+        //    {
+        //        if (i != 0)
+        //        {
+        //            isStart = false;
+        //            delay = originalDelay * 0.75f;
+        //        }
+        //        //if (isStart || card.RepeatEffect)
+        //        //{
+        //        //    await DelayTask(delay);
+        //        //}
+        //        await DelayTask(delay);
+        //        await EffectManager.Instance.SpawnEffect(card, isStart, _cts.Token);
+
+        //        if (EffectManager.Instance.GetCurCardEffect() != null)
+        //        {
+        //            if (isStart)
+        //            {
+        //                animator = EffectManager.Instance.GetCurCardEffect().GetComponent<Animator>();
+        //                particleSystem = EffectManager.Instance.GetCurCardEffect();
+        //                particleMain = particleSystem.main;
+
+        //            }
+        //            if (card.Data.Count > 1 &&!card.RepeatEffect)
+        //            {
+        //                animator.speed = 0.1f;
+        //                particleMain.simulationSpeed = 0.1f;
+        //            }
+        //        }
+        //        foreach (var eventTask in cardEvent) // 0, 1, 2... 순서대로 실행
+        //        {
+        //            var tasksToRun = eventTask.Value.Select(func => func()).ToList();
+        //            await UniTask.WhenAll(tasksToRun).SuppressCancellationThrow(); // 동시 실행 및 대기
+        //        }
+
+        //        if (EffectManager.Instance.GetCurCardEffect() != null)
+        //        {
+        //            animator.speed = 1f;
+        //            particleMain.simulationSpeed = 1f;
+        //            //particleSystem.Play(true);
+        //        }
+
+        //        if (_cts.IsCancellationRequested)
+        //        {
+        //            break;
+        //        }
+        //    }
+
+        //    switch (card.Data.CardTag)
+        //    {
+        //        case CardTag.SingleAttack:
+        //            card.Target(null);
+        //            _player.CheckCritical();
+        //            break;
+        //        case CardTag.MultiAttack:
+        //            _player.CheckCritical();
+        //            break;
+        //        //case CardTag.SkillTargetMe:
+        //        default:
+        //            break;
+        //    }
+        //    if (!_cts.IsCancellationRequested)
+        //    {
+        //        _cts.Cancel();
+        //        _cts.Dispose();
+        //    }
+        //});
     }
 
     //async UniTask SpawnEffect(Card card, bool isStart = true)
@@ -348,7 +458,7 @@ public class CardAbility
     //    }
     //}
 
-    async UniTask AddCardEvent(Card card, float delay = 0.5f, params (int, Func<UniTask>)[] taskOrder)
+    async UniTask AddCardEvent(Card card, params (int, Func<UniTask>)[] taskOrder)
     {
         var cardEventDict = new SortedDictionary<int, List<Func<UniTask>>>();
         foreach (var (order, effectTask) in taskOrder)
@@ -359,7 +469,7 @@ public class CardAbility
             }
             cardEventDict[order].Add(effectTask);
         }
-        await PlayCardEvent(card, cardEventDict, delay);
+        await PlayCardEvent(card, cardEventDict);
     }
 
     async UniTask SingleAttackAB(Card card, bool critical)             // 컨티뉴 single이랑 그냥 single 합침. -> 2025년 10월 말에 코드 다 바꾸면서 그냥 단일 타켓 코드로만 작동.
@@ -416,6 +526,36 @@ public class CardAbility
         CardManager.Instance.SetCardState(2);
     }
 
+    async UniTask<bool> ConditionHpCheck(Card card)
+    {
+        // 1. 현재 플레이어 체력 확인 (InGameManager 등 참조)
+        int currentHp = InGameManager.Instance.Player.CurHP.Value;
+
+        if (currentHp > -card.Data.Hp)
+        {
+            return true;
+        }
+        else
+        {
+            Debug.Log("HP 부족으로 사용 실패");
+            return false;
+        }
+    }
+
+    private async UniTask HpEffectAB(Card card)
+    {
+        int val = card.Data.Hp;
+        if (val < 0)
+        {
+            // 음수라면 데미지 로직 (-를 붙여 양수로 변환)
+            await _player.TakeDamage(-val);
+        }
+        else
+        {
+            // 양수라면 회복 로직
+            await _player.Heal(val);
+        }
+    }
 
     async UniTask ConfirmedDiscardAB(Card card)
     {
@@ -425,52 +565,85 @@ public class CardAbility
         InGameButtonManager.Instance.SetActiveDiscardCancelBtn(false);
         CardManager.Instance.ChangeDiscard(true);
         OutGameUIManager.Instance.RemoveOpenUIOrder(InGameUIManager.CanvasName.SelectedCard.ToString());        // 강제 조건확인이라 뒤로가기를 미리 막음.
-        await UniTask.Create(async () =>
-        {
-            await InGameButtonManager.Instance.DiscardButton.OnClickAsync(cancellationToken: TurnManager.Instance.CancelSource.Token).SuppressCancellationThrow();
-            CardManager.Instance.ThrowAwaySelectedCard().Forget();
-        });
+        await InGameButtonManager.Instance.DiscardButton.OnClickAsync(cancellationToken: TurnManager.Instance.CancelSource.Token).SuppressCancellationThrow();
+        CardManager.Instance.ThrowAwaySelectedCard().Forget();
+        //await UniTask.Create(async () =>
+        //{
+        //    await InGameButtonManager.Instance.DiscardButton.OnClickAsync(cancellationToken: TurnManager.Instance.CancelSource.Token).SuppressCancellationThrow();
+        //    CardManager.Instance.ThrowAwaySelectedCard().Forget();
+        //});
         InGameButtonManager.Instance.SetActiveDiscardCancelBtn(true);
         CardManager.Instance.ChangeDiscard(false);
     }
     async UniTask<bool> ConditionDiscardAB(Card card)
     {
         card.MoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale * 0.8f), true, CardUtils.CardAlignmentDelay);
-        bool discarded = false;
+        //bool discarded = false;
         InGameButtonManager.Instance.DiscardBtnInvert(false);
         CardManager.Instance.ChangeDiscard(true);
         CancellationTokenSource cts = new();
-        var task1 = UniTask.Create(async () =>
-        {
-            await InGameButtonManager.Instance.DiscardButton.OnClickAsync(cts.Token);
-            CardManager.Instance.ThrowAwaySelectedCard().Forget();
-            discarded = true;
-        });
-        var task2 = UniTask.Create(async () =>
-        {
-            await InGameButtonManager.Instance.DiscardCancelButton.OnClickAsync(cts.Token);
-            CardManager.Instance.ReturnSelectedCard();
-            discarded = false;
-        });
-        var task3 = UniTask.Create(async () =>
-        {
-            await UniTask.WaitUntil(() => !InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf, cancellationToken: cts.Token);
-            CardManager.Instance.ReturnSelectedCard();
-            discarded = false;
-        });
-        var task4 = UniTask.Create(async () =>
-        {
-            // 버리는 와중에 전투가 끝나면(전투 bool이 변경되면) 초기화
-            //await UniTask.WaitUntil(() => !TurnManager.Instance.InBattle, cancellationToken: cts.Token);
-            await TurnManager.Instance.InBattle.Where(inBattle => !inBattle).ToUniTask(cancellationToken: cts.Token);
-            CardManager.Instance.ReturnSelectedCard();
-            discarded = false;
-        });
-        await UniTask.WhenAny(task1, task2, task3, task4);
+        // 1. 네 가지 조건 중 가장 먼저 일어나는 녀석의 '인덱스'를 가져옵니다.
+        int winnerIndex = await UniTask.WhenAny(
+            InGameButtonManager.Instance.DiscardButton.OnClickAsync(cts.Token),      // 0번
+            InGameButtonManager.Instance.DiscardCancelButton.OnClickAsync(cts.Token),// 1번
+            UniTask.WaitUntil(() => !InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf, cancellationToken: cts.Token), // 2번
+            TurnManager.Instance.InBattle.Where(x => !x).ToUniTask(cancellationToken: cts.Token) // 3번
+        );
+
+        // 2. 경주가 끝났으니 나머지 대기 작업들은 모두 취소합니다.
         cts.Cancel();
-        
+        cts.Dispose();
+
+        // 3. 누가 이겼는지(어떤 이벤트가 발생했는지)에 따라 결과 처리
+        bool isDiscarded = false;
+
+        switch (winnerIndex)
+        {
+            case 0: // 버리기 성공
+                CardManager.Instance.ThrowAwaySelectedCard().Forget();
+                isDiscarded = true;
+                break;
+            case 1: // 취소 버튼
+            case 2: // UI 닫힘
+            case 3: // 전투 종료
+                CardManager.Instance.ReturnSelectedCard();
+                isDiscarded = false;
+                break;
+        }
+
         CardManager.Instance.ChangeDiscard(false);
-        return discarded;
+        return isDiscarded;
+        //var task1 = UniTask.Create(async () =>
+        //{
+        //    await InGameButtonManager.Instance.DiscardButton.OnClickAsync(cts.Token);
+        //    CardManager.Instance.ThrowAwaySelectedCard().Forget();
+        //    discarded = true;
+        //});
+        //var task2 = UniTask.Create(async () =>
+        //{
+        //    await InGameButtonManager.Instance.DiscardCancelButton.OnClickAsync(cts.Token);
+        //    CardManager.Instance.ReturnSelectedCard();
+        //    discarded = false;
+        //});
+        //var task3 = UniTask.Create(async () =>
+        //{
+        //    await UniTask.WaitUntil(() => !InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf, cancellationToken: cts.Token);
+        //    CardManager.Instance.ReturnSelectedCard();
+        //    discarded = false;
+        //});
+        //var task4 = UniTask.Create(async () =>
+        //{
+        //    // 버리는 와중에 전투가 끝나면(전투 bool이 변경되면) 초기화
+        //    //await UniTask.WaitUntil(() => !TurnManager.Instance.InBattle, cancellationToken: cts.Token);
+        //    await TurnManager.Instance.InBattle.Where(inBattle => !inBattle).ToUniTask(cancellationToken: cts.Token);
+        //    CardManager.Instance.ReturnSelectedCard();
+        //    discarded = false;
+        //});
+        //await UniTask.WhenAny(task1, task2, task3, task4);
+        //cts.Cancel();
+        
+        //CardManager.Instance.ChangeDiscard(false);
+        //return discarded;
 
     }
 
@@ -491,26 +664,53 @@ public class CardAbility
     async UniTask<bool> ConditionRemoveAB(Card card)
     {
         card.MoveTransform(new PRS(Vector3.zero, Quaternion.identity, CardUtils.CardScale * 0.8f), true, CardUtils.CardAlignmentDelay);
-        bool removed = false;
+        //bool removed = false;
         InGameButtonManager.Instance.DiscardBtnInvert(false);
         CardManager.Instance.ChangeRemove(true);
         CancellationTokenSource cts = new();
-        var task1 = UniTask.Create(async () =>
-        {
-            await InGameButtonManager.Instance.DiscardButton.OnClickAsync(cts.Token);
-            //CardManager.Instance.ThrowAwaySelectedCard().Forget();        // 제거하는 코드로 변경
-            removed = true;
-        });
-        var task2 = UniTask.Create(async () =>
-        {
-            await InGameButtonManager.Instance.DiscardCancelButton.OnClickAsync(cts.Token);
-            CardManager.Instance.ReturnSelectedCard();
-            removed = false;
-        });
-        await UniTask.WhenAny(task1, task2);
+        int winnerIndex = await UniTask.WhenAny(
+            InGameButtonManager.Instance.DiscardButton.OnClickAsync(cts.Token),
+            InGameButtonManager.Instance.DiscardCancelButton.OnClickAsync(cts.Token)
+         );
+
+        // 3. 한 쪽이 결정됐으니 나머지 대기 취소 및 정리
         cts.Cancel();
+        cts.Dispose();
+
+        bool isRemoved = false;
+
+        // 4. 결과에 따른 후속 처리
+        if (winnerIndex == 0) // 제거 버튼 클릭 시
+        {
+            // 여기서 실제로 카드를 제거하는 로직을 호출하세요. (예: CardManager.Instance.RemoveSelectedCard().Forget();)
+            isRemoved = true;
+        }
+        else // 취소 버튼 클릭 시
+        {
+            CardManager.Instance.ReturnSelectedCard();
+            isRemoved = false;
+        }
+
+        // 5. UI 상태 원복
         CardManager.Instance.ChangeRemove(false);
-        return removed;
+
+        return isRemoved;
+        //var task1 = UniTask.Create(async () =>
+        //{
+        //    await InGameButtonManager.Instance.DiscardButton.OnClickAsync(cts.Token);
+        //    //CardManager.Instance.ThrowAwaySelectedCard().Forget();        // 제거하는 코드로 변경
+        //    removed = true;
+        //});
+        //var task2 = UniTask.Create(async () =>
+        //{
+        //    await InGameButtonManager.Instance.DiscardCancelButton.OnClickAsync(cts.Token);
+        //    CardManager.Instance.ReturnSelectedCard();
+        //    removed = false;
+        //});
+        //await UniTask.WhenAny(task1, task2);
+        //cts.Cancel();
+        //CardManager.Instance.ChangeRemove(false);
+        //return removed;
     }
 
     void ReduceHpAB(Card card)

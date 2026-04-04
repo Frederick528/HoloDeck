@@ -49,6 +49,7 @@ public class CardData
     //public int EnhancedDraw;
     public int Discard;
     public int Remove;
+    public int Hp;
     //public float CardUseDelay;
     public int Price;
     [TextArea(1, 5)]
@@ -75,6 +76,7 @@ public class CardData
             Draw = Draw,
             Discard = Discard,
             Remove = Remove,
+            Hp = Hp,
             //CardUseDelay = CardUseDelay,
             Price = Price,
             Descript = Descript,

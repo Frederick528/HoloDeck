@@ -469,7 +469,7 @@ public class MapManager : MonoBehaviour
 
         if (/*!StopMove*/TurnManager.Instance.InBattle.Value)
             await TurnManager.Instance.EndBattle();
-        await _settingMap.MoveStage(PrevStage);
+        await _settingMap.MoveStage(PrevStage, true);
 
         if (CurrStage.cleared)
             canMove = true;
@@ -480,7 +480,7 @@ public class MapManager : MonoBehaviour
         if (stage == null) return;
         if (/*!StopMove*/TurnManager.Instance.InBattle.Value)
             await TurnManager.Instance.EndBattle();
-        await _settingMap.MoveStage(stage);
+        await _settingMap.MoveStage(stage, true);
 
         if (CurrStage.cleared)
             canMove = true;
@@ -490,7 +490,7 @@ public class MapManager : MonoBehaviour
     {
         if (TurnManager.Instance.InBattle.Value)
             await TurnManager.Instance.EndBattle();
-        await _settingMap.MoveStage(_settingMap.Maps[CreateMapCnt - 1]);
+        await _settingMap.MoveStage(_settingMap.Maps[CreateMapCnt - 1], true);
 
         if (CurrStage.cleared)
             canMove = true;

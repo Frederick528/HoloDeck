@@ -1148,24 +1148,6 @@ MonoBehaviour:
     rot: {x: 0, y: 0, z: 0, w: 0}
     scale: {x: 0, y: 0, z: 0}
   CardOrder: {fileID: 0}
-  DefaultData:
-    Name: 
-    ID: 0
-    Cost: 0
-    Damage: 0
-    Shield: 0
-    Count: 0
-    Draw: 0
-    Discard: 0
-    Remove: 0
-    Price: 0
-    Descript: 
-    Sprite: {fileID: 0}
-    Effect: {fileID: 0}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
-    CardTag: 0
-    CardRarity: 0
   Desc: 
   ID: 0
   Block: 0

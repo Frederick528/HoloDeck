@@ -19,6 +19,7 @@ public class InGameUIManager : MonoBehaviour
     {
         InGame = 0,
         Battle = 1,
+        ActionCard = 2,
         //RewardBox = 10,
         CardReward = 11,        // ESC
         ItemReward = 12,        // ESC
@@ -190,7 +191,7 @@ public class InGameUIManager : MonoBehaviour
         PassiveTransform = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "PassiveItem");
         ActiveTransform = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "ActiveItemButton");
         //PotionTransform = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "PotionItem");
-        PotionTransform = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "ActionCard");
+        PotionTransform = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.ActionCard), "ActionCard");
 
         _statusWindow = FindTransform.ContinueFindChildUIByName(Canvas(CanvasName.InGame), "Status");
         _statusImg[0] = _statusWindow.Find("HPCircle").GetComponent<Image>();
@@ -369,6 +370,7 @@ public class InGameUIManager : MonoBehaviour
 
     public void SetActiveCanvas(CanvasName canvasName, bool state, int idx = -1)
     {
+        if (GameManager.Instance.GetIsEscPause()) return;
         if (!state)     // 꺼질 때
         {
             switch (canvasName)     // ESC 체크용. 각각 쓰기 귀찮아서 그냥 한 곳에 모음.
@@ -522,6 +524,7 @@ public class InGameUIManager : MonoBehaviour
 
     public async UniTaskVoid ShowStatus()
     {
+        if (GameManager.Instance.GetIsEscPause()) return;
         _showStatus = !_showStatus;
         float showPos = -985f;
         float hidePos = -1460f;

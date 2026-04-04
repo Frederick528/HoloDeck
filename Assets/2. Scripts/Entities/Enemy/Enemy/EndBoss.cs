@@ -54,12 +54,12 @@ public class EndBoss : Enemy
         //    _nextActText.text = repeat > 1 ? $"{value}*{repeat}" : value.ToString();
         //    //_nextPattern = func;
         //}
-        _nextPattern.Add(async () => await UniTask.Create(async () =>
+        _nextPattern.Add(async () => 
         {
             await UniTask.WaitForSeconds(delay/*, cancellationToken: TurnManager.Instance.CancelSource.Token*/);
             if (this.CurHP.Value > 0)
                 player.RemoveStatusEffect(player.GetRandomStatusEffect());
-        }));
+        });
         //_nextPattern = () => UniTask.Create(async () =>
         //{
         //    await UniTask.CompletedTask;

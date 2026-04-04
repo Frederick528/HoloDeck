@@ -440,7 +440,7 @@ public class SettingMap
         });
     }
 
-    public async UniTask MoveStage(Map stage)
+    public async UniTask MoveStage(Map stage, bool force = false)
     {
         if (_mapManager.StopMove)
             return;
@@ -499,7 +499,7 @@ public class SettingMap
         //InGameUIManager.Instance.MoveMap();
 
 
-        if (stage != _mapManager.CurrStage)
+        if (stage != _mapManager.CurrStage || force)
         {
             if (_mark != null)
             {

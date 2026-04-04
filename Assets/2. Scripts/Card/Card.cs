@@ -2,9 +2,12 @@
 using DG.Tweening;
 using System;
 using System.Text;
+using System.Threading;
 using TMPro;
 using UniRx;
 using UnityEngine;
+using System.Collections.Generic;
+
 
 //public struct CardData
 //{
@@ -52,7 +55,7 @@ public class Card : MonoBehaviour
     public Action ImmediatelyUseCard { get; private set; }
     public Action FailureBeforeUseCard { get; private set; }
 
-    public Func<UniTask<bool>?> UseConditions { get; private set; }
+    public List<Func<UniTask<bool>>> UseConditions { get; private set; }
 
     //public Action<Card> CardAction { get; private set; }
     //public Action CardAction { get; private set; }
@@ -189,7 +192,7 @@ public class Card : MonoBehaviour
         this.CardTask = cardTask;
     }
 
-    public void SetUseConditions(Func<UniTask<bool>?> condition)
+    public void SetUseConditions(List<Func<UniTask<bool>>> condition)
     {
         this.UseConditions = condition;
     }
@@ -197,11 +200,22 @@ public class Card : MonoBehaviour
     public async UniTask<bool> CheckUseConditions()
     {
         //CardAbility.SetCardAbility(this);
-        if (UseConditions == null)
+        if (UseConditions == null || UseConditions.Count == 0)
         {
             return true;
         }
-        return await UseConditions().Value;
+
+        foreach (var task in UseConditions)
+        {
+            if (task == null) continue;
+
+            // 실행 후 결과 확인
+            var result = await task();
+
+            // 하나라도 실패하면 즉시 false 반환
+            if (!result) return false;
+        }
+        return true;
     }
 
     public async UniTask UseTask()
@@ -243,25 +257,37 @@ public class Card : MonoBehaviour
         //{
         if (DefaultData.Damage != 0)
         {
-            Data.Damage = DefaultData.Damage + InGameManager.Instance.Player.AttackPower.Value;
-            if (Data.Damage < 0) { Data.Damage = 0; }
+            Data.Damage = Mathf.Max(0, DefaultData.Damage + InGameManager.Instance.Player.AttackPower.Value);
         }
         if (DefaultData.Shield != 0)
         {
-            Data.Shield = DefaultData.Shield + InGameManager.Instance.Player.DefensePower.Value;
-            if (Data.Shield < 0) { Data.Shield = 0; }
+            Data.Shield = Mathf.Max(0, DefaultData.Shield + InGameManager.Instance.Player.DefensePower.Value);
         }
+
         Data.Count = DefaultData.Count + 0;
         Data.Draw = DefaultData.Draw + 0;
         Data.Discard = DefaultData.Discard + 0;
+
+        string GetColorValue(int current, int original)
+        {
+            if (current > original)
+                // 차분한 딥 그린 (성장/버프 느낌)
+                return $"<color=#4CAF50>{current}</color>";
+            else if (current < original)
+                // 묵직한 다크 레드 (상처/디버프 느낌)
+                return $"<color=#B71C1C>{current}</color>";
+            else                         // 동일: 검정색 (기본 색상이 검정이라면 태그를 빼도 됩니다)
+                return $"{current}";
+        }
         
         StringBuilder sb = new StringBuilder(DefaultData.Descript);
-        sb.Replace("{Damage}", Data.Damage.ToString());
-        sb.Replace("{Shield}", Data.Shield.ToString());
-        sb.Replace("{Count}", Data.Count.ToString());
-        sb.Replace("{Draw}", Data.Draw.ToString());
-        sb.Replace("{Discard}", Data.Discard.ToString());
-        sb.Replace("{Remove}", Data.Remove.ToString());
+        sb.Replace("{Damage}", GetColorValue(Data.Damage, DefaultData.Damage));
+        sb.Replace("{Shield}", GetColorValue(Data.Shield, DefaultData.Shield));
+        sb.Replace("{Count}", GetColorValue(Data.Count, DefaultData.Count));
+        sb.Replace("{Draw}", GetColorValue(Data.Draw, DefaultData.Draw));
+        sb.Replace("{Discard}", GetColorValue(Data.Discard, DefaultData.Discard));
+        sb.Replace("{Remove}", GetColorValue(Data.Remove, DefaultData.Remove));
+        sb.Replace("{Hp}", GetColorValue(Data.Hp, DefaultData.Hp));
         Desc = sb.ToString();
         
         if (DefaultData.Cost == -1)
@@ -358,38 +384,45 @@ public class Card : MonoBehaviour
         }
     }
 
-    public async UniTask TaskMoveTransform(PRS prs, bool battleCancel, float dotweenTime = 0)
+    public async UniTask TaskMoveTransform(PRS prs, CancellationToken cancellationToken, float dotweenTime = 0, Ease ease = Ease.OutQuad)
     {
-        if (battleCancel)
-        {
-            //AutoSyncTr(dotweenTime).Forget();           // 그냥 여기서 켰다가 밑에서 꺼도 되지만, 그냥 함수 하나로 퉁치기
-            await UniTask.WhenAll(
-            //AutoSyncTr(dotweenTime),
-            transform.DOMove(prs.pos, dotweenTime).SetUpdate(true).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/,
-            transform.DORotateQuaternion(prs.rot, dotweenTime).SetUpdate(true).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/,
-            transform.DOScale(prs.scale, dotweenTime).SetUpdate(true).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/
+        //AutoSyncTr(dotweenTime).Forget();           // 그냥 여기서 켰다가 밑에서 꺼도 되지만, 그냥 함수 하나로 퉁치기
+        await UniTask.WhenAll(
+        //AutoSyncTr(dotweenTime),
+            transform.DOMove(prs.pos, dotweenTime).SetUpdate(true).SetEase(ease).WithCancellation(cancellationToken)/*.SuppressCancellationThrow()*/,
+            transform.DORotateQuaternion(prs.rot, dotweenTime).SetUpdate(true).SetEase(ease).WithCancellation(cancellationToken)/*.SuppressCancellationThrow()*/,
+            transform.DOScale(prs.scale, dotweenTime).SetUpdate(true).SetEase(ease).WithCancellation(cancellationToken)/*.SuppressCancellationThrow()*/
             );
-        }
-        else
-        {
-            await UniTask.WhenAll(
-            //AutoSyncTr(dotweenTime),
-            transform.DOMove(prs.pos, dotweenTime).SetUpdate(true).WithCancellation(this.GetCancellationTokenOnDestroy()),
-            transform.DORotateQuaternion(prs.rot, dotweenTime).SetUpdate(true).WithCancellation(this.GetCancellationTokenOnDestroy()),
-            transform.DOScale(prs.scale, dotweenTime).SetUpdate(true).WithCancellation(this.GetCancellationTokenOnDestroy())
-            );
-        }
+        //if (battleCancel)
+        //{
+        //    //AutoSyncTr(dotweenTime).Forget();           // 그냥 여기서 켰다가 밑에서 꺼도 되지만, 그냥 함수 하나로 퉁치기
+        //    await UniTask.WhenAll(
+        //    //AutoSyncTr(dotweenTime),
+        //    transform.DOMove(prs.pos, dotweenTime).SetUpdate(true).SetEase(ease).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/,
+        //    transform.DORotateQuaternion(prs.rot, dotweenTime).SetUpdate(true).SetEase(ease).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/,
+        //    transform.DOScale(prs.scale, dotweenTime).SetUpdate(true).SetEase(ease).WithCancellation(TurnManager.Instance.CancelSource.Token)/*.SuppressCancellationThrow()*/
+        //    );
+        //}
+        //else
+        //{
+        //    await UniTask.WhenAll(
+        //    //AutoSyncTr(dotweenTime),
+        //    transform.DOMove(prs.pos, dotweenTime).SetUpdate(true).SetEase(ease).WithCancellation(this.GetCancellationTokenOnDestroy()),
+        //    transform.DORotateQuaternion(prs.rot, dotweenTime).SetUpdate(true).SetEase(ease).WithCancellation(this.GetCancellationTokenOnDestroy()),
+        //    transform.DOScale(prs.scale, dotweenTime).SetUpdate(true).SetEase(ease).WithCancellation(this.GetCancellationTokenOnDestroy())
+        //    );
+        //}
     }
-    public void MoveTransform(PRS prs, bool useDotween = false, float dotweenTime = 0/*, bool ignoreTimeScale = false*/)
+    public void MoveTransform(PRS prs, bool useDotween = false, float dotweenTime = 0, Ease ease = Ease.OutQuad/*, bool ignoreTimeScale = false*/)
     {
         //Physics2D.SyncTransforms();
         //Physics2D.autoSyncTransforms = true;
         if (useDotween)
         {
             //AutoSyncTr(dotweenTime).Forget();
-            transform.DOMove(prs.pos, dotweenTime).SetUpdate(true);
-            transform.DORotateQuaternion(prs.rot, dotweenTime).SetUpdate(true);
-            transform.DOScale(prs.scale, dotweenTime).SetUpdate(true);
+            transform.DOMove(prs.pos, dotweenTime).SetUpdate(true).SetEase(ease);
+            transform.DORotateQuaternion(prs.rot, dotweenTime).SetUpdate(true).SetEase(ease);
+            transform.DOScale(prs.scale, dotweenTime).SetUpdate(true).SetEase(ease);
         }
         else
         {
@@ -514,7 +547,7 @@ public class Card : MonoBehaviour
 
     public async UniTask AfterCardAbility(bool endBattle = false)
     {
-        await TaskMoveTransform(new PRS(CardManager.Instance.CardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), false, CardUtils.ThrowAwayCardDelay);
+        await TaskMoveTransform(new PRS(CardManager.Instance.CardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), this.GetCancellationTokenOnDestroy(), CardUtils.ThrowAwayCardDelay);
 
         if (!endBattle)
         {

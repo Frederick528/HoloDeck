@@ -11,6 +11,10 @@ public class EffectManager : MonoBehaviour
     //public GameObject HealEffect;
     public ParticleSystem CurCardEffect { get; private set; }
 
+    Animator _animator;
+    ParticleSystem _particleSystem;
+    ParticleSystem.MainModule _particleMain;
+
     private void Awake()
     {
         Instance = Instance != null ? Instance : this;
@@ -22,11 +26,36 @@ public class EffectManager : MonoBehaviour
         if (CurCardEffect == null || prs == null) return;
         CurCardEffect.transform.SetPositionAndRotation(prs.pos, prs.rot);
         CurCardEffect.transform.localScale = prs.scale;
+        _animator = CurCardEffect.GetComponent<Animator>();
+        _particleSystem = CurCardEffect;
+        _particleMain = _particleSystem.main;
     }
 
     public ParticleSystem GetCurCardEffect()
     {
         return CurCardEffect;
+    }
+
+    public void SlowSppedEffect(Card card)
+    {
+        if (CurCardEffect != null)
+        {
+            if (card.Data.Count > 1 && !card.RepeatEffect)
+            {
+                _animator.speed = 0.1f;
+                _particleMain.simulationSpeed = 0.1f;
+            }
+        }
+    }
+
+    public void OriginSpeedEffect()
+    {
+        if (CurCardEffect != null)
+        {
+            _animator.speed = 1f;
+            _particleMain.simulationSpeed = 1f;
+            //particleSystem.Play(true);
+        }
     }
 
     public bool IsAlivingEffect()
@@ -71,13 +100,20 @@ public class EffectManager : MonoBehaviour
             //await DelayTask(0.5f);
             return;
         }
-        if (!isStart && !card.RepeatEffect)
+        if (!isStart)
         {
-            // 반복 카드인데 이펙트를 반복하지 않고, 첫 스타트도 아닌 경우, => 원본 이펙트에서 공격 타이밍만 받는다는 뜻
-            card.UseTimingReset();
-            await UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, cts);
-            card.UseTimingReset();
-            return;
+            if (!card.RepeatEffect)
+            {
+                // 반복 카드인데 이펙트를 반복하지 않고, 첫 스타트도 아닌 경우, => 원본 이펙트에서 공격 타이밍만 받는다는 뜻
+                card.UseTimingReset();
+                await UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, cts);
+                card.UseTimingReset();
+                return;
+            }
+            else
+            {
+                await UniTask.WaitForSeconds(CardUtils.NextCardUseDelay * 0.5f, cancellationToken: cts);
+            }
         }
         Vector3 originEffectAngle = card.Data.Effect.transform.eulerAngles;
         originEffectAngle.x -= 5;

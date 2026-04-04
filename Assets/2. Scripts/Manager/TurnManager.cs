@@ -262,6 +262,12 @@ public class TurnManager : MonoBehaviour
         // 적 턴이 끝나면 내 턴 시작.
         // 적 턴은 비동기함수 하나로 통침.
 
+        if (EnemyManager.Instance.NoEnemy)
+        {
+            EndBattle().Forget();
+            return;
+        }
+
         foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
         {
             enemy.TurnStatusEffect();

@@ -1,15 +1,16 @@
 ﻿using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using Random = UnityEngine.Random;
-using UnityEngine.UI;
-using DG.Tweening;
 using System.Linq;
+using System.Threading;
 using TMPro;
 using UniRx;
+using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class CardManager : MonoBehaviour
 {
@@ -86,21 +87,27 @@ public class CardManager : MonoBehaviour
 
     int _isDrawingCount = 0;
 
+    RectTransform[] _cachedDropZones;
+    (RectTransform rect, int? index) _hoveredZone;
+    (RectTransform rect, int? index) _lastHoveredZone; // 이전 프레임의 호버 상태 기억
+
+    CancellationTokenSource _moveCts;
+
 
     private void Awake()
     {
         Instance = Instance != null ? Instance : this;
-    }
-
-
-    private void Start()
-    {
         CardSpawnPoint = InGameManager.Instance.PlayerTr.Find("CardSpawnPoint");
         CardDummyTr = InGameManager.Instance.PlayerTr.Find("CardDummy");
         WatingCardTr = InGameManager.Instance.PlayerTr.Find("WatingCard");
         PlayingCardTr = InGameManager.Instance.PlayerTr.Find("PlayingCard");
         myCardLeft = InGameManager.Instance.PlayerTr.Find("MyCardLeft");
         myCardRight = InGameManager.Instance.PlayerTr.Find("MyCardRight");
+    }
+
+
+    private void Start()
+    {
         isUseCard.Subscribe((canUse) =>
         {
             if (SelectCard == null) return;
@@ -114,11 +121,13 @@ public class CardManager : MonoBehaviour
                 BattleManager.Instance.SetActiveArrowCursor(true, 0);
                 //PullCard();
                 SelectCard.transform.DOKill();        // 마우스 커서가 카드를 나갈 때 카드 크기가 원래대로 돌아가는 코드를 멈춰주는 함수.
-                SelectCard.transform.position = new Vector2(0, CardUtils.LargeCardPosY);
+                SelectCard.MoveTransform(new PRS(new(0, CardUtils.LargeCardPosY), SelectCard.transform.localRotation, SelectCard.transform.localScale), true, CardUtils.CardFastMoveDelay);
+                //SelectCard.transform.position = new Vector2(0, CardUtils.LargeCardPosY);
                 isSingleTarget = true;
             }
             else if (!canUse && isSingleTarget)
             {
+                CancelCardMoveTask();
                 BattleManager.Instance.SetActiveArrowCursor(false, 0);
                 isSingleTarget = false;
                 if (SelectCard != null)
@@ -127,6 +136,8 @@ public class CardManager : MonoBehaviour
                 }
             }
         }).AddTo(this);
+
+        _cachedDropZones = ItemManager.Instance.GetPotionRects();
     }
     public void RewardedCard()
     {
@@ -580,6 +591,7 @@ public class CardManager : MonoBehaviour
 
         InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.InGame, true);
         InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, true);
+        InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.ActionCard, true);
     }
     public void ReturnSelectedCard()
     {
@@ -789,7 +801,7 @@ public class CardManager : MonoBehaviour
         SetOriginOrder();
         CardAlignment();
 
-        await throwCard.TaskMoveTransform(new PRS(CardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), false, CardUtils.ThrowAwayCardDelay);
+        await throwCard.TaskMoveTransform(new PRS(CardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), throwCard.GetCancellationTokenOnDestroy(), CardUtils.ThrowAwayCardDelay);
 
         CardDummy.Add(throwCard);
         InGameUIManager.Instance.SetDummyCount();
@@ -1110,6 +1122,7 @@ public class CardManager : MonoBehaviour
 
         InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.InGame, false);
         //InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.Battle, false);
+        InGameUIManager.Instance.SetCanvasRaycast(InGameUIManager.CanvasName.ActionCard, false);
 
         Cursor.visible = false;
 
@@ -1148,6 +1161,7 @@ public class CardManager : MonoBehaviour
             }
             else                                               // 단일타격 카드이지만, 대상을 지정하지 않았을 경우
             {
+                CancelCardMoveTask();
                 ResetSetting();
                 PutDownCard(card).Forget();
             }
@@ -1168,7 +1182,7 @@ public class CardManager : MonoBehaviour
             return;
         card.CardOrder.SetMostFrontOrder(false);
         PullCard();
-        await card.TaskMoveTransform(card.OriginPRS, true, CardUtils.CardAlignmentDelay).SuppressCancellationThrow();
+        await card.TaskMoveTransform(card.OriginPRS, TurnManager.Instance.CancelSource.Token, CardUtils.CardAlignmentDelay).SuppressCancellationThrow();
         card.UnblockCard();
     }
 
@@ -1186,16 +1200,88 @@ public class CardManager : MonoBehaviour
 
         DetectCardArea();
 
-        if (isUseCard.Value && card.Data.CardTag != CardTag.SingleAttack)
+        CheckActionCard();
+
+        Vector2 tempPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        if (_hoveredZone.rect != null)
         {
-            Vector2 tempPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            card.transform.position = tempPos;
+            // 1. 방금 막 포션 구역에 들어왔을 때 (딱 한 번만 실행)
+            if (_lastHoveredZone != _hoveredZone)
+            {
+                card.DOKill();
+                card.MoveTransform(new PRS(_hoveredZone.rect.position, Quaternion.identity, CardUtils.CardScale * 0.3f), true, CardUtils.CardAlignmentDelay);
+                _lastHoveredZone = _hoveredZone;
+
+                PotionItem potion = ItemManager.Instance.GetPotionItems()[_hoveredZone.index.Value];
+
+                if (potion != null)
+                {
+                    potion.SetPreviewAugment("데미지를 3 증가시킵니다.");
+                    potion.OnPointerEnter(null);
+                }
+
+
+                if (card.Data.CardTag == CardTag.SingleAttack)
+                {
+                    CancelCardMoveTask();
+                    BattleManager.Instance.SetActiveArrowCursor(false, 0);
+                }
+                else
+                {
+                    Cursor.visible = true;
+                }
+
+            }
+            // 들어와 있는 상태라면 트윈을 더 호출하지 않고 트윈이 끝날 때까지 기다리거나 위치 고정
         }
-        else if (!isUseCard.Value)
+        else
         {
-            Vector2 tempPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            card.transform.position = tempPos;
+            // 2. 구역에서 나갔을 때 (딱 한 번만 실행)
+            if (_lastHoveredZone.rect != null)
+            {
+                card.DOKill();
+                PotionItem potion = ItemManager.Instance.GetPotionItems()[_lastHoveredZone.index.Value];
+
+                if (potion != null)
+                {
+                    potion.ClearPreviewAugment();
+                    potion.OnPointerExit(null);
+                }
+
+                _lastHoveredZone.rect = null;
+                _lastHoveredZone.index = null;
+
+
+                if (card.Data.CardTag == CardTag.SingleAttack)
+                {
+                    _moveCts = new();
+                    MoveToDefaultAndShowCursor(card, _moveCts.Token).Forget();
+                }
+                else
+                {
+                    Cursor.visible = false;
+                }
+            }
+            if (!isUseCard.Value || card.Data.CardTag != CardTag.SingleAttack)
+            {
+                card.transform.position = Vector3.Lerp(card.transform.position, tempPos, Time.deltaTime * 20f);
+                card.transform.localScale = Vector3.Lerp(card.transform.localScale, CardUtils.CardScale * 1.2f, Time.deltaTime * 7.5f);
+            }
+
         }
+        //else if ((/*isUseCard.Value && */card.Data.CardTag != CardTag.SingleAttack))
+        //{
+        //    card.DOKill();
+        //    card.MoveTransform(new PRS(tempPos, Quaternion.identity, CardUtils.CardScale * 1.2f), true, CardUtils.CardFastMoveDelay);
+        //    //card.transform.position = tempPos;
+        //}
+        //else if (!isUseCard.Value)
+        //{
+        //    card.DOKill();
+        //    card.MoveTransform(new PRS(tempPos, Quaternion.identity, CardUtils.CardScale * 1.2f), true, CardUtils.CardFastMoveDelay);
+        //    //card.transform.position = tempPos;
+        //}
     }
 
     void DetectCardArea()
@@ -1204,6 +1290,45 @@ public class CardManager : MonoBehaviour
         int layer = LayerMask.NameToLayer("UsedCardArea");
         isUseCard.Value = Array.Exists(hits, x => x.collider.gameObject.layer == layer);      // 카드 사용 범위에 있을 경우, isUseCard = true
 
+    }
+
+    void CheckActionCard()
+    {
+        if (_cachedDropZones == null) return;
+        _hoveredZone.rect = null;
+        _hoveredZone.index = null;
+        int i = 0;
+        foreach (var zone in _cachedDropZones)
+        {
+            // Raycast Target이 꺼져있어도 수학적으로 계산됨
+            if (RectTransformUtility.RectangleContainsScreenPoint(zone, Input.mousePosition, Camera.main))
+            {
+                _hoveredZone.rect = zone;
+                _hoveredZone.index = i;
+                return; // 찾았으면 루프 종료
+            }
+            i++;
+        }
+    }
+
+    public void CancelCardMoveTask()
+    {
+        _moveCts?.Cancel();
+        _moveCts?.Dispose();
+        _moveCts = null;
+    }
+
+    // 실제 이동 대기 및 커서 처리 함수
+    private async UniTaskVoid MoveToDefaultAndShowCursor(Card card, CancellationToken token)
+    {
+        await card.TaskMoveTransform(
+                new PRS(new(0, CardUtils.LargeCardPosY), Quaternion.identity, CardUtils.CardScale * 1.2f),
+                token,
+                CardUtils.CardFastMoveDelay * 3f,
+                Ease.InExpo
+            );
+
+        BattleManager.Instance.SetActiveArrowCursor(true, 0);
     }
 
     /// <summary>
@@ -1241,4 +1366,10 @@ public class CardManager : MonoBehaviour
     //    Cursor.visible = !isOn;
     //}
     #endregion
+
+    private void OnDestroy()
+    {
+        _moveCts?.Cancel();
+        _moveCts?.Dispose();
+    }
 }
