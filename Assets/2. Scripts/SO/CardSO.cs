@@ -6,10 +6,12 @@ using UnityEngine;
 public enum CardTag
 {
     SingleAttack,
-    MultiAttack,
-    SkillTargetMe,
-    SkillTargetEnemy,
-    SkillTargetTotal
+    AllAttack,
+    RandomAttack,
+    SkillTargetSelf,
+    SkillTargetSingle,
+    SkillTargetAll,
+    SkillTargetRandom
 }
 public enum CardRarity
 {
@@ -17,6 +19,15 @@ public enum CardRarity
     Rare,
     Epic,
     Legendary
+}
+
+[Serializable]
+public struct SpecialTagData
+{
+    public string Tag;              // 효과 이름 (예: ATKUp)
+    public string Type;   // 종류 (예: TurnDuration)
+    public string Amount;            // 값 (예: 5, x)
+    public string Duration;         // 지속시간 (예: 3, -1)
 }
 //public struct CardData
 //{
@@ -49,7 +60,7 @@ public class CardData
     //public int EnhancedDraw;
     public int Discard;
     public int Remove;
-    public int Hp;
+    public int HP;
     //public float CardUseDelay;
     public int Price;
     [TextArea(1, 5)]
@@ -58,8 +69,8 @@ public class CardData
     //public string EnhancedDescript;
     public Sprite Sprite;
     public GameObject Effect;
-    public bool IsSimpleAB;
-    public bool HasSimpleCondition;
+    public List<SpecialTagData> SpecialTags = new();
+    public bool HasCondition;
     public CardTag CardTag;
     public CardRarity CardRarity;
 
@@ -76,14 +87,14 @@ public class CardData
             Draw = Draw,
             Discard = Discard,
             Remove = Remove,
-            Hp = Hp,
+            HP = HP,
             //CardUseDelay = CardUseDelay,
             Price = Price,
             Descript = Descript,
             Sprite = Sprite,
             Effect = Effect,
-            IsSimpleAB = IsSimpleAB,
-            HasSimpleCondition = HasSimpleCondition,
+            SpecialTags = SpecialTags,
+            HasCondition = HasCondition,
             CardTag = CardTag,
             CardRarity = CardRarity
         };

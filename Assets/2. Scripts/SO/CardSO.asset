@@ -70,14 +70,14 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 10
     Descript: "\uB2E8\uC77C \uB370\uBBF8\uC9C0 {Damage}, \uD134 \uCCAB\uCE74\uB4DC\uB85C
       \uC0AC\uC6A9\uC2DC \uCF54\uC2A4\uD2B8 0\uC73C\uB85C \uAC10\uC18C"
     Sprite: {fileID: 21300000, guid: 2fe03326281e0bd4193a8b2c6d41c332, type: 3}
     Effect: {fileID: 2715471840370901047, guid: df9374346b76e444dbbb2b019de4da25, type: 3}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
+    SpecialTags: []
+    HasCondition: 0
     CardTag: 0
     CardRarity: 0
   - Name: "\uC804\uAD11\uC11D\uD654"
@@ -89,13 +89,13 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 10
     Descript: "\uB2E8\uC77C \uB300\uBBF8\uC9C0 {Damage}"
     Sprite: {fileID: 21300000, guid: ec3fa358adba88c449853d5c20b67db0, type: 3}
     Effect: {fileID: 2965222256817593503, guid: a164e676dbbd6e54587237e619372c98, type: 3}
-    IsSimpleAB: 1
-    HasSimpleCondition: 0
+    SpecialTags: []
+    HasCondition: 0
     CardTag: 0
     CardRarity: 0
   - Name: "\uAE09\uC18C\uACF5\uACA9"
@@ -107,13 +107,17 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 10
     Descript: "\uB2E8\uC77C \uB300\uBBF8\uC9C0 {Damage}, \uCDE8\uC57D 2\uD134 \uBD80\uC5EC"
     Sprite: {fileID: 21300000, guid: 9887926c8bf3db840998abaf10f44ab9, type: 3}
     Effect: {fileID: 8974203713140315807, guid: 709b0bd6b0b625249a98409dd7a87343, type: 3}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
+    SpecialTags:
+    - Tag: Vulnerable
+      Type: NoAmountTurnDuration
+      Amount: 1
+      Duration: 2
+    HasCondition: 0
     CardTag: 0
     CardRarity: 0
   - Name: "\uAF2C\uB9AC \uD718\uB450\uB974\uAE30"
@@ -125,14 +129,14 @@ MonoBehaviour:
     Draw: 0
     Discard: 1
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 10
     Descript: "\uD328 {Discard}\uC7A5 \uBC84\uB9AC\uACE0 \uC0AC\uC6A9, \uB2E8\uC77C
       \uB300\uBBF8\uC9C0 {Damage}"
     Sprite: {fileID: 21300000, guid: 1dd6f43b667f45b428ba420c20adcc12, type: 3}
     Effect: {fileID: 0}
-    IsSimpleAB: 1
-    HasSimpleCondition: 1
+    SpecialTags: []
+    HasCondition: 1
     CardTag: 0
     CardRarity: 0
   - Name: "\uB0A0\uB835\uD55C \uC5F0\uACA9"
@@ -144,15 +148,15 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 10
     Descript: "\uB2E8\uC77C \uB300\uBBF8\uC9C0 {Damage} + \uC774\uBC88\uD134\uC5D0
       \uC0AC\uC6A9\uD55C \uACF5\uACA9\uCE74\uB4DC 1\uC7A5\uB2F9 \uB300\uBBF8\uC9C0
       +3"
     Sprite: {fileID: 21300000, guid: a9cc5251dfe3aa24ca8a954346ae682a, type: 3}
     Effect: {fileID: 6424583148328831481, guid: d2ffbc8b168cdf74a9dbb7c6c1cfdf2f, type: 3}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
+    SpecialTags: []
+    HasCondition: 0
     CardTag: 0
     CardRarity: 0
   - Name: "\uC0C1\uCC98 \uB367\uB0B4\uAE30"
@@ -164,15 +168,19 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 10
     Descript: "\uB2E8\uC77C \uB300\uBBF8\uC9C0 {Damage} + \uC801\uC5D0\uAC8C \uAC78\uB9B0
       \uBAA8\uB4E0 \uB514\uBC84\uD504(\uCDE8\uC57D, \uC57D\uD654 \uB4F1)\uC758 \uC9C0\uC18D
       \uC2DC\uAC04 +1\uD134"
     Sprite: {fileID: 21300000, guid: 2fb01aa7f95a2d745a4952ea9e239a6a, type: 3}
     Effect: {fileID: 0}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
+    SpecialTags:
+    - Tag: ChangeAllDebuffValue
+      Type: AddDuration
+      Amount: 
+      Duration: 1
+    HasCondition: 0
     CardTag: 0
     CardRarity: 0
   - Name: "\uBB34\uBAA8\uD55C \uB3CC\uC9C4"
@@ -184,13 +192,13 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: -2
+    HP: -2
     Price: 10
-    Descript: "\uAD11\uC5ED \uB300\uBBF8\uC9C0 {Damage} + \uCCB4\uB825 {Hp} \uAC10\uC18C"
+    Descript: "\uAD11\uC5ED \uB300\uBBF8\uC9C0 {Damage} + \uCCB4\uB825 {HP} \uAC10\uC18C"
     Sprite: {fileID: 21300000, guid: cbf49c380404e2e438effc24a6de08be, type: 3}
     Effect: {fileID: 1289543790355709915, guid: b99922c2f59b1a542bdd06ae8bee47ae, type: 3}
-    IsSimpleAB: 1
-    HasSimpleCondition: 1
+    SpecialTags: []
+    HasCondition: 1
     CardTag: 1
     CardRarity: 0
   - Name: "\uC0B4\uAE30"
@@ -202,14 +210,18 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 10
     Descript: "\uAD11\uC5ED \uB300\uBBF8\uC9C0 {Damage} + \uBAA8\uB4E0 \uC801\uC5D0\uAC8C
       \uC57D\uD654 1\uD134 \uBD80\uC5EC"
     Sprite: {fileID: 21300000, guid: 3c4ab3de5a908f140ba285fce66e9dc6, type: 3}
     Effect: {fileID: 6823302871133167919, guid: 3138a83bedbd6ad4481ba0b061da2eb6, type: 3}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
+    SpecialTags:
+    - Tag: Weaking
+      Type: NoAmountTurnDuration
+      Amount: 1
+      Duration: 1
+    HasCondition: 0
     CardTag: 1
     CardRarity: 0
   - Name: "\uC804\uD22C\uAD11"
@@ -221,13 +233,13 @@ MonoBehaviour:
     Draw: 1
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 10
     Descript: "\uB2E8\uC77C \uB300\uBBF8\uC9C0 {Damage} + \uB4DC\uB85C\uC6B0 {Draw}"
     Sprite: {fileID: 21300000, guid: 06c8570774996724a9c95b55769c9b2a, type: 3}
     Effect: {fileID: 1171201465392465800, guid: 4aa9f30a28a77224ba84b2a2c334c71b, type: 3}
-    IsSimpleAB: 1
-    HasSimpleCondition: 0
+    SpecialTags: []
+    HasCondition: 0
     CardTag: 0
     CardRarity: 0
   - Name: "\uBD88\uC548\uC815\uD55C \uC57C\uC131"
@@ -239,15 +251,19 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 10
     Descript: "2\uD134 \uB3D9\uC548 \uACF5\uACA9\uB825 +2, \uB9E4\uD134 \uCCB4\uB825\uC744
       2\uC529 \uC783\uC2B5\uB2C8\uB2E4"
     Sprite: {fileID: 21300000, guid: 26f2ab3a1cff5814a81421d49b6b6ae4, type: 3}
     Effect: {fileID: 0}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
-    CardTag: 2
+    SpecialTags:
+    - Tag: Wildness
+      Type: NoAmountTurnDuration
+      Amount: 1
+      Duration: 2
+    HasCondition: 0
+    CardTag: 3
     CardRarity: 0
   - Name: "\uC19F\uAD6C\uCE58\uB294 \uC544\uB4DC\uB808\uB0A0\uB9B0"
     ID: 110
@@ -258,15 +274,15 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 10
     Descript: "\uC774\uBC88 \uD134\uC5D0 \uACF5\uACA9\uCE74\uB4DC\uB97C 3\uC7A5 \uC774\uC0C1
       \uC0AC\uC6A9\uC2DC, \uBC29\uC5B4\uB3C4 {Shield}"
     Sprite: {fileID: 21300000, guid: 9a1b6067a00f6124aad1bbf0ad0dd4c3, type: 3}
     Effect: {fileID: 0}
-    IsSimpleAB: 0
-    HasSimpleCondition: 1
-    CardTag: 2
+    SpecialTags: []
+    HasCondition: 1
+    CardTag: 3
     CardRarity: 0
   - Name: "\uC0AC\uB0E5\uAC10 \uD3EC\uCC29"
     ID: 111
@@ -277,15 +293,15 @@ MonoBehaviour:
     Draw: 2
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 10
     Descript: "\uB4DC\uB85C\uC6B0 {Draw}, \uBF51\uC740 \uCE74\uB4DC\uAC00 \uACF5\uACA9\uCE74\uB4DC\uC77C
       \uC2DC, \uADF8 \uCE74\uB4DC \uB300\uBBF8\uC9C0 +2"
     Sprite: {fileID: 21300000, guid: 9bafe66ebcb87eb42b83a4ac6a302c6c, type: 3}
     Effect: {fileID: 0}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
-    CardTag: 2
+    SpecialTags: []
+    HasCondition: 0
+    CardTag: 3
     CardRarity: 0
   - Name: "\uC0DD\uC874\uBCF8\uB2A5"
     ID: 112
@@ -296,14 +312,14 @@ MonoBehaviour:
     Draw: 1
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 10
     Descript: "\uBC29\uC5B4\uB3C4 {Shield} + \uB4DC\uB85C\uC6B0 {Draw}"
     Sprite: {fileID: 21300000, guid: 192a7154e56b4204ca7d985bf7264184, type: 3}
     Effect: {fileID: 0}
-    IsSimpleAB: 1
-    HasSimpleCondition: 0
-    CardTag: 2
+    SpecialTags: []
+    HasCondition: 0
+    CardTag: 3
     CardRarity: 0
   - Name: "\uC790\uAC00\uD68C\uBCF5"
     ID: 113
@@ -314,15 +330,15 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 4
+    HP: 4
     Price: 10
     Descript: "\uD53C\uD574\uB97C \uC785\uC9C0 \uC54A\uACE0 \uC0C1\uB300\uD134 \uC885\uB8CC
-      \uC2DC, \uCCB4\uB825 {Hp} \uD68C\uBCF5"
+      \uC2DC, \uCCB4\uB825 {HP} \uD68C\uBCF5"
     Sprite: {fileID: 21300000, guid: 736454ebaff08954da474ddc3fd74eef, type: 3}
     Effect: {fileID: 0}
-    IsSimpleAB: 0
-    HasSimpleCondition: 1
-    CardTag: 2
+    SpecialTags: []
+    HasCondition: 1
+    CardTag: 3
     CardRarity: 0
   - Name: "\uB450\uAEBC\uC6B4 \uAC00\uC8FD"
     ID: 114
@@ -333,14 +349,14 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 10
     Descript: "\uBC29\uC5B4\uB3C4 {Shield}"
     Sprite: {fileID: 21300000, guid: ce56e527ec609ca4eab2eb8e7be92d67, type: 3}
     Effect: {fileID: 0}
-    IsSimpleAB: 1
-    HasSimpleCondition: 0
-    CardTag: 2
+    SpecialTags: []
+    HasCondition: 0
+    CardTag: 3
     CardRarity: 0
   - Name: "\uB9C8\uBB34\uB9AC \uBCF4\uB108\uC2A4"
     ID: 500
@@ -351,15 +367,15 @@ MonoBehaviour:
     Draw: 1
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 30
     Descript: "\uB2E8\uC77C \uB300\uBBF8\uC9C0 {Damage} + \uC774 \uCE74\uB4DC\uB85C
       \uC801 \uCC98\uCE58\uC2DC \uCF54\uC2A4\uD2B8 1 \uD68C\uBCF5 + \uB4DC\uB85C\uC6B0
       {Draw}"
     Sprite: {fileID: 21300000, guid: 1af68fbd7731b134ea0553872e907aa3, type: 3}
     Effect: {fileID: 3153472991145048103, guid: 3407e378c048bb5438424b28c7740b48, type: 3}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
+    SpecialTags: []
+    HasCondition: 0
     CardTag: 0
     CardRarity: 1
   - Name: "\uB09C\uD0C0"
@@ -371,15 +387,19 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 30
     Descript: "\uCCB4\uB825\uC744 x \uB9CC\uD07C \uC783\uC2B5\uB2C8\uB2E4 + \uBB34\uC791\uC704
       \uC801\uC5D0\uAC8C \uB300\uBBF8\uC9C0 {Damage} * x\uBC88 \uB9CC\uD07C \uBC1C\uB3D9"
     Sprite: {fileID: 21300000, guid: 1d99c4fd3ce689f42826b1f60c90e4cf, type: 3}
     Effect: {fileID: 689667626583958020, guid: 1336648bc1d8baf46a4515860950c9d4, type: 3}
-    IsSimpleAB: 0
-    HasSimpleCondition: 1
-    CardTag: 0
+    SpecialTags:
+    - Tag: XValue
+      Type: Count
+      Amount: 
+      Duration: 
+    HasCondition: 1
+    CardTag: 2
     CardRarity: 1
   - Name: "\uD3EC\uC2DD\uC790"
     ID: 502
@@ -390,14 +410,14 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 30
     Descript: "\uB300\uBBF8\uC9C0 {Damage} + \uC774 \uCE74\uB4DC\uB85C \uC801\uC5D0\uAC8C
       \uC900 \uD53C\uD574\uC758 50% \uD68C\uBCF5 (\uBC29\uC5B4\uB3C4 \uC81C\uC678)"
     Sprite: {fileID: 21300000, guid: d265aa72caa20a34d831e5eb3a8d5b19, type: 3}
     Effect: {fileID: 7131401307255788800, guid: 4d9a3b35b3bc07649b697df7fb497b6d, type: 3}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
+    SpecialTags: []
+    HasCondition: 0
     CardTag: 0
     CardRarity: 1
   - Name: "\uAC11\uC637 \uCC22\uAE30"
@@ -409,14 +429,14 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 30
     Descript: "\uB300\uBBF8\uC9C0 {Damage}* {Count} , \uC774 \uCE74\uB4DC\uB85C \uC801\uC758
       \uBC29\uC5B4\uB3C4\uB97C \uAE68\uB728\uB9AC\uBA74 \uCF54\uC2A4\uD2B8 1 \uD68C\uBCF5"
     Sprite: {fileID: 21300000, guid: 868620d0bdbd0b347af3a5e4e5ec63f6, type: 3}
     Effect: {fileID: 7155335147208632822, guid: 97c43495f80a3244fad1301dfafbe252, type: 3}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
+    SpecialTags: []
+    HasCondition: 0
     CardTag: 0
     CardRarity: 1
   - Name: "\uBC18\uC0AC\uC2E0\uACBD"
@@ -428,16 +448,16 @@ MonoBehaviour:
     Draw: 0
     Discard: 2
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 30
     Descript: "\uD328 {Discard}\uC7A5 \uBC84\uB9AC\uACE0 \uC0AC\uC6A9, \uC774\uBC88
       \uD134\uC5D0 \uB2E4\uC74C\uC5D0 \uC0AC\uC6A9\uD558\uB294 \uACF5\uACA9 \uCE74\uB4DC\uAC00
       2\uBC88 \uBC1C\uB3D9"
     Sprite: {fileID: 21300000, guid: 9fb184d4b52295843bd0fdea96884828, type: 3}
     Effect: {fileID: 0}
-    IsSimpleAB: 0
-    HasSimpleCondition: 1
-    CardTag: 2
+    SpecialTags: []
+    HasCondition: 1
+    CardTag: 3
     CardRarity: 1
   - Name: "\uCD9C\uD608 \uC720\uBC1C"
     ID: 800
@@ -448,15 +468,15 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 50
     Descript: "\uB300\uBBF8\uC9C0\uB97C \uC904 \uB54C\uB9C8\uB2E4 \uCD94\uAC00 \uD53C\uD574
       5\uB97C \uC8FC\uB294 \uC9C0\uC18D \uB514\uBC84\uD504"
     Sprite: {fileID: 21300000, guid: b4745b742eb68b3478bf3dd85b13df53, type: 3}
     Effect: {fileID: 358637981425055526, guid: 8eb503696b886e04faff8fc0f480d473, type: 3}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
-    CardTag: 3
+    SpecialTags: []
+    HasCondition: 0
+    CardTag: 4
     CardRarity: 2
   - Name: "\uAE68\uC5B4\uB098\uB294 \uC57C\uC131"
     ID: 801
@@ -467,14 +487,18 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 50
     Descript: "x\uB9CC\uD07C \uACF5\uACA9\uB825 \uC0C1\uC2B9"
     Sprite: {fileID: 21300000, guid: 01fd68ac417cf43428c50fd6c99e7f2a, type: 3}
     Effect: {fileID: 1171201465392465800, guid: d0c28677f730d7c47b974e49c230a877, type: 3}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
-    CardTag: 2
+    SpecialTags:
+    - Tag: ATKUp
+      Type: InfiniteDuration
+      Amount: x
+      Duration: -1
+    HasCondition: 0
+    CardTag: 3
     CardRarity: 2
   - Name: "\uC9C8\uC8FC"
     ID: 802
@@ -485,15 +509,15 @@ MonoBehaviour:
     Draw: 2
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 50
     Descript: "\uB4DC\uB85C\uC6B0 {Draw} + \uC774\uBC88\uD134 0\uCF54\uC2A4\uD2B8
       \uACF5\uACA9 \uCE74\uB4DC \uB370\uBBF8\uC9C0 +7"
     Sprite: {fileID: 21300000, guid: fb6dbe365dafff74992a52f77a4e4981, type: 3}
     Effect: {fileID: 8974203713140315807, guid: c0e63d685aed24d47aef3d8a8063c162, type: 3}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
-    CardTag: 2
+    SpecialTags: []
+    HasCondition: 0
+    CardTag: 3
     CardRarity: 2
   - Name: "\uBB34\uB9AC \uC0AC\uB0E5"
     ID: 803
@@ -504,15 +528,15 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 50
     Descript: "\uB371\uC5D0\uC11C \uBB34\uC791\uC704 \uACF5\uACA9\uCE74\uB4DC 2\uC7A5
       \uD328\uB85C \uAC00\uC838\uC634"
     Sprite: {fileID: 21300000, guid: ef9849d2fd189ff49a0e38ae4903ce39, type: 3}
     Effect: {fileID: 0}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
-    CardTag: 2
+    SpecialTags: []
+    HasCondition: 0
+    CardTag: 3
     CardRarity: 2
   - Name: "\uC57C\uAC04 \uC2DC\uB825"
     ID: 804
@@ -523,14 +547,14 @@ MonoBehaviour:
     Draw: 2
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 50
     Descript: "\uB4DC\uB85C\uC6B0 {Draw}"
     Sprite: {fileID: 21300000, guid: f43ebf26118644745a55daf89e9a32e7, type: 3}
     Effect: {fileID: 0}
-    IsSimpleAB: 1
-    HasSimpleCondition: 0
-    CardTag: 2
+    SpecialTags: []
+    HasCondition: 0
+    CardTag: 3
     CardRarity: 2
   - Name: "\uC2E0\uC131\uD55C \uC57C\uC218\uC758 \uC77C\uACA9"
     ID: 1000
@@ -541,15 +565,15 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 100
     Descript: "\uAD11\uC5ED \uB300\uBBF8\uC9C0 {Damage} + \uC774\uBC88 \uC804\uD22C\uC5D0\uC11C
       \uC0AC\uC6A9\uD55C 0\uCF54\uC2A4\uD2B8 \uCE74\uB4DC \uD55C \uC7A5\uB2F9 \uB300\uBBF8\uC9C0
       + 5"
     Sprite: {fileID: 21300000, guid: 4a647fe6ea630804a85e519e27d79ffc, type: 3}
     Effect: {fileID: 7478731271839673279, guid: 4d3c8045dd8857a4b8d34c2361c61045, type: 3}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
+    SpecialTags: []
+    HasCondition: 0
     CardTag: 1
     CardRarity: 3
   - Name: "\uC6B0\uB450\uBA38\uB9AC\uC758 \uBA85\uB839"
@@ -561,14 +585,14 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 100
     Descript: "\uC774\uBC88 \uD134 \uBAA8\uB4E0 \uCE74\uB4DC \uCF54\uC2A4\uD2B8 0"
     Sprite: {fileID: 21300000, guid: c801c0dc89ff0784e82379ff8a8220b3, type: 3}
     Effect: {fileID: 8378648546881499446, guid: 867c572a5be680d42a042d2349f10143, type: 3}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
-    CardTag: 2
+    SpecialTags: []
+    HasCondition: 0
+    CardTag: 3
     CardRarity: 3
   - Name: "\uB9CC\uC6D4\uC758 \uD3EC\uD6A8"
     ID: 1002
@@ -579,15 +603,15 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 100
     Descript: "\uBAA8\uB4E0 \uC801\uC5D0\uAC8C \uCDE8\uC57D\uACFC \uC57D\uD654 \uB514\uBC84\uD504
       3\uD134 \uBD80\uC5EC + \uCF54\uC2A4\uD2B8 2\uD68C\uBCF5"
     Sprite: {fileID: 21300000, guid: 7f5a64f3be581704596283bf2e1d7c4f, type: 3}
     Effect: {fileID: 0}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
-    CardTag: 4
+    SpecialTags: []
+    HasCondition: 0
+    CardTag: 5
     CardRarity: 3
   - Name: "\uC644\uC804 \uC57C\uC218\uD654"
     ID: 1003
@@ -598,14 +622,14 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 100
     Descript: "\uACF5\uACA9\uB825 + 9"
     Sprite: {fileID: 21300000, guid: c5672a6cec3611c4f8fa4253870cd301, type: 3}
     Effect: {fileID: 0}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
-    CardTag: 2
+    SpecialTags: []
+    HasCondition: 0
+    CardTag: 3
     CardRarity: 3
   - Name: "\uCD5C\uC0C1\uC704 \uD3EC\uC2DD\uC790"
     ID: 1004
@@ -616,15 +640,15 @@ MonoBehaviour:
     Draw: 0
     Discard: 0
     Remove: 0
-    Hp: 0
+    HP: 0
     Price: 100
     Descript: "\uC801\uC5D0\uAC8C \uC900 \uD53C\uD574\uC758 20% \uD68C\uBCF5\uD558\uB294
       \uC9C0\uC18D \uBC84\uD504"
     Sprite: {fileID: 21300000, guid: d9f479b28fa175a46b704095c1105e5f, type: 3}
     Effect: {fileID: 0}
-    IsSimpleAB: 0
-    HasSimpleCondition: 0
-    CardTag: 2
+    SpecialTags: []
+    HasCondition: 0
+    CardTag: 3
     CardRarity: 3
   ClassifyCardRarityID:
   - {x: 100, y: 114}

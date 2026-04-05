@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -10,13 +10,13 @@ public class PotionItem : UseItem
     public int BtnIdx = -1;
 
     [Header("Condition Settings")]
-    private string _conditionText = "Á¶°Ç ¾øÀ½";
+    private string _conditionText = "ì¡°ê±´ ì—†ìŒ";
     private int _currentProgress = 0;
     private int _maxProgress = 0;
 
     [Header("Enhancement Settings")]
     private List<string> _appliedAugments = new List<string>();
-    private string _nextPreviewAugment = ""; // °­È­¸¦ ÇÏ°Ô µÇ¸é ¾òÀ» È¿°ú (ÃÊ·Ï»ö Ç¥½Ã)
+    private string _nextPreviewAugment = ""; // ê°•í™”ë¥¼ í•˜ê²Œ ë˜ë©´ ì–»ì„ íš¨ê³¼ (ì´ˆë¡ìƒ‰ í‘œì‹œ)
 
     private static readonly StringBuilder _sb = new StringBuilder(256);
 
@@ -52,7 +52,7 @@ public class PotionItem : UseItem
     }
 
     /// <summary>
-    /// ½Ç½Ã°£À¸·Î ÁøÇàµµ³ª °­È­ ³»¿ëÀÌ ¹Ù²ğ ¶§ È£ÃâÇÏ¿© Desc¸¦ °»½ÅÇÕ´Ï´Ù.
+    /// ì‹¤ì‹œê°„ìœ¼ë¡œ ì§„í–‰ë„ë‚˜ ê°•í™” ë‚´ìš©ì´ ë°”ë€” ë•Œ í˜¸ì¶œí•˜ì—¬ Descë¥¼ ê°±ì‹ í•©ë‹ˆë‹¤.
     /// </summary>
     public void UpdateDescription()
     {
@@ -60,16 +60,16 @@ public class PotionItem : UseItem
         if (string.IsNullOrWhiteSpace(_defaultData.Descript)) return;
         _sb.Clear();
 
-        // 1. Á¶°Ç ¹× ÁøÇàµµ [1/4]
-        _sb.Append("<b>[Á¶°Ç]</b> ").Append(_conditionText);
-        if (!_conditionText.Contains("Á¶°Ç ¾øÀ½"))
+        // 1. ì¡°ê±´ ë° ì§„í–‰ë„ [1/4]
+        _sb.Append("<b>[ì¡°ê±´]</b> ").Append(_conditionText);
+        if (!_conditionText.Contains("ì¡°ê±´ ì—†ìŒ"))
         {
             _sb.Append(" <color=#FFD700>[").Append(_currentProgress).Append("/").Append(_maxProgress).Append("]</color>\n");
         }
 
-        _sb.Append("<size=80%>\n</size>"); // ÁÙ°£°İ »ìÂ¦ ¶ç¿ì±â
+        _sb.Append("<size=80%>\n</size>"); // ì¤„ê°„ê²© ì‚´ì§ ë„ìš°ê¸°
 
-        // 2. ±âº» È¿°ú (±âÁ¸ µ¥ÀÌÅÍ ±â¹İ)
+        // 2. ê¸°ë³¸ íš¨ê³¼ (ê¸°ì¡´ ë°ì´í„° ê¸°ë°˜)
         string baseDesc = _defaultData.Descript;
         baseDesc = baseDesc.Replace("{Damage}", Damage.ToString())
                            .Replace("{Shield}", Shield.ToString())
@@ -77,41 +77,41 @@ public class PotionItem : UseItem
                            .Replace("{Heal}", Heal.ToString())
                            .Replace("{Duration}", Duration.ToString());
 
-        _sb.Append("<b>[È¿°ú]</b> ").Append(baseDesc).Append("\n");
+        _sb.Append("<b>[íš¨ê³¼]</b> ").Append(baseDesc).Append("\n");
 
-        // 3. °­È­ ³»¿ë ³ª¿­
+        // 3. ê°•í™” ë‚´ìš© ë‚˜ì—´
         if (_appliedAugments.Count > 0 || !string.IsNullOrEmpty(_nextPreviewAugment))
         {
             _sb.Append("<size=80%>\n</size>");
-            _sb.Append("<b>[°­È­ ³»¿ª]</b>\n");
+            _sb.Append("<b>[ê°•í™” ë‚´ì—­]</b>\n");
 
-            // ÇöÀç Àû¿ëµÈ °­È­µé
+            // í˜„ì¬ ì ìš©ëœ ê°•í™”ë“¤
             foreach (var aug in _appliedAugments)
             {
                 _sb.Append("- ").Append(aug).Append("\n");
             }
 
-            // ´ÙÀ½ °­È­ ¿¹Á¤ È¿°ú (ÃÊ·Ï»ö °­Á¶)
+            // ë‹¤ìŒ ê°•í™” ì˜ˆì • íš¨ê³¼ (ì´ˆë¡ìƒ‰ ê°•ì¡°)
             if (!string.IsNullOrEmpty(_nextPreviewAugment))
             {
-                _sb.Append("- <color=#00FF00>").Append(_nextPreviewAugment).Append(" (¿¹Á¤)</color>");
+                _sb.Append("- <color=#00FF00>").Append(_nextPreviewAugment).Append(" (ì˜ˆì •)</color>");
             }
         }
 
         Desc = _sb.ToString();
 
-        // ¼³¸íÃ¢ÀÌ ¿­·ÁÀÖ´Ù¸é ½Ç½Ã°£À¸·Î Å©±â Á¶Á¤
+        // ì„¤ëª…ì°½ì´ ì—´ë ¤ìˆë‹¤ë©´ ì‹¤ì‹œê°„ìœ¼ë¡œ í¬ê¸° ì¡°ì •
         AdjustBackgroundSize();
     }
 
     /// <summary>
-    /// ¿ÜºÎ¿¡¼­ Æ÷¼ÇÀÇ Á¶°Ç ÁøÇàµµ¸¦ ¿Ã¸± ¶§ È£ÃâÇÕ´Ï´Ù.
+    /// ì™¸ë¶€ì—ì„œ í¬ì…˜ì˜ ì¡°ê±´ ì§„í–‰ë„ë¥¼ ì˜¬ë¦´ ë•Œ í˜¸ì¶œí•©ë‹ˆë‹¤.
     /// </summary>
     public void AddProgress(int value)
     {
         _currentProgress = Mathf.Clamp(_currentProgress + value, 0, _maxProgress);
 
-        // Á¶°Ç ´Ş¼º ¿©ºÎ Ã¼Å©
+        // ì¡°ê±´ ë‹¬ì„± ì—¬ë¶€ ì²´í¬
         if (_currentProgress >= _maxProgress)
         {
             ItemManager.Instance.HavePotionItem[BtnIdx] = true;
@@ -125,8 +125,8 @@ public class PotionItem : UseItem
     }
 
     /// <summary>
-    /// [´Ü¼ø È®ÀÎ¿ë] °­È­¸¦ ÇÏ¸é ¾î¶² È¿°ú°¡ Ãß°¡µÉÁö ÃÊ·Ï»ö ¿¹°í ¹®±¸¸¸ ¼³Á¤ÇÕ´Ï´Ù.
-    /// ¸®½ºÆ®¿¡ Ãß°¡µÇÁö ¾ÊÀ¸¹Ç·Î ¾È½ÉÇÏ°í È£ÃâÇÏ¼¼¿ä.
+    /// [ë‹¨ìˆœ í™•ì¸ìš©] ê°•í™”ë¥¼ í•˜ë©´ ì–´ë–¤ íš¨ê³¼ê°€ ì¶”ê°€ë ì§€ ì´ˆë¡ìƒ‰ ì˜ˆê³  ë¬¸êµ¬ë§Œ ì„¤ì •í•©ë‹ˆë‹¤.
+    /// ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€ë˜ì§€ ì•Šìœ¼ë¯€ë¡œ ì•ˆì‹¬í•˜ê³  í˜¸ì¶œí•˜ì„¸ìš”.
     /// </summary>
     public void SetPreviewAugment(string previewText)
     {
@@ -135,7 +135,7 @@ public class PotionItem : UseItem
     }
 
     /// <summary>
-    /// [´Ü¼ø È®ÀÎ¿ë] ÃÊ·Ï»ö ¿¹°í ¹®±¸¸¦ Áö¿ó´Ï´Ù. (¿¹: °­È­ Ã¢¿¡¼­ ¸¶¿ì½º¸¦ ¶ÃÀ» ¶§)
+    /// [ë‹¨ìˆœ í™•ì¸ìš©] ì´ˆë¡ìƒ‰ ì˜ˆê³  ë¬¸êµ¬ë¥¼ ì§€ì›ë‹ˆë‹¤. (ì˜ˆ: ê°•í™” ì°½ì—ì„œ ë§ˆìš°ìŠ¤ë¥¼ ë—ì„ ë•Œ)
     /// </summary>
     public void ClearPreviewAugment()
     {
@@ -144,16 +144,16 @@ public class PotionItem : UseItem
     }
 
     /// <summary>
-    /// [½ÇÁ¦ Àû¿ë¿ë] ÇöÀç ÇÁ¸®ºä ÁßÀÎ °­È­ ³»¿ëÀ» 'ÁøÂ¥ ³»¿ª'À¸·Î ¿Å±â°í ÇÁ¸®ºä¸¦ ÃÊ±âÈ­ÇÕ´Ï´Ù.
+    /// [ì‹¤ì œ ì ìš©ìš©] í˜„ì¬ í”„ë¦¬ë·° ì¤‘ì¸ ê°•í™” ë‚´ìš©ì„ 'ì§„ì§œ ë‚´ì—­'ìœ¼ë¡œ ì˜®ê¸°ê³  í”„ë¦¬ë·°ë¥¼ ì´ˆê¸°í™”í•©ë‹ˆë‹¤.
     /// </summary>
     public void ConfirmAugment()
     {
         if (string.IsNullOrEmpty(_nextPreviewAugment)) return;
 
-        // ÇÁ¸®ºä ³»¿ëÀ» ÁøÂ¥ ³»¿ª¿¡ Ãß°¡
+        // í”„ë¦¬ë·° ë‚´ìš©ì„ ì§„ì§œ ë‚´ì—­ì— ì¶”ê°€
         _appliedAugments.Add(_nextPreviewAugment);
 
-        // ÇÁ¸®ºä °ª ÃÊ±âÈ­ (ÀÌÁ¦ ÃÊ·Ï»ö ±Û¾¾´Â »ç¶óÁö°í Èò»ö ³»¿ªÀ¸·Î ¿Ã¶ó°¨)
+        // í”„ë¦¬ë·° ê°’ ì´ˆê¸°í™” (ì´ì œ ì´ˆë¡ìƒ‰ ê¸€ì”¨ëŠ” ì‚¬ë¼ì§€ê³  í°ìƒ‰ ë‚´ì—­ìœ¼ë¡œ ì˜¬ë¼ê°)
         _nextPreviewAugment = "";
 
         UpdateDescription();
@@ -170,7 +170,7 @@ public class PotionItem : UseItem
     }
     public async override UniTask UseTask()
     {
-        if (ItemCanUse == ItemCanUse.OnlyBattle && !TurnManager.Instance.InBattle.Value)        // »ç¿ë Áß ¹èÆ²ÀÌ ³¡³ª´Â °æ¿ì
+        if (ItemCanUse == ItemCanUse.OnlyBattle && !TurnManager.Instance.InBattle.Value)        // ì‚¬ìš© ì¤‘ ë°°í‹€ì´ ëë‚˜ëŠ” ê²½ìš°
         {
             ItemManager.Instance.HavePotionItem[BtnIdx] = true;
             return;

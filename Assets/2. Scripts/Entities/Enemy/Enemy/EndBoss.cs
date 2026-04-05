@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,7 +42,7 @@ public class EndBoss : Enemy
 
     protected override void SpecialPattern(int value, bool addPattern = false, float delay = 0.3F)
     {
-        _specialDesc = "ÇØ´ç ÀûÀº ´ç½ÅÀÇ »óÅÂ È¿°ú Áß 1°³¸¦ ·£´ıÇÏ°Ô Á¦°Å ÇÒ ¿¹Á¤ÀÔ´Ï´Ù";
+        _specialDesc = "í•´ë‹¹ ì ì€ ë‹¹ì‹ ì˜ ìƒíƒœ íš¨ê³¼ ì¤‘ 1ê°œë¥¼ ëœë¤í•˜ê²Œ ì œê±° í•  ì˜ˆì •ì…ë‹ˆë‹¤";
 
         //if (addPattern)
         //{

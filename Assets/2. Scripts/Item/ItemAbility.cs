@@ -202,11 +202,11 @@ public class ItemAbility
     //}
     //async UniTask ContinuousMultiAttackAB(Card card, float delay)
     //{
-    //    await MultiAttackAB(card);
+    //    await AllAttackAB(card);
     //    for (int j = 1; j < card.Data.Count; ++j)
     //    {
     //        await DelayTask(delay);
-    //        await MultiAttackAB(card);
+    //        await AllAttackAB(card);
     //    }
     //}
     async UniTask DrawAB()

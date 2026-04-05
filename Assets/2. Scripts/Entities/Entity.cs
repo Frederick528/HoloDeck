@@ -705,8 +705,10 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
             switch (statusEffect.type)
             {
                 case StatusEffectType.InfiniteDuration:
+                case StatusEffectType.NoAmountInfiniteDuration:
                 case StatusEffectType.UseAmountInfiniteDuration:
                 case StatusEffectType.Perpetual:
+                case StatusEffectType.NoAmountPerpetual:
                 case StatusEffectType.UseAmountPerpetual:
                     if (info.getAmount - amount > 0)
                     {
@@ -823,6 +825,14 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
             case StatusEffectType.UseAmountPerpetual:
                 duration = -1;
                 break;
+            case StatusEffectType.NoAmountInfiniteDuration:
+            case StatusEffectType.NoAmountPerpetual:
+                amount = 1;
+                duration = -1;
+                break;
+            case StatusEffectType.NoAmountTurnDuration:
+                amount = 1;
+                break;
         }
 
         if (statusEffect.type != StatusEffectType.Information)
@@ -872,6 +882,15 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                         CurStatusEffectDict[statusEffect.effect][statusEffect.type] = (info.amount + amount, duration);
                         ChangeStatusEffectDesc(statusEffect);
                         break;
+
+                    case StatusEffectType.NoAmountInfiniteDuration:
+                    case StatusEffectType.NoAmountPerpetual:
+                        break;
+                    case StatusEffectType.NoAmountTurnDuration:
+                        CurStatusEffectDict[statusEffect.effect][statusEffect.type] = (amount, info.duration + duration);
+                        ChangeStatusEffectDesc(statusEffect);
+                        break;
+
                     case StatusEffectType.DurationIsAmount:
                         CurStatusEffectDict[statusEffect.effect][statusEffect.type] = (info.amount + amount, info.duration + duration);
                         ChangeStatusEffectDesc(statusEffect);
@@ -880,10 +899,10 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                     //    CurStatusEffectDict[statusEffect.effect][statusEffect.type] = (amount, duration);
                     //    ChangeStatusEffectDesc(statusEffect);
                     //    break;
-                    default:
+                    default:        // 턴 상태효과는 값은 더해되, 지속시간은 더 짧은 걸 따라가서 밸런스를 맞춤.
                         CurStatusEffectDict[statusEffect.effect][statusEffect.type] = (
                                     info.amount + amount,
-                                    info.duration > duration ? info.duration : duration
+                                    info.duration < duration ? info.duration : duration
                                     );
                         ChangeStatusEffectDesc(statusEffect);
                         break;
@@ -1058,11 +1077,14 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         {
             StatusEffectType.InfiniteDuration,          
             StatusEffectType.TurnDuration,              
+            StatusEffectType.NoAmountInfiniteDuration,              
+            StatusEffectType.NoAmountTurnDuration,              
             StatusEffectType.DurationIsAmount,          
             StatusEffectType.UseAmountInfiniteDuration, 
             StatusEffectType.UseAmountTurnDuration,     
             //StatusEffectType.Perpetual,                 
-            //StatusEffectType.UseAmountPerpetual,        
+            //StatusEffectType.NoAmountPerpetual,
+            //StatusEffectType.UseAmountPerpetual,
             //StatusEffectType.Information
         };
         foreach (var dict in CurStatusEffectDict)
@@ -1168,6 +1190,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         switch (statusEffect.Value.type)
         {
             case StatusEffectType.Perpetual:
+            case StatusEffectType.NoAmountPerpetual:
             case StatusEffectType.UseAmountPerpetual:
                 return;
             
@@ -1241,10 +1264,18 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                 StatusEffectText[StatusEffectTextIdx[statusEffect]].duration.text = "∞";
                 StatusEffectDescText[StatusEffectTextIdx[statusEffect]].duration.text = $"LV: <color=green>{info.amount}</color> / 지속시간: <color=yellow>∞</color>";
                 break;
+            case StatusEffectType.NoAmountInfiniteDuration:
+                StatusEffectText[StatusEffectTextIdx[statusEffect]].duration.text = "∞";
+                StatusEffectDescText[StatusEffectTextIdx[statusEffect]].duration.text = $"지속시간: <color=yellow>∞</color>";
+                break;
             case StatusEffectType.Perpetual:
             case StatusEffectType.UseAmountPerpetual:
                 StatusEffectText[StatusEffectTextIdx[statusEffect]].duration.text = null;
                 StatusEffectDescText[StatusEffectTextIdx[statusEffect]].duration.text = $"LV: <color=green>{info.amount}</color>"/* / 지속시간: <color=yellow>∞</color>"*/;
+                break;
+            case StatusEffectType.NoAmountPerpetual:
+                StatusEffectText[StatusEffectTextIdx[statusEffect]].duration.text = null;
+                StatusEffectDescText[StatusEffectTextIdx[statusEffect]].duration.text = "";
                 break;
             case StatusEffectType.Information:
                 StatusEffectDescText[StatusEffectTextIdx[statusEffect]].duration.text = ChangeInformationLV(statusEffect, info);
@@ -1268,7 +1299,15 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                 {
                     color = "red";
                 }
-                StatusEffectDescText[StatusEffectTextIdx[statusEffect]].duration.text = $"LV: <color=green>{info.amount}</color> / 지속시간: <color={color}>{info.duration}</color>";
+
+                if (statusEffect.type == StatusEffectType.NoAmountTurnDuration)
+                {
+                    StatusEffectDescText[StatusEffectTextIdx[statusEffect]].duration.text = $"지속시간: <color={color}>{info.duration}</color>";
+                }
+                else
+                {
+                    StatusEffectDescText[StatusEffectTextIdx[statusEffect]].duration.text = $"LV: <color=green>{info.amount}</color> / 지속시간: <color={color}>{info.duration}</color>";
+                }
                 break;
         }
         //if (statusEffect.Item2 == StatusEffectType.InfiniteDuration || statusEffect.Item2 == StatusEffectType.UseAmountInfiniteDuration)
@@ -1348,6 +1387,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
             //    StatusEffectDescText[StatusEffectTextIdx[statusEffect]][0].text += " <size=10><color=yellow>(전투가 종료되면 사라집니다.)</color></size>";
             //    break;
             case StatusEffectType.Perpetual:
+            case StatusEffectType.NoAmountPerpetual:
             case StatusEffectType.UseAmountPerpetual:
                 StatusEffectDescText[StatusEffectTextIdx[statusEffect]].desc.text += " <size=10><color=red>(해당 상태 효과는 버프 제거로 사라지지 않습니다.)</color></size>";
                 break;
@@ -1426,6 +1466,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                         effectImage[0].color = _teal;
                         break;
                     default:
+                        effectImage[0].color = _red;
                         break;
                 }
                 TwoTextsAddList(StatusEffectText, effect.GetComponentsInChildren<TMP_Text>());
@@ -1461,6 +1502,8 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                 break;
             case StatusEffectType.InfiniteDuration:
             case StatusEffectType.TurnDuration:
+            case StatusEffectType.NoAmountInfiniteDuration:
+            case StatusEffectType.NoAmountTurnDuration:
             case StatusEffectType.DurationIsAmount:
             case StatusEffectType.UseAmountInfiniteDuration:
             case StatusEffectType.UseAmountTurnDuration:
@@ -1479,6 +1522,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                 }
                 break;
             case StatusEffectType.Perpetual:
+            case StatusEffectType.NoAmountPerpetual:
             case StatusEffectType.UseAmountPerpetual:
                 StatusEffectText[StatusEffectTextIdx[statusEffect]].amount.transform.parent.gameObject.SetActive(isOn);             // 체력바 하단 내용
                 if (isOn)
@@ -1573,12 +1617,17 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
 
         var typesToProcess = new List<StatusEffectType>
         {
+            
+
             //StatusEffectType.InfiniteDuration,
             StatusEffectType.TurnDuration,
             StatusEffectType.DurationIsAmount,
+            //StatusEffectType.NoAmountInfiniteDuration,
+            StatusEffectType.NoAmountTurnDuration,  
             //StatusEffectType.UseAmountInfiniteDuration,
             StatusEffectType.UseAmountTurnDuration,
             //StatusEffectType.Perpetual,
+            //StatusEffectType.NoAmountPerpetual,
             //StatusEffectType.UseAmountPerpetual,
             //StatusEffectType.Information
         };
@@ -1595,6 +1644,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                     switch (type)
                     {
                         case StatusEffectType.TurnDuration:
+                        case StatusEffectType.NoAmountTurnDuration:
                         case StatusEffectType.UseAmountTurnDuration:
                             ReduceStatusEffect((dict.Key, type));
                             break;

@@ -162,15 +162,65 @@ public class ReadSpreadSheet : MonoBehaviour
                 Draw = ConvertInt32(cells[6]),
                 Discard = ConvertInt32(cells[7]),
                 Remove = ConvertInt32(cells[8]),
-                Hp = ConvertInt32(cells[9]),
+                HP = ConvertInt32(cells[9]),
                 //data.CardUseDelay = ConvertSingle(cells[7]);
                 Price = ConvertInt32(cells[10]),
                 Descript = LineBreakStr(cells[11]),
-                IsSimpleAB = NullTrueBool(cells[12]),
-                HasSimpleCondition = NullFalseBool(cells[13]),
+                //SpecialTags = LineBreakStr(cells[12]),
+                HasCondition = NullFalseBool(cells[13]),
                 CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[14]),
                 CardRarity = (CardRarity)Enum.Parse(typeof(CardRarity), cells[15])
             };
+
+            string rawTags = cells[12].Trim();
+            if (!string.IsNullOrEmpty(rawTags))
+            {
+                string[] units = rawTags.Split(new[] { "//" }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string unit in units)
+                {
+                    string[] parts = unit.Trim().Split(':');
+                    if (parts.Length < 1) continue; // 데이터가 1보다 적으면 스킵
+
+                    data.SpecialTags.Add(new SpecialTagData
+                    {
+                        Tag = parts[0].Trim(),
+                        Type = parts.Length > 1 ? parts[1].Trim() : "",
+                        Amount = parts.Length > 2 ? parts[2].Trim() : "",
+                        Duration = parts.Length > 3 ? parts[3].Trim() : ""
+                    });
+                }
+            }
+            //string rawTags = cells[12].Trim();
+            //if (!string.IsNullOrEmpty(rawTags))
+            //{
+            //    // 1. "//" 로 각 효과 단위 분리
+            //    string[] units = rawTags.Split(new[] { "//" }, StringSplitOptions.RemoveEmptyEntries);
+
+            //    foreach (string unit in units)
+            //    {
+            //        string trimmedUnit = unit.Trim();
+            //        if (string.IsNullOrEmpty(trimmedUnit)) continue;
+
+            //        SpecialTagData tagData = new SpecialTagData();
+
+            //        // 2. ":" 로 태그와 값 분리
+            //        if (trimmedUnit.Contains(":"))
+            //        {
+            //            string[] parts = trimmedUnit.Split(':');
+            //            tagData.Tag = parts[0].Trim();
+            //            tagData.Value = parts[1].Trim();
+            //        }
+            //        else
+            //        {
+            //            // 만약 수치 없이 태그만 들어왔을 경우를 대비한 방어 코드
+            //            tagData.Tag = trimmedUnit;
+            //            tagData.Value = "0";
+            //        }
+
+            //        data.SpecialTags.Add(tagData);
+            //    }
+            //}
+
             data.Sprite = Array.Find(CardSO.CardSprites, x => x.name == data.ID.ToString());
             data.Effect = Array.Find(CardSO.CardEffects, x => x.name == data.ID.ToString());
             //try

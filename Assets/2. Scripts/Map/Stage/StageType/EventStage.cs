@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -62,7 +62,7 @@ public class EventStage : MonoBehaviour, IStage
         switch (rand)
         {
             case 0:
-                InGameUIManager.Instance.EventText.text = "¼ö¶ô ½Ã, ¸ÊÀ» ¹àÈü´Ï´Ù.\n°ÅÀý ½Ã, Ã¼·ÂÀ» 10 È¸º¹ÇÕ´Ï´Ù.";
+                InGameUIManager.Instance.EventText.text = "ìˆ˜ë½ ì‹œ, ë§µì„ ë°íž™ë‹ˆë‹¤.\nê±°ì ˆ ì‹œ, ì²´ë ¥ì„ 10 íšŒë³µí•©ë‹ˆë‹¤.";
                 SetEventButton(() =>
                 {
                     MapManager.Instance.ShowAllMap();
@@ -73,7 +73,7 @@ public class EventStage : MonoBehaviour, IStage
                 });
                 break;
             case 1:
-                InGameUIManager.Instance.EventText.text = "¼ö¶ô ½Ã, 10% È®·ü·Î ¿µ±¸ÀûÀ¸·Î °ø°Ý·ÂÀÌ 1 Áõ°¡ÇÕ´Ï´Ù.\n°ÅÀý ½Ã, ´ÙÀ½ ÀüÅõ±îÁö °ø°Ý·ÂÀÌ 2 Áõ°¡ÇÕ´Ï´Ù.";
+                InGameUIManager.Instance.EventText.text = "ìˆ˜ë½ ì‹œ, 10% í™•ë¥ ë¡œ ì˜êµ¬ì ìœ¼ë¡œ ê³µê²©ë ¥ì´ 1 ì¦ê°€í•©ë‹ˆë‹¤.\nê±°ì ˆ ì‹œ, ë‹¤ìŒ ì „íˆ¬ê¹Œì§€ ê³µê²©ë ¥ì´ 2 ì¦ê°€í•©ë‹ˆë‹¤.";
                 SetEventButton(() =>
                 {
                     if (Random.Range(0, 10) < 1)
@@ -85,7 +85,7 @@ public class EventStage : MonoBehaviour, IStage
                 });
                 break;
             case 2:
-                InGameUIManager.Instance.EventText.text = "¼ö¶ô ½Ã, ¸ÊÀ» ¹àÈü´Ï´Ù.\n°ÅÀý ½Ã, Ã¼·ÂÀ» 10 È¸º¹ÇÕ´Ï´Ù.";
+                InGameUIManager.Instance.EventText.text = "ìˆ˜ë½ ì‹œ, ë§µì„ ë°íž™ë‹ˆë‹¤.\nê±°ì ˆ ì‹œ, ì²´ë ¥ì„ 10 íšŒë³µí•©ë‹ˆë‹¤.";
                 SetEventButton(() =>
                 {
                     MapManager.Instance.ShowAllMap();
@@ -105,7 +105,7 @@ public class EventStage : MonoBehaviour, IStage
             case 107:
             case 108:
             case 109:
-                InGameUIManager.Instance.EventText.text = "¼ö¶ô ½Ã, Ã¼·ÂÀ» 999 È¸º¹ÇÕ´Ï´Ù.\n°ÅÀý ½Ã, ÇÇÇØ ¸é¿ª È¿°ú¸¦ ´ÙÀ½ ÀüÅõ±îÁö 3È¸ ¾ò½À´Ï´Ù.";
+                InGameUIManager.Instance.EventText.text = "ìˆ˜ë½ ì‹œ, ì²´ë ¥ì„ 999 íšŒë³µí•©ë‹ˆë‹¤.\nê±°ì ˆ ì‹œ, í”¼í•´ ë©´ì—­ íš¨ê³¼ë¥¼ ë‹¤ìŒ ì „íˆ¬ê¹Œì§€ 3íšŒ ì–»ìŠµë‹ˆë‹¤.";
                 SetEventButton(() =>
                 {
                     InGameManager.Instance.Player.Heal(999).Forget();

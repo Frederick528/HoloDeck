@@ -115,12 +115,14 @@ public class Card : MonoBehaviour
         switch (Data.CardTag)
         {
             case CardTag.SingleAttack:
-            case CardTag.MultiAttack:
+            case CardTag.AllAttack:
+            case CardTag.RandomAttack:
                 _tagText.text = "Attack";
                 break;
-            case CardTag.SkillTargetMe:
-            case CardTag.SkillTargetEnemy:
-            case CardTag.SkillTargetTotal:
+            case CardTag.SkillTargetSelf:
+            case CardTag.SkillTargetSingle:
+            case CardTag.SkillTargetAll:
+            case CardTag.SkillTargetRandom:
                 _tagText.text = "Skill";
                 break;
         }
@@ -223,6 +225,7 @@ public class Card : MonoBehaviour
         //CardAbility.SetCardAbility(this);   // checkUseConditions에서 받게 되면 이건 사용 안 할 예정
         //UniTask uniTask = UniTask.Create(() => CardTask);
         //await CardAbility.SetCardAbility(this);     // 다른 방식이 있는지 찾아봐야할 듯
+        if (CardTask == null) return;
         await CardTask();
         if (DefaultData.Damage != 0)
         {
@@ -287,7 +290,7 @@ public class Card : MonoBehaviour
         sb.Replace("{Draw}", GetColorValue(Data.Draw, DefaultData.Draw));
         sb.Replace("{Discard}", GetColorValue(Data.Discard, DefaultData.Discard));
         sb.Replace("{Remove}", GetColorValue(Data.Remove, DefaultData.Remove));
-        sb.Replace("{Hp}", GetColorValue(Data.Hp, DefaultData.Hp));
+        sb.Replace("{HP}", GetColorValue(Data.HP, DefaultData.HP));
         Desc = sb.ToString();
         
         if (DefaultData.Cost == -1)
@@ -484,7 +487,7 @@ public class Card : MonoBehaviour
     //                TargetEnemy.CheckIfDead(Data.Damage, count);
     //            }
     //            break;
-    //        case CardTag.MultiAttack:
+    //        case CardTag.AllAttack:
     //            foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
     //            {
     //                if (InGameManager.Instance.Player.GetStatusEffect(StatusEffect.UseCritical, out _))
@@ -522,7 +525,7 @@ public class Card : MonoBehaviour
             }
         }
 
-        if (Data.CardTag == CardTag.SingleAttack && TargetEnemy == null)
+        if ((Data.CardTag == CardTag.SingleAttack || Data.CardTag == CardTag.SkillTargetSingle) && TargetEnemy == null)
         {
             Target(null);
             return false;

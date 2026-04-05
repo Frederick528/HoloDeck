@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -68,7 +68,7 @@ public class Healer : Enemy
     //    int resistDamage;
     //    if (damage > _resistance)
     //    {
-    //        resistDamage = damage - _resistance;      // BeforeTakeDamage·Î ¾òÀ» _shield ¾ç¸¸Å­ »©¼­ °è»ê.
+    //        resistDamage = damage - _resistance;      // BeforeTakeDamageë¡œ ì–»ì„ _shield ì–‘ë§Œí¼ ë¹¼ì„œ ê³„ì‚°.
     //        print(resistDamage);
     //    }
     //    else
@@ -83,7 +83,7 @@ public class Healer : Enemy
     //    int resistDamage;
     //    if (damage > _resistance)
     //    {
-    //        resistDamage = damage - _resistance;      // BeforeTakeDamage·Î ¾òÀ» _shield ¾ç¸¸Å­ »©¼­ °è»ê.
+    //        resistDamage = damage - _resistance;      // BeforeTakeDamageë¡œ ì–»ì„ _shield ì–‘ë§Œí¼ ë¹¼ì„œ ê³„ì‚°.
     //    }
     //    else
     //    {

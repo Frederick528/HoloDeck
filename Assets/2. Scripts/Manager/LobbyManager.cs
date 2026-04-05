@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -127,7 +127,7 @@ public struct Upgrade
 }
 public class LobbyManager : MonoBehaviour
 {
-    public enum CanvasName      // ¼ø¼­°¡ Canvas ¼ø¼­¶û ÀÏÄ¡ÇØ¾ß ÇÔ.
+    public enum CanvasName      // ìˆœì„œê°€ Canvas ìˆœì„œë‘ ì¼ì¹˜í•´ì•¼ í•¨.
     {
         Main,
         PowerUP,
@@ -175,7 +175,7 @@ public class LobbyManager : MonoBehaviour
 
     public void SetActiveCanvas(CanvasName canvasName, bool state, int idx = -1)
     {
-        if (!state)     // ²¨Áú ¶§
+        if (!state)     // êº¼ì§ˆ ë•Œ
         {
             switch (canvasName)
             {
@@ -236,7 +236,7 @@ public class LobbyManager : MonoBehaviour
     }
     public void SelectCharacter(int idx)
     {
-        SetActiveCanvas(CanvasName.Character, false);       // ÀÌ°Å ¾È ÇØÁÖ¸é Ä³¸¯ÅÍ UI°¡ ÄÑÁ®ÀÖ´Â »óÅÂ¶ó°í ÆÇ´ÜÇÔ.
+        SetActiveCanvas(CanvasName.Character, false);       // ì´ê±° ì•ˆ í•´ì£¼ë©´ ìºë¦­í„° UIê°€ ì¼œì ¸ìˆëŠ” ìƒíƒœë¼ê³  íŒë‹¨í•¨.
         GameManager.Instance.PlayerInt = idx;
         ChangeScene(1);
     }

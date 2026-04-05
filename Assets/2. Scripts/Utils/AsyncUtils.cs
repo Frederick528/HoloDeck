@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System.Threading;
 using UniRx;
 using Unity.VisualScripting.Antlr3.Runtime;
@@ -13,7 +13,7 @@ public static class UniRxExtensions
         //    return UniTask.CompletedTask;
         //}
         return property
-            .Where(isTrue => isTrue) // "true°¡ µÇ´Â"
+            .Where(isTrue => isTrue) // "trueê°€ ë˜ëŠ”"
             .First()
             .ToUniTask(cancellationToken: token);
     }

@@ -1,4 +1,4 @@
-//using System.Collections;
+ï»¿//using System.Collections;
 //using System.Collections.Generic;
 //using Unity.VisualScripting;
 //using UnityEngine;
@@ -91,7 +91,7 @@
 //        loadedMaps.Add(room.GetComponent<Map>());
 //    }
 
-//    // ºó µ¥ÀÌÅÍ È¤Àº »èÁ¦µÈ ¹æÀÌ ÀÖÀ» °æ¿ì¸¦ À§ÇÑ ¿¹¿ÜÃ³¸®
+//    // ë¹ˆ ë°ì´í„° í˜¹ì€ ì‚­ì œëœ ë°©ì´ ìˆì„ ê²½ìš°ë¥¼ ìœ„í•œ ì˜ˆì™¸ì²˜ë¦¬
 //    public bool DoesMapExist(int x, int y, int z)
 //    {
 //        return loadedMaps.Find(item => item.array_Position.x == x && item.array_Position.y == y && item.array_Position.z == z) != null;
@@ -100,11 +100,11 @@
 //    //    
 //    public Map FindMap(int x, int y, int z)
 //    {
-//        // List.Find : item º¯¼ö Á¶°Ç¿¡ ¸Â´Â MapÀ» Ã£¾Æ ¹İÈ¯
+//        // List.Find : item ë³€ìˆ˜ ì¡°ê±´ì— ë§ëŠ” Mapì„ ì°¾ì•„ ë°˜í™˜
 //        return loadedMaps.Find(item => item.array_Position.x == x && item.array_Position.y == y && item.array_Position.z == z);
 //    }
 
-//    // ÇØ´ç Map¿¡¼­ Player°¡ ÀÖ´Â ¹æÀ» ¹İÈ¯
+//    // í•´ë‹¹ Mapì—ì„œ Playerê°€ ìˆëŠ” ë°©ì„ ë°˜í™˜
 //    public void OnPlayerEnterMap(Map room)
 //    {
 //        CameraFollow.Instance.currStage = room;

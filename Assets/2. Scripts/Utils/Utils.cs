@@ -48,10 +48,13 @@ public enum StatusEffectType
 {
     InfiniteDuration,                   // 무한 지속 (duration = -1), 버프 제거로만 삭제 가능
     TurnDuration,                       // 턴마다 지속시간 1 감소
+    NoAmountInfiniteDuration,           // 값 고정(1)인 상태로 무한 지속
+    NoAmountTurnDuration,               // 값 고정(1)인 상태로 턴마다 지속시간 1 감소
     DurationIsAmount,                   // 턴마다 지속시간이 1 감소되며, 이는 값을 의미하기도 함
     UseAmountInfiniteDuration,          // Amount 값이 사용되며, 값이 0이 되지 않는다면, 버프 제거로만 삭제 가능
     UseAmountTurnDuration,              // Amount 값이 사용되며, 턴마다 지속시간 1 감소
     Perpetual,                          // 영구적으로 적용. 버프제거로도 안 사라짐.
+    NoAmountPerpetual,                  // 값 고정(1)인 상태로 영구 적용
     UseAmountPerpetual,                 // Amount 값이 사용되며, 값이 0이 되지 않는다면, 영구적으로 적용.
     Information                         // 정보(~~을 준비 중) 표시용이며, 체력바 아래에 이미지가 표시 안 됨.
 }

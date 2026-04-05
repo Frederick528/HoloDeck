@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -62,8 +62,8 @@ public class GameManager : MonoBehaviour
             Instance = this;
             OutGameRootObj = transform.root.gameObject;
             IsAsyncLoadComplete = _curInGameAsyncLoad
-                                .Select(count => count == 0) // int¸¦ bool·Î º¯È¯
-                                .ToReadOnlyReactiveProperty(); // IObservable<bool>À» RP<bool>·Î º¯È¯
+                                .Select(count => count == 0) // intë¥¼ boolë¡œ ë³€í™˜
+                                .ToReadOnlyReactiveProperty(); // IObservable<bool>ì„ RP<bool>ë¡œ ë³€í™˜
             DontDestroyOnLoad(OutGameRootObj);
         }
         else
@@ -128,16 +128,16 @@ public class GameManager : MonoBehaviour
         }
 
         float targetAspectRatio = 16.0f / 9.0f;
-        // ÇöÀç È­¸éÀÇ ºñÀ²
+        // í˜„ì¬ í™”ë©´ì˜ ë¹„ìœ¨
         float windowAspectRatio = (float)width / (float)height;
 
-        // ¸ñÇ¥ ºñÀ²º¸´Ù È­¸éÀÌ °¡·Î·Î ´õ ³ĞÀº °æ¿ì (Pillarbox)
+        // ëª©í‘œ ë¹„ìœ¨ë³´ë‹¤ í™”ë©´ì´ ê°€ë¡œë¡œ ë” ë„“ì€ ê²½ìš° (Pillarbox)
         if (windowAspectRatio > targetAspectRatio)
         {
             float newWidth = targetAspectRatio / windowAspectRatio;
             cam.rect = new Rect((1f - newWidth) / 2f, 0, newWidth, 1f);
         }
-        // ¸ñÇ¥ ºñÀ²º¸´Ù È­¸éÀÌ ¼¼·Î·Î ´õ ±ä °æ¿ì (Letterbox)
+        // ëª©í‘œ ë¹„ìœ¨ë³´ë‹¤ í™”ë©´ì´ ì„¸ë¡œë¡œ ë” ê¸´ ê²½ìš° (Letterbox)
         else
         {
             float newHeight = windowAspectRatio / targetAspectRatio;
@@ -237,7 +237,7 @@ public class GameManager : MonoBehaviour
             }
         }
         Time.timeScale = pause ? 0 : 1;
-        //Physics2D.autoSyncTransforms = pause ? true : false;      // Á¤Áö»óÅÂ¿¡¼­ Ä«µå¸¦ »ç¿ëÇÏ´Â °æ¿ì¿¡´Â ÇÊ¿äÇÔ. ±Ùµ¥, Áö±İÀº µû·Î ÇÊ¿ä¾øÀ½.
+        //Physics2D.autoSyncTransforms = pause ? true : false;      // ì •ì§€ìƒíƒœì—ì„œ ì¹´ë“œë¥¼ ì‚¬ìš©í•˜ëŠ” ê²½ìš°ì—ëŠ” í•„ìš”í•¨. ê·¼ë°, ì§€ê¸ˆì€ ë”°ë¡œ í•„ìš”ì—†ìŒ.
     }
 
     //public void OnUI(bool isOn)
@@ -328,7 +328,7 @@ public class GameManager : MonoBehaviour
         {
             case 0:
                 DestroyAllInGameDontDestroyObjects();
-                NowChapterLV = idx;       // ·Îºñ
+                NowChapterLV = idx;       // ë¡œë¹„
                 await SceneManager.LoadSceneAsync(idx);
 
                 //SceneManager.LoadScene(idx);
@@ -347,7 +347,7 @@ public class GameManager : MonoBehaviour
                 break;
             default:
                 DestroyAllInGameDontDestroyObjects();
-                NowChapterLV = 0;       // ·Îºñ
+                NowChapterLV = 0;       // ë¡œë¹„
                 await SceneManager.LoadSceneAsync(0);
                 //SceneManager.LoadScene(0);
                 break;
@@ -364,7 +364,7 @@ public class GameManager : MonoBehaviour
             if (!await AllLoadAsync())
             {
                 DestroyAllInGameDontDestroyObjects();
-                NowChapterLV = 0;       // ·Îºñ
+                NowChapterLV = 0;       // ë¡œë¹„
                 await SceneManager.LoadSceneAsync(0);
             }
             await OutGameUIManager.Instance.FadeIn(0.75f);
@@ -468,7 +468,7 @@ public class GameManager : MonoBehaviour
                 break;
             default:
                 DestroyAllInGameDontDestroyObjects();
-                NowChapterLV = 0;       // ·Îºñ
+                NowChapterLV = 0;       // ë¡œë¹„
                 await SceneManager.LoadSceneAsync(0);
                 break;
         }

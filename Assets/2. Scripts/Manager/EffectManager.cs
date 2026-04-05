@@ -1,4 +1,5 @@
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
+using System;
 using System.Threading;
 using UniRx;
 using Unity.VisualScripting;
@@ -104,9 +105,12 @@ public class EffectManager : MonoBehaviour
         {
             if (!card.RepeatEffect)
             {
-                // �ݺ� ī���ε� ����Ʈ�� �ݺ����� �ʰ�, ù ��ŸƮ�� �ƴ� ���, => ���� ����Ʈ���� ���� Ÿ�ָ̹� �޴´ٴ� ��
+                // 반복 카드인데 이펙트를 반복하지 않고, 첫 스타트도 아닌 경우, => 원본 이펙트에서 공격 타이밍만 받는다는 뜻
                 card.UseTimingReset();
-                await UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, cts);
+                await UniTask.WhenAny(
+                    UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, cts),
+                    UniTask.WaitForSeconds(3f, cancellationToken: cts)
+                );
                 card.UseTimingReset();
                 return;
             }
@@ -120,44 +124,52 @@ public class EffectManager : MonoBehaviour
         Quaternion effectAngle = Quaternion.Euler(originEffectAngle);
         switch (card.Data.CardTag)
         {
+            // 1. 적 하나를 타겟팅하는 모든 경우 (공격, 스킬, 랜덤 선택된 타겟 포함)
             case CardTag.SingleAttack:
-                await UniTask.WhenAny(
-                    PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(card.TargetEnemy.transform.position + card.Data.Effect.transform.position, effectAngle, card.Data.Effect.transform.localScale))
-                    , UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, cts)
-                    //, card.IsCardUseTiming.Where(timing => timing).ToUniTask(cancellationToken: _cts.Token)
-                    );
-                break;
-            case CardTag.MultiAttack:
-                if (card.AllEnemies)
+            case CardTag.SkillTargetSingle:
+            case CardTag.RandomAttack:
+            case CardTag.SkillTargetRandom:
+                // card.TargetEnemy가 이미 로직상에서 결정되어 있다고 가정합니다.
+                if (card.TargetEnemy != null)
                 {
                     await UniTask.WhenAny(
-                        PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(EnemyManager.Instance.EnemyCenterSpawnPos + card.Data.Effect.transform.position, effectAngle, card.Data.Effect.transform.localScale * 2.5f))
-                        , UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, cts)
-                        //, card.IsCardUseTiming.Where(timing => timing).ToUniTask(cancellationToken: _cts.Token)
-                        );
+                        PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(card.TargetEnemy.transform.position + card.Data.Effect.transform.position, effectAngle, card.Data.Effect.transform.localScale)),
+                        UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, cts)
+                    );
                 }
-                else
+                break;
+
+            // 2. 적 전체를 타겟팅하는 모든 경우 (공격, 스킬)
+            case CardTag.AllAttack:
+            case CardTag.SkillTargetAll:
+                if (card.AllEnemies) // 화면 중앙에서 거대한 이펙트 하나 발생
+                {
+                    await UniTask.WhenAny(
+                        PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(EnemyManager.Instance.EnemyCenterSpawnPos + card.Data.Effect.transform.position, effectAngle, card.Data.Effect.transform.localScale * 2.5f)),
+                        UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, cts)
+                    );
+                }
+                else // 모든 적 머리 위에 각각 이펙트 발생
                 {
                     await UniTask.WhenAll(EnemyManager.Instance.EnemyList.Select(async enemy =>
                     {
                         if (enemy != null)
                         {
                             await UniTask.WhenAny(
-                                PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(enemy.transform.position + card.Data.Effect.transform.position, effectAngle, card.Data.Effect.transform.localScale))
-                                , UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, cts)
-                                //, card.IsCardUseTiming.Where(timing => timing).ToUniTask(cancellationToken: _cts.Token)
-                                );
-                            //await enemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, critical));
+                                PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(enemy.transform.position + card.Data.Effect.transform.position, effectAngle, card.Data.Effect.transform.localScale)),
+                                UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, cts)
+                            );
                         }
                     }));
                 }
                 break;
-            case CardTag.SkillTargetMe:
+
+            // 3. 플레이어 자신에게 스킬 발동
+            case CardTag.SkillTargetSelf:
                 await UniTask.WhenAny(
-                        PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(InGameManager.Instance.Player.transform.position + card.Data.Effect.transform.position, effectAngle, card.Data.Effect.transform.localScale))
-                        , UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, cts)
-                        //, card.IsCardUseTiming.Where(timing => timing).ToUniTask(cancellationToken: _cts.Token)
-                        );
+                    PoolManager.Instance.GetEffect(card.Data.Effect, new PRS(InGameManager.Instance.Player.transform.position + card.Data.Effect.transform.position, effectAngle, card.Data.Effect.transform.localScale)),
+                    UniRxExtensions.AwaitTrueAsync(card.IsCardUseTiming, cts)
+                );
                 break;
         }
         card.UseTimingReset();

@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -34,7 +34,7 @@ public class Elite1 : Enemy
 
     protected override void SpecialPattern(int value, bool addPattern = false, float delay = 0.3f)
     {
-        _specialDesc = "ÇØ´ç ÀûÀº °ø°Ý·ÂÀ» {n}¸¸Å­ 2ÅÏµ¿¾È ¾ò½À´Ï´Ù.";
+        _specialDesc = "í•´ë‹¹ ì ì€ ê³µê²©ë ¥ì„ {n}ë§Œí¼ 2í„´ë™ì•ˆ ì–»ìŠµë‹ˆë‹¤.";
 
         _nextPattern.Add(async () => 
         {

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,11 +13,11 @@ public class MapInfo
         new Vector3Int( 0, -1, 0)        // up
     };
 
-    // 현재 방(개별)의 위치
+    // ??? 諛?媛??)?????
     public Vector3Int array_Position;
     public Vector3Int transform_Position;
 
-    //너비 우선탐색 알고리즘에서 확인했는지 체크
+    //??? ?곗???? ???由ъ???? ??????吏 泥댄?
     public bool isCheck = false;
     public int distance = -1;
 

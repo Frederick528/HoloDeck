@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -60,7 +60,7 @@ public class BossStage : MonoBehaviour, IStage
         switch (rand)
         {
             case 0:
-                EnemyManager.Instance.SpawnEnemy(100, 0);       // Àá½Ã SpawnEnemy »ç¿ë. ³ªÁß¿¡ Boss·Î ¹Ù²Ü°ÅÀÓ.
+                EnemyManager.Instance.SpawnEnemy(100, 0);       // ì ì‹œ SpawnEnemy ì‚¬ìš©. ë‚˜ì¤‘ì— Bossë¡œ ë°”ê¿€ê±°ì„.
                 EnemyManager.Instance.SpawnEnemy(101, 1);
                 EnemyManager.Instance.SpawnEnemy(102, 2);
                 EnemyManager.Instance.SpawnEnemy(102, 3);

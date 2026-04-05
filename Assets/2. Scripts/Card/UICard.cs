@@ -82,12 +82,14 @@ public class UICard : MonoBehaviour
         switch (data.CardTag)
         {
             case CardTag.SingleAttack:
-            case CardTag.MultiAttack:
+            case CardTag.AllAttack:
+            case CardTag.RandomAttack:
                 _tagText.text = "Attack";
                 break;
-            case CardTag.SkillTargetMe:
-            case CardTag.SkillTargetEnemy:
-            case CardTag.SkillTargetTotal:
+            case CardTag.SkillTargetSelf:
+            case CardTag.SkillTargetSingle:
+            case CardTag.SkillTargetAll:
+            case CardTag.SkillTargetRandom:
                 _tagText.text = "Skill";
                 break;
         }

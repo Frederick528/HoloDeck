@@ -116,7 +116,7 @@ public class CardManager : MonoBehaviour
             {
                 InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.Map, false);
             }
-            if (canUse && SelectCard.Data.CardTag == CardTag.SingleAttack && !isSingleTarget)
+            if (canUse && (SelectCard.Data.CardTag == CardTag.SingleAttack || SelectCard.Data.CardTag == CardTag.SkillTargetSingle) && !isSingleTarget)
             {
                 BattleManager.Instance.SetActiveArrowCursor(true, 0);
                 //PullCard();
@@ -254,7 +254,7 @@ public class CardManager : MonoBehaviour
     //        case CardTag.SingleAttack:
     //            card.TargetEnemy.CheckIfDead(card.Data.Damage, count);
     //            break;
-    //        case CardTag.MultiAttack:
+    //        case CardTag.AllAttack:
     //            foreach (Enemy enemy in EnemyManager.Instance.EnemyList)
     //            {
     //                enemy.CheckIfDead(card.Data.Damage, count);
@@ -1146,20 +1146,20 @@ public class CardManager : MonoBehaviour
 
         if (isUseCard.Value)        // 카드 사용 가능 범위에 들어왔는지 확인
         {
-            if (card.Data.CardTag != CardTag.SingleAttack)     // 단일타격을 제외한 나머지
+            if (card.Data.CardTag != CardTag.SingleAttack && card.Data.CardTag != CardTag.SkillTargetSingle)     // 지정 카드를 제외한 나머지
             {
                 ResetSetting();
                 InGameManager.Instance.AbilityEventQueue.Enqueue(card);
                 //await CheckCanUseingCard(card);
             }
-            else if (useSingleTargetCard)                      // 단일타격이 가능할 경우
+            else if (useSingleTargetCard)                      // 지정 카드 사용이 가능할 경우
             {
                 card.Target(EnemyManager.Instance.TargetEnemy/*.GetComponent<Enemy>()*/);
                 ResetSetting();
                 InGameManager.Instance.AbilityEventQueue.Enqueue(card);
                 //await CheckCanUseingCard(card/*, true*/);
             }
-            else                                               // 단일타격 카드이지만, 대상을 지정하지 않았을 경우
+            else                                               // 지정 카드이지만, 대상을 지정하지 않았을 경우
             {
                 CancelCardMoveTask();
                 ResetSetting();
@@ -1222,7 +1222,7 @@ public class CardManager : MonoBehaviour
                 }
 
 
-                if (card.Data.CardTag == CardTag.SingleAttack)
+                if (card.Data.CardTag == CardTag.SingleAttack || card.Data.CardTag == CardTag.SkillTargetSingle)
                 {
                     CancelCardMoveTask();
                     BattleManager.Instance.SetActiveArrowCursor(false, 0);
@@ -1253,7 +1253,7 @@ public class CardManager : MonoBehaviour
                 _lastHoveredZone.index = null;
 
 
-                if (card.Data.CardTag == CardTag.SingleAttack)
+                if (card.Data.CardTag == CardTag.SingleAttack || card.Data.CardTag == CardTag.SkillTargetSingle)
                 {
                     _moveCts = new();
                     MoveToDefaultAndShowCursor(card, _moveCts.Token).Forget();
@@ -1263,7 +1263,7 @@ public class CardManager : MonoBehaviour
                     Cursor.visible = false;
                 }
             }
-            if (!isUseCard.Value || card.Data.CardTag != CardTag.SingleAttack)
+            if (!isUseCard.Value || (card.Data.CardTag != CardTag.SingleAttack && card.Data.CardTag != CardTag.SkillTargetSingle))
             {
                 card.transform.position = Vector3.Lerp(card.transform.position, tempPos, Time.deltaTime * 20f);
                 card.transform.localScale = Vector3.Lerp(card.transform.localScale, CardUtils.CardScale * 1.2f, Time.deltaTime * 7.5f);

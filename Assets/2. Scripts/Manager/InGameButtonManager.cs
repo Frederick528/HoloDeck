@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
@@ -211,7 +211,7 @@ public class InGameButtonManager : MonoBehaviour
                 }
                 else
                 {
-                    MapManager.Instance.ResetChapter(true).Forget();        // ¾ÀÀ» °°ÀÌ º¯°æÇÒ °æ¿ì.
+                    MapManager.Instance.ResetChapter(true).Forget();        // ì”¬ì„ ê°™ì´ ë³€ê²½í•  ê²½ìš°.
                 }
                 break;
             case 4:
@@ -226,7 +226,7 @@ public class InGameButtonManager : MonoBehaviour
                 }
                 else
                 {
-                    MapManager.Instance.ResetChapter(true).Forget();        // ¾ÀÀ» °°ÀÌ º¯°æÇÒ °æ¿ì.
+                    MapManager.Instance.ResetChapter(true).Forget();        // ì”¬ì„ ê°™ì´ ë³€ê²½í•  ê²½ìš°.
                 }
                 break;
         }

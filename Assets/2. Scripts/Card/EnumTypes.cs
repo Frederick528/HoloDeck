@@ -1,4 +1,4 @@
-public class EnumTypes
+﻿public class EnumTypes
 {
     public enum CardTypes
     {

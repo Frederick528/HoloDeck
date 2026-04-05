@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -36,19 +36,19 @@ public class SoundManager : MonoBehaviour
                 go.transform.parent = root.transform;
             }
 
-            _audioSources[(int)Sound.Bgm].loop = true; // bgm Àç»ı±â´Â ¹«ÇÑ ¹İº¹ Àç»ı
+            _audioSources[(int)Sound.Bgm].loop = true; // bgm ì¬ìƒê¸°ëŠ” ë¬´í•œ ë°˜ë³µ ì¬ìƒ
         }
     }
 
     public void Clear()
     {
-        // Àç»ı±â ÀüºÎ Àç»ı ½ºÅ¾, À½¹İ »©±â
+        // ì¬ìƒê¸° ì „ë¶€ ì¬ìƒ ìŠ¤íƒ‘, ìŒë°˜ ë¹¼ê¸°
         foreach (AudioSource audioSource in _audioSources)
         {
             audioSource.clip = null;
             audioSource.Stop();
         }
-        // È¿°úÀ½ Dictionary ºñ¿ì±â
+        // íš¨ê³¼ìŒ Dictionary ë¹„ìš°ê¸°
         _audioClips.Clear();
     }
 
@@ -96,7 +96,7 @@ public class SoundManager : MonoBehaviour
     AudioClip GetOrAddAudioClip(string path, Sound type = Sound.Effect)
     {
         if (path.Contains("Sounds/") == false)
-            path = $"Sounds/{path}"; // Sound Æú´õ ¾È¿¡ ÀúÀåµÉ ¼ö ÀÖµµ·Ï
+            path = $"Sounds/{path}"; // Sound í´ë” ì•ˆì— ì €ì¥ë  ìˆ˜ ìˆë„ë¡
 
         AudioClip audioClip = null;
         if (_audioClips.TryGetValue(path, out audioClip) == false)

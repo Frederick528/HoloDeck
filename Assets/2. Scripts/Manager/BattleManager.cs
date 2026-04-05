@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -29,10 +29,10 @@ public class BattleManager : MonoBehaviour
     //    //SoundManager.Instance.Play("Sounds/Bgm/StoryBgm", Sound.Bgm, 0.2f);
     //}
     /// <summary>
-    /// ArrowÄ¿¼­ÀÇ È°¼ºÈ­ ¿©ºÎ¿Í À§Ä¡¸¦ ¼³Á¤ÇÕ´Ï´Ù.
+    /// Arrowì»¤ì„œì˜ í™œì„±í™” ì—¬ë¶€ì™€ ìœ„ì¹˜ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
     /// </summary>
     /// <param name="isOn"></param>
-    /// <param name="arrowIdx">ArrowÀÇ À§Ä¡¸¦ ÀÇ¹Ì(0 = Card, 1 = Active, 2 = Potion)</param>
+    /// <param name="arrowIdx">Arrowì˜ ìœ„ì¹˜ë¥¼ ì˜ë¯¸(0 = Card, 1 = Active, 2 = Potion)</param>
     public void SetActiveArrowCursor(bool isOn, int arrowIdx)
     {
         //if (isOn)

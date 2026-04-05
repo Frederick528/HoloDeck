@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ public class Boss1 : Enemy
             case 1:
                 AttackPattern(_defaultEnemyData.Damage);
                 break;
-            case 2:     // Áßº¹ ÆĞÅÏÀÏ °æ¿ì, °¡Àå ¾Æ·¡¿¡ ÀÖ´Â ÇÔ¼ö°¡ °¡Àå ¸ÕÀú ½ÇÇàµÊ.
+            case 2:     // ì¤‘ë³µ íŒ¨í„´ì¼ ê²½ìš°, ê°€ì¥ ì•„ë˜ì— ìˆëŠ” í•¨ìˆ˜ê°€ ê°€ì¥ ë¨¼ì € ì‹¤í–‰ë¨.
                 HealPattern(_defaultEnemyData.Damage);
                 DefensePattern(_defaultEnemyData.Damage, true);
                 AttackPattern(_defaultEnemyData.Damage, true);
@@ -39,7 +39,7 @@ public class Boss1 : Enemy
 
     //protected override void SpecialPattern(int value, int repeat = 1, bool addPattern = false, float delay = 0.3F)
     //{
-    //    _specialDesc = "ÇØ´ç ÀûÀº {n}¸¸Å­ÀÇ °ø°İ°ú È¸º¹°ú ½¯µå¸¦ ÁØºñ ÁßÀÔ´Ï´Ù.";
+    //    _specialDesc = "í•´ë‹¹ ì ì€ {n}ë§Œí¼ì˜ ê³µê²©ê³¼ íšŒë³µê³¼ ì‰´ë“œë¥¼ ì¤€ë¹„ ì¤‘ì…ë‹ˆë‹¤.";
     //    Func<UniTask> func = () => UniTask.Create(async () =>
     //    {
     //        await Attack(value);

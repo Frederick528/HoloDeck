@@ -1,4 +1,4 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -205,7 +205,7 @@ public class ShopManager : MonoBehaviour
             _shopCardPrices[_shopCardIdx].text = "";
         }
         else
-            print("µ∑∫Œ¡∑");
+            print("ÎèàÎ∂ÄÏ°±");
     }
 
     public void BuyCardIdx(int idx)
