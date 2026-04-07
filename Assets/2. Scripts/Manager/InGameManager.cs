@@ -667,7 +667,12 @@ public class InGameManager : MonoBehaviour
         //}
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            CardManager.Instance.AddDeck(100, EAddDeck.Draw);
+            if (MapManager.Instance.CurrStage.State == Map.StageState.Start)
+            {
+                EnemyManager.Instance.Spawndummy();
+                if (!TurnManager.Instance.InBattle.Value)
+                    TurnManager.Instance.StartBattle();
+            }
         }
         //if (Input.GetKeyDown(KeyCode.C))
         //{

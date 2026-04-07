@@ -135,17 +135,18 @@ public class Player : Entity
         //AddHealPower(GameManager.Instance.AddHealPower);
     }
 
-    public async override UniTask<bool> TakeDamage(int dmg, Entity attacker = null)
+    public async override UniTask<(bool Dead, int ActualDamage)> TakeDamage(int dmg, Entity attacker = null, bool ignoreShield = false)
     {
-        if (!await base.TakeDamage(dmg, attacker))
+        (bool Dead, int ActualDamage) checkTakeDamage = await base.TakeDamage(dmg, attacker, ignoreShield);
+        if (checkTakeDamage.Dead)
         {
-            return false;
+            //return false;
+            TurnManager.Instance.EndBattle().Forget();
+            await base.DieAnimation(true);
+            print("플레이어가 죽었습니다.");
+            InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.GameOver, true);
         }
-        TurnManager.Instance.EndBattle().Forget();
-        await base.DieAnimation(true);
-        print("플레이어가 죽었습니다.");
-        InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.GameOver, true);
-        return true;
+        return checkTakeDamage;
 
     }
 

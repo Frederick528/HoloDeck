@@ -5,9 +5,11 @@ using System.Text;
 using System.Threading;
 using TMPro;
 using UniRx;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 using Random = UnityEngine.Random;
 
 public abstract class Entity : MonoBehaviour, IOnMouseEnter
@@ -200,16 +202,26 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         {
             await Shield(amount);
         }
+        if (ApplyStatusEffect(StatusEffect.Vulnerable, out _))
+        {
+            damage = Mathf.FloorToInt(damage * 1.5f + 0.50001f);
+        }
         return damage;
     }
-    protected virtual async UniTask AfterTakeDamage(Entity attacker = null)
+    protected virtual async UniTask ApplyCounterEffects(Entity attacker = null)
     {
         if (attacker == null) { return; }
+
+        // 공격자의 버프 활용
 
         if (attacker.ApplyStatusEffect(StatusEffect.Vampire, out int vampire))
         {
             await attacker.Heal(vampire);
         }
+
+        if (CurHP.Value <= 0) { return; }
+
+        // 내 버프 활용(따라서 본인이 죽으면 실행 불가)
 
         if (ApplyStatusEffect(StatusEffect.Reflection, out int amount))
         {
@@ -268,35 +280,53 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
     /// 상대가 직접 타격한 것인지 아닌지 확인.
     /// </param>
     /// <returns></returns>
-    public async virtual UniTask<bool> TakeDamage(int dmg, Entity attacker = null)
+    public async virtual UniTask<(bool Dead, int ActualDamage)> TakeDamage(int dmg, Entity attacker = null, bool ignoreShield = false)
     {
         dmg = await BeforeTakeDamage(dmg, attacker);
         if (dmg == 0)       // 데미지가 0일 경우, 맞은 후 효과는 발동 X
-            return false;
-        TextEffect(-dmg).Forget();
+            return (false, dmg);
 
-        if (CurShield.Value >= dmg)
+        int preHP = CurHP.Value;
+
+        if (ignoreShield)
         {
-            CurShield.Value -= dmg;
+            CurHP.Value = Mathf.Max(0, preHP - dmg);
+            dmg = preHP - CurHP.Value;      // 방어도 무시이기 때문에 실제 깎인 체력을 그대로 계산
+            TextEffect(-dmg).Forget();      // 준 데미지만큼 표시
         }
         else
         {
-            dmg -= CurShield.Value;
-            CurShield.Value = 0;
-            CurHP.Value -= dmg;
-            if (ApplyStatusEffect(StatusEffect.Berserker, out int berserker))       // 버서커 효과는 피해를 받을 때만 발동하기에 쉴도로 막혀도 발동하는 AfterTakeDamage와 다르게, 해당 위치에서 체크함.
+            if (CurShield.Value >= dmg)
             {
-                AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), berserker);
+                CurShield.Value -= dmg;
+                TextEffect(-dmg).Forget();  // 방어도에 막혔기에 해당 데미지만큼 표시
+
+                dmg = 0;                    // 실제로 체력에 영향을 준 데미지는 0
+            }
+            else
+            {
+                CurHP.Value = Mathf.Max(0, preHP + CurShield.Value - dmg);      // 방어도에 막히고 남은 체력
+                TextEffect(CurHP.Value - preHP - CurShield.Value).Forget();     // 표시할 텍스트는 총 공격력이며 -(실제 깎인 체력[preHP - CurHP.Value] + 가지고 있던 방어도[CurShield.Value])
+
+                dmg = preHP - CurHP.Value;                                      // 실제 데미지 계산
+                CurShield.Value = 0;
+                //if (ApplyStatusEffect(StatusEffect.Berserker, out int berserker))       // 버서커 효과는 피해를 받을 때만 발동하기에 쉴도로 막혀도 발동하는 AfterTakeDamage와 다르게, 해당 위치에서 체크함.
+                //{
+                //    AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), berserker);
+                //}
             }
         }
+
         //AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         //if (stateInfo.IsName("Attack"))
         //animator.SetTrigger(_hitAnim);        // play를 해야 맞을 때마다 실행 가능
-        animator.Play(_hitAnim, -1, 0);  // 타격 당하는 애니메이션 실행        => 공격 중에는 딜레이를 주거나 무시하는 코드가 필요할 듯.
-        await AfterTakeDamage(attacker);
+        //animator.Play(_hitAnim, -1, 0);  // 타격 당하는 애니메이션 실행        => 공격 중에는 딜레이를 주거나 무시하는 코드가 필요할 듯.
+
+        await ApplyCounterEffects(attacker);
+
         if (CurHP.Value > 0)
         {
-            return false;
+            return (false, dmg);
         }
 
         if (ApplyStatusEffect(StatusEffect.Resurrection, out _))
@@ -304,14 +334,14 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
             CurHP.Value = (int)(MaxHP.Value * 0.5f);
             // 부활 수치 감소 코드 추가
             //_resurrection = true;
-            return false;
+            return (false, dmg);
         }
 
         //col2d.enabled = false;
         //slider.gameObject.SetActive(false);
         //canvas.gameObject.SetActive(false);
         canvas.gameObject.SetActive(false);
-        return true;
+        return (true, dmg);
     }
 
     public void AtkAnimtiming()
@@ -324,7 +354,8 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         if (_animEvent == null)
             checkAtkTiming = false;
         //animator.SetTrigger(_attackAnim);
-        animator.Play(_attackAnim, -1, 0);  // 공격 애니메이션 실행
+        if (animator)
+            animator.Play(_attackAnim, -1, 0);  // 공격 애니메이션 실행
         if (checkAtkTiming)
         {
             var cts = new CancellationTokenSource();
@@ -378,7 +409,8 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         if (_animEvent == null)
             checkAnim = false;
         //animator.SetTrigger(_dieAnim);        // play로 해야 바로 사망 가능
-        animator.Play(_dieAnim, -1, 0);  // 사망 애니메이션 실행
+        if (animator)
+            animator.Play(_dieAnim, -1, 0);  // 사망 애니메이션 실행
         //await UniTask.Delay(1000);
         if (checkAnim)
         {
@@ -482,10 +514,12 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
             }).AddTo(this);
         CurHP
             .Where(_ => hpBar && MaxHP.Value > 0)
-            .Subscribe(hp =>
+            .StartWith(CurHP.Value) // 1. 초기값을 하나 밀어넣어 Pair를 만듦
+            .Pairwise()             // 2. (이전값, 현재값) 쌍으로 묶어줌
+            .Subscribe(pair =>
             {
-                hpBar.fillAmount = hp / (float)MaxHP.Value;
-                hpText.text = $"{hp}/{MaxHP.Value}";
+                OnHpChanged(pair.Previous, pair.Current);
+
             }).AddTo(this);
         CurShield
             .Where(_ => shieldObj)
@@ -631,7 +665,73 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
     }
 
 
+    protected virtual void OnHpChanged(float prev, float curr)
+    {
+        // [공통] UI 업데이트 (항상 실행)
+        UpdateHPUI(curr);
 
+        // [분기 1] 체력이 감소했을 때 (데미지)
+        if (curr < prev)
+        {
+            if (curr <= 0)
+            {
+                // 사망 시 즉각적인 시각 효과 (회색 처리, 소리 등)
+                // ※ 주의: 비동기 시퀀스(애니메이션 대기 등)는 TakeDamage에서 처리
+                OnDeadVisual();
+            }
+            else
+            {
+                // 피격 애니메이션 (이전 체력 - 현재 체력 = 데미지 양)
+                OnHit(prev - curr);
+            }
+        }
+        // [분기 2] 체력이 증가했을 때 (회복 또는 부활)
+        else if (curr > prev)
+        {
+            if (prev <= 0)
+            {
+                // 죽어있다가(<=0) 살아난(>0) 경우 -> 부활 연출
+                OnResurrectionVisual();
+            }
+            else
+            {
+                // 일반 회복 연출
+                OnHeal();
+            }
+        }
+    }
+
+    protected virtual void UpdateHPUI(float hp)
+    {
+        if (hpBar) hpBar.fillAmount = hp / (float)MaxHP.Value;
+        if (hpText) hpText.text = $"{hp}/{MaxHP.Value}";
+    }
+
+    protected virtual void OnHit(float damage)
+    {
+        if (animator)
+            animator.Play(_hitAnim, -1, 0);
+        if (ApplyStatusEffect(StatusEffect.Berserker, out int berserker))       // 버서커 효과는 피해를 받을 때만 발동하기에 쉴도로 막혀도 발동하는 AfterTakeDamage와 다르게, 해당 위치에서 체크함.
+        {
+            AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), berserker);
+        }
+        // 기본 피격 흔들림 로직 등
+    }
+
+    protected virtual void OnDeadVisual()
+    {
+        // 캐릭터 색상 변경이나 사망 사운드 등 (즉시 실행되는 것들)
+    }
+
+    protected virtual void OnResurrectionVisual()
+    {
+        // 부활 파티클, 캐릭터 다시 세우기 등
+    }
+
+    protected virtual void OnHeal()
+    {
+        // 회복 반짝임 효과 등
+    }
     public virtual bool BoolOnMouseEnter()
     {
         if (EventSystem.current.IsPointerOverGameObject())
@@ -1737,8 +1837,8 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                 //StatusEffectType.InfiniteDuration,
                 //StatusEffectType.TurnDuration,
                 //StatusEffectType.DurationIsAmount,
-                StatusEffectType.UseAmountInfiniteDuration,
                 StatusEffectType.UseAmountTurnDuration,
+                StatusEffectType.UseAmountInfiniteDuration,
                 //StatusEffectType.Perpetual,
                 StatusEffectType.UseAmountPerpetual,
                 //StatusEffectType.Information
@@ -1748,23 +1848,52 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
             {
                 if (CurStatusEffectDict[statusEffect].TryGetValue(type, out var info))
                 {
-                    if (once)
+                    if (info.amount > 0 && info.duration != 0)
                     {
-                        amount -= info.amount;
-                    }
-                    if (info.amount != 0 && info.duration != 0)
-                    {
-                        ReduceStatusEffect((statusEffect, type), 1, 0);
+                        // [변경 포인트]
+                        if (once)
+                        {
+                            // 이미 하나 소모했으니까, 이번 타입의 amount만 전체 합계에서 빼고 Reduce는 안 함!
+                            amount -= info.amount;
+                            continue;
+                        }
+
+                        int decrease = 1;       // 나중에 모든 값을 다 깎는 상태효과면 이 값을 수정.
+
                         switch (statusEffect)
                         {
                             case StatusEffect.Resurrection:
                             case StatusEffect.Immunity:
-                                once = true;
-                                break;
+                                once = true; break;
                         }
+
+                        // 첫 번째로 발견된 타입만 실제로 깎음
+                        ReduceStatusEffect((statusEffect, type), decrease, 0);
                     }
                 }
             }
+            //foreach (var type in typesToProcess)
+            //{
+            //    if (CurStatusEffectDict[statusEffect].TryGetValue(type, out var info))
+            //    {
+            //        if (once)
+            //        {
+            //            amount -= info.amount;
+            //        }
+            //        if (info.amount != 0 && info.duration != 0)
+            //        {
+            //            int decrease;
+            //            switch (statusEffect)
+            //            {
+            //                case StatusEffect.Resurrection:
+            //                case StatusEffect.Immunity:
+            //                    once = true;
+            //                    break;
+            //            }
+            //            ReduceStatusEffect((statusEffect, type), 1, 0);
+            //        }
+            //    }
+            //}
             //(int amount, int duration) info;
             //if (CurStatusEffectDict[statusEffect].TryGetValue(StatusEffectType.UseAmountTurnDuration, out info))
             //{

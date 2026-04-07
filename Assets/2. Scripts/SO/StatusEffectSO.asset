@@ -43,12 +43,12 @@ MonoBehaviour:
     Sprite: {fileID: 0}
   - SE: 6
     SET: 0
-    Descript: "\uD53C\uD574\uB97C \uBC1B\uC744 \uB54C, {n}%\uC758 \uB370\uBBF8\uC9C0\uB97C
+    Descript: "\uD53C\uD574\uB97C \uBC1B\uC744 \uB54C, 50%\uC758 \uB370\uBBF8\uC9C0\uB97C
       \uCD94\uAC00\uB85C \uBC1B\uC2B5\uB2C8\uB2E4."
     Sprite: {fileID: 0}
   - SE: 7
     SET: 0
-    Descript: "\uD53C\uD574\uB97C \uC904 \uB54C, {n}%\uB9CC\uD07C \uB370\uBBF8\uC9C0\uAC00
+    Descript: "\uD53C\uD574\uB97C \uC904 \uB54C, 25%\uB9CC\uD07C \uB370\uBBF8\uC9C0\uAC00
       \uAC10\uC18C\uD569\uB2C8\uB2E4."
     Sprite: {fileID: 0}
   - SE: 8
@@ -105,9 +105,10 @@ MonoBehaviour:
     Sprite: {fileID: 0}
   - SE: 19
     SET: 0
-    Descript: "\uC9C1\uC811 \uD53C\uD574\uB97C \uC785\uD790 \uB54C\uB9C8\uB2E4, \uCCB4\uB825\uC744
-      {n}\uB9CC\uD07C \uD68C\uBCF5\uD569\uB2C8\uB2E4. \uC774\uB294 \uBC18\uC0AC\uBCF4\uB2E4
-      \uBA3C\uC800 \uC801\uC6A9\uB429\uB2C8\uB2E4."
+    Descript: "\uB9C9\uD788\uC9C0 \uC54A\uB294 \uC9C1\uC811 \uD53C\uD574\uB97C \uC785\uD790
+      \uB54C\uB9C8\uB2E4, \uCCB4\uB825\uC744 \uB370\uBBF8\uC9C0\uC758 20%\uB9CC\uD07C
+      \uD68C\uBCF5\uD569\uB2C8\uB2E4. \uC774\uB294 \uBC18\uC0AC\uBCF4\uB2E4 \uBA3C\uC800
+      \uC801\uC6A9\uB429\uB2C8\uB2E4."
     Sprite: {fileID: 0}
   - SE: 20
     SET: 0

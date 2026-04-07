@@ -728,7 +728,7 @@ public class CardManager : MonoBehaviour
     }
     public void ChangeRemove(bool remove)
     {
-        _discard = remove;
+        _remove = remove;
         InGameUIManager.Instance.SetActiveCanvas(InGameUIManager.CanvasName.SelectedCard, remove);
         if (remove)
         {
@@ -926,11 +926,11 @@ public class CardManager : MonoBehaviour
         {
             Card targetCard = HandCard[i];
 
-            if (targetCard == SelectCard)
-            {
-                targetCard.OriginPRS = originCardPRSs[i - alignmentIdx];
-                continue;
-            }
+            //if (targetCard == SelectCard)
+            //{
+            //    targetCard.OriginPRS = originCardPRSs[i - alignmentIdx];
+            //    continue;
+            //}
             if (targetCard == _usedCard || targetCard.Selected || targetCard.IsEnqueued)
             {
                 ++alignmentIdx;
@@ -1134,7 +1134,7 @@ public class CardManager : MonoBehaviour
     public void CardMouseUp(Card card)
     {
         Cursor.visible = true;
-        if (CardState != ECardState.CanMouseDrag)
+        if (CardState != ECardState.CanMouseDrag || !draggable)
         {
             //card.Block = false;
             return;
@@ -1154,7 +1154,7 @@ public class CardManager : MonoBehaviour
             }
             else if (useSingleTargetCard)                      // 지정 카드 사용이 가능할 경우
             {
-                card.Target(EnemyManager.Instance.TargetEnemy/*.GetComponent<Enemy>()*/);
+                card.Target(card.CheckTarget/*EnemyManager.Instance.TargetEnemy*//*.GetComponent<Enemy>()*/);
                 ResetSetting();
                 InGameManager.Instance.AbilityEventQueue.Enqueue(card);
                 //await CheckCanUseingCard(card/*, true*/);

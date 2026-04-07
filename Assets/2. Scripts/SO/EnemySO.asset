@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EnemySprites: []
   EnemyPrefabs:
+  - {fileID: 5221804452159623028, guid: 301ef8fb7c5c00d4ba016a384201b292, type: 3}
   - {fileID: 5423766591507928315, guid: fb7e25f00b434b447ba0b2db46622238, type: 3}
   - {fileID: 8476364101092123999, guid: b7362bd93fac5cf4a9d671b7ce1493c4, type: 3}
   - {fileID: 4086410140833498804, guid: 671ee7bd8898ae942820b3810882fc4e, type: 3}
@@ -29,6 +30,18 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 910f5ac75c6f0ac448d3ef72a3777211, type: 3}
   - {fileID: 21300000, guid: af265b2fbc97a2045ac7f630d1214705, type: 3}
   EnemyDatas:
+  - Name: Dummy0
+    ID: 0
+    Level: 0
+    Damage: 0
+    CriticalChance: 0
+    CriticalDamage: 0
+    HP: 1000000
+    DropCoin: 0
+    Descript: Dummy
+    Sprite: {fileID: 0}
+    EnemyTag: 0
+    EnemyPrefab: {fileID: 5221804452159623028, guid: 301ef8fb7c5c00d4ba016a384201b292, type: 3}
   - Name: Slime100
     ID: 100
     Level: 0

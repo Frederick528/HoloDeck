@@ -32,6 +32,13 @@ public partial class CardAbility
     {
         _cts = new CancellationTokenSource();
 
+        // [1] Order 0 처리: 효과 발동 전 딱 1번만 실행
+        if (cardEvent.TryGetValue(0, out var startTasks))
+        {
+            var tasksToRun = startTasks.Select(func => func()).ToList();
+            await UniTask.WhenAll(tasksToRun).SuppressCancellationThrow();
+        }
+
         for (int i = 0; i < card.Data.Count; i++)
         {
             // 1. 이펙트 소환 (루프 안에서 딜레이 및 타이밍 체크)
@@ -42,6 +49,7 @@ public partial class CardAbility
             // 2. 해당 순서(Order)의 능력치 동시 실행
             foreach (var eventTask in cardEvent)
             {
+                if (eventTask.Key == 0 || eventTask.Key == 999) continue;
                 var tasksToRun = eventTask.Value.Select(func => func()).ToList();
                 await UniTask.WhenAll(tasksToRun).SuppressCancellationThrow();
             }
@@ -51,7 +59,14 @@ public partial class CardAbility
             if (_cts.IsCancellationRequested) break;
         }
 
-        // 3. 카드 태그별 후처리 (타겟 해제 및 크리티컬 체크)
+        // [3] Order 999 처리: 모든 반복이 끝난 후 딱 1번만 실행
+        if (cardEvent.TryGetValue(999, out var endTasks))
+        {
+            var tasksToRun = endTasks.Select(func => func()).ToList();
+            await UniTask.WhenAll(tasksToRun).SuppressCancellationThrow();
+        }
+
+        // [4]. 카드 태그별 후처리 (타겟 해제 및 크리티컬 체크)
         PostProcess(card);
 
         if (!_cts.IsCancellationRequested)

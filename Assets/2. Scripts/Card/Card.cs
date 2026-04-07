@@ -64,6 +64,7 @@ public class Card : MonoBehaviour
 
     public bool Enhanced = false;
 
+    public Enemy CheckTarget { get; private set; } = null;          // 카드 사용 전에 계속 적 체크
     public Enemy TargetEnemy { get; private set; } = null;        // 카드 사용 시, 타겟에너미를 받아옴. (나중에 큐에서 체크하기 위함.)
 
     private ReactiveProperty<bool> _isCardUseTiming = new();
@@ -73,6 +74,8 @@ public class Card : MonoBehaviour
     public bool CardUseTiming { get; private set; }
     public bool RepeatEffect { get; private set; }
     public bool AllEnemies { get; private set; }
+
+    Dictionary<string, int> _xValueBonuses = new();
 
     //public AsyncLazy PlayEffect = null;
 
@@ -227,11 +230,11 @@ public class Card : MonoBehaviour
         //await CardAbility.SetCardAbility(this);     // 다른 방식이 있는지 찾아봐야할 듯
         if (CardTask == null) return;
         await CardTask();
-        if (DefaultData.Damage != 0)
+        if (Data.DamageOrder >= 0)
         {
             InGameManager.Instance.Player.ApplyStatusEffect(StatusEffect.ATKUp, out _);     // 공격 이후 공격력 감소 효과 적용되는 경우
         }
-        if (DefaultData.Shield != 0)        // 기존 데이터값에서 쉴드값이 0이 아닌 경우 -> 방어 관련 카드라는 뜻
+        if (Data.DamageOrder >= 0)        // 기존 데이터값에서 쉴드값이 0이 아닌 경우 -> 방어 관련 카드라는 뜻
         {
             InGameManager.Instance.Player.ApplyStatusEffect(StatusEffect.DEFUp, out _);     // 마찬가지
         }
@@ -258,18 +261,47 @@ public class Card : MonoBehaviour
         //}
         //else
         //{
-        if (DefaultData.Damage != 0)
+        int damage = 0;
+        int shield = 0;
+        int count = 0;
+        int draw = 0;
+        int discard = 0;
+        int remove = 0;
+        int hp = 0;
+        if (Data.DamageOrder >= 0)
         {
             Data.Damage = Mathf.Max(0, DefaultData.Damage + InGameManager.Instance.Player.AttackPower.Value);
+            if (InGameManager.Instance.Player.GetStatusEffect(StatusEffect.Weaking, out _))
+            {
+                Data.Damage = Mathf.FloorToInt(Data.Damage * 0.75f + 0.50001f);
+                //damage = Mathf.FloorToInt(Data.Damage * 0.75f + 0.50001f);
+            }
+            if (CheckTarget != null)        // 해당 수치는 실제 적용이 아닌 보여주기 값.
+            {
+                if (CheckTarget.GetStatusEffect(StatusEffect.Vulnerable, out _))
+                {
+                    damage = Mathf.FloorToInt(Data.Damage * 1.5f + 0.50001f);
+                }
+            }
+            damage = Mathf.Max(Data.Damage, damage);
         }
-        if (DefaultData.Shield != 0)
+        if (Data.ShieldOrder >= 0)
         {
             Data.Shield = Mathf.Max(0, DefaultData.Shield + InGameManager.Instance.Player.DefensePower.Value);
+
+            //shield = Data.Shield;
         }
 
-        Data.Count = DefaultData.Count + 0;
-        Data.Draw = DefaultData.Draw + 0;
-        Data.Discard = DefaultData.Discard + 0;
+        //Data.Count = DefaultData.Count + 0;
+        //count = Data.Count;
+        //Data.Draw = DefaultData.Draw + 0;
+        //draw = Data.Draw;
+        //Data.Discard = DefaultData.Discard + 0;
+        //discard = Data.Discard;
+        //Data.Remove = DefaultData.Remove + 0;
+        //remove = Data.Remove;
+        //Data.HP = DefaultData.HP + 0;
+        //hp = Data.HP;
 
         string GetColorValue(int current, int original)
         {
@@ -284,7 +316,7 @@ public class Card : MonoBehaviour
         }
         
         StringBuilder sb = new StringBuilder(DefaultData.Descript);
-        sb.Replace("{Damage}", GetColorValue(Data.Damage, DefaultData.Damage));
+        sb.Replace("{Damage}", GetColorValue(damage, DefaultData.Damage));
         sb.Replace("{Shield}", GetColorValue(Data.Shield, DefaultData.Shield));
         sb.Replace("{Count}", GetColorValue(Data.Count, DefaultData.Count));
         sb.Replace("{Draw}", GetColorValue(Data.Draw, DefaultData.Draw));
@@ -364,9 +396,18 @@ public class Card : MonoBehaviour
         _outline.gameObject.SetActive(false);
     }
 
+    public void CheckTargetTemp(Enemy enemy)
+    {
+        CheckTarget = enemy;
+        if (TargetEnemy != null && enemy == null) return;
+        CardDataReset();
+    }
+
     public void Target(Enemy enemy)     // 이거 필요없음. 죽는 적은 애초에 지정이 안 되기 때문에 따로 타켓 안 해도 됨.
     {
         TargetEnemy = enemy;
+        if (enemy == null)
+            CardDataReset();
     }
 
     public async UniTask TurnOnOutline(bool isOn)
@@ -506,7 +547,7 @@ public class Card : MonoBehaviour
     {
         if (DefaultData.Cost == -1)
         {
-            if (InGameManager.Instance.Player.CurHolo > 0)
+            if (InGameManager.Instance.Player.CurHolo >= 0)
             {
                 Data.Cost = InGameManager.Instance.Player.CurHolo;
             }
@@ -540,6 +581,9 @@ public class Card : MonoBehaviour
 
         InGameManager.Instance.Player.AddCurHolo(-Data.Cost);
 
+        // XValue 태그가 있다면 스탯 뻥튀기 (Data.Cost 기준)
+        ApplyXValueEffects();
+
         Used = true;
         //CardOrder.SetOriginOrder(-10);
 
@@ -550,6 +594,8 @@ public class Card : MonoBehaviour
 
     public async UniTask AfterCardAbility(bool endBattle = false)
     {
+        RevertXValueEffects();
+
         await TaskMoveTransform(new PRS(CardManager.Instance.CardDummyTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), this.GetCancellationTokenOnDestroy(), CardUtils.ThrowAwayCardDelay);
 
         if (!endBattle)
@@ -559,6 +605,66 @@ public class Card : MonoBehaviour
         }
         Block = false;
         Used = false;
+    }
+
+    private void ApplyXValueEffects()
+    {
+        if (DefaultData.Cost != -1) return;
+        if (Data.SpecialTags == null || Data.SpecialTags.Count == 0) return;
+
+        int xValue = Data.Cost;
+        _xValueBonuses.Clear();
+
+        foreach (var tag in Data.SpecialTags)
+        {
+            if (tag.Tag != "XValue") continue;
+
+            string target = tag.Type;
+            float.TryParse(tag.Amount, out float multiple);
+            
+            int totalValue = Mathf.FloorToInt(xValue * multiple + 0.50001f);
+
+            print(totalValue);
+
+            _xValueBonuses[target] = totalValue;
+
+
+            switch (target)
+            {
+                case "AddCount": Data.Count = totalValue; break;
+                case "AddDamage": Data.Damage += totalValue; break;
+                case "AddShield": Data.Shield += totalValue; break;
+                case "AddDraw": Data.Draw += totalValue; break;
+                case "AddHealHP": Data.HP += totalValue; break;
+                case "AddDamageHP": Data.HP -= totalValue; break;
+            }
+        }
+    }
+
+    private void RevertXValueEffects()
+    {
+        if (DefaultData.Cost != -1) return;
+        // 1. 스탯 원복
+        foreach (var bonus in _xValueBonuses)
+        {
+            switch (bonus.Key)
+            {
+                case "AddCount": Data.Count = 1; break; // 기본값 복구
+                case "AddDamage": Data.Damage -= bonus.Value; break;
+                case "AddShield": Data.Shield -= bonus.Value; break;
+                case "AddDraw": Data.Draw -= bonus.Value; break;
+                case "AddHealHP": Data.HP -= bonus.Value; break;
+                case "AddDamageHP": Data.HP += bonus.Value; break;
+            }
+        }
+        _xValueBonuses.Clear();
+        Data.Cost = -1;
+
+        //// 2. 코스트 원복 (X코스트 카드인 경우)
+        //if (DefaultData.Cost == -1)
+        //{
+        //    Data.Cost = -1;
+        //}
     }
 
 

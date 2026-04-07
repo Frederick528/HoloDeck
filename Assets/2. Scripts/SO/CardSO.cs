@@ -49,18 +49,25 @@ public class CardData
     public string Name;
     public int ID;
     public int Cost;
+    public int Count;
     //public int EnhancedCost;
     public int Damage;
+    public int DamageOrder;
     //public int EnhancedDamage;
     public int Shield;
+    public int ShieldOrder;
     //public int EnhancedDefence;
-    public int Count;
     //public int EnhancedCount;
     public int Draw;
+    public int DrawOrder;
     //public int EnhancedDraw;
-    public int Discard;
-    public int Remove;
     public int HP;
+    public int HPOrder;
+
+    public int Discard;
+    public int DiscardOrder;
+    public int Remove;
+    public int RemoveOrder;
     //public float CardUseDelay;
     public int Price;
     [TextArea(1, 5)]
@@ -78,25 +85,32 @@ public class CardData
     {
         return new CardData
         {
-            Name = Name,
-            ID = ID,
-            Cost = Cost,
-            Damage = Damage,
-            Shield = Shield,
-            Count = Count,
-            Draw = Draw,
-            Discard = Discard,
-            Remove = Remove,
-            HP = HP,
+            Name = this.Name,
+            ID = this.ID,
+            Cost = this.Cost,
+            Count = this.Count,
+            Damage = this.Damage,
+            DamageOrder = this.DamageOrder,
+            Shield = this.Shield,
+            ShieldOrder = this.ShieldOrder,
+            Draw = this.Draw,
+            DrawOrder = this.DrawOrder,
+            HP = this.HP,
+            HPOrder = this.HPOrder,
+
+            Discard = this.Discard,
+            DiscardOrder = this.DiscardOrder,
+            Remove = this.Remove,
+            RemoveOrder = this.RemoveOrder,
             //CardUseDelay = CardUseDelay,
-            Price = Price,
-            Descript = Descript,
-            Sprite = Sprite,
-            Effect = Effect,
-            SpecialTags = SpecialTags,
-            HasCondition = HasCondition,
-            CardTag = CardTag,
-            CardRarity = CardRarity
+            Price = this.Price,
+            Descript = this.Descript,
+            Sprite = this.Sprite,
+            Effect = this.Effect,
+            SpecialTags = this.SpecialTags,
+            HasCondition = this.HasCondition,
+            CardTag = this.CardTag,
+            CardRarity = this.CardRarity
         };
     }
 }

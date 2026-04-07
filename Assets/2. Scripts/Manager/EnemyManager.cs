@@ -189,6 +189,31 @@ public class EnemyManager : MonoBehaviour
         return false;
     }
 
+    public bool Spawndummy()
+    {
+        EnemyData enemyData;
+        GameObject enemyObject;
+        Enemy enemy;
+        for (int i = 0; i < enemySpawnPosition.Length; ++i)
+        {
+            if (!enemySpawn[i]/*enemySpawnPosition[i].gameObject.activeSelf*/)
+                continue;
+            enemyData = FindEnemyData(0);
+            if (enemyData == null)
+                return false;
+            enemyObject = Instantiate(enemyData.EnemyPrefab, enemySpawnPosition[i], Quaternion.identity);
+            enemy = enemyObject.GetComponent<Enemy>();
+            EnemyList.Add(enemy);
+            EnemyDict.Add(enemyObject.GetInstanceID(), enemy);
+            enemy.SetupEnemy(enemyData, i);
+            enemySpawn[i] = false;
+            NoEnemy = EnemyList.Count == 0;
+            //enemySpawnPosition[i].gameObject.SetActive(false);
+            return true;
+        }
+        return false;
+    }
+
 
     public async UniTask KillEnemyCheck(Enemy enemy, UniTask task)
     {

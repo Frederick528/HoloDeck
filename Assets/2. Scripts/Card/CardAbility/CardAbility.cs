@@ -10,12 +10,11 @@ public enum AbilityTag
 {
     None,
     PrePreparation, // 0: 사전 준비 (데이터 설정, 버프 등)
-    Heal,           // 1: 회복 (공격 전 생존력 확보)
-    SelfDamage,     // 2: 자해 (공격의 대가로 체력 소모)
-    Attack,         // 3: 공격 (메인 액션)
-    Shield,         // 4: 방어
-    Draw,           // 5: 드로우
-    PostEffect      // 6: 모든 효과 완료 후 (상태이상 부여, 후속 연출 등)
+    ChangeHP,       // 1: 체력 변동
+    Attack,         // 2: 공격 (메인 액션)
+    Shield,         // 3: 방어
+    Draw,           // 4: 드로우
+    PostEffect      // 5: 모든 효과 완료 후 (상태이상 부여, 후속 연출 등)
 }
 
 public partial class CardAbility

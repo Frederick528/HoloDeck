@@ -10,7 +10,7 @@ public partial class CardAbility
     // --- 1. 공격 관련 ---
     async UniTask SingleAttackAB(Card card, bool crit)
     {
-        bool kill = await card.TargetEnemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, crit), _player);
+        bool kill = (await card.TargetEnemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, crit), _player)).Dead;
         if (kill)
         {
             _cts.Cancel();
@@ -45,10 +45,9 @@ public partial class CardAbility
         var target = enemies[randomIndex];
 
         // 4. 데미지 처리를 진행합니다. (기존 SingleAttackAB 로직 활용)
-        bool kill = await target.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, crit), _player);
+        await target.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, crit), _player);
 
-        // 5. 적이 죽었거나 모든 적이 사라졌을 경우 전투 종료(Cts 취소) 처리를 확인합니다.
-        if (kill)
+        if (EnemyManager.Instance.NoEnemy)
         {
             _cts.Cancel();
             _cts.Dispose();
@@ -63,7 +62,7 @@ public partial class CardAbility
 
     async UniTask HpEffectAB(Card card)
     {
-        if (card.Data.HP < 0) await _player.TakeDamage(-card.Data.HP);
+        if (card.Data.HP < 0) await _player.TakeDamage(-card.Data.HP, null, true);
         else await _player.Heal(card.Data.HP);
     }
 
@@ -105,26 +104,26 @@ public partial class CardAbility
     }
 
     // --- 4. 조건 검사 관련 ---
-    private async UniTask<bool> ConditionHpCheck(Card card)
-    {
-        if (_player.CurHP.Value > -card.Data.HP)
-        {
-            await _player.TakeDamage(-card.Data.HP);
-            return true;
-        }
-        return false;
-        
-    }
-    private async UniTask<bool> ConditionHpCheckXValue(Card card)
-    {
-        if (_player.CurHP.Value > card.Data.Cost)
-        {
-            await _player.TakeDamage(card.Data.Cost);
-            return true;
-        }
-        return false;
+    //private async UniTask<bool> ConditionHpCheck(Card card)
+    //{
+    //    if (_player.CurHP.Value > -card.Data.HP)
+    //    {
+    //        await _player.TakeDamage(-card.Data.HP, null, true);
+    //        return true;
+    //    }
+    //    return false;
 
-    }
+    //}
+    //private async UniTask<bool> ConditionHpCheckXValue(Card card)
+    //{
+    //    if (_player.CurHP.Value > card.Data.Cost)
+    //    {
+    //        await _player.TakeDamage(card.Data.Cost, null, true);
+    //        return true;
+    //    }
+    //    return false;
+
+    //}
 
     async UniTask<bool> ConditionDiscardAB(Card card)
     {

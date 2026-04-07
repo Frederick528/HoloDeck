@@ -98,23 +98,24 @@ public abstract class Enemy : Entity
         MaxHP.Value = enemyData.HP;
         CurHP.Value = MaxHP.Value;
         _criticalChance.Value = enemyData.CriticalChance;
-        CriticalDamage.Value = 150;
+        CriticalDamage.Value = enemyData.CriticalDamage;
         spawnPosIdx = pos;
         player = InGameManager.Instance.Player;
         EnemySubScribe();
     }
-    public override async UniTask<bool> TakeDamage(int dmg, Entity attacker = null)
+    public override async UniTask<(bool Dead, int ActualDamage)> TakeDamage(int dmg, Entity attacker = null, bool ignoreShield = false)
     {
         //if (isHit)
         //{
         //    BattleManager.Instance.HitEntity.Item1 = player;
         //}
-        if (!await base.TakeDamage(dmg, attacker))
+        (bool Dead, int ActualDamage) checkTakeDamage = await base.TakeDamage(dmg, attacker, ignoreShield);
+        if (checkTakeDamage.Dead)
         {
-            return false;
+            KillEnemy().Forget();
+            //return false;
         }
-        KillEnemy().Forget();
-        return true;
+        return checkTakeDamage;
 
     }
 

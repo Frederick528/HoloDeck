@@ -177,7 +177,10 @@ public class Arrow : MonoBehaviour
         //CardManager.Instance.useSingleTargetCard = true;        // 따로 체크해서 받아주는 거랑 그냥 true 하는 거랑 비슷할 것 같아서 걍 if문 없이 진행 => 근데 그럼 일관성을 해치는 듯 다시 체크해줌.
 
         //EnemyManager.Instance.TargetEnemy = collision.gameObject;       // Enemy 스크립트를 여기서 받는 건 너무 오바라서 그냥 카드 사용할 때 받기로 함. (Enemy한테 OnTrigger 하는 것보다 이게 좀 더 비용적으로 나을 듯?)
-        EnemyManager.Instance.TargetEnemy = EnemyManager.Instance.EnemyDict[collision.gameObject.GetInstanceID()];
+
+        Enemy enemy = EnemyManager.Instance.EnemyDict[collision.gameObject.GetInstanceID()];
+        EnemyManager.Instance.TargetEnemy = enemy;
+        CardManager.Instance.SelectCard.CheckTargetTemp(enemy);
         EnemyManager.Instance.TargetEnemy.TargetOutline(true);
         for (int i = 0; i < BattleManager.Instance.ArrowCursor.arrowRenderer.Count; ++i)
         {
@@ -207,6 +210,7 @@ public class Arrow : MonoBehaviour
         CardManager.Instance.useSingleTargetCard = false;       // 나갈 때 무조건 꺼야하는데, 굳이 조건문 확인해서 체크 꺼주는 것보다 그냥 꺼주는 게 더 나을 듯?
         EnemyManager.Instance.TargetEnemy.TargetOutline(false);
         EnemyManager.Instance.TargetEnemy = null;
+        CardManager.Instance.SelectCard.CheckTargetTemp(null);
         for (int i = 0; i < BattleManager.Instance.ArrowCursor.arrowRenderer.Count; ++i)
         {
             BattleManager.Instance.ArrowCursor.arrowRenderer[i].color = Color.white;

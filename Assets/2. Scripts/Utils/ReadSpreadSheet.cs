@@ -65,7 +65,7 @@ public class ReadSpreadSheet : MonoBehaviour
     {
         Debug.Log("Card Load Start");
         string address = "https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8";
-        string range = "A4:P";
+        string range = "A4:Z33";
         //string range = "A4:O";
         string cardSheetID = "2055316414";
         //string cardSheetID = "1809511646";
@@ -156,20 +156,26 @@ public class ReadSpreadSheet : MonoBehaviour
                 ID = ConvertInt32(cells[0]),
                 Name = LineBreakStr(cells[1]),
                 Cost = ConvertInt32(cells[2]),
-                Damage = ConvertInt32(cells[3]),
-                Shield = ConvertInt32(cells[4]),
-                Count = ConvertInt32(cells[5]) == 0 ? 1 : ConvertInt32(cells[5]),
+                Count = ConvertInt32(cells[3]) == 0 ? 1 : ConvertInt32(cells[3]),
+                Damage = ConvertInt32(cells[4]),
+                Shield = ConvertInt32(cells[5]),
                 Draw = ConvertInt32(cells[6]),
-                Discard = ConvertInt32(cells[7]),
-                Remove = ConvertInt32(cells[8]),
-                HP = ConvertInt32(cells[9]),
+                HP = ConvertInt32(cells[7]),
+                Discard = ConvertInt32(cells[8]),
+                Remove = ConvertInt32(cells[9]),
                 //data.CardUseDelay = ConvertSingle(cells[7]);
                 Price = ConvertInt32(cells[10]),
                 Descript = LineBreakStr(cells[11]),
                 //SpecialTags = LineBreakStr(cells[12]),
                 HasCondition = NullFalseBool(cells[13]),
                 CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[14]),
-                CardRarity = (CardRarity)Enum.Parse(typeof(CardRarity), cells[15])
+                CardRarity = (CardRarity)Enum.Parse(typeof(CardRarity), cells[15]),
+                DamageOrder = ConvertInt32M1(cells[19]),
+                ShieldOrder = ConvertInt32M1(cells[20]),
+                DrawOrder = ConvertInt32M1(cells[21]),
+                HPOrder = ConvertInt32M1(cells[22]),
+                DiscardOrder = ConvertInt32M1(cells[23]),
+                RemoveOrder = ConvertInt32M1(cells[24])
             };
 
             string rawTags = cells[12].Trim();
@@ -698,6 +704,29 @@ public class ReadSpreadSheet : MonoBehaviour
             // 디버깅을 위해 어떤 데이터에서 에러가 났는지 로그를 찍는 것이 좋습니다.
             Debug.LogWarning($"숫자 변환 실패! 입력된 문자열: '{str}' (0으로 대체됨)");
             return 0;
+        }
+    }
+    int ConvertInt32M1(string str)    // 구글스프레드시트는 엑셀 빈 칸을 ""로 가져오기 때문에 Convert.ToInt32가 에러가 뜸.
+    {
+        //int _value = Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
+        //return Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
+        if (string.IsNullOrWhiteSpace(str))
+            return -1;
+
+        // 2. 양끝 공백 및 보이지 않는 특수 문자 제거 (Trim)
+        string cleanStr = str.Trim();
+
+        // 3. TryParse로 안전하게 변환 시도
+        if (int.TryParse(cleanStr, out int result))
+        {
+            return result;
+        }
+        else
+        {
+            // 4. 숫자가 아닌 문자가 들어온 경우 (예: "데미지", "10A" 등)
+            // 디버깅을 위해 어떤 데이터에서 에러가 났는지 로그를 찍는 것이 좋습니다.
+            Debug.LogWarning($"숫자 변환 실패! 입력된 문자열: '{str}' (0으로 대체됨)");
+            return -1;
         }
     }
 

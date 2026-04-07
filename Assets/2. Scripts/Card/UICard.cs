@@ -45,10 +45,10 @@ public class UICard : MonoBehaviour
         }
     }
 
-    public void Setup(CardData data)
+    public void Setup(CardData defaultData, CardData currData = null)
     {
-        _getCardData = data;
-        if (data == null)
+        _getCardData = defaultData;
+        if (defaultData == null)
         {
             _nameText.text = "Null";
             _costText.text = "0";
@@ -59,27 +59,43 @@ public class UICard : MonoBehaviour
                 _rararityBG[i].sprite = CardManager.Instance.CommonSprites[i];
             return;
         }
-        StringBuilder sb = new StringBuilder(data.Descript);
-        sb.Replace("{Damage}", (data.Damage).ToString());
-        sb.Replace("{Shield}", (data.Shield).ToString());
-        sb.Replace("{Count}", (data.Count).ToString());
-        sb.Replace("{Draw}", (data.Draw).ToString());
-        sb.Replace("{Discard}", (data.Discard).ToString());
-        sb.Replace("{Remove}", (data.Remove).ToString());
 
-        _nameText.text = data.Name;
-        if (data.Cost == -1)
+        string GetColorValue(int? current, int original)
+        {
+            if (current == null)
+                return $"{original}";
+            if (current > original)
+                // 차분한 딥 그린 (성장/버프 느낌)
+                return $"<color=#4CAF50>{current}</color>";
+            else if (current < original)
+                // 묵직한 다크 레드 (상처/디버프 느낌)
+                return $"<color=#B71C1C>{current}</color>";
+            else                         // 동일: 검정색 (기본 색상이 검정이라면 태그를 빼도 됩니다)
+                return $"{current}";
+        }
+
+        StringBuilder sb = new StringBuilder(defaultData.Descript);
+        sb.Replace("{Damage}", GetColorValue(currData?.Damage, defaultData.Damage));
+        sb.Replace("{Shield}", GetColorValue(currData?.Shield, defaultData.Shield));
+        sb.Replace("{Count}", GetColorValue(currData?.Count, defaultData.Count));
+        sb.Replace("{Draw}", GetColorValue(currData?.Draw, defaultData.Draw));
+        sb.Replace("{Discard}", GetColorValue(currData?.Discard, defaultData.Discard));
+        sb.Replace("{Remove}", GetColorValue(currData?.Remove, defaultData.Remove));
+        sb.Replace("{HP}", GetColorValue(currData?.HP, defaultData.HP));
+
+        _nameText.text = defaultData.Name;
+        if (defaultData.Cost == -1)
         {
             _costText.text = "X";
         }
         else
         {
-            _costText.text = data.Cost.ToString();
+            _costText.text = defaultData.Cost.ToString();
         }
         _descText.text = sb.ToString();
-        _character.sprite = data.Sprite;
+        _character.sprite = defaultData.Sprite;
 
-        switch (data.CardTag)
+        switch (defaultData.CardTag)
         {
             case CardTag.SingleAttack:
             case CardTag.AllAttack:
@@ -93,7 +109,7 @@ public class UICard : MonoBehaviour
                 _tagText.text = "Skill";
                 break;
         }
-        switch (data.CardRarity)
+        switch (defaultData.CardRarity)
         {
             case CardRarity.Common:
                 for (int i = 0; i < _rararityBG.Length; ++i)

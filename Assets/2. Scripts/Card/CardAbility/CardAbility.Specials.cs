@@ -28,11 +28,11 @@ public partial class CardAbility
                 AddVulnerable(card, tasks, type, data.Amount, data.Duration);
             }},
 
-            { "XValue", (card, tasks, data) => {
-                // data.Type에 "Count", "Damage" 등이 들어있으므로 그대로 전달
-                if (!string.IsNullOrEmpty(data.Type))
-                    AddXValue(card, tasks, data.Type);
-            }}
+            //{ "XValue", (card, tasks, data) => {
+            //    // data.Type에 "Count", "Damage" 등이 들어있으므로 그대로 전달
+            //    if (!string.IsNullOrEmpty(data.Type))
+            //        AddXValue(card, tasks, data.Type);
+            //}}
         };
         //_specialAbilityMap = new()
         //{
@@ -58,6 +58,7 @@ public partial class CardAbility
 
         return 0;
     }
+
 
     //private int GetAmount(Card card, string[] args)
     //{
@@ -91,10 +92,10 @@ public partial class CardAbility
     {
         switch (card.Data.ID)
         {
-            case 503:
-                //conditionTasks.Insert(0, () => UniTask.FromResult(card.Data.Cost >= 3));
-                conditionTasks.Add(() => ConditionHpCheckXValue(card));     // 체력을 깎는 조건은 맨 마지막에 확인해야 문제 없음.
-                break;
+            //case 503:
+            //    //conditionTasks.Insert(0, () => UniTask.FromResult(card.Data.Cost >= 3));
+            //    conditionTasks.Add(() => ConditionHpCheckXValue(card));     // 체력을 깎는 조건은 맨 마지막에 확인해야 문제 없음.
+            //    break;
             case 999: // 예: 내 손패가 3장 이하일 때만 사용 가능
                 conditionTasks.Insert(0, () => UniTask.FromResult(CardManager.Instance.HandCard.Count <= 3));
                 break;
@@ -108,6 +109,7 @@ public partial class CardAbility
 
         foreach (var tagData in card.Data.SpecialTags)
         {
+            if (tagData.Tag == "XValue") continue;
             // 3. 맵에서 해당 태그가 있는지 확인
             if (_specialAbilityMap.TryGetValue(tagData.Tag, out var addAction))
             {
@@ -129,10 +131,10 @@ public partial class CardAbility
     
 
     // 105: 확정 버리기 (6번) (조건이 아닌 카드 효과라서 여기서 적용됨.)
-    void AddConfirmedDiscard(Card card, List<(int order, AbilityTag tag, Func<UniTask> task)> tasks)
-    {
-        tasks.Add((6, AbilityTag.PostEffect, () => ConfirmedDiscardAB(card)));
-    }
+    //void AddConfirmedDiscard(Card card, List<(int order, AbilityTag tag, Func<UniTask> task)> tasks)
+    //{
+    //    tasks.Add((6, AbilityTag.PostEffect, () => ConfirmedDiscardAB(card)));
+    //}
 
     // 108: 상태이상 비례 데미지 (스마트 버전)
     void AddEnemyStatusDamage(Card card, List<(int order, AbilityTag tag, Func<UniTask> task)> tasks)
@@ -191,83 +193,85 @@ public partial class CardAbility
         ));
     }
 
+    // [장착] 카드를 내기 직전, 모든 XValue 태그를 찾아 수치에 더함
+    
     // 801: 횟수 세팅 (0번)
-    private void AddXValue(Card card, List<(int order, AbilityTag tag, Func<UniTask> task)> tasks, string target)
-    {
-        int bonusValue = 0; // 원복을 위해 저장해둘 변수
+    //private void AddXValue(Card card, List<(int order, AbilityTag tag, Func<UniTask> task)> tasks, string target)
+    //{
+    //    int bonusValue = 0; // 원복을 위해 저장해둘 변수
 
-        // 1. 사전 준비(0번): X값을 타겟에 적용
-        tasks.Add((0, AbilityTag.PrePreparation, () => {
-            int xValue = card.Data.Cost;
-            bonusValue = xValue;
+    //    // 1. 사전 준비(0번): X값을 타겟에 적용
+    //    tasks.Add((0, AbilityTag.PrePreparation, () => {
+    //        int xValue = card.Data.Cost;
+    //        bonusValue = xValue;
 
-            switch (target)
-            {
-                case "Count":
-                    card.Data.Count += xValue;
-                    break;
-                case "Damage":
-                    card.Data.Damage += xValue;
-                    break;
-                case "Shield":
-                    card.Data.Shield += xValue;
-                    break;
-                case "Draw":
-                    card.Data.Draw += xValue;
-                    break;
-                case "Discard":
-                    card.Data.Discard += xValue;
-                    break;
-                case "Remove":
-                    card.Data.Remove += xValue;
-                    break;
-                case "HealHP":
-                    card.Data.HP += xValue;
-                    break;
-                case "DamageHP":
-                    card.Data.HP -= xValue;
-                    break;
-            }
-            return UniTask.CompletedTask;
-        }
-        ));
+    //        switch (target)
+    //        {
+    //            case "Count":
+    //                card.Data.Count += xValue;
+    //                break;
+    //            case "Damage":
+    //                card.Data.Damage += xValue;
+    //                break;
+    //            case "Shield":
+    //                card.Data.Shield += xValue;
+    //                break;
+    //            case "Draw":
+    //                card.Data.Draw += xValue;
+    //                break;
+    //            case "Discard":
+    //                card.Data.Discard += xValue;
+    //                break;
+    //            case "Remove":
+    //                card.Data.Remove += xValue;
+    //                break;
+    //            case "HealHP":
+    //                card.Data.HP += xValue;
+    //                break;
+    //            case "DamageHP":
+    //                card.Data.HP -= xValue;
+    //                break;
+    //        }
+    //        return UniTask.CompletedTask;
+    //    }
+    //    ));
 
-        // 2. 사후 처리(6번): 데미지나 횟수처럼 '이번 장'에만 해당되는 값은 원복
-        tasks.Add((6, AbilityTag.PostEffect, () => {
-            switch (target)
-            {
-                case "Count":
-                    card.Data.Count -= bonusValue;
-                    break;
-                case "Damage":
-                    card.Data.Damage -= bonusValue;
-                    break;
-                case "Shield":
-                    card.Data.Shield -= bonusValue;
-                    break;
-                case "Draw":
-                    card.Data.Draw -= bonusValue;
-                    break;
-                case "Discard":
-                    card.Data.Discard -= bonusValue;
-                    break;
-                case "Remove":
-                    card.Data.Remove -= bonusValue;
-                    break;
-                case "HealHP":
-                    card.Data.HP -= bonusValue;
-                    break;
-                case "DamageHP":
-                    card.Data.HP += bonusValue;
-                    break;
-            }
-            return UniTask.CompletedTask;
-        }));
-    }
+    //    // 2. 사후 처리(6번): 데미지나 횟수처럼 '이번 장'에만 해당되는 값은 원복
+    //    tasks.Add((6, AbilityTag.PostEffect, () => {
+    //        switch (target)
+    //        {
+    //            case "Count":
+    //                card.Data.Count -= bonusValue;
+    //                break;
+    //            case "Damage":
+    //                card.Data.Damage -= bonusValue;
+    //                break;
+    //            case "Shield":
+    //                card.Data.Shield -= bonusValue;
+    //                break;
+    //            case "Draw":
+    //                card.Data.Draw -= bonusValue;
+    //                break;
+    //            case "Discard":
+    //                card.Data.Discard -= bonusValue;
+    //                break;
+    //            case "Remove":
+    //                card.Data.Remove -= bonusValue;
+    //                break;
+    //            case "HealHP":
+    //                card.Data.HP -= bonusValue;
+    //                break;
+    //            case "DamageHP":
+    //                card.Data.HP += bonusValue;
+    //                break;
+    //        }
+    //        return UniTask.CompletedTask;
+    //    }));
+    //}
 
     void AddVulnerable(Card card, List<(int order, AbilityTag tag, Func<UniTask> task)> tasks, StatusEffectType type, string amountText, string durationText)
     {
-        tasks.Add((0, AbilityTag.PrePreparation, () => {
+        tasks.Add((10, AbilityTag.PrePreparation, () => {
             // 헬퍼를 사용하여 적군 전체 혹은 단일 타겟에게 적용
             int amount = GetVariable(card, amountText);
             int duration = GetVariable(card, durationText);
