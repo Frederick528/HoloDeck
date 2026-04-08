@@ -32,6 +32,34 @@ public class TurnManager : MonoBehaviour
 
     bool _canEndTurn;
 
+    int _turnAttackCount = 0;
+    int _turnSkillCount = 0;
+
+    int _battleAttackCount = 0;
+    int _battleSkillCount = 0;
+
+    int _battleZeroCostCount = 0;
+
+    bool _isFirstCardPlayed = false;
+
+    public void AddAttackCardsPlayed()
+    {
+        _turnAttackCount++;
+        _battleAttackCount++;
+    }
+    public void AddSkillCardsPlayed()
+    {
+        _turnSkillCount++;
+        _battleSkillCount++;
+    }
+    public void AddZeroCardsPlayed() => _battleAttackCount++;
+    public bool UsedFirstCardPlayed() => true;
+    public int GetTurnAttackCount() => _turnAttackCount;
+    public int GetTurnSkillCount() => _turnSkillCount;
+    public int GetBattleAttackCount() => _battleAttackCount;
+    public int GetBattleSkillCount() => _battleSkillCount;
+    public int GetBattleZeroCostCount() => _battleZeroCostCount;
+    public bool GetFirstCardPlayed() => _isFirstCardPlayed;
 
     public CancellationTokenSource CancelSource = new CancellationTokenSource();
 
@@ -89,6 +117,20 @@ public class TurnManager : MonoBehaviour
         //    startCardCount = 0;
     }
 
+    void ResetTurnStart()
+    {
+        _turnAttackCount = 0;
+        _turnSkillCount = 0;
+        _isFirstCardPlayed = false;
+    }
+
+    void ResetBattleStart()
+    {
+        _battleAttackCount = 0;
+        _battleSkillCount = 0;
+        _battleZeroCostCount = 0;
+    }
+
     public async UniTask StartTurnTask()        // 시작 뽑기 (수정 필요: OnAddCard가 액션이라 Invoke 사용시, await가 작용하지 않아 카드덱이 0개일 경우, 0.5초 뒤에 뽑는 것이 적용되지 않음.)
     {
         //GameSetup();
@@ -98,6 +140,7 @@ public class TurnManager : MonoBehaviour
 
         InGameManager.Instance.Player.AddCurHolo(InGameManager.Instance.Player.MaxHolo);
         InGameManager.Instance.Player.ShieldReset();
+        ResetTurnStart();
 
         foreach (var enemy in EnemyManager.Instance.EnemyList)
         {
@@ -289,6 +332,7 @@ public class TurnManager : MonoBehaviour
         //OnAddCard += () =>
         //    CardManager.Instance.DrawCard().Forget();
 
+        ResetBattleStart();
 
         StartTurnTask().Forget();
     }

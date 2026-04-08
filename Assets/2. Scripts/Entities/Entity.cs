@@ -204,7 +204,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         }
         if (ApplyStatusEffect(StatusEffect.Vulnerable, out _))
         {
-            damage = Mathf.FloorToInt(damage * 1.5f + 0.50001f);
+            damage = MathUtil.MultiplierToInt(damage, 1.5f);
         }
         return damage;
     }

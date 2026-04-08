@@ -32,6 +32,10 @@ public partial class CardAbility
     {
         _cts = new CancellationTokenSource();
 
+        card.IndividualUseDamage = 0;
+        card.TotalUseDamage = 0;
+        card.IsKillEnemy = false;
+
         // [1] Order 0 처리: 효과 발동 전 딱 1번만 실행
         if (cardEvent.TryGetValue(0, out var startTasks))
         {
@@ -62,8 +66,11 @@ public partial class CardAbility
         // [3] Order 999 처리: 모든 반복이 끝난 후 딱 1번만 실행
         if (cardEvent.TryGetValue(999, out var endTasks))
         {
-            var tasksToRun = endTasks.Select(func => func()).ToList();
-            await UniTask.WhenAll(tasksToRun).SuppressCancellationThrow();
+            if (!_cts.IsCancellationRequested)
+            {
+                var tasksToRun = endTasks.Select(func => func()).ToList();
+                await UniTask.WhenAll(tasksToRun).SuppressCancellationThrow();
+            }
         }
 
         // [4]. 카드 태그별 후처리 (타겟 해제 및 크리티컬 체크)

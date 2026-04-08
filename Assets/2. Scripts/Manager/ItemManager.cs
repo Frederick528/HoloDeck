@@ -70,11 +70,11 @@ public class ItemManager : MonoBehaviour
         }
         InGameButtonManager.Instance.TurnPassiveButton[0].onClick.AddListener(() =>
         {
-            _passiveTransform.offsetMin = new Vector2(_passiveTransform.offsetMin.x + 1600 > 0 ? 0 : _passiveTransform.offsetMin.x + 1600, _passiveTransform.offsetMin.y);
+            _passiveTransform.offsetMin = new Vector2(_passiveTransform.offsetMin.x + 420 > 0 ? 0 : _passiveTransform.offsetMin.x + 420, _passiveTransform.offsetMin.y);
         });
         InGameButtonManager.Instance.TurnPassiveButton[1].onClick.AddListener(() =>
         {
-            _passiveTransform.offsetMin = new Vector2(_passiveTransform.offsetMin.x - 1600 < -1600 * (int)(_passiveItem.Count * 0.05f) ? -1600 * (int)(_passiveItem.Count * 0.05f) : _passiveTransform.offsetMin.x - 1600, _passiveTransform.offsetMin.y);
+            _passiveTransform.offsetMin = new Vector2(_passiveTransform.offsetMin.x - 420 < -420 * (_passiveItem.Count / 7) ? -420 * (_passiveItem.Count / 7) : _passiveTransform.offsetMin.x - 420, _passiveTransform.offsetMin.y);
         });
 
         InGameButtonManager.Instance.ActiveItemButton.onClick.AddListener(() =>
@@ -340,7 +340,7 @@ public class ItemManager : MonoBehaviour
         Item passiveItem = Instantiate(_passiveItemPrefab, _passiveTransform);
         passiveItem.Setup(itemData);
         _passiveItem.Add(passiveItem);
-        if (_passiveItem.Count > 20 && !InGameButtonManager.Instance.TurnPassiveButton[0].gameObject.activeSelf)
+        if (_passiveItem.Count > 7 && !InGameButtonManager.Instance.TurnPassiveButton[0].gameObject.activeSelf)
         {
             InGameButtonManager.Instance.SetActiveTurnPassiveBtn(true);
         }

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using UniRx;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 // [Actions] 모든 카드가 공통으로 사용하는 '원자적 기능'들
@@ -10,9 +11,12 @@ public partial class CardAbility
     // --- 1. 공격 관련 ---
     async UniTask SingleAttackAB(Card card, bool crit)
     {
-        bool kill = (await card.TargetEnemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, crit), _player)).Dead;
+        (bool kill, int actualDamage) = await card.TargetEnemy.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, crit), _player);
+        card.IndividualUseDamage = actualDamage;
+        card.TotalUseDamage += actualDamage;
         if (kill)
         {
+            card.IsKillEnemy = true;
             _cts.Cancel();
             _cts.Dispose();
         }
@@ -21,9 +25,22 @@ public partial class CardAbility
     async UniTask AllAttackAB(Card card, bool crit)
     {
         var enemies = EnemyManager.Instance.EnemyList.ToList();
-        await UniTask.WhenAll(enemies.Select(e => e != null
+        (bool kill, int actualDamage)[] results = await UniTask.WhenAll(enemies.Select(e => e != null
             ? e.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, crit), _player)
-            : UniTask.FromResult(false)));
+            : UniTask.FromResult((false, 0))));
+
+        int totalActualDamageThisTime = 0;
+        foreach (var result in results)
+        {
+            if (result.kill)
+            {
+                card.IsKillEnemy = true;
+            }
+            totalActualDamageThisTime += result.actualDamage;
+        }
+
+        card.IndividualUseDamage = totalActualDamageThisTime;
+        card.TotalUseDamage += totalActualDamageThisTime;
 
         if (EnemyManager.Instance.NoEnemy)
         {
@@ -45,7 +62,15 @@ public partial class CardAbility
         var target = enemies[randomIndex];
 
         // 4. 데미지 처리를 진행합니다. (기존 SingleAttackAB 로직 활용)
-        await target.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, crit), _player);
+        (bool kill, int actualDamage) = await target.TakeDamage(_player.CheckCriticalDamage(card.Data.Damage, crit), _player);
+
+        card.IndividualUseDamage = actualDamage;
+        card.TotalUseDamage += actualDamage;
+
+        if (kill)
+        {
+            card.IsKillEnemy = true;
+        }
 
         if (EnemyManager.Instance.NoEnemy)
         {

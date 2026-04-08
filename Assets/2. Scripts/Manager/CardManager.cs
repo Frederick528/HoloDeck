@@ -337,7 +337,7 @@ public class CardManager : MonoBehaviour
     {
         foreach (Card card in TotalDeck)
         {
-            card.CardDataReset();
+            card.RefreshCardDesc();
         }
     }
 
@@ -345,7 +345,7 @@ public class CardManager : MonoBehaviour
     {
         foreach (Card card in HandCard)
         {
-            card.CardDataReset();
+            card.RefreshCardDesc();
         }
     }
 
@@ -363,7 +363,7 @@ public class CardManager : MonoBehaviour
                 {
                     continue;
                 }
-                //TotalDeck[i].CardDataReset(true);
+                //TotalDeck[i].RefreshCardDesc(true);
                 TotalDeck[i].CardRelease();
                 TotalDeck.Remove(TotalDeck[i--]);
             }

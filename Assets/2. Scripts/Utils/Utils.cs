@@ -88,3 +88,8 @@ public class FindTransform
         return null;
     }
 }
+
+public class MathUtil
+{
+    public static int MultiplierToInt(int amount, float multiple) => Mathf.FloorToInt(amount * multiple + 0.50001f);
+}

@@ -77,6 +77,11 @@ public class Card : MonoBehaviour
 
     Dictionary<string, int> _xValueBonuses = new();
 
+    public int TotalUseDamage = 0;
+    public int IndividualUseDamage = 0;
+
+    public bool IsKillEnemy = false;
+
     //public AsyncLazy PlayEffect = null;
 
     //BoxCollider2D _boxCollider2;
@@ -161,7 +166,7 @@ public class Card : MonoBehaviour
             AllEnemies = sendAnimEvent.AllEnemies;
         }
 
-        CardDataReset();        // 글(string) 데이터만 초기화
+        RefreshCardDesc();        // 글(string) 데이터만 초기화
         //Data = _defaultData;
         ////Data.Name = data.Name;
         ////Data.ID = data.ID;
@@ -248,7 +253,7 @@ public class Card : MonoBehaviour
     //    CardAction?.Invoke();
     //}
 
-    public void CardDataReset(/*bool release = false*/)
+    public void RefreshCardDesc(/*bool release = false*/)
     {
         //if (release)
         //{
@@ -261,29 +266,33 @@ public class Card : MonoBehaviour
         //}
         //else
         //{
-        int damage = 0;
-        int shield = 0;
-        int count = 0;
-        int draw = 0;
-        int discard = 0;
-        int remove = 0;
-        int hp = 0;
+        int cost = -1;
+        int damage = -1;
+        int shield = -1;
+        int count = -1;
+        int draw = -1;
+        int discard = -1;
+        int remove = -1;
+        int hp = -1;
         if (Data.DamageOrder >= 0)
         {
             Data.Damage = Mathf.Max(0, DefaultData.Damage + InGameManager.Instance.Player.AttackPower.Value);
             if (InGameManager.Instance.Player.GetStatusEffect(StatusEffect.Weaking, out _))
             {
-                Data.Damage = Mathf.FloorToInt(Data.Damage * 0.75f + 0.50001f);
+                Data.Damage = MathUtil.MultiplierToInt(Data.Damage, 0.75f);
                 //damage = Mathf.FloorToInt(Data.Damage * 0.75f + 0.50001f);
             }
             if (CheckTarget != null)        // 해당 수치는 실제 적용이 아닌 보여주기 값.
             {
                 if (CheckTarget.GetStatusEffect(StatusEffect.Vulnerable, out _))
                 {
-                    damage = Mathf.FloorToInt(Data.Damage * 1.5f + 0.50001f);
+                    damage = MathUtil.MultiplierToInt(Data.Damage, 1.5f);
                 }
             }
-            damage = Mathf.Max(Data.Damage, damage);
+            if (damage == -1)
+            {
+                damage = Data.Damage;
+            }
         }
         if (Data.ShieldOrder >= 0)
         {
@@ -351,7 +360,7 @@ public class Card : MonoBehaviour
     //    sb.Replace("{Draw}", (_defaultData.Draw).ToString());
     //    sb.Replace("{Discard}", (_defaultData.Discard).ToString());
     //    Desc = sb.ToString();
-    //    CardDataReset();
+    //    RefreshCardDesc();
     //    //switch (data)
     //    //{
     //    //    case "Attack":
@@ -400,14 +409,14 @@ public class Card : MonoBehaviour
     {
         CheckTarget = enemy;
         if (TargetEnemy != null && enemy == null) return;
-        CardDataReset();
+        RefreshCardDesc();
     }
 
     public void Target(Enemy enemy)     // 이거 필요없음. 죽는 적은 애초에 지정이 안 되기 때문에 따로 타켓 안 해도 됨.
     {
         TargetEnemy = enemy;
         if (enemy == null)
-            CardDataReset();
+            RefreshCardDesc();
     }
 
     public async UniTask TurnOnOutline(bool isOn)
@@ -622,7 +631,8 @@ public class Card : MonoBehaviour
             string target = tag.Type;
             float.TryParse(tag.Amount, out float multiple);
             
-            int totalValue = Mathf.FloorToInt(xValue * multiple + 0.50001f);
+            //int totalValue = Mathf.FloorToInt(xValue * multiple + 0.50001f);
+            int totalValue = MathUtil.MultiplierToInt(xValue, multiple);
 
             print(totalValue);
 

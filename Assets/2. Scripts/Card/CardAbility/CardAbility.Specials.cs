@@ -28,6 +28,18 @@ public partial class CardAbility
                 AddVulnerable(card, tasks, type, data.Amount, data.Duration);
             }},
 
+            { "Cost", (card, tasks, data) => {
+                AddCost(card, tasks, data);
+            }},
+
+            { "Kill", (card, tasks, data) => {
+                KillEnemy(card, tasks, data);
+            }},
+
+            { "DamageDealt", (card, tasks, data) => {
+                DamageDealt(card, tasks, data);
+            }},
+
             //{ "XValue", (card, tasks, data) => {
             //    // data.Type에 "Count", "Damage" 등이 들어있으므로 그대로 전달
             //    if (!string.IsNullOrEmpty(data.Type))
@@ -57,6 +69,17 @@ public partial class CardAbility
         if (int.TryParse(val, out int result)) return result;
 
         return 0;
+    }
+
+    private float GetMultipleValue(Card card, string input)
+    {
+        if (string.IsNullOrEmpty(input)) return 1f;
+
+        string val = input.Trim().ToLower();
+        if (val == "x") return (float)card.Data.Cost;
+        if (float.TryParse(val, out float result)) return result;
+
+        return 1f;
     }
 
 
@@ -171,103 +194,127 @@ public partial class CardAbility
     // 503: 공격력 버프 (0번)
     void AddAttackUP(Card card, List<(int order, AbilityTag tag, Func<UniTask> task)> tasks, StatusEffectType type, string amountText, string durationText)
     {
-        tasks.Add((0, AbilityTag.PrePreparation, () => {
-
+        Func<UniTask> taskLogic = () =>
+        {
             int amount = GetVariable(card, amountText);
             int duration = GetVariable(card, durationText);
 
             _player.AddStatusEffect((StatusEffect.ATKUp, type), amount, duration);
             return UniTask.CompletedTask;
-        }));
+        };
+        tasks.Add((10, AbilityTag.PrePreparation, taskLogic));
     }
 
     void AddDefenseUP(Card card, List<(int order, AbilityTag tag, Func<UniTask> task)> tasks, StatusEffectType type, string amountText, string durationText)
     {
-        tasks.Add((0, AbilityTag.PrePreparation, () => {
+        Func<UniTask> taskLogic = () =>
+        {
             int amount = GetVariable(card, amountText);
             int duration = GetVariable(card, durationText);
 
-            _player.AddStatusEffect((StatusEffect.DEFUp, StatusEffectType.InfiniteDuration), amount);
+            _player.AddStatusEffect((StatusEffect.DEFUp, type), amount);
             return UniTask.CompletedTask;
-        }
-        ));
+        };
+        tasks.Add((10, AbilityTag.PrePreparation, taskLogic));
     }
 
-    // [장착] 카드를 내기 직전, 모든 XValue 태그를 찾아 수치에 더함
-    
-    // 801: 횟수 세팅 (0번)
-    //private void AddXValue(Card card, List<(int order, AbilityTag tag, Func<UniTask> task)> tasks, string target)
-    //{
-    //    int bonusValue = 0; // 원복을 위해 저장해둘 변수
+    void AddCost(Card card, List<(int order, AbilityTag tag, Func<UniTask> task)> tasks, SpecialTagData data)
+    {
+        Func<UniTask> taskLogic = () =>
+        {
+            int amount = GetVariable(card, data.Amount);
+            switch (data.Type)
+            {
+                case "AddAmount":
+                    _player.AddCurHolo(amount);
+                    break;
+                case "MultipleAmount":
+                    _player.AddCurHolo(_player.CurHolo * (amount - 1));
+                    break;
+            }
 
-    //    // 1. 사전 준비(0번): X값을 타겟에 적용
-    //    tasks.Add((0, AbilityTag.PrePreparation, () => {
-    //        int xValue = card.Data.Cost;
-    //        bonusValue = xValue;
+            return UniTask.CompletedTask;
+        };
+        tasks.Add((10, AbilityTag.PrePreparation, taskLogic));
+    }
 
-    //        switch (target)
-    //        {
-    //            case "Count":
-    //                card.Data.Count += xValue;
-    //                break;
-    //            case "Damage":
-    //                card.Data.Damage += xValue;
-    //                break;
-    //            case "Shield":
-    //                card.Data.Shield += xValue;
-    //                break;
-    //            case "Draw":
-    //                card.Data.Draw += xValue;
-    //                break;
-    //            case "Discard":
-    //                card.Data.Discard += xValue;
-    //                break;
-    //            case "Remove":
-    //                card.Data.Remove += xValue;
-    //                break;
-    //            case "HealHP":
-    //                card.Data.HP += xValue;
-    //                break;
-    //            case "DamageHP":
-    //                card.Data.HP -= xValue;
-    //                break;
-    //        }
-    //        return UniTask.CompletedTask;
-    //    }
-    //    ));
+    void KillEnemy(Card card, List<(int order, AbilityTag tag, Func<UniTask> task)> tasks, SpecialTagData data)
+    {
+        Func<UniTask> taskLogic = async () =>
+        {
+            int amount = GetVariable(card, data.Amount);
+            await TypeTask(data.Type, amount);
+        };
+        tasks.Add((10, AbilityTag.PrePreparation, taskLogic));
+    }
 
-    //    // 2. 사후 처리(6번): 데미지나 횟수처럼 '이번 장'에만 해당되는 값은 원복
-    //    tasks.Add((6, AbilityTag.PostEffect, () => {
-    //        switch (target)
-    //        {
-    //            case "Count":
-    //                card.Data.Count -= bonusValue;
-    //                break;
-    //            case "Damage":
-    //                card.Data.Damage -= bonusValue;
-    //                break;
-    //            case "Shield":
-    //                card.Data.Shield -= bonusValue;
-    //                break;
-    //            case "Draw":
-    //                card.Data.Draw -= bonusValue;
-    //                break;
-    //            case "Discard":
-    //                card.Data.Discard -= bonusValue;
-    //                break;
-    //            case "Remove":
-    //                card.Data.Remove -= bonusValue;
-    //                break;
-    //            case "HealHP":
-    //                card.Data.HP -= bonusValue;
-    //                break;
-    //            case "DamageHP":
-    //                card.Data.HP += bonusValue;
-    //                break;
-    //        }
-    //        return UniTask.CompletedTask;
-    //    }));
-    //}
+
+    void DamageDealt(Card card, List<(int order, AbilityTag tag, Func<UniTask> task)> tasks, SpecialTagData data)
+    {
+        Func<UniTask> taskLogic = async () =>
+        {
+            float multiple = GetMultipleValue(card, data.Amount);
+            int amount = MathUtil.MultiplierToInt(card.IndividualUseDamage, multiple);
+            await TypeTask(data.Type, amount);
+        };
+        tasks.Add((10, AbilityTag.PrePreparation, taskLogic));
+
+        //tasks.Add((10, AbilityTag.PostEffect, () =>
+        //{
+        //    int xValue = card.Data.Cost;
+        //    bonusValue = xValue;
+
+        //    switch (target)
+        //    {
+        //        case "Count":
+        //            card.Data.Count += xValue;
+        //            break;
+        //        case "Damage":
+        //            card.Data.Damage += xValue;
+        //            break;
+        //        case "Shield":
+        //            card.Data.Shield += xValue;
+        //            break;
+        //        case "Draw":
+        //            card.Data.Draw += xValue;
+        //            break;
+        //        case "Discard":
+        //            card.Data.Discard += xValue;
+        //            break;
+        //        case "Remove":
+        //            card.Data.Remove += xValue;
+        //            break;
+        //        case "HealHP":
+        //            card.Data.HP += xValue;
+        //            break;
+        //        case "DamageHP":
+        //            card.Data.HP -= xValue;
+        //            break;
+        //    }
+        //    return UniTask.CompletedTask;
+        //}
+        //));
+
+    }
+
+    async UniTask TypeTask(string type, int amount)
+    {
+        switch (type)
+        {
+            case "AddHeal":
+                await _player.Heal(amount);
+                break;
+            case "AddCost":
+                _player.AddCurHolo(amount);
+                break;
+            case "AddShield":
+                await _player.Shield(amount);
+                break;
+            case "AddDraw":
+                await CardManager.Instance.DrawCard(amount);
+                break;
+        }
+    }
 
     void AddVulnerable(Card card, List<(int order, AbilityTag tag, Func<UniTask> task)> tasks, StatusEffectType type, string amountText, string durationText)
     {
