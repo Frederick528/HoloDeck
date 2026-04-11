@@ -1148,6 +1148,636 @@ MonoBehaviour:
     Price: 5
     Descript: passive6
     Sprite: {fileID: 0}
+  - Name: Passive1
+    ID: 100
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive1
+    Sprite: {fileID: 0}
+  - Name: Passive2
+    ID: 101
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 10
+    Descript: passive2
+    Sprite: {fileID: 0}
+  - Name: Passive3
+    ID: 102
+    ItemTag: 0
+    ItemRarity: 1
+    Price: 20
+    Descript: passive3
+    Sprite: {fileID: 0}
+  - Name: Passive4
+    ID: 103
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 20
+    Descript: passive4
+    Sprite: {fileID: 0}
+  - Name: Passive5
+    ID: 104
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 15
+    Descript: passive5
+    Sprite: {fileID: 0}
+  - Name: Passive6
+    ID: 105
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive6
+    Sprite: {fileID: 0}
+  - Name: Passive1
+    ID: 100
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive1
+    Sprite: {fileID: 0}
+  - Name: Passive2
+    ID: 101
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 10
+    Descript: passive2
+    Sprite: {fileID: 0}
+  - Name: Passive3
+    ID: 102
+    ItemTag: 0
+    ItemRarity: 1
+    Price: 20
+    Descript: passive3
+    Sprite: {fileID: 0}
+  - Name: Passive4
+    ID: 103
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 20
+    Descript: passive4
+    Sprite: {fileID: 0}
+  - Name: Passive5
+    ID: 104
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 15
+    Descript: passive5
+    Sprite: {fileID: 0}
+  - Name: Passive6
+    ID: 105
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive6
+    Sprite: {fileID: 0}
+  - Name: Passive1
+    ID: 100
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive1
+    Sprite: {fileID: 0}
+  - Name: Passive2
+    ID: 101
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 10
+    Descript: passive2
+    Sprite: {fileID: 0}
+  - Name: Passive3
+    ID: 102
+    ItemTag: 0
+    ItemRarity: 1
+    Price: 20
+    Descript: passive3
+    Sprite: {fileID: 0}
+  - Name: Passive4
+    ID: 103
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 20
+    Descript: passive4
+    Sprite: {fileID: 0}
+  - Name: Passive5
+    ID: 104
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 15
+    Descript: passive5
+    Sprite: {fileID: 0}
+  - Name: Passive6
+    ID: 105
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive6
+    Sprite: {fileID: 0}
+  - Name: Passive1
+    ID: 100
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive1
+    Sprite: {fileID: 0}
+  - Name: Passive2
+    ID: 101
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 10
+    Descript: passive2
+    Sprite: {fileID: 0}
+  - Name: Passive3
+    ID: 102
+    ItemTag: 0
+    ItemRarity: 1
+    Price: 20
+    Descript: passive3
+    Sprite: {fileID: 0}
+  - Name: Passive4
+    ID: 103
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 20
+    Descript: passive4
+    Sprite: {fileID: 0}
+  - Name: Passive5
+    ID: 104
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 15
+    Descript: passive5
+    Sprite: {fileID: 0}
+  - Name: Passive6
+    ID: 105
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive6
+    Sprite: {fileID: 0}
+  - Name: Passive1
+    ID: 100
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive1
+    Sprite: {fileID: 0}
+  - Name: Passive2
+    ID: 101
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 10
+    Descript: passive2
+    Sprite: {fileID: 0}
+  - Name: Passive3
+    ID: 102
+    ItemTag: 0
+    ItemRarity: 1
+    Price: 20
+    Descript: passive3
+    Sprite: {fileID: 0}
+  - Name: Passive4
+    ID: 103
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 20
+    Descript: passive4
+    Sprite: {fileID: 0}
+  - Name: Passive5
+    ID: 104
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 15
+    Descript: passive5
+    Sprite: {fileID: 0}
+  - Name: Passive6
+    ID: 105
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive6
+    Sprite: {fileID: 0}
+  - Name: Passive1
+    ID: 100
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive1
+    Sprite: {fileID: 0}
+  - Name: Passive2
+    ID: 101
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 10
+    Descript: passive2
+    Sprite: {fileID: 0}
+  - Name: Passive3
+    ID: 102
+    ItemTag: 0
+    ItemRarity: 1
+    Price: 20
+    Descript: passive3
+    Sprite: {fileID: 0}
+  - Name: Passive4
+    ID: 103
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 20
+    Descript: passive4
+    Sprite: {fileID: 0}
+  - Name: Passive5
+    ID: 104
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 15
+    Descript: passive5
+    Sprite: {fileID: 0}
+  - Name: Passive6
+    ID: 105
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive6
+    Sprite: {fileID: 0}
+  - Name: Passive1
+    ID: 100
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive1
+    Sprite: {fileID: 0}
+  - Name: Passive2
+    ID: 101
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 10
+    Descript: passive2
+    Sprite: {fileID: 0}
+  - Name: Passive3
+    ID: 102
+    ItemTag: 0
+    ItemRarity: 1
+    Price: 20
+    Descript: passive3
+    Sprite: {fileID: 0}
+  - Name: Passive4
+    ID: 103
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 20
+    Descript: passive4
+    Sprite: {fileID: 0}
+  - Name: Passive5
+    ID: 104
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 15
+    Descript: passive5
+    Sprite: {fileID: 0}
+  - Name: Passive6
+    ID: 105
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive6
+    Sprite: {fileID: 0}
+  - Name: Passive1
+    ID: 100
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive1
+    Sprite: {fileID: 0}
+  - Name: Passive2
+    ID: 101
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 10
+    Descript: passive2
+    Sprite: {fileID: 0}
+  - Name: Passive3
+    ID: 102
+    ItemTag: 0
+    ItemRarity: 1
+    Price: 20
+    Descript: passive3
+    Sprite: {fileID: 0}
+  - Name: Passive4
+    ID: 103
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 20
+    Descript: passive4
+    Sprite: {fileID: 0}
+  - Name: Passive5
+    ID: 104
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 15
+    Descript: passive5
+    Sprite: {fileID: 0}
+  - Name: Passive6
+    ID: 105
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive6
+    Sprite: {fileID: 0}
+  - Name: Passive1
+    ID: 100
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive1
+    Sprite: {fileID: 0}
+  - Name: Passive2
+    ID: 101
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 10
+    Descript: passive2
+    Sprite: {fileID: 0}
+  - Name: Passive3
+    ID: 102
+    ItemTag: 0
+    ItemRarity: 1
+    Price: 20
+    Descript: passive3
+    Sprite: {fileID: 0}
+  - Name: Passive4
+    ID: 103
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 20
+    Descript: passive4
+    Sprite: {fileID: 0}
+  - Name: Passive5
+    ID: 104
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 15
+    Descript: passive5
+    Sprite: {fileID: 0}
+  - Name: Passive6
+    ID: 105
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive6
+    Sprite: {fileID: 0}
+  - Name: Passive1
+    ID: 100
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive1
+    Sprite: {fileID: 0}
+  - Name: Passive2
+    ID: 101
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 10
+    Descript: passive2
+    Sprite: {fileID: 0}
+  - Name: Passive3
+    ID: 102
+    ItemTag: 0
+    ItemRarity: 1
+    Price: 20
+    Descript: passive3
+    Sprite: {fileID: 0}
+  - Name: Passive4
+    ID: 103
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 20
+    Descript: passive4
+    Sprite: {fileID: 0}
+  - Name: Passive5
+    ID: 104
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 15
+    Descript: passive5
+    Sprite: {fileID: 0}
+  - Name: Passive6
+    ID: 105
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive6
+    Sprite: {fileID: 0}
+  - Name: Passive1
+    ID: 100
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive1
+    Sprite: {fileID: 0}
+  - Name: Passive2
+    ID: 101
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 10
+    Descript: passive2
+    Sprite: {fileID: 0}
+  - Name: Passive3
+    ID: 102
+    ItemTag: 0
+    ItemRarity: 1
+    Price: 20
+    Descript: passive3
+    Sprite: {fileID: 0}
+  - Name: Passive4
+    ID: 103
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 20
+    Descript: passive4
+    Sprite: {fileID: 0}
+  - Name: Passive5
+    ID: 104
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 15
+    Descript: passive5
+    Sprite: {fileID: 0}
+  - Name: Passive6
+    ID: 105
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive6
+    Sprite: {fileID: 0}
+  - Name: Passive1
+    ID: 100
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive1
+    Sprite: {fileID: 0}
+  - Name: Passive2
+    ID: 101
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 10
+    Descript: passive2
+    Sprite: {fileID: 0}
+  - Name: Passive3
+    ID: 102
+    ItemTag: 0
+    ItemRarity: 1
+    Price: 20
+    Descript: passive3
+    Sprite: {fileID: 0}
+  - Name: Passive4
+    ID: 103
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 20
+    Descript: passive4
+    Sprite: {fileID: 0}
+  - Name: Passive5
+    ID: 104
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 15
+    Descript: passive5
+    Sprite: {fileID: 0}
+  - Name: Passive6
+    ID: 105
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive6
+    Sprite: {fileID: 0}
+  - Name: Passive1
+    ID: 100
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive1
+    Sprite: {fileID: 0}
+  - Name: Passive2
+    ID: 101
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 10
+    Descript: passive2
+    Sprite: {fileID: 0}
+  - Name: Passive3
+    ID: 102
+    ItemTag: 0
+    ItemRarity: 1
+    Price: 20
+    Descript: passive3
+    Sprite: {fileID: 0}
+  - Name: Passive4
+    ID: 103
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 20
+    Descript: passive4
+    Sprite: {fileID: 0}
+  - Name: Passive5
+    ID: 104
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 15
+    Descript: passive5
+    Sprite: {fileID: 0}
+  - Name: Passive6
+    ID: 105
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive6
+    Sprite: {fileID: 0}
+  - Name: Passive1
+    ID: 100
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive1
+    Sprite: {fileID: 0}
+  - Name: Passive2
+    ID: 101
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 10
+    Descript: passive2
+    Sprite: {fileID: 0}
+  - Name: Passive3
+    ID: 102
+    ItemTag: 0
+    ItemRarity: 1
+    Price: 20
+    Descript: passive3
+    Sprite: {fileID: 0}
+  - Name: Passive4
+    ID: 103
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 20
+    Descript: passive4
+    Sprite: {fileID: 0}
+  - Name: Passive5
+    ID: 104
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 15
+    Descript: passive5
+    Sprite: {fileID: 0}
+  - Name: Passive6
+    ID: 105
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive6
+    Sprite: {fileID: 0}
+  - Name: Passive1
+    ID: 100
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive1
+    Sprite: {fileID: 0}
+  - Name: Passive2
+    ID: 101
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 10
+    Descript: passive2
+    Sprite: {fileID: 0}
+  - Name: Passive3
+    ID: 102
+    ItemTag: 0
+    ItemRarity: 1
+    Price: 20
+    Descript: passive3
+    Sprite: {fileID: 0}
+  - Name: Passive4
+    ID: 103
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 20
+    Descript: passive4
+    Sprite: {fileID: 0}
+  - Name: Passive5
+    ID: 104
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 15
+    Descript: passive5
+    Sprite: {fileID: 0}
+  - Name: Passive6
+    ID: 105
+    ItemTag: 0
+    ItemRarity: 0
+    Price: 5
+    Descript: passive6
+    Sprite: {fileID: 0}
   PotionItems:
   - Name: Potion1
     ID: 1001
@@ -1527,7 +2157,967 @@ MonoBehaviour:
     Duration: 0
     AttackType: 1
     ItemCanUse: 1
+  - Name: Potion1
+    ID: 1001
+    ItemTag: 2
+    ItemRarity: 0
+    Price: 30
+    Descript: 
+    Sprite: {fileID: 0}
+    Damage: 10
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+  - Name: Potion1
+    ID: 1001
+    ItemTag: 2
+    ItemRarity: 0
+    Price: 30
+    Descript: 
+    Sprite: {fileID: 0}
+    Damage: 10
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+  - Name: Potion1
+    ID: 1001
+    ItemTag: 2
+    ItemRarity: 0
+    Price: 30
+    Descript: 
+    Sprite: {fileID: 0}
+    Damage: 10
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+  - Name: Potion1
+    ID: 1001
+    ItemTag: 2
+    ItemRarity: 0
+    Price: 30
+    Descript: 
+    Sprite: {fileID: 0}
+    Damage: 10
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+  - Name: Potion1
+    ID: 1001
+    ItemTag: 2
+    ItemRarity: 0
+    Price: 30
+    Descript: 
+    Sprite: {fileID: 0}
+    Damage: 10
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+  - Name: Potion1
+    ID: 1001
+    ItemTag: 2
+    ItemRarity: 0
+    Price: 30
+    Descript: 
+    Sprite: {fileID: 0}
+    Damage: 10
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+  - Name: Potion1
+    ID: 1001
+    ItemTag: 2
+    ItemRarity: 0
+    Price: 30
+    Descript: 
+    Sprite: {fileID: 0}
+    Damage: 10
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+  - Name: Potion1
+    ID: 1001
+    ItemTag: 2
+    ItemRarity: 0
+    Price: 30
+    Descript: 
+    Sprite: {fileID: 0}
+    Damage: 10
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+  - Name: Potion1
+    ID: 1001
+    ItemTag: 2
+    ItemRarity: 0
+    Price: 30
+    Descript: 
+    Sprite: {fileID: 0}
+    Damage: 10
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+  - Name: Potion1
+    ID: 1001
+    ItemTag: 2
+    ItemRarity: 0
+    Price: 30
+    Descript: 
+    Sprite: {fileID: 0}
+    Damage: 10
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+  - Name: Potion1
+    ID: 1001
+    ItemTag: 2
+    ItemRarity: 0
+    Price: 30
+    Descript: 
+    Sprite: {fileID: 0}
+    Damage: 10
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+  - Name: Potion1
+    ID: 1001
+    ItemTag: 2
+    ItemRarity: 0
+    Price: 30
+    Descript: 
+    Sprite: {fileID: 0}
+    Damage: 10
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+  - Name: Potion1
+    ID: 1001
+    ItemTag: 2
+    ItemRarity: 0
+    Price: 30
+    Descript: 
+    Sprite: {fileID: 0}
+    Damage: 10
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+  - Name: Potion1
+    ID: 1001
+    ItemTag: 2
+    ItemRarity: 0
+    Price: 30
+    Descript: 
+    Sprite: {fileID: 0}
+    Damage: 10
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+  - Name: Potion1
+    ID: 1001
+    ItemTag: 2
+    ItemRarity: 0
+    Price: 30
+    Descript: 
+    Sprite: {fileID: 0}
+    Damage: 10
+    Shield: 0
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
   ActiveItems:
+  - Name: Active1
+    ID: 501
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    Damage: 6
+    Shield: 0
+    Draw: 1
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+    MaxCharge: 6
+    StartCharge: 1
+  - Name: Active2
+    ID: 502
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Shield} Shield'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 6
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 1
+    MaxCharge: 3
+    StartCharge: 1
+  - Name: Active3
+    ID: 503
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Heal} Heal'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 10
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 2
+    MaxCharge: 5
+    StartCharge: 0
+  - Name: Active1
+    ID: 501
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    Damage: 6
+    Shield: 0
+    Draw: 1
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+    MaxCharge: 6
+    StartCharge: 1
+  - Name: Active2
+    ID: 502
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Shield} Shield'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 6
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 1
+    MaxCharge: 3
+    StartCharge: 1
+  - Name: Active3
+    ID: 503
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Heal} Heal'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 10
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 2
+    MaxCharge: 5
+    StartCharge: 0
+  - Name: Active1
+    ID: 501
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    Damage: 6
+    Shield: 0
+    Draw: 1
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+    MaxCharge: 6
+    StartCharge: 1
+  - Name: Active2
+    ID: 502
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Shield} Shield'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 6
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 1
+    MaxCharge: 3
+    StartCharge: 1
+  - Name: Active3
+    ID: 503
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Heal} Heal'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 10
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 2
+    MaxCharge: 5
+    StartCharge: 0
+  - Name: Active1
+    ID: 501
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    Damage: 6
+    Shield: 0
+    Draw: 1
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+    MaxCharge: 6
+    StartCharge: 1
+  - Name: Active2
+    ID: 502
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Shield} Shield'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 6
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 1
+    MaxCharge: 3
+    StartCharge: 1
+  - Name: Active3
+    ID: 503
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Heal} Heal'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 10
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 2
+    MaxCharge: 5
+    StartCharge: 0
+  - Name: Active1
+    ID: 501
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    Damage: 6
+    Shield: 0
+    Draw: 1
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+    MaxCharge: 6
+    StartCharge: 1
+  - Name: Active2
+    ID: 502
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Shield} Shield'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 6
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 1
+    MaxCharge: 3
+    StartCharge: 1
+  - Name: Active3
+    ID: 503
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Heal} Heal'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 10
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 2
+    MaxCharge: 5
+    StartCharge: 0
+  - Name: Active1
+    ID: 501
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    Damage: 6
+    Shield: 0
+    Draw: 1
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+    MaxCharge: 6
+    StartCharge: 1
+  - Name: Active2
+    ID: 502
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Shield} Shield'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 6
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 1
+    MaxCharge: 3
+    StartCharge: 1
+  - Name: Active3
+    ID: 503
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Heal} Heal'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 10
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 2
+    MaxCharge: 5
+    StartCharge: 0
+  - Name: Active1
+    ID: 501
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    Damage: 6
+    Shield: 0
+    Draw: 1
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+    MaxCharge: 6
+    StartCharge: 1
+  - Name: Active2
+    ID: 502
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Shield} Shield'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 6
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 1
+    MaxCharge: 3
+    StartCharge: 1
+  - Name: Active3
+    ID: 503
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Heal} Heal'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 10
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 2
+    MaxCharge: 5
+    StartCharge: 0
+  - Name: Active1
+    ID: 501
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    Damage: 6
+    Shield: 0
+    Draw: 1
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+    MaxCharge: 6
+    StartCharge: 1
+  - Name: Active2
+    ID: 502
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Shield} Shield'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 6
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 1
+    MaxCharge: 3
+    StartCharge: 1
+  - Name: Active3
+    ID: 503
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Heal} Heal'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 10
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 2
+    MaxCharge: 5
+    StartCharge: 0
+  - Name: Active1
+    ID: 501
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    Damage: 6
+    Shield: 0
+    Draw: 1
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+    MaxCharge: 6
+    StartCharge: 1
+  - Name: Active2
+    ID: 502
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Shield} Shield'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 6
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 1
+    MaxCharge: 3
+    StartCharge: 1
+  - Name: Active3
+    ID: 503
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Heal} Heal'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 10
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 2
+    MaxCharge: 5
+    StartCharge: 0
+  - Name: Active1
+    ID: 501
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    Damage: 6
+    Shield: 0
+    Draw: 1
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+    MaxCharge: 6
+    StartCharge: 1
+  - Name: Active2
+    ID: 502
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Shield} Shield'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 6
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 1
+    MaxCharge: 3
+    StartCharge: 1
+  - Name: Active3
+    ID: 503
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Heal} Heal'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 10
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 2
+    MaxCharge: 5
+    StartCharge: 0
+  - Name: Active1
+    ID: 501
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    Damage: 6
+    Shield: 0
+    Draw: 1
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+    MaxCharge: 6
+    StartCharge: 1
+  - Name: Active2
+    ID: 502
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Shield} Shield'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 6
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 1
+    MaxCharge: 3
+    StartCharge: 1
+  - Name: Active3
+    ID: 503
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Heal} Heal'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 10
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 2
+    MaxCharge: 5
+    StartCharge: 0
+  - Name: Active1
+    ID: 501
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    Damage: 6
+    Shield: 0
+    Draw: 1
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+    MaxCharge: 6
+    StartCharge: 1
+  - Name: Active2
+    ID: 502
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Shield} Shield'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 6
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 1
+    MaxCharge: 3
+    StartCharge: 1
+  - Name: Active3
+    ID: 503
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Heal} Heal'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 10
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 2
+    MaxCharge: 5
+    StartCharge: 0
+  - Name: Active1
+    ID: 501
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    Damage: 6
+    Shield: 0
+    Draw: 1
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+    MaxCharge: 6
+    StartCharge: 1
+  - Name: Active2
+    ID: 502
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Shield} Shield'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 6
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 1
+    MaxCharge: 3
+    StartCharge: 1
+  - Name: Active3
+    ID: 503
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Heal} Heal'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 10
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 2
+    MaxCharge: 5
+    StartCharge: 0
+  - Name: Active1
+    ID: 501
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    Damage: 6
+    Shield: 0
+    Draw: 1
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+    MaxCharge: 6
+    StartCharge: 1
+  - Name: Active2
+    ID: 502
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Shield} Shield'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 6
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 1
+    MaxCharge: 3
+    StartCharge: 1
+  - Name: Active3
+    ID: 503
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Heal} Heal'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 10
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 2
+    MaxCharge: 5
+    StartCharge: 0
+  - Name: Active1
+    ID: 501
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Damage} Damage
+
+      {Draw} Draw'
+    Sprite: {fileID: 0}
+    Damage: 6
+    Shield: 0
+    Draw: 1
+    Heal: 0
+    Duration: 0
+    AttackType: 1
+    ItemCanUse: 1
+    MaxCharge: 6
+    StartCharge: 1
+  - Name: Active2
+    ID: 502
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Shield} Shield'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 6
+    Draw: 0
+    Heal: 0
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 1
+    MaxCharge: 3
+    StartCharge: 1
+  - Name: Active3
+    ID: 503
+    ItemTag: 1
+    ItemRarity: 0
+    Price: 50
+    Descript: '{Heal} Heal'
+    Sprite: {fileID: 0}
+    Damage: 0
+    Shield: 0
+    Draw: 0
+    Heal: 10
+    Duration: 0
+    AttackType: 0
+    ItemCanUse: 2
+    MaxCharge: 5
+    StartCharge: 0
   - Name: Active1
     ID: 501
     ItemTag: 1

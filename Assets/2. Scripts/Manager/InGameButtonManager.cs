@@ -84,7 +84,7 @@ public class InGameButtonManager : MonoBehaviour
     }
     public void TurnEndBtn()
     {
-        TurnManager.Instance.EndTurn().Forget();
+        TurnManager.Instance.EndPlayerTurn().Forget();
     }
 
     public void TurnEndBtnInvert(bool state)

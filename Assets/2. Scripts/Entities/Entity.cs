@@ -202,21 +202,22 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         {
             await Shield(amount);
         }
+        if (attacker is Enemy) return damage;
         if (ApplyStatusEffect(StatusEffect.Vulnerable, out _))
         {
             damage = MathUtil.MultiplierToInt(damage, 1.5f);
         }
         return damage;
     }
-    protected virtual async UniTask ApplyCounterEffects(Entity attacker = null)
+    protected virtual async UniTask ApplyCounterEffects(int dmg, Entity attacker = null)
     {
         if (attacker == null) { return; }
 
         // 공격자의 버프 활용
 
-        if (attacker.ApplyStatusEffect(StatusEffect.Vampire, out int vampire))
+        if (attacker.ApplyStatusEffect(StatusEffect.Vampire, out _))
         {
-            await attacker.Heal(vampire);
+            await attacker.Heal(MathUtil.MultiplierToInt(dmg, 0.2f));
         }
 
         if (CurHP.Value <= 0) { return; }
@@ -317,12 +318,17 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
             }
         }
 
+        if (dmg > 0 && attacker != null && ApplyStatusEffect(StatusEffect.AddDamage, out _))
+        {
+            await TakeDamage(3);
+        }
+
         //AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         //if (stateInfo.IsName("Attack"))
         //animator.SetTrigger(_hitAnim);        // play를 해야 맞을 때마다 실행 가능
         //animator.Play(_hitAnim, -1, 0);  // 타격 당하는 애니메이션 실행        => 공격 중에는 딜레이를 주거나 무시하는 코드가 필요할 듯.
 
-        await ApplyCounterEffects(attacker);
+        await ApplyCounterEffects(dmg, attacker);
 
         if (CurHP.Value > 0)
         {
@@ -379,6 +385,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
 
     async UniTask TextEffect(int value)
     {
+        if (value == 0) return;
         //if (TurnManager.Instance.CancelSource.Token.IsCancellationRequested) return;
         TMP_Text textEffect = PoolManager.Instance.GetText(/*out TMP_Text textEffect*/);
         textEffect.transform.position = transform.position;
@@ -791,8 +798,11 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
     //}
     public virtual void ReduceStatusEffect((StatusEffect effect, StatusEffectType type) statusEffect, int amount = 0, int duration = 1)        // 턴 감소를 디폴트로 만듦.
     {
+        if (!CurStatusEffectDict.ContainsKey(statusEffect.effect) ||
+        !CurStatusEffectDict[statusEffect.effect].ContainsKey(statusEffect.type)) return;
 
         (int getAmount, int getDuration) info = CurStatusEffectDict[statusEffect.effect][statusEffect.type];
+
         if (info.getDuration - duration > 0 && info.getAmount - amount > 0)           // 감소된 값이 둘 다 양수 => 무한 지속은 기본 음수라서 제외하고, 나머지만 적용됨.
         {
             CurStatusEffectDict[statusEffect.effect][statusEffect.type] = (info.getAmount - amount, info.getDuration - duration);
@@ -884,7 +894,10 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                 {
                     if (GetStatusEffect(StatusEffect.Attack, out _))        // Attack은 공격을 하겠다는 설명이기에 플레이어는 얻어서는 안됨.
                     {
-                        ReduceStatusEffect((StatusEffect.Attack, StatusEffectType.Information), amount, 0);
+                        //ReduceStatusEffect((StatusEffect.Attack, StatusEffectType.Information), amount, 0);
+                        //ChangeStatusEffectDesc((StatusEffect.Attack, StatusEffectType.Information));
+                        ((Enemy)this).RefreshIntent();
+
                     }
                 }
                 break;
@@ -900,15 +913,114 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
             case StatusEffect.CriticalDamageUp:
                 CriticalDamage.Value -= amount;
                 break;
-            case StatusEffect.UseCritical:      // 적 개체 한정
-                if (this is Enemy)
+            case StatusEffect.ZeroCostDamage:
+                if (this is Player)
                 {
-                    if (GetStatusEffect(StatusEffect.Attack, out _))
-                    {
-                        ReduceStatusEffect((StatusEffect.Attack, StatusEffectType.Information), 0, 0);
-                    }
+                    GameEvents.NotifyBaseStats();
                 }
                 break;
+            //case StatusEffect.UseCritical:      // 적 개체 한정
+            //    if (this is Enemy)
+            //    {
+            //        if (GetStatusEffect(StatusEffect.Attack, out _))
+            //        {
+            //            //ReduceStatusEffect((StatusEffect.Attack, StatusEffectType.Information), 0, 0);
+            //            ((Enemy)this).RefreshIntent();
+            //        }
+            //    }
+            //    break;
+
+            //case StatusEffect.Vulnerable:
+            //    // "(플레이어)"에게 취약이 걸리거나 해제될 때
+            //    if (this is Player)
+            //    {
+            //        // 모든 적에게 알림!
+            //        EnemyManager.Instance.RefreshAllEnemyIntents();
+            //    }
+            //    break;
+
+            //case StatusEffect.Weaking:
+            //    // "(적)"에게 약화가 걸릴 때 (이건 기존대로 자기 자신만 갱신)
+            //    if (this is Enemy && GetStatusEffect(StatusEffect.Attack, out _))
+            //    {
+            //        ((Enemy)this).RefreshIntent();
+            //    }
+            //    if (this is Player)
+            //    {
+            //        GameEvents.NotifyBaseStats();
+            //    }
+            //    break;
+        }
+
+        if (!GetStatusEffect(statusEffect.effect, out _))      // 제거 후 값이 없을 경우.
+        {
+            switch (statusEffect.effect)
+            {
+                case StatusEffect.UseCritical:      // 적 개체 한정
+                    if (this is Enemy)
+                    {
+                        if (GetStatusEffect(StatusEffect.Attack, out _))
+                        {
+                            //ReduceStatusEffect((StatusEffect.Attack, StatusEffectType.Information), 0, 0);
+                            ((Enemy)this).RefreshIntent();
+                        }
+                    }
+                    break;
+
+                case StatusEffect.Vulnerable:
+                    // "(플레이어)"에게 취약이 걸리거나 해제될 때
+                    if (this is Player)
+                    {
+                        // 모든 적에게 알림!
+                        EnemyManager.Instance.RefreshAllEnemyIntents();
+                    }
+                    break;
+
+                case StatusEffect.Weaking:
+                    // "(적)"에게 약화가 걸릴 때 (이건 기존대로 자기 자신만 갱신)
+                    if (this is Enemy && GetStatusEffect(StatusEffect.Attack, out _))
+                    {
+                        ((Enemy)this).RefreshIntent();
+                    }
+                    if (this is Player)
+                    {
+                        GameEvents.NotifyBaseStats();
+                    }
+                    break;
+
+                case StatusEffect.Wildness:
+                    AttackPower.Value -= 2;
+                    break;
+                case StatusEffect.CostZero:
+                    if (this is Player)
+                    {
+                        GameEvents.NotifyBaseStats();
+                    }
+                    break;
+            }
+        }
+
+
+    }
+
+    public virtual void ReduceStatusEffect(int amount, int duration = 1)
+    {
+        // 현재 가지고 있는 모든 효과의 키(Effect, Type)를 리스트로 복사합니다.
+        // (순회 중에 딕셔너리가 수정되면 에러가 나기 때문이에요!)
+        List<(StatusEffect effect, StatusEffectType type)> targets = new();
+
+        foreach (var outer in CurStatusEffectDict)
+        {
+            foreach (var inner in outer.Value)
+            {
+                targets.Add((outer.Key, inner.Key));
+            }
+        }
+
+        // 수집된 모든 타겟에 대해 기존 ReduceStatusEffect 호출
+        foreach (var target in targets)
+        {
+            ReduceStatusEffect(target, amount, duration);
         }
     }
 
@@ -939,6 +1051,8 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         {
             if (amount == 0 || duration == 0) return;
         }
+
+        bool isFirstAcq = !GetStatusEffect(statusEffect.effect, out _);
 
         if (!CurStatusEffectDict.ContainsKey(statusEffect.effect))
         {
@@ -1020,8 +1134,9 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
                 {
                     if (GetStatusEffect(StatusEffect.Attack, out _))        // Attack은 공격을 하겠다는 설명이기에 플레이어는 얻어서는 안됨.
                     {
-                        AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), amount, 0);
+                        //AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), amount, 0);
                         //ChangeStatusEffectDesc((StatusEffect.Attack, StatusEffectType.Information));
+                        ((Enemy)this).RefreshIntent();
                     }
                 }
                 break;
@@ -1037,15 +1152,98 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
             case StatusEffect.CriticalDamageUp:
                 CriticalDamage.Value += amount;
                 break;
-            case StatusEffect.UseCritical:      // 적 개체 한정
-                if (this is Enemy)
+            case StatusEffect.ZeroCostDamage:
+                if (this is Player)
                 {
-                    if (GetStatusEffect(StatusEffect.Attack, out _))        // Attack은 공격을 하겠다는 설명이기에 플레이어는 얻어서는 안됨.
-                    {
-                        AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), 0, 0);
-                    }
+                    GameEvents.NotifyBaseStats();
                 }
                 break;
+            //case StatusEffect.UseCritical:      // 적 개체 한정
+            //    if (this is Enemy)
+            //    {
+            //        if (GetStatusEffect(StatusEffect.Attack, out _))        // Attack은 공격을 하겠다는 설명이기에 플레이어는 얻어서는 안됨.
+            //        {
+            //            //AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), 0, 0);
+            //            //ChangeStatusEffectDesc((StatusEffect.Attack, StatusEffectType.Information));
+            //            ((Enemy)this).RefreshIntent();
+            //        }
+            //    }
+            //    break;
+
+            //case StatusEffect.Vulnerable:
+            //    // "(플레이어)"에게 취약이 걸리거나 해제될 때
+            //    if (this is Player)
+            //    {
+            //        // 모든 적에게 알림!
+            //        EnemyManager.Instance.RefreshAllEnemyIntents();
+            //    }
+            //    break;
+
+            //case StatusEffect.Weaking:
+            //    // "(적)"에게 약화가 걸릴 때 (이건 기존대로 자기 자신만 갱신)
+            //    if (this is Enemy && GetStatusEffect(StatusEffect.Attack, out _))
+            //    {
+            //        ((Enemy)this).RefreshIntent();
+            //    }
+            //    if (this is Player)
+            //    {
+            //        GameEvents.NotifyBaseStats();
+            //    }
+            //    break;
+
+            //case StatusEffect.Wildness:
+            //    AttackPower.Value += 2;
+            //    break;
+
+        }
+
+        if (isFirstAcq && GetStatusEffect(statusEffect.effect, out _))      // 혹시라도 중간에 방해 받아서 못 얻었을 경우를 대비.
+        {
+            switch (statusEffect.effect)
+            {
+                case StatusEffect.UseCritical:      // 적 개체 한정
+                    if (this is Enemy)
+                    {
+                        if (GetStatusEffect(StatusEffect.Attack, out _))        // Attack은 공격을 하겠다는 설명이기에 플레이어는 얻어서는 안됨.
+                        {
+                            //AddStatusEffect((StatusEffect.Attack, StatusEffectType.Information), 0, 0);
+                            //ChangeStatusEffectDesc((StatusEffect.Attack, StatusEffectType.Information));
+                            ((Enemy)this).RefreshIntent();
+                        }
+                    }
+                    break;
+                case StatusEffect.Vulnerable:
+                    // "(플레이어)"에게 취약이 걸리거나 해제될 때
+                    if (this is Player)
+                    {
+                        // 모든 적에게 알림!
+                        EnemyManager.Instance.RefreshAllEnemyIntents();
+                    }
+                    break;
+
+                case StatusEffect.Weaking:
+                    // "(적)"에게 약화가 걸릴 때 (이건 기존대로 자기 자신만 갱신)
+                    if (this is Enemy && GetStatusEffect(StatusEffect.Attack, out _))
+                    {
+                        ((Enemy)this).RefreshIntent();
+                    }
+                    if (this is Player)
+                    {
+                        GameEvents.NotifyBaseStats();
+                    }
+                    break;
+
+                case StatusEffect.Wildness:
+                    AttackPower.Value += 2;
+                    break;
+
+                case StatusEffect.CostZero:
+                    if (this is Player)
+                    {
+                        GameEvents.NotifyBaseStats();
+                    }
+                    break;
+            }
         }
 
         //else if (info.Item2 == -1)     // 상태효과 지속시간이 없는 경우(계속 유지)
@@ -1169,6 +1367,25 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         //        return;
         //    }
         //}
+    }
+
+    public virtual void AddStatusEffect(int amount, int duration = 1)
+    {
+        List<(StatusEffect effect, StatusEffectType type)> targets = new();
+
+        foreach (var outer in CurStatusEffectDict)
+        {
+            foreach (var inner in outer.Value)
+            {
+                targets.Add((outer.Key, inner.Key));
+            }
+        }
+
+        // 수집된 모든 타겟에 대해 기존 AddStatusEffect 호출
+        foreach (var target in targets)
+        {
+            AddStatusEffect(target, amount, duration);
+        }
     }
 
     public void RemoveStatusEffect()
@@ -1348,7 +1565,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         return statusEffect;
     }
 
-    void ChangeStatusEffectDesc((StatusEffect effect, StatusEffectType type) statusEffect)
+    public void ChangeStatusEffectDesc((StatusEffect effect, StatusEffectType type) statusEffect)
     {
         (int amount, int duration) info = CurStatusEffectDict[statusEffect.effect][statusEffect.type];
 
@@ -1661,6 +1878,18 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
     //        ActivateStatusEffect(statusEffect, false);
     //    }
     //}
+
+    public virtual async UniTask OnTurnStartTask()
+    {
+        // 1. 야성(Wildness) 효과 확인
+        if (ApplyStatusEffect(StatusEffect.Wildness, out _))
+        {
+            await TakeDamage(2, null, true);
+        }
+
+        // 2. 여기에 다른 '턴 시작 시 발동할 효과'들을 추가하면 됩니다.
+        // if (GetStatusEffect(StatusEffect.Regeneration, out _)) { ... }
+    }
 
     public void TurnStatusEffect()
     {

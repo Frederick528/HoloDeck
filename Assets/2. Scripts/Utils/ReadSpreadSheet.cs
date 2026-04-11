@@ -166,16 +166,16 @@ public class ReadSpreadSheet : MonoBehaviour
                 //data.CardUseDelay = ConvertSingle(cells[7]);
                 Price = ConvertInt32(cells[10]),
                 Descript = LineBreakStr(cells[11]),
-                //SpecialTags = LineBreakStr(cells[12]),
+                //MasterTags = LineBreakStr(cells[12]),
                 HasCondition = NullFalseBool(cells[13]),
                 CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[14]),
                 CardRarity = (CardRarity)Enum.Parse(typeof(CardRarity), cells[15]),
-                DamageOrder = ConvertInt32M1(cells[19]),
-                ShieldOrder = ConvertInt32M1(cells[20]),
-                DrawOrder = ConvertInt32M1(cells[21]),
-                HPOrder = ConvertInt32M1(cells[22]),
-                DiscardOrder = ConvertInt32M1(cells[23]),
-                RemoveOrder = ConvertInt32M1(cells[24])
+                DamageOrder = ConvertFloat32M1(cells[19]),
+                ShieldOrder = ConvertFloat32M1(cells[20]),
+                DrawOrder = ConvertFloat32M1(cells[21]),
+                HPOrder = ConvertFloat32M1(cells[22]),
+                DiscardOrder = ConvertFloat32M1(cells[23]),
+                RemoveOrder = ConvertFloat32M1(cells[24])
             };
 
             string rawTags = cells[12].Trim();
@@ -187,12 +187,33 @@ public class ReadSpreadSheet : MonoBehaviour
                     string[] parts = unit.Trim().Split(':');
                     if (parts.Length < 1) continue; // 데이터가 1보다 적으면 스킵
 
-                    data.SpecialTags.Add(new SpecialTagData
+                    string amountStr = parts.Length > 2 ? parts[2].Trim() : "0";
+                    bool isXAmount = amountStr.ToLower() == "x";
+
+                    float parsedAmount = 0;
+                    if (!isXAmount)
                     {
-                        Tag = parts[0].Trim(),
-                        Type = parts.Length > 1 ? parts[1].Trim() : "",
-                        Amount = parts.Length > 2 ? parts[2].Trim() : "",
-                        Duration = parts.Length > 3 ? parts[3].Trim() : ""
+                        // 혹시 모를 오타를 대비해 TryParse를 쓰는 게 더 안전합니다.
+                        float.TryParse(amountStr, out parsedAmount);
+                    }
+
+                    string durationStr = parts.Length > 3 ? parts[3].Trim() : "0";
+                    bool isXDuration = durationStr.ToLower() == "x";
+
+                    float parsedDuration = 0;
+                    if (!isXDuration)
+                    {
+                        float.TryParse(parts[3].Trim(), out parsedDuration);
+                    }
+
+                    data.MasterTags.Add(new MasterTagData
+                    {
+                        Tag = MasterTag.Parse(parts[0].Trim()),
+                        Type = MasterType.Parse(parts.Length > 1 ? parts[1].Trim() : ""),
+                        XAmount = isXAmount,
+                        Amount = parsedAmount,
+                        XDuration = isXDuration,
+                        Duration = parsedDuration
                     });
                 }
             }
@@ -207,7 +228,7 @@ public class ReadSpreadSheet : MonoBehaviour
             //        string trimmedUnit = unit.Trim();
             //        if (string.IsNullOrEmpty(trimmedUnit)) continue;
 
-            //        SpecialTagData tagData = new SpecialTagData();
+            //        MasterTagData tagData = new MasterTagData();
 
             //        // 2. ":" 로 태그와 값 분리
             //        if (trimmedUnit.Contains(":"))
@@ -223,7 +244,7 @@ public class ReadSpreadSheet : MonoBehaviour
             //            tagData.Value = "0";
             //        }
 
-            //        data.SpecialTags.Add(tagData);
+            //        data.MasterTags.Add(tagData);
             //    }
             //}
 
@@ -706,18 +727,18 @@ public class ReadSpreadSheet : MonoBehaviour
             return 0;
         }
     }
-    int ConvertInt32M1(string str)    // 구글스프레드시트는 엑셀 빈 칸을 ""로 가져오기 때문에 Convert.ToInt32가 에러가 뜸.
+    float ConvertFloat32M1(string str)    // 구글스프레드시트는 엑셀 빈 칸을 ""로 가져오기 때문에 에러가 뜸.
     {
         //int _value = Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
         //return Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
         if (string.IsNullOrWhiteSpace(str))
-            return -1;
+            return -1f;
 
         // 2. 양끝 공백 및 보이지 않는 특수 문자 제거 (Trim)
         string cleanStr = str.Trim();
 
         // 3. TryParse로 안전하게 변환 시도
-        if (int.TryParse(cleanStr, out int result))
+        if (float.TryParse(cleanStr, out float result))
         {
             return result;
         }
@@ -725,8 +746,8 @@ public class ReadSpreadSheet : MonoBehaviour
         {
             // 4. 숫자가 아닌 문자가 들어온 경우 (예: "데미지", "10A" 등)
             // 디버깅을 위해 어떤 데이터에서 에러가 났는지 로그를 찍는 것이 좋습니다.
-            Debug.LogWarning($"숫자 변환 실패! 입력된 문자열: '{str}' (0으로 대체됨)");
-            return -1;
+            Debug.LogWarning($"숫자 변환 실패! 입력된 문자열: '{str}' (-1f로 대체됨)");
+            return -1f;
         }
     }
 

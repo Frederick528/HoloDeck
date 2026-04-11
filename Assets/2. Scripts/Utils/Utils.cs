@@ -38,14 +38,15 @@ public enum EAddDeck
 
 public enum StatusEffect
 {
-    Attack, Defense, Heal, ATKUp, DEFUp, HealUp, Vulnerable, Weaking, Reflection, Protect, Resurrection, CoinGained, CriticalChanceUp,
-    CriticalDamageUp, HPUp, Thievery, Special, UseCritical, Immunity, Vampire, Berserker, GetCritical, Bleed
+    None, Attack, Defense, Heal, ATKUp, DEFUp, HealUp, Vulnerable, Weaking, Reflection, Protect, Resurrection, CoinGained, CriticalChanceUp,
+    CriticalDamageUp, HPUp, Thievery, Special, UseCritical, Immunity, Vampire, Berserker, GetCritical, Bleed,
+    Wildness, DoubleAttack, CostZero, AddDamage, ZeroCostDamage,
     // 공격 알림, 방어 알림, 회복 알림, 공격력 업, 방어력 업, 회복력 업, 취약, 약화, 반사, 보호, 부활, 골드 획득량, 치명타 확률 업,
     // 치명타 데미지 업, 체력 업, 도둑, 특별(설명을 직접 작성), 치명타 사용, 면역, 흡혈, 피해 시 공격력 업, 치명타 얻음 알림, 출혈
 }
-
 public enum StatusEffectType
 {
+    None,
     InfiniteDuration,                   // 무한 지속 (duration = -1), 버프 제거로만 삭제 가능
     TurnDuration,                       // 턴마다 지속시간 1 감소
     NoAmountInfiniteDuration,           // 값 고정(1)인 상태로 무한 지속
@@ -58,6 +59,23 @@ public enum StatusEffectType
     UseAmountPerpetual,                 // Amount 값이 사용되며, 값이 0이 되지 않는다면, 영구적으로 적용.
     Information                         // 정보(~~을 준비 중) 표시용이며, 체력바 아래에 이미지가 표시 안 됨.
 }
+
+public enum SpecialTag
+{
+    None, XValue, ChangeSingleDebuffValue, ChangeAllDebuffValue, Cost, ConfirmedDiscard, ConfirmedRemove, DamageDealt, ShieldDealt,
+    Kill, NextAttack, FirstCard, CheckUsedCardCount, CardCountValue, RemoveDebuffValue, RandomCardDraw, DrawCheck, DrawCardEffect,
+    CreateCard, CreateCardEffect, IsTargetShield
+}
+
+public enum SpecialTagType
+{
+    None, AddDamage, AddShield, AddCount, AddDraw, AddDiscard, AddRemove, AddHealHP, AddDamageHP, AddAmount, MultipleAmount, AddDuration, MultipleDuration, 
+    RemoveShield, AddCost, ReduceCost, ChangeCost, TurnAttack, TurnSkill, TurnAll, BattleAttack, BattleSkill, BattleAll, BattleZeroCost,
+    IsCost, IsCount, IsDamage, IsShield, IsDraw, Over, DrawAttack, DrawSkill, UsedCard, CreateAttack, CreateSkill, CreateDummy,
+    InHand, InDeck, ImmediateUse, ImmediateDiscard
+
+}
+
 
 public class FindTransform
 {

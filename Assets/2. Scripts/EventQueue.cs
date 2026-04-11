@@ -60,7 +60,7 @@ public class EventQueue
             if (!EnemyManager.Instance.NoEnemy)
                 InGameButtonManager.Instance.TurnEndBtnInvert(!_isPending);
             //if (InGameManager.Instance.player.CurHolo == 0)           // 강제 턴종은 포션이나 스킬 효과를 못 쓰게 만드므로 그냥 제거
-            //    TurnManager.Instance.EndTurn().Forget();
+            //    TurnManager.Instance.EndPlayerTurn().Forget();
             return;
         }
 

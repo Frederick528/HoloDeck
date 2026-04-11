@@ -21,7 +21,7 @@ public partial class CardAbility
 {
     CancellationTokenSource _cts;
 
-    private Dictionary<string, Action<Card, List<(int order, AbilityTag tag, Func<UniTask> task)>, SpecialTagData>> _specialAbilityMap;
+    Dictionary<MasterTag, Action<Card, List<(float order, AbilityTag tag, Func<PlayContext, UniTask> task)>, MasterTagData>> _specialAbilityMap;
     //(Action _cardImmediately, Action _cardFailure)? _checkCard;  // 즉시 실행하는 코드 + 해당 카드가 실패했을 때 효과
     //Func<UniTask> _cardTask;
     ////Func<UniTask<bool>?> _conditionTask;
@@ -39,33 +39,34 @@ public partial class CardAbility
 
         Action immediateActions = null;
         Action failureActions = null;
+        Action successActions = null;
         // --- 1. 이번 조립에만 쓸 '지역 변수' 바구니들 ---
-        var abilityTasks = new List<(int order, AbilityTag tag, Func<UniTask> task)>();
+        var abilityTasks = new List<(float order, AbilityTag tag, Func<PlayContext, UniTask> task)>();
         var conditionTasks = new List<Func<UniTask<bool>>>();
-        (Action, Action)? finalCheckCard = null;
-        Func<UniTask> finalCardTask = null;
+        (Action, Action, Action)? finalCheckCard = null;
+        Func<PlayContext, UniTask> finalCardTask = null;
 
         // --- 2. 조립 시작 (바구니를 인자로 넘겨줌) ---
-        SettingImmediately(card, ref immediateActions, ref failureActions); // Specials에서 처리
+        SettingImmediately(card, ref immediateActions, ref failureActions, ref successActions); // Specials에서 처리
         BuildBaseAbilities(card, abilityTasks);  // Simple에서 처리
         BuildSpecialAbilities(card, abilityTasks); // Specials에서 처리
 
         // 조건도 바구니에 담기
         if (card.Data.HasCondition)
         {
-            SettingCondition(card, conditionTasks, ref immediateActions, ref failureActions);
-            SettingSpecialCondition(card, conditionTasks, ref immediateActions, ref failureActions);
+            SettingCondition(card, conditionTasks, ref immediateActions, ref failureActions, ref successActions);
+            SettingSpecialCondition(card, conditionTasks, ref immediateActions, ref failureActions, ref successActions);
         }
         // --- 3. 최종 포장 및 전달 ---
-        if (immediateActions != null || failureActions != null)
+        if (immediateActions != null || failureActions != null || successActions != null)
         {
-            finalCheckCard = (immediateActions, failureActions);
+            finalCheckCard = (immediateActions, failureActions, successActions);
         }
 
         if (abilityTasks.Count > 0)
         {
             // 지역 변수를 사용하여 래핑
-            finalCardTask = () => AddCardEvent(card, abilityTasks.ToArray());
+            finalCardTask = (ctx) => AddCardEvent(card, abilityTasks.ToArray(), ctx);
         }
 
         // 카드 객체에 직접 할당 (여기서 끝!)
@@ -102,13 +103,13 @@ public partial class CardAbility
         //card.SetCardTask(_cardTask);
         ////card.SetUseConditions(_conditionTask);
     }
-    T GetEnum<T>(string input) where T : struct, Enum
-    {
-        if (Enum.TryParse<T>(input, true, out T result)) return result;
+    //T GetEnum<T>(string input) where T : struct, Enum
+    //{
+    //    if (Enum.TryParse<T>(input, true, out T result)) return result;
 
-        Debug.LogWarning($"[CardAbility] {typeof(T).Name} 파싱 실패: {input}. 기본값으로 설정합니다.");
-        return default;
-    }
+    //    Debug.LogWarning($"[CardAbility] {typeof(T).Name} 파싱 실패: {input}. 기본값으로 설정합니다.");
+    //    return default;
+    //}
 
     void ForEachEnemyTarget(Card card, Action<Enemy> action)
     {

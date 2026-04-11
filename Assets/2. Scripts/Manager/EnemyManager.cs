@@ -55,6 +55,43 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
+    void SettingEnemyNextPattern()
+    {
+        foreach (var enemy in EnemyList)
+        {
+            enemy.NextPattern();
+        }
+    }
+
+    void EnemyShieldReset()
+    {
+        foreach (var enemy in EnemyList)
+        {
+            enemy.ShieldReset();
+        }
+    }
+
+    void TurnStatusEffect()
+    {
+        foreach (var enemy in EnemyList)
+        {
+            enemy.TurnStatusEffect();
+        }
+    }
+
+    void EndBattle()
+    {
+        if (EnemyList.Count > 0)
+        {
+            foreach (var enemy in EnemyList)
+            {
+                Destroy(enemy.gameObject);
+            }
+            EnemyList.Clear();
+            CanEnemySpawn(true);
+        }
+    }
+
     private void Start()
     {
         enemySpawn = new bool[enemySpawnPosition.Length];
@@ -62,6 +99,10 @@ public class EnemyManager : MonoBehaviour
         CanEnemySpawn(true);
         CanBossSpawn(true);
 
+        TurnManager.Instance.OnBattleStart += SettingEnemyNextPattern;
+        TurnManager.Instance.OnEnemyTurnStart += EnemyShieldReset;
+        TurnManager.Instance.OnEnemyTurnEnd += TurnStatusEffect;
+        TurnManager.Instance.OnBattleEnd += EndBattle;
         //TestSpawn().Forget();
     }
     public async UniTask TestSpawn()
@@ -244,5 +285,28 @@ public class EnemyManager : MonoBehaviour
     public Sprite NextActImg(int idx)
     {
         return enemySO.EnemyNextAct[idx];
+    }
+
+    public void RefreshAllEnemyIntents()
+    {
+        foreach (var enemy in EnemyList)
+        {
+            // 공격 의도가 있는 적들만 UI를 새로고침하게 합니다.
+            if (enemy.GetStatusEffect(StatusEffect.Attack, out _))
+            {
+                enemy.RefreshIntent();
+            }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (TurnManager.Instance != null)
+        {
+            TurnManager.Instance.OnBattleStart -= SettingEnemyNextPattern;
+            TurnManager.Instance.OnEnemyTurnStart -= EnemyShieldReset;
+            TurnManager.Instance.OnEnemyTurnEnd -= TurnStatusEffect;
+            TurnManager.Instance.OnBattleEnd -= EndBattle;
+        }
     }
 }

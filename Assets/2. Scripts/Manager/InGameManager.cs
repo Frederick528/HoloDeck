@@ -93,6 +93,22 @@ public class InGameManager : MonoBehaviour
         //}
     }
 
+    void StartBattle()
+    {
+        Player.StartOrEndBattle(TurnManager.Instance.InBattle.Value);
+    }
+    void PlayerTurnStart()
+    {
+        Player.AddCurHolo(Player.MaxHolo);
+        Player.ShieldReset();
+    }
+
+    void EndBattle()
+    {
+        Player.StartOrEndBattle(TurnManager.Instance.InBattle.Value);
+        Player.ShieldReset();
+        Player.RemoveStatusEffect();
+    }
     private void Start()
     {
         //Random.InitState(255);
@@ -103,6 +119,10 @@ public class InGameManager : MonoBehaviour
 
         SettingRandomCardList();
         SettingRandomItemList();
+
+        TurnManager.Instance.OnBattleStart += StartBattle;
+        TurnManager.Instance.OnPlayerTurnStart += PlayerTurnStart;
+        TurnManager.Instance.OnBattleEnd += EndBattle;
 
         //SpawnPlayer(0);
 
@@ -578,7 +598,7 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.W))
         {
-            TurnManager.Instance.EndTurn().Forget();
+            TurnManager.Instance.EndPlayerTurn().Forget();
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
@@ -740,14 +760,16 @@ public class InGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Slash))
         {
-            Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), 1);
-            Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.UseAmountTurnDuration), 3, 4);
-            Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), 3, 10);
+            Player.AddStatusEffect((StatusEffect.Weaking, StatusEffectType.NoAmountPerpetual), 1);
+            Player.AddStatusEffect((StatusEffect.Vulnerable, StatusEffectType.NoAmountPerpetual), 1);
+            //Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), 1);
+            //Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.UseAmountTurnDuration), 3, 4);
+            //Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), 3, 10);
             //player.AddAndApplyStatusEffect((StatusEffect.HealUp, StatusEffectType.InfiniteDuration), 1);
             //player.AddAndApplyStatusEffect((StatusEffect.DEFUp, StatusEffectType.InfiniteDuration), 1);
-            Player.AddStatusEffect((StatusEffect.Resurrection, StatusEffectType.UseAmountTurnDuration), 1, 10);
-            Player.AddStatusEffect((StatusEffect.Reflection, StatusEffectType.UseAmountTurnDuration), 5, 3);
-            Player.AddStatusEffect((StatusEffect.Protect, StatusEffectType.DurationIsAmount), 0, 3);
+            //Player.AddStatusEffect((StatusEffect.Resurrection, StatusEffectType.UseAmountTurnDuration), 1, 10);
+            //Player.AddStatusEffect((StatusEffect.Reflection, StatusEffectType.UseAmountTurnDuration), 5, 3);
+            //Player.AddStatusEffect((StatusEffect.Protect, StatusEffectType.DurationIsAmount), 0, 3);
             //player.AddAndApplyStatusEffect((StatusEffect.Resurrection, StatusEffectType.InfiniteDuration), 1);
         }
         if (Input.GetKeyDown(KeyCode.Comma))
@@ -782,5 +804,12 @@ public class InGameManager : MonoBehaviour
         _playerObj = null;
         if (_playerHandle.IsValid())
             Addressables.Release(_playerHandle);
+
+        if (TurnManager.Instance != null)
+        {
+            TurnManager.Instance.OnBattleStart -= StartBattle;
+            TurnManager.Instance.OnPlayerTurnStart -= PlayerTurnStart;
+            TurnManager.Instance.OnBattleEnd -= EndBattle;
+        }
     }
 }

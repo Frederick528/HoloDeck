@@ -82,11 +82,19 @@ MonoBehaviour:
       \uC0AC\uC6A9\uC2DC \uCF54\uC2A4\uD2B8 0\uC73C\uB85C \uAC10\uC18C"
     Sprite: {fileID: 21300000, guid: 2fe03326281e0bd4193a8b2c6d41c332, type: 3}
     Effect: {fileID: 2715471840370901047, guid: df9374346b76e444dbbb2b019de4da25, type: 3}
-    SpecialTags:
-    - Tag: FirstCard
-      Type: ChangeCost
+    MasterTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 11
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 16
+        Status: 0
+      XAmount: 0
       Amount: 0
-      Duration: 
+      XDuration: 0
+      Duration: 0
     HasCondition: 0
     CardTag: 0
     CardRarity: 0
@@ -110,7 +118,7 @@ MonoBehaviour:
     Descript: "\uB2E8\uC77C \uB300\uBBF8\uC9C0 {Damage}"
     Sprite: {fileID: 21300000, guid: ec3fa358adba88c449853d5c20b67db0, type: 3}
     Effect: {fileID: 2965222256817593503, guid: a164e676dbbd6e54587237e619372c98, type: 3}
-    SpecialTags: []
+    MasterTags: []
     HasCondition: 0
     CardTag: 0
     CardRarity: 0
@@ -134,10 +142,18 @@ MonoBehaviour:
     Descript: "\uB2E8\uC77C \uB300\uBBF8\uC9C0 {Damage}, \uCDE8\uC57D 2\uD134 \uBD80\uC5EC"
     Sprite: {fileID: 21300000, guid: 9887926c8bf3db840998abaf10f44ab9, type: 3}
     Effect: {fileID: 8974203713140315807, guid: 709b0bd6b0b625249a98409dd7a87343, type: 3}
-    SpecialTags:
-    - Tag: Vulnerable
-      Type: NoAmountTurnDuration
+    MasterTags:
+    - Tag:
+        IsSpecial: 0
+        Special: 0
+        Status: 7
+      Type:
+        IsSpecial: 0
+        Special: 0
+        Status: 4
+      XAmount: 0
       Amount: 1
+      XDuration: 0
       Duration: 2
     HasCondition: 0
     CardTag: 0
@@ -163,7 +179,7 @@ MonoBehaviour:
       \uB300\uBBF8\uC9C0 {Damage}"
     Sprite: {fileID: 21300000, guid: 1dd6f43b667f45b428ba420c20adcc12, type: 3}
     Effect: {fileID: 0}
-    SpecialTags: []
+    MasterTags: []
     HasCondition: 1
     CardTag: 0
     CardRarity: 0
@@ -189,15 +205,31 @@ MonoBehaviour:
       +3"
     Sprite: {fileID: 21300000, guid: a9cc5251dfe3aa24ca8a954346ae682a, type: 3}
     Effect: {fileID: 6424583148328831481, guid: d2ffbc8b168cdf74a9dbb7c6c1cfdf2f, type: 3}
-    SpecialTags:
-    - Tag: CheckUsedCardCount
-      Type: TurnAttack
-      Amount: 
-      Duration: 
-    - Tag: CardCountValue
-      Type: AddDamage
+    MasterTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 12
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 17
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: 0
+    - Tag:
+        IsSpecial: 1
+        Special: 13
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
       Amount: 3
-      Duration: 
+      XDuration: 0
+      Duration: 0
     HasCondition: 0
     CardTag: 0
     CardRarity: 0
@@ -223,10 +255,18 @@ MonoBehaviour:
       \uC2DC\uAC04 +1\uD134"
     Sprite: {fileID: 21300000, guid: 2fb01aa7f95a2d745a4952ea9e239a6a, type: 3}
     Effect: {fileID: 0}
-    SpecialTags:
-    - Tag: ChangeAllDebuffValue
-      Type: AddDuration
-      Amount: 
+    MasterTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 3
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 11
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
       Duration: 1
     HasCondition: 0
     CardTag: 0
@@ -236,13 +276,13 @@ MonoBehaviour:
     Cost: 1
     Count: 1
     Damage: 8
-    DamageOrder: 1
+    DamageOrder: 2
     Shield: 0
     ShieldOrder: -1
     Draw: 0
     DrawOrder: -1
     HP: -2
-    HPOrder: 2
+    HPOrder: 1
     Discard: 0
     DiscardOrder: -1
     Remove: 0
@@ -251,7 +291,7 @@ MonoBehaviour:
     Descript: "\uAD11\uC5ED \uB300\uBBF8\uC9C0 {Damage} + \uCCB4\uB825 {HP} \uAC10\uC18C"
     Sprite: {fileID: 21300000, guid: cbf49c380404e2e438effc24a6de08be, type: 3}
     Effect: {fileID: 1289543790355709915, guid: b99922c2f59b1a542bdd06ae8bee47ae, type: 3}
-    SpecialTags: []
+    MasterTags: []
     HasCondition: 1
     CardTag: 1
     CardRarity: 0
@@ -276,10 +316,18 @@ MonoBehaviour:
       \uC57D\uD654 1\uD134 \uBD80\uC5EC"
     Sprite: {fileID: 21300000, guid: 3c4ab3de5a908f140ba285fce66e9dc6, type: 3}
     Effect: {fileID: 6823302871133167919, guid: 3138a83bedbd6ad4481ba0b061da2eb6, type: 3}
-    SpecialTags:
-    - Tag: Weaking
-      Type: NoAmountTurnDuration
+    MasterTags:
+    - Tag:
+        IsSpecial: 0
+        Special: 0
+        Status: 8
+      Type:
+        IsSpecial: 0
+        Special: 0
+        Status: 4
+      XAmount: 0
       Amount: 1
+      XDuration: 0
       Duration: 1
     HasCondition: 0
     CardTag: 1
@@ -304,7 +352,7 @@ MonoBehaviour:
     Descript: "\uB2E8\uC77C \uB300\uBBF8\uC9C0 {Damage} + \uB4DC\uB85C\uC6B0 {Draw}"
     Sprite: {fileID: 21300000, guid: 06c8570774996724a9c95b55769c9b2a, type: 3}
     Effect: {fileID: 1171201465392465800, guid: 4aa9f30a28a77224ba84b2a2c334c71b, type: 3}
-    SpecialTags: []
+    MasterTags: []
     HasCondition: 0
     CardTag: 0
     CardRarity: 0
@@ -329,10 +377,18 @@ MonoBehaviour:
       2\uC529 \uC783\uC2B5\uB2C8\uB2E4"
     Sprite: {fileID: 21300000, guid: 26f2ab3a1cff5814a81421d49b6b6ae4, type: 3}
     Effect: {fileID: 0}
-    SpecialTags:
-    - Tag: Wildness
-      Type: NoAmountTurnDuration
+    MasterTags:
+    - Tag:
+        IsSpecial: 0
+        Special: 0
+        Status: 24
+      Type:
+        IsSpecial: 0
+        Special: 0
+        Status: 4
+      XAmount: 0
       Amount: 1
+      XDuration: 0
       Duration: 2
     HasCondition: 0
     CardTag: 3
@@ -358,7 +414,31 @@ MonoBehaviour:
       \uC0AC\uC6A9\uC2DC, \uBC29\uC5B4\uB3C4 {Shield}"
     Sprite: {fileID: 21300000, guid: 9a1b6067a00f6124aad1bbf0ad0dd4c3, type: 3}
     Effect: {fileID: 0}
-    SpecialTags: []
+    MasterTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 12
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 17
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: 0
+    - Tag:
+        IsSpecial: 1
+        Special: 13
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 29
+        Status: 0
+      XAmount: 0
+      Amount: 2
+      XDuration: 0
+      Duration: 0
     HasCondition: 1
     CardTag: 3
     CardRarity: 0
@@ -383,7 +463,31 @@ MonoBehaviour:
       \uC2DC, \uADF8 \uCE74\uB4DC \uB300\uBBF8\uC9C0 +2"
     Sprite: {fileID: 21300000, guid: 9bafe66ebcb87eb42b83a4ac6a302c6c, type: 3}
     Effect: {fileID: 0}
-    SpecialTags: []
+    MasterTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 16
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 26
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: 0
+    - Tag:
+        IsSpecial: 1
+        Special: 17
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 2
+      XDuration: 0
+      Duration: 0
     HasCondition: 0
     CardTag: 3
     CardRarity: 0
@@ -407,7 +511,7 @@ MonoBehaviour:
     Descript: "\uBC29\uC5B4\uB3C4 {Shield} + \uB4DC\uB85C\uC6B0 {Draw}"
     Sprite: {fileID: 21300000, guid: 192a7154e56b4204ca7d985bf7264184, type: 3}
     Effect: {fileID: 0}
-    SpecialTags: []
+    MasterTags: []
     HasCondition: 0
     CardTag: 3
     CardRarity: 0
@@ -432,7 +536,7 @@ MonoBehaviour:
       \uD68C\uBCF5\uC744  {HP} \uD569\uB2C8\uB2E4."
     Sprite: {fileID: 21300000, guid: 736454ebaff08954da474ddc3fd74eef, type: 3}
     Effect: {fileID: 0}
-    SpecialTags: []
+    MasterTags: []
     HasCondition: 1
     CardTag: 3
     CardRarity: 0
@@ -456,7 +560,7 @@ MonoBehaviour:
     Descript: "\uBC29\uC5B4\uB3C4 {Shield}"
     Sprite: {fileID: 21300000, guid: ce56e527ec609ca4eab2eb8e7be92d67, type: 3}
     Effect: {fileID: 0}
-    SpecialTags: []
+    MasterTags: []
     HasCondition: 0
     CardTag: 3
     CardRarity: 0
@@ -479,18 +583,34 @@ MonoBehaviour:
     Price: 30
     Descript: "\uB2E8\uC77C \uB300\uBBF8\uC9C0 {Damage} + \uC774 \uCE74\uB4DC\uB85C
       \uC801 \uCC98\uCE58 \uC2DC \uCF54\uC2A4\uD2B8 1 \uD68C\uBCF5 + \uB4DC\uB85C\uC6B0
-      {Draw}"
+      1"
     Sprite: {fileID: 21300000, guid: 1af68fbd7731b134ea0553872e907aa3, type: 3}
     Effect: {fileID: 3153472991145048103, guid: 3407e378c048bb5438424b28c7740b48, type: 3}
-    SpecialTags:
-    - Tag: Kill
-      Type: AddCost
+    MasterTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 9
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 14
+        Status: 0
+      XAmount: 0
       Amount: 1
-      Duration: 
-    - Tag: Kill
-      Type: AddDraw
+      XDuration: 0
+      Duration: 0
+    - Tag:
+        IsSpecial: 1
+        Special: 9
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 4
+        Status: 0
+      XAmount: 0
       Amount: 1
-      Duration: 
+      XDuration: 0
+      Duration: 0
     HasCondition: 0
     CardTag: 0
     CardRarity: 1
@@ -505,25 +625,41 @@ MonoBehaviour:
     Draw: 0
     DrawOrder: -1
     HP: 0
-    HPOrder: 0
+    HPOrder: 0.5
     Discard: 0
     DiscardOrder: -1
     Remove: 0
     RemoveOrder: -1
     Price: 30
-    Descript: "\uCCB4\uB825\uC744 x \uB9CC\uD07C \uC783\uC2B5\uB2C8\uB2E4 + \uBB34\uC791\uC704
+    Descript: "\uCCB4\uB825\uC744 x \uB9CC\uD07C \uC783\uC2B5\uB2C8\uB2E4, \uBB34\uC791\uC704
       \uC801\uC5D0\uAC8C \uB300\uBBF8\uC9C0 {Damage} * x\uBC88 \uB9CC\uD07C \uBC1C\uB3D9"
     Sprite: {fileID: 21300000, guid: 1d99c4fd3ce689f42826b1f60c90e4cf, type: 3}
     Effect: {fileID: 689667626583958020, guid: 1336648bc1d8baf46a4515860950c9d4, type: 3}
-    SpecialTags:
-    - Tag: XValue
-      Type: AddCount
+    MasterTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 3
+        Status: 0
+      XAmount: 0
       Amount: 1
-      Duration: 
-    - Tag: XValue
-      Type: AddDamageHP
+      XDuration: 0
+      Duration: 0
+    - Tag:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 8
+        Status: 0
+      XAmount: 0
       Amount: 1
-      Duration: 
+      XDuration: 0
+      Duration: 0
     HasCondition: 1
     CardTag: 2
     CardRarity: 1
@@ -548,11 +684,19 @@ MonoBehaviour:
       \uC900 \uD53C\uD574\uC758 50% \uD68C\uBCF5 (\uBC29\uC5B4\uB3C4 \uC81C\uC678)"
     Sprite: {fileID: 21300000, guid: d265aa72caa20a34d831e5eb3a8d5b19, type: 3}
     Effect: {fileID: 7131401307255788800, guid: 4d9a3b35b3bc07649b697df7fb497b6d, type: 3}
-    SpecialTags:
-    - Tag: DamageDealt
-      Type: AddHeal
+    MasterTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 7
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 7
+        Status: 0
+      XAmount: 0
       Amount: 0.5
-      Duration: 
+      XDuration: 0
+      Duration: 0
     HasCondition: 0
     CardTag: 0
     CardRarity: 1
@@ -577,11 +721,19 @@ MonoBehaviour:
       \uCC98\uCE58 \uC2DC \uCF54\uC2A4\uD2B8 1 \uD68C\uBCF5"
     Sprite: {fileID: 21300000, guid: 868620d0bdbd0b347af3a5e4e5ec63f6, type: 3}
     Effect: {fileID: 7155335147208632822, guid: 97c43495f80a3244fad1301dfafbe252, type: 3}
-    SpecialTags:
-    - Tag: Kill
-      Type: AddCost
+    MasterTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 9
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 14
+        Status: 0
+      XAmount: 0
       Amount: 1
-      Duration: 
+      XDuration: 0
+      Duration: 0
     HasCondition: 0
     CardTag: 0
     CardRarity: 1
@@ -607,11 +759,19 @@ MonoBehaviour:
       2\uBC88 \uBC1C\uB3D9, \uC911\uBCF5 \uBD88\uAC00"
     Sprite: {fileID: 21300000, guid: 9fb184d4b52295843bd0fdea96884828, type: 3}
     Effect: {fileID: 0}
-    SpecialTags:
-    - Tag: DoubleAttack
-      Type: UseAmountTurnDuration
-      Amount: 0
-      Duration: 0
+    MasterTags:
+    - Tag:
+        IsSpecial: 0
+        Special: 0
+        Status: 25
+      Type:
+        IsSpecial: 0
+        Special: 0
+        Status: 7
+      XAmount: 0
+      Amount: 1
+      XDuration: 0
+      Duration: 1
     HasCondition: 1
     CardTag: 3
     CardRarity: 1
@@ -636,10 +796,18 @@ MonoBehaviour:
       3\uB97C \uC8FC\uB294 \uC9C0\uC18D \uB514\uBC84\uD504"
     Sprite: {fileID: 21300000, guid: b4745b742eb68b3478bf3dd85b13df53, type: 3}
     Effect: {fileID: 358637981425055526, guid: 8eb503696b886e04faff8fc0f480d473, type: 3}
-    SpecialTags:
-    - Tag: AddDamage
-      Type: NoAmountInfiniteDuration
+    MasterTags:
+    - Tag:
+        IsSpecial: 0
+        Special: 0
+        Status: 27
+      Type:
+        IsSpecial: 0
+        Special: 0
+        Status: 3
+      XAmount: 0
       Amount: 1
+      XDuration: 0
       Duration: -1
     HasCondition: 0
     CardTag: 4
@@ -664,10 +832,18 @@ MonoBehaviour:
     Descript: "x\uB9CC\uD07C \uACF5\uACA9\uB825 \uC0C1\uC2B9"
     Sprite: {fileID: 21300000, guid: 01fd68ac417cf43428c50fd6c99e7f2a, type: 3}
     Effect: {fileID: 1171201465392465800, guid: d0c28677f730d7c47b974e49c230a877, type: 3}
-    SpecialTags:
-    - Tag: ATKUp
-      Type: InfiniteDuration
-      Amount: x
+    MasterTags:
+    - Tag:
+        IsSpecial: 0
+        Special: 0
+        Status: 4
+      Type:
+        IsSpecial: 0
+        Special: 0
+        Status: 1
+      XAmount: 1
+      Amount: 0
+      XDuration: 0
       Duration: -1
     HasCondition: 0
     CardTag: 3
@@ -689,11 +865,23 @@ MonoBehaviour:
     Remove: 0
     RemoveOrder: -1
     Price: 50
-    Descript: "\uB4DC\uB85C\uC6B0 {Draw} + \uC774\uBC88\uD134 0\uCF54\uC2A4\uD2B8
+    Descript: "\uB4DC\uB85C\uC6B0 {Draw} + \uC774\uBC88 \uD134 0\uCF54\uC2A4\uD2B8
       \uACF5\uACA9 \uCE74\uB4DC \uB370\uBBF8\uC9C0 +7"
     Sprite: {fileID: 21300000, guid: fb6dbe365dafff74992a52f77a4e4981, type: 3}
     Effect: {fileID: 8974203713140315807, guid: c0e63d685aed24d47aef3d8a8063c162, type: 3}
-    SpecialTags: []
+    MasterTags:
+    - Tag:
+        IsSpecial: 0
+        Special: 0
+        Status: 28
+      Type:
+        IsSpecial: 0
+        Special: 0
+        Status: 2
+      XAmount: 0
+      Amount: 7
+      XDuration: 0
+      Duration: 1
     HasCondition: 0
     CardTag: 3
     CardRarity: 2
@@ -718,7 +906,19 @@ MonoBehaviour:
       \uD328\uB85C \uAC00\uC838\uC634"
     Sprite: {fileID: 21300000, guid: ef9849d2fd189ff49a0e38ae4903ce39, type: 3}
     Effect: {fileID: 0}
-    SpecialTags: []
+    MasterTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 15
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 30
+        Status: 0
+      XAmount: 0
+      Amount: 2
+      XDuration: 0
+      Duration: 0
     HasCondition: 0
     CardTag: 3
     CardRarity: 2
@@ -742,7 +942,7 @@ MonoBehaviour:
     Descript: "\uB4DC\uB85C\uC6B0 {Draw}"
     Sprite: {fileID: 21300000, guid: f43ebf26118644745a55daf89e9a32e7, type: 3}
     Effect: {fileID: 0}
-    SpecialTags: []
+    MasterTags: []
     HasCondition: 0
     CardTag: 3
     CardRarity: 2
@@ -768,7 +968,31 @@ MonoBehaviour:
       + 5"
     Sprite: {fileID: 21300000, guid: 4a647fe6ea630804a85e519e27d79ffc, type: 3}
     Effect: {fileID: 7478731271839673279, guid: 4d3c8045dd8857a4b8d34c2361c61045, type: 3}
-    SpecialTags: []
+    MasterTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 12
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: 0
+    - Tag:
+        IsSpecial: 1
+        Special: 13
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 5
+      XDuration: 0
+      Duration: 0
     HasCondition: 0
     CardTag: 1
     CardRarity: 3
@@ -792,10 +1016,18 @@ MonoBehaviour:
     Descript: "\uC774\uBC88 \uD134 \uBAA8\uB4E0 \uCE74\uB4DC \uCF54\uC2A4\uD2B8 0"
     Sprite: {fileID: 21300000, guid: c801c0dc89ff0784e82379ff8a8220b3, type: 3}
     Effect: {fileID: 8378648546881499446, guid: 867c572a5be680d42a042d2349f10143, type: 3}
-    SpecialTags:
-    - Tag: CostZero
-      Type: NoAmountTurnDuration
+    MasterTags:
+    - Tag:
+        IsSpecial: 0
+        Special: 0
+        Status: 26
+      Type:
+        IsSpecial: 0
+        Special: 0
+        Status: 4
+      XAmount: 0
       Amount: 1
+      XDuration: 0
       Duration: 1
     HasCondition: 0
     CardTag: 3
@@ -821,19 +1053,43 @@ MonoBehaviour:
       3\uD134 \uBD80\uC5EC + \uCF54\uC2A4\uD2B8 2\uD68C\uBCF5"
     Sprite: {fileID: 21300000, guid: 7f5a64f3be581704596283bf2e1d7c4f, type: 3}
     Effect: {fileID: 0}
-    SpecialTags:
-    - Tag: Vulnerable
-      Type: NoAmountTurnDuration
+    MasterTags:
+    - Tag:
+        IsSpecial: 0
+        Special: 0
+        Status: 7
+      Type:
+        IsSpecial: 0
+        Special: 0
+        Status: 4
+      XAmount: 0
       Amount: 1
+      XDuration: 0
       Duration: 3
-    - Tag: Weaking
-      Type: NoAmountTurnDuration
+    - Tag:
+        IsSpecial: 0
+        Special: 0
+        Status: 8
+      Type:
+        IsSpecial: 0
+        Special: 0
+        Status: 4
+      XAmount: 0
       Amount: 1
+      XDuration: 0
       Duration: 3
-    - Tag: Cost
-      Type: AddAmount
+    - Tag:
+        IsSpecial: 1
+        Special: 4
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 9
+        Status: 0
+      XAmount: 0
       Amount: 2
-      Duration: 
+      XDuration: 0
+      Duration: 0
     HasCondition: 0
     CardTag: 5
     CardRarity: 3
@@ -857,10 +1113,18 @@ MonoBehaviour:
     Descript: "\uACF5\uACA9\uB825 + 9"
     Sprite: {fileID: 21300000, guid: c5672a6cec3611c4f8fa4253870cd301, type: 3}
     Effect: {fileID: 0}
-    SpecialTags:
-    - Tag: ATKUp
-      Type: InfiniteDuration
+    MasterTags:
+    - Tag:
+        IsSpecial: 0
+        Special: 0
+        Status: 4
+      Type:
+        IsSpecial: 0
+        Special: 0
+        Status: 1
+      XAmount: 0
       Amount: 9
+      XDuration: 0
       Duration: -1
     HasCondition: 0
     CardTag: 3
@@ -886,10 +1150,18 @@ MonoBehaviour:
       \uC9C0\uC18D \uBC84\uD504"
     Sprite: {fileID: 21300000, guid: d9f479b28fa175a46b704095c1105e5f, type: 3}
     Effect: {fileID: 0}
-    SpecialTags:
-    - Tag: Vampire
-      Type: NoAmountInfiniteDuration
+    MasterTags:
+    - Tag:
+        IsSpecial: 0
+        Special: 0
+        Status: 20
+      Type:
+        IsSpecial: 0
+        Special: 0
+        Status: 3
+      XAmount: 0
       Amount: 1
+      XDuration: 0
       Duration: -1
     HasCondition: 0
     CardTag: 3

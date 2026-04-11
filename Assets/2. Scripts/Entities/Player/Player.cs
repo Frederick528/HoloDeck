@@ -74,21 +74,24 @@ public class Player : Entity
         AttackPower.Subscribe(atk =>
         {
             InGameUIManager.Instance.ChangeStatus(1, atk);
-            CardManager.Instance.ChangeTotalCardDesc();
+            //CardManager.Instance.ChangeCardDesc(CardManager.Instance.TotalDeck);
+            GameEvents.NotifyBaseStats();
             ItemManager.Instance.ActiveItemDataReset();
         }).AddTo(this);
 
         DefensePower.Subscribe(def =>
         {
             InGameUIManager.Instance.ChangeStatus(2, def);
-            CardManager.Instance.ChangeTotalCardDesc();
+            //CardManager.Instance.ChangeCardDesc(CardManager.Instance.TotalDeck);
+            GameEvents.NotifyBaseStats();
             ItemManager.Instance.ActiveItemDataReset();
         }).AddTo(this);
 
         HealPower.Subscribe(heal =>
         {
             InGameUIManager.Instance.ChangeStatus(3, heal);
-            CardManager.Instance.ChangeTotalCardDesc();
+            //CardManager.Instance.ChangeCardDesc(CardManager.Instance.TotalDeck);
+            GameEvents.NotifyBaseStats();
             ItemManager.Instance.ActiveItemDataReset();
         }).AddTo(this);
 

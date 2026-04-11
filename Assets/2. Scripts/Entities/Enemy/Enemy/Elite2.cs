@@ -21,11 +21,9 @@ public class Elite2 : Enemy
         switch (turn)
         {
             case 1:
-                SetRepeat(2);
-                AttackPattern(_defaultEnemyData.Damage);
+                AttackPattern(_defaultEnemyData.Damage, 2);
                 break;
             case 2:
-                SetRepeat();
                 AttackPattern(_defaultEnemyData.Damage);
                 turn = 0;
                 break;
