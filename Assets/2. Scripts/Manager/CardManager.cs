@@ -495,6 +495,13 @@ public class CardManager : MonoBehaviour
                 card.FailureBeforeUseCard?.Invoke();
                 return false;
             }
+
+            if (card is ActionCard)
+            {
+                _usedCard = null;
+                card.FailureBeforeUseCard?.Invoke();
+                return false;
+            }
             //card.Used = false;
             //HandCard.Add(card);
             _usedCard = null;
@@ -1055,6 +1062,11 @@ public class CardManager : MonoBehaviour
             if (playedCard.IsForce)
             {
                 await RemoveCopyCard(playedCard);
+                return;
+            }
+            if (playedCard is ActionCard action)
+            {
+                await action.HideQueueVisual();
                 return;
             }
             playedCard.FailedUseCard();

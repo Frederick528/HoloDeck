@@ -29,12 +29,16 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     RectTransform _textRect;
     RectTransform _bgRect;
 
+    Image _image;
+
     void Awake()
     {
         _backgroundImage = transform.Find("ItemDescWindow").GetComponent<Image>();
         _text = _backgroundImage.transform.Find("DescText").GetComponent<TMP_Text>();
         _textRect = _text.GetComponent<RectTransform>();
         _bgRect = _backgroundImage.GetComponent<RectTransform>();
+
+        _image = GetComponent<Image>();
         //AdjustBackgroundSize();
     }
     //private void Update()
@@ -98,6 +102,12 @@ public class Item : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         _defaultData = data;
         Data = _defaultData.Clone();
+
+        if (Data.Sprite != null)
+            _image.sprite = Data.Sprite;
+
+
+        
 
         //StringBuilder sb = new StringBuilder(_defaultData.Descript);
 

@@ -61,6 +61,11 @@ public class ActionCard : Card, IPointerEnterHandler, IPointerExitHandler // Car
 
     }
 
+    public void ReturnCondition()
+    {
+        _currentProgress = _maxProgress;
+    }
+
     public void ShowQueueVisual(Vector3 watingPos, int order)
     {
         if (_queueVisual == null) return;

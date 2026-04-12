@@ -132,8 +132,15 @@ public class EventQueue
                 _queue.Dequeue();
 
                 CardManager.Instance.CardInQueue(card, false);
-                if (card is not ActionCard)
+                if (card is ActionCard actionCard)
+                {
+                    actionCard.HideQueueVisual().Forget();
+                    actionCard.ReturnCondition();
+                }
+                else
+                {
                     CardManager.Instance.PutDownCard(card).Forget();
+                }
 
                 //QueueClearCard(card)/*.Forget()*/;
             }
