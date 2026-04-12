@@ -43,6 +43,12 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 7f5a64f3be581704596283bf2e1d7c4f, type: 3}
   - {fileID: 21300000, guid: c5672a6cec3611c4f8fa4253870cd301, type: 3}
   - {fileID: 21300000, guid: d9f479b28fa175a46b704095c1105e5f, type: 3}
+  - {fileID: 21300000, guid: c0c439f267363864ebe95e4ed81366c7, type: 3}
+  - {fileID: 21300000, guid: 0893d2e459a781849b86d362ce572fd6, type: 3}
+  - {fileID: 21300000, guid: 43f404c8ebe5100428e4d2abbdfca8f5, type: 3}
+  - {fileID: 21300000, guid: d8430141f8923744d965041cedadee52, type: 3}
+  - {fileID: 21300000, guid: 75ae52f7ae5bc97489c17e0900f2f929, type: 3}
+  - {fileID: 21300000, guid: 95e9e3d54362db443bddaabf80f494f7, type: 3}
   CardEffects:
   - {fileID: 2715471840370901047, guid: df9374346b76e444dbbb2b019de4da25, type: 3}
   - {fileID: 2965222256817593503, guid: a164e676dbbd6e54587237e619372c98, type: 3}
@@ -98,6 +104,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 0
     CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 5
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 5 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uC804\uAD11\uC11D\uD654"
     ID: 101
     Cost: 0
@@ -122,6 +143,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 0
     CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 3
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 3 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uAE09\uC18C\uACF5\uACA9"
     ID: 102
     Cost: 2
@@ -158,6 +194,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 0
     CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 2
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 2 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uAF2C\uB9AC \uD718\uB450\uB974\uAE30"
     ID: 103
     Cost: 1
@@ -183,6 +234,21 @@ MonoBehaviour:
     HasCondition: 1
     CardTag: 0
     CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 4
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 4 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uB0A0\uB835\uD55C \uC5F0\uACA9"
     ID: 104
     Cost: 1
@@ -233,6 +299,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 0
     CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 6
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 6 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uC0C1\uCC98 \uB367\uB0B4\uAE30"
     ID: 105
     Cost: 1
@@ -271,6 +352,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 0
     CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 7
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 7 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uBB34\uBAA8\uD55C \uB3CC\uC9C4"
     ID: 106
     Cost: 1
@@ -295,6 +391,21 @@ MonoBehaviour:
     HasCondition: 1
     CardTag: 1
     CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 9
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 9 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uC0B4\uAE30"
     ID: 107
     Cost: 1
@@ -332,6 +443,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 1
     CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 7
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 7 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uC804\uD22C\uAD11"
     ID: 108
     Cost: 2
@@ -356,6 +482,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 0
     CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 13
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 13 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uBD88\uC548\uC815\uD55C \uC57C\uC131"
     ID: 109
     Cost: 1
@@ -393,6 +534,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 3
     CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 1
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 1 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uC19F\uAD6C\uCE58\uB294 \uC544\uB4DC\uB808\uB0A0\uB9B0"
     ID: 110
     Cost: 1
@@ -442,6 +598,21 @@ MonoBehaviour:
     HasCondition: 1
     CardTag: 3
     CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 4
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 4 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uC0AC\uB0E5\uAC10 \uD3EC\uCC29"
     ID: 111
     Cost: 1
@@ -491,6 +662,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 3
     CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 7
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 7 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uC0DD\uC874\uBCF8\uB2A5"
     ID: 112
     Cost: 1
@@ -515,6 +701,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 3
     CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 8
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 8 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uC790\uAC00\uD68C\uBCF5"
     ID: 113
     Cost: 1
@@ -540,6 +741,21 @@ MonoBehaviour:
     HasCondition: 1
     CardTag: 3
     CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 9
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 9 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uB450\uAEBC\uC6B4 \uAC00\uC8FD"
     ID: 114
     Cost: 1
@@ -564,6 +780,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 3
     CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 8
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 8 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uB9C8\uBB34\uB9AC \uBCF4\uB108\uC2A4"
     ID: 500
     Cost: 1
@@ -614,6 +845,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 0
     CardRarity: 1
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 5
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 5 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uB09C\uD0C0"
     ID: 501
     Cost: -1
@@ -663,6 +909,21 @@ MonoBehaviour:
     HasCondition: 1
     CardTag: 2
     CardRarity: 1
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 3
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 3 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uD3EC\uC2DD\uC790"
     ID: 502
     Cost: 2
@@ -700,6 +961,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 0
     CardRarity: 1
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 2
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 2 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uC0B4\uC810 \uB72F\uAE30"
     ID: 503
     Cost: 1
@@ -737,6 +1013,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 0
     CardRarity: 1
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 4
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 4 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uBC18\uC0AC\uC2E0\uACBD"
     ID: 504
     Cost: 0
@@ -775,6 +1066,21 @@ MonoBehaviour:
     HasCondition: 1
     CardTag: 3
     CardRarity: 1
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 6
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 6 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uCD9C\uD608 \uC720\uBC1C"
     ID: 800
     Cost: 2
@@ -812,6 +1118,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 4
     CardRarity: 2
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 7
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 7 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uAE68\uC5B4\uB098\uB294 \uC57C\uC131"
     ID: 801
     Cost: -1
@@ -848,6 +1169,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 3
     CardRarity: 2
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 9
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 9 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uC9C8\uC8FC"
     ID: 802
     Cost: 0
@@ -885,6 +1221,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 3
     CardRarity: 2
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 7
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 7 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uBB34\uB9AC \uC0AC\uB0E5"
     ID: 803
     Cost: 1
@@ -922,6 +1273,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 3
     CardRarity: 2
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 13
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 13 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uC57C\uAC04 \uC2DC\uB825"
     ID: 804
     Cost: 0
@@ -946,6 +1312,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 3
     CardRarity: 2
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 1
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 1 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uC2E0\uC131\uD55C \uC57C\uC218\uC758 \uC77C\uACA9"
     ID: 1000
     Cost: 3
@@ -996,6 +1377,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 1
     CardRarity: 3
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 4
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 4 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uC6B0\uB450\uBA38\uB9AC\uC758 \uBA85\uB839"
     ID: 1001
     Cost: 3
@@ -1032,6 +1428,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 3
     CardRarity: 3
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 7
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 7 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uB9CC\uC6D4\uC758 \uD3EC\uD6A8"
     ID: 1002
     Cost: 0
@@ -1093,6 +1504,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 5
     CardRarity: 3
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 8
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 8 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uC644\uC804 \uC57C\uC218\uD654"
     ID: 1003
     Cost: 3
@@ -1129,6 +1555,21 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 3
     CardRarity: 3
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 9
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 9 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   - Name: "\uCD5C\uC0C1\uC704 \uD3EC\uC2DD\uC790"
     ID: 1004
     Cost: 2
@@ -1166,13 +1607,1223 @@ MonoBehaviour:
     HasCondition: 0
     CardTag: 3
     CardRarity: 3
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 23
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 1
+        Status: 0
+      XAmount: 0
+      Amount: 8
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uB370\uBBF8\uC9C0\uAC00 8 \uC99D\uAC00\uD569\uB2C8\uB2E4."
+  - Name: "\uC190\uD1B1"
+    ID: 10000
+    Cost: 0
+    Count: 1
+    Damage: 7
+    DamageOrder: 1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: "\uB2E8\uC77C \uB300\uBBF8\uC9C0 {Damage}"
+    Sprite: {fileID: 21300000, guid: c0c439f267363864ebe95e4ed81366c7, type: 3}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 0
+    CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 40
+        Status: 0
+      XAmount: 0
+      Amount: 15
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uD53C\uD574 15 \uC785\uD788\uAE30"
+  - Name: "\uD53C\uC5B4"
+    ID: 10001
+    Cost: 0
+    Count: 1
+    Damage: 2
+    DamageOrder: 1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: "\uAD11\uC5ED \uB300\uBBF8\uC9C0 {Damage}"
+    Sprite: {fileID: 21300000, guid: 0893d2e459a781849b86d362ce572fd6, type: 3}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 1
+    CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 46
+        Status: 0
+      XAmount: 0
+      Amount: 6
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uACF5\uACA9 \uCE74\uB4DC 6\uC7A5 \uC0AC\uC6A9"
+  - Name: "\uBD84\uB178"
+    ID: 10002
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: "\uC774\uBC88 \uD134 \uACF5\uACA9\uB825 +2"
+    Sprite: {fileID: 21300000, guid: 43f404c8ebe5100428e4d2abbdfca8f5, type: 3}
+    Effect: {fileID: 0}
+    MasterTags:
+    - Tag:
+        IsSpecial: 0
+        Special: 0
+        Status: 4
+      Type:
+        IsSpecial: 0
+        Special: 0
+        Status: 2
+      XAmount: 0
+      Amount: 2
+      XDuration: 0
+      Duration: 1
+    HasCondition: 0
+    CardTag: 3
+    CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 45
+        Status: 0
+      XAmount: 0
+      Amount: 10
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uCCB4\uB825 10 \uC783\uAE30"
+  - Name: "\uAC80"
+    ID: 10003
+    Cost: 0
+    Count: 1
+    Damage: 6
+    DamageOrder: 1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: "\uB2E8\uC77C \uB300\uBBF8\uC9C0 {Damage}"
+    Sprite: {fileID: 21300000, guid: d8430141f8923744d965041cedadee52, type: 3}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 0
+    CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 40
+        Status: 0
+      XAmount: 0
+      Amount: 15
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uD53C\uD574 15 \uC785\uD788\uAE30"
+  - Name: "\uBC29\uD328"
+    ID: 10004
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 5
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: "\uBC29\uC5B4\uB3C4 {Shield}"
+    Sprite: {fileID: 21300000, guid: 75ae52f7ae5bc97489c17e0900f2f929, type: 3}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 3
+    CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 41
+        Status: 0
+      XAmount: 0
+      Amount: 15
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uBC29\uC5B4\uB3C4 15 \uC5BB\uAE30"
+  - Name: "\uC644\uC804\uBB34\uC7A5"
+    ID: 10005
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 8
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: "\uCCB4\uB825 {HP} \uD68C\uBCF5, \uC774\uBC88 \uD134 \uACF5\uACA9\uB825
+      +4"
+    Sprite: {fileID: 21300000, guid: 95e9e3d54362db443bddaabf80f494f7, type: 3}
+    Effect: {fileID: 0}
+    MasterTags:
+    - Tag:
+        IsSpecial: 0
+        Special: 0
+        Status: 4
+      Type:
+        IsSpecial: 0
+        Special: 0
+        Status: 2
+      XAmount: 0
+      Amount: 4
+      XDuration: 0
+      Duration: 1
+    HasCondition: 0
+    CardTag: 3
+    CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 48
+        Status: 0
+      XAmount: 0
+      Amount: 5
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - "\uC801 5\uB9C8\uB9AC \uCC98\uCE58"
+  - Name: 
+    ID: 10006
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: 1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 1
+    CardTag: 1
+    CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 40
+        Status: 0
+      XAmount: 0
+      Amount: 9
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - None
+  - Name: 
+    ID: 10007
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 1
+    CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 40
+        Status: 0
+      XAmount: 0
+      Amount: 8
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - None
+  - Name: 
+    ID: 10008
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: 2
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 0
+    CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 40
+        Status: 0
+      XAmount: 0
+      Amount: 7
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - None
+  - Name: 
+    ID: 10009
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 3
+    CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 40
+        Status: 0
+      XAmount: 0
+      Amount: 6
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - None
+  - Name: 
+    ID: 10010
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: 1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 1
+    CardTag: 3
+    CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 40
+        Status: 0
+      XAmount: 0
+      Amount: 5
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - None
+  - Name: 
+    ID: 10011
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: 1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 3
+    CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 40
+        Status: 0
+      XAmount: 0
+      Amount: 4
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - None
+  - Name: 
+    ID: 10012
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: 1
+    Draw: 0
+    DrawOrder: 2
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 3
+    CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 40
+        Status: 0
+      XAmount: 0
+      Amount: 3
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - None
+  - Name: 
+    ID: 10013
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: 1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 1
+    CardTag: 3
+    CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 40
+        Status: 0
+      XAmount: 0
+      Amount: 2
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - None
+  - Name: 
+    ID: 10014
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: 1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 3
+    CardRarity: 0
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 0
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - 
+  - Name: 
+    ID: 10015
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: 1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 0
+    CardRarity: 1
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 0
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - 
+  - Name: 
+    ID: 10016
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: 2
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: 0.5
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 1
+    CardTag: 2
+    CardRarity: 1
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 0
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - 
+  - Name: 
+    ID: 10017
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: 1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 0
+    CardRarity: 1
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 0
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - 
+  - Name: 
+    ID: 10018
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: 1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 0
+    CardRarity: 1
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 0
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - 
+  - Name: 
+    ID: 10019
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 1
+    CardTag: 3
+    CardRarity: 1
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 0
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - 
+  - Name: 
+    ID: 10020
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 4
+    CardRarity: 2
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 0
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - 
+  - Name: 
+    ID: 10021
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 3
+    CardRarity: 2
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 0
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - 
+  - Name: 
+    ID: 10022
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: 1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 3
+    CardRarity: 2
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 0
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - 
+  - Name: 
+    ID: 10023
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 3
+    CardRarity: 2
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 0
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - 
+  - Name: 
+    ID: 10024
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: 1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 3
+    CardRarity: 2
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 0
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - 
+  - Name: 
+    ID: 10025
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: 1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 1
+    CardRarity: 3
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 0
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - 
+  - Name: 
+    ID: 10026
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 3
+    CardRarity: 3
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 0
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - 
+  - Name: 
+    ID: 10027
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 5
+    CardRarity: 3
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 0
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - 
+  - Name: 
+    ID: 10028
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 3
+    CardRarity: 3
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 0
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - 
+  - Name: 
+    ID: 10029
+    Cost: 0
+    Count: 1
+    Damage: 0
+    DamageOrder: -1
+    Shield: 0
+    ShieldOrder: -1
+    Draw: 0
+    DrawOrder: -1
+    HP: 0
+    HPOrder: -1
+    Discard: 0
+    DiscardOrder: -1
+    Remove: 0
+    RemoveOrder: -1
+    Price: 0
+    Descript: 
+    Sprite: {fileID: 0}
+    Effect: {fileID: 0}
+    MasterTags: []
+    HasCondition: 0
+    CardTag: 3
+    CardRarity: 3
+    UpgradeTags:
+    - Tag:
+        IsSpecial: 1
+        Special: 22
+        Status: 0
+      Type:
+        IsSpecial: 1
+        Special: 0
+        Status: 0
+      XAmount: 0
+      Amount: 0
+      XDuration: 0
+      Duration: -1
+    UpgradeDescriptions:
+    - 
   ClassifyCardRarityID:
   - {x: 100, y: 114}
   - {x: 500, y: 504}
   - {x: 800, y: 804}
   - {x: 1000, y: 1004}
   ClassifyEnhancedCardRarityID:
-  - {x: -1, y: 10005}
-  - {x: -1, y: 10002}
-  - {x: -1, y: 0}
-  - {x: -1, y: 0}
+  - {x: 10000, y: 10014}
+  - {x: 10015, y: 10019}
+  - {x: 10020, y: 10024}
+  - {x: 10025, y: 10029}

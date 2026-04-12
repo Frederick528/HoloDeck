@@ -64,7 +64,7 @@ public enum SpecialTag
 {
     None, XValue, ChangeSingleDebuffValue, ChangeAllDebuffValue, Cost, ConfirmedDiscard, ConfirmedRemove, DamageDealt, ShieldDealt,
     Kill, NextAttack, FirstCard, CheckUsedCardCount, CardCountValue, RemoveDebuffValue, RandomCardDraw, DrawCheck, DrawCardEffect,
-    CreateCard, CreateCardEffect, IsTargetShield
+    CreateCard, CreateCardEffect, IsTargetShield, PermanentUpgrade, ActionCardCondition, AddAbilityUpgrade
 }
 
 public enum SpecialTagType
@@ -72,7 +72,8 @@ public enum SpecialTagType
     None, AddDamage, AddShield, AddCount, AddDraw, AddDiscard, AddRemove, AddHealHP, AddDamageHP, AddAmount, MultipleAmount, AddDuration, MultipleDuration, 
     RemoveShield, AddCost, ReduceCost, ChangeCost, TurnAttack, TurnSkill, TurnAll, BattleAttack, BattleSkill, BattleAll, BattleZeroCost,
     IsCost, IsCount, IsDamage, IsShield, IsDraw, Over, DrawAttack, DrawSkill, UsedCard, CreateAttack, CreateSkill, CreateDummy,
-    InHand, InDeck, ImmediateUse, ImmediateDiscard
+    InHand, InDeck, ImmediateUse, ImmediateDiscard,
+    TotalDamage, TotalShield, TotalDraw, TotalCost, TotalHeal, TotalTakeDamage, UsedAttackCard, UsedSkillCard, TotalKillEnemy
 
 }
 

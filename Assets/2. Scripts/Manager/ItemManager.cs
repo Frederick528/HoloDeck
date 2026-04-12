@@ -115,33 +115,33 @@ public class ItemManager : MonoBehaviour
             }
         });
 
-        for (int idx = 0; idx < HavePotionItem.Length; ++idx)
-        {
-            int i = idx;
-            InGameButtonManager.Instance.PotionButtons[i].onClick.AddListener(() =>
-            {
-                _clickedPotionIdx = i;
-                if (!HavePotionItem[_clickedPotionIdx]) { return; }
-                if (_potionItem[i].ItemCanUse == ItemCanUse.Anytime)
-                {
-                    UsePotionItem();
-                }
-                else if (_potionItem[i].ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player)      // Arrow Cursor가 쓰이거나 전투 관련을 의미함.
-                {
-                    if (_potionItem[i].AttackType == AttackType.Single)
-                    {
-                        _arrowIdx = 2;
-                        BattleManager.Instance.SetActiveArrowCursor(true, _arrowIdx);
-                    }
-                    else
-                    {
-                        UsePotionItem();
-                    }
-                }
-                _potionItem[i].DescWindowOff();
-                //ButtonManager.Instance.PotionButtons[i].onClick.RemoveAllListeners();
-            });
-        }
+        //for (int idx = 0; idx < HavePotionItem.Length; ++idx)
+        //{
+        //    int i = idx;
+        //    InGameButtonManager.Instance.PotionButtons[i].onClick.AddListener(() =>
+        //    {
+        //        _clickedPotionIdx = i;
+        //        if (!HavePotionItem[_clickedPotionIdx]) { return; }
+        //        if (_potionItem[i].ItemCanUse == ItemCanUse.Anytime)
+        //        {
+        //            UsePotionItem();
+        //        }
+        //        else if (_potionItem[i].ItemCanUse == ItemCanUse.OnlyBattle && TurnManager.Instance.CurTurnType == TurnManager.TurnType.Player)      // Arrow Cursor가 쓰이거나 전투 관련을 의미함.
+        //        {
+        //            if (_potionItem[i].AttackType == AttackType.Single)
+        //            {
+        //                _arrowIdx = 2;
+        //                BattleManager.Instance.SetActiveArrowCursor(true, _arrowIdx);
+        //            }
+        //            else
+        //            {
+        //                UsePotionItem();
+        //            }
+        //        }
+        //        _potionItem[i].DescWindowOff();
+        //        //ButtonManager.Instance.PotionButtons[i].onClick.RemoveAllListeners();
+        //    });
+        //}
 
         Addressables.LoadAssetAsync<GameObject>("PassiveItem.prefab").Completed += (op) =>
         {

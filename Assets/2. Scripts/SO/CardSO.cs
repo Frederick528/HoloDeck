@@ -158,6 +158,10 @@ public class CardData
     public CardTag CardTag;
     public CardRarity CardRarity;
 
+    [Header("Action Card Upgrade Settings")]
+    public List<MasterTagData> UpgradeTags = new();  // 이 카드가 재료로 쓰일 때 액션 카드에 추가할 태그
+    public List<string> UpgradeDescriptions = new();         // "공격력 +3" 같이 UI에 보여줄 텍스트
+
     public CardData Clone()
     {
         return new CardData
@@ -187,7 +191,10 @@ public class CardData
             MasterTags = this.MasterTags,
             HasCondition = this.HasCondition,
             CardTag = this.CardTag,
-            CardRarity = this.CardRarity
+            CardRarity = this.CardRarity,
+
+            UpgradeTags = this.UpgradeTags,
+            UpgradeDescriptions = this.UpgradeDescriptions,
         };
     }
 }

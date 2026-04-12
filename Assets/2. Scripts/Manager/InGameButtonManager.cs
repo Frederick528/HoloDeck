@@ -71,6 +71,8 @@ public class InGameButtonManager : MonoBehaviour
         ActiveItemButton = InGameUIManager.Instance.ActiveTransform.GetComponent<Button>();
 
         PotionButtons = InGameUIManager.Instance.PotionTransform.GetComponentsInChildren<Button>();
+
+        CardManager.Instance.SetActionCardButtons();
     }
     [VisibleEnum(typeof(InGameUIManager.CanvasName))]
     public void OnCanvas(int canvasNameIdx)

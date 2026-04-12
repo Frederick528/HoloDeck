@@ -678,6 +678,11 @@ public class InGameUIManager : MonoBehaviour
     /// <param name="idx">0 = 전체덱, 1 = 뽑을 카드 더미, 2 = 버린 카드 더미, 3 = 소멸된 카드 더미</param>
     public void SetViewDeck(int idx = 0)                // 풀링이지만, Release 개념이 아닌, 활성화 비활성화로 진행됨. Release는 인덱스로 넣는데, Get은 Release된 것 중에서 마지막에 넣었던 것을 꺼내오기 때문에 생긴 문제
     {
+        if (Canvas(CanvasName.ViewDeck).gameObject.activeSelf)
+        {
+            SetActiveCanvas(CanvasName.ViewDeck, false, idx);
+            return;
+        }
         List<Card> deck = new();
         switch (idx)
         {
@@ -767,7 +772,7 @@ public class InGameUIManager : MonoBehaviour
     public void ChangeTurnButtonText(bool turn)
     {
         if (turn)
-            _turnEndButtonText.text = "Turn End";
+            _turnEndButtonText.text = "Turn End <color=white>[W]</color>";
         else
             _turnEndButtonText.text = "Enemy's Turn";
     }

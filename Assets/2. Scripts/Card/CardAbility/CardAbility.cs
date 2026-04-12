@@ -35,7 +35,14 @@ public partial class CardAbility
     }
     public void SetCardAbility(Card card)
     {
-        _player = InGameManager.Instance.Player;
+        if (!_player)
+        {
+            _player = InGameManager.Instance.Player;
+            if (_player == null)
+                return;
+        }
+
+        card.AbilityRebuild();
 
         Action immediateActions = null;
         Action failureActions = null;
@@ -61,6 +68,15 @@ public partial class CardAbility
         if (immediateActions != null || failureActions != null || successActions != null)
         {
             finalCheckCard = (immediateActions, failureActions, successActions);
+        }
+
+        foreach (var tagData in card.AddedAbilities)
+        {
+            if (_specialAbilityMap.TryGetValue(tagData.Tag, out var addAction))
+            {
+                // 기존 맵을 그대로 활용해서 태그에 맞는 로직을 tasks에 추가합니다.
+                addAction(card, abilityTasks, tagData);
+            }
         }
 
         if (abilityTasks.Count > 0)

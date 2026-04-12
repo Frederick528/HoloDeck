@@ -1,13 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using UniRx;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using static EnumTypes;
-using static UnityEngine.GraphicsBuffer;
 
 public partial class CardAbility
 {
@@ -55,6 +49,14 @@ public partial class CardAbility
 
             { SpecialTag.DrawCheck, (card, tasks, data) => {
                 DrawCheck(card, tasks, data);
+            }},
+
+            { SpecialTag.PermanentUpgrade, (card, tasks, data) => {
+                PermanentUpgrade(card, tasks, data);
+            }},
+
+            { SpecialTag.AddAbilityUpgrade, (card, tasks, data) => {
+                AddAbilityUpgrade(card, tasks, data);
             }},
 
             //{ SpecialTag.CheckUsedCardCount, (card, tasks, data) => {
@@ -409,7 +411,7 @@ public partial class CardAbility
                     int bonusAmount = effectData.XAmount ? card.Data.Cost : (int)effectData.Amount;
 
                     //ApplyToCard(drawnCard, data.Type.Special, bonusAmount);
-                    drawnCard.AddCardBuff(effectData.Type.Special, bonusAmount);
+                    drawnCard.AddCardBuff(false, effectData.Type.Special, bonusAmount);
 
 
                     // 시각적으로 수치가 변했음을 알림 (카드 텍스트 갱신)
@@ -419,6 +421,31 @@ public partial class CardAbility
             return UniTask.CompletedTask;
         };
         tasks.Add((10, AbilityTag.PostEffect, taskLogic));
+    }
+
+    void PermanentUpgrade(Card card, List<(float order, AbilityTag tag, Func<PlayContext, UniTask> task)> tasks, MasterTagData data)
+    {
+        Func<PlayContext, UniTask> taskLogic = (ctx) =>
+        {
+            int amount;
+            if (data.XAmount) amount = card.Data.Cost;
+            else amount = (int)data.Amount;
+
+            card.AddCardBuff(true, data.Type.Special, amount);
+
+            return UniTask.CompletedTask;
+        };
+
+        tasks.Add((10, AbilityTag.PostEffect, taskLogic));
+    }
+
+    void AddAbilityUpgrade(Card card, List<(float order, AbilityTag tag, Func<PlayContext, UniTask> task)> tasks, MasterTagData data)
+    {
+        int amount;
+        if (data.XAmount) amount = card.Data.Cost;
+        else amount = (int)data.Amount;
+
+        card.AbilityBuff(data.Type.Special, amount);
     }
 
     //void CheckUsedCardCount(Card card, List<(float order, AbilityTag tag, Func<UniTask> task)> tasks, MasterTagData data)
@@ -528,7 +555,7 @@ public partial class CardAbility
     void AddCostZero(Card card, List<(float order, AbilityTag tag, Func<PlayContext, UniTask> task)> tasks, MasterTagData data)
     {
         Func<PlayContext, UniTask> taskLogic = CreateTaskLogic(true, card, data);
-        tasks.Add((10f, AbilityTag.PostEffect, taskLogic));
+        tasks.Add((999.1f, AbilityTag.PostEffect, taskLogic));
     }
     void AddVampire(Card card, List<(float order, AbilityTag tag, Func<PlayContext, UniTask> task)> tasks, MasterTagData data)
     {
@@ -538,7 +565,7 @@ public partial class CardAbility
     void AddZeroCostDamage(Card card, List<(float order, AbilityTag tag, Func<PlayContext, UniTask> task)> tasks, MasterTagData data)
     {
         Func<PlayContext, UniTask> taskLogic = CreateTaskLogic(true, card, data);
-        tasks.Add((999.1f, AbilityTag.PostEffect, taskLogic));
+        tasks.Add((10f, AbilityTag.PostEffect, taskLogic));
     }
 
     Func<PlayContext, UniTask> CreateTaskLogic(bool isApplyPlayer, Card card, MasterTagData data)

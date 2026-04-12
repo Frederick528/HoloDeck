@@ -189,9 +189,15 @@ public class InGameManager : MonoBehaviour
         {
             case 0:
                 Player.BaseThickness = 0.0018f;
+                CardManager.Instance.ChangeActionCard(FindCardData(10003));
+                CardManager.Instance.ChangeActionCard(FindCardData(10004));
+                CardManager.Instance.ChangeActionCard(FindCardData(10005));
                 break;
             case 1:
                 Player.BaseThickness = 0.0012f;
+                CardManager.Instance.ChangeActionCard(FindCardData(10000));
+                CardManager.Instance.ChangeActionCard(FindCardData(10001));
+                CardManager.Instance.ChangeActionCard(FindCardData(10002));
                 break;
         }
     }
@@ -587,33 +593,36 @@ public class InGameManager : MonoBehaviour
         //{
         //    TurnManager.OnAddCard?.Invoke();
         //}
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            CardManager.Instance.DrawCard().Forget();
-            //TurnManager.Instance.DrawCardTask().Forget();
-        }
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            CardSwapAndPop(0, Random.Range(0, _randomCardList[0].Count));
-        }
+        //if (Input.GetKeyDown(KeyCode.Q))
+        //{
+        //    CardManager.Instance.DrawCard().Forget();
+        //    //TurnManager.Instance.DrawCardTask().Forget();
+        //}
+        //if (Input.GetKeyDown(KeyCode.H))
+        //{
+        //    CardSwapAndPop(0, Random.Range(0, _randomCardList[0].Count));
+        //}
         if (Input.GetKeyDown(KeyCode.W))
         {
             TurnManager.Instance.EndPlayerTurn().Forget();
         }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            MapManager.Instance.MoveBossStage().Forget();
-        }
+        //if (Input.GetKeyDown(KeyCode.E))
+        //{
+        //    MapManager.Instance.MoveBossStage().Forget();
+        //}
 
         //if (Input.GetKeyDown(KeyCode.A))
         //{
         //    player.AddAttackPower(-1);
         //}
 
-        //if (Input.GetKeyDown(KeyCode.D))
-        //{
-        //    player.AddDefencePower(1);
-        //}
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            if (TurnManager.Instance.InBattle.Value)
+            {
+                InGameUIManager.Instance.SetViewDeck(2);
+            }
+        }
 
         if (Input.GetKeyDown(KeyCode.S))
         {
@@ -633,41 +642,42 @@ public class InGameManager : MonoBehaviour
             //if (_fastMode)
             //    _slowMode = false;
         }
-        if (Input.GetKeyDown(KeyCode.RightShift))
-        {
-            GameManager.Instance.SlowMode();
-            //_slowMode = !_slowMode;
-            //if (_slowMode)
-            //    _fastMode = false;
-        }
+        //if (Input.GetKeyDown(KeyCode.RightShift))
+        //{
+        //    GameManager.Instance.SlowMode();
+        //    //_slowMode = !_slowMode;
+        //    //if (_slowMode)
+        //    //    _fastMode = false;
+        //}
         if (Input.GetKeyDown(KeyCode.M))
         {
             InGameUIManager.Instance.LookMap();
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
-            if (MapManager.Instance.CurrStage.State == Map.StageState.Enemy || MapManager.Instance.CurrStage.State == Map.StageState.Boss)
-            {
-                for (int i = EnemyManager.Instance.EnemyList.Count - 1; i >= 0; --i)
-                {
-                    //EnemyManager.Instance.EnemyList[i].CheckIfDead(9999, 1);
-                    EnemyManager.Instance.EnemyList[i].TakeDamage(9999).Forget();
-                    //EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
-                }
-            }
-            else if (MapManager.Instance.CurrStage.State == Map.StageState.Start)
-            {
-                for (int i = EnemyManager.Instance.EnemyList.Count - 1; i >= 0; --i)
-                {
-                    //EnemyManager.Instance.EnemyList[i].CheckIfDead(9999, 1);
-                    EnemyManager.Instance.EnemyList[i].TakeDamage(9999).Forget();
-                    //EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
-                }
-            }
-            else
-            {
-                MapManager.Instance.ClearStage().Forget();
-            }
+            InGameUIManager.Instance.SetViewDeck(0);
+            //if (MapManager.Instance.CurrStage.State == Map.StageState.Enemy || MapManager.Instance.CurrStage.State == Map.StageState.Boss)
+            //{
+            //    for (int i = EnemyManager.Instance.EnemyList.Count - 1; i >= 0; --i)
+            //    {
+            //        //EnemyManager.Instance.EnemyList[i].CheckIfDead(9999, 1);
+            //        EnemyManager.Instance.EnemyList[i].TakeDamage(9999).Forget();
+            //        //EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
+            //    }
+            //}
+            //else if (MapManager.Instance.CurrStage.State == Map.StageState.Start)
+            //{
+            //    for (int i = EnemyManager.Instance.EnemyList.Count - 1; i >= 0; --i)
+            //    {
+            //        //EnemyManager.Instance.EnemyList[i].CheckIfDead(9999, 1);
+            //        EnemyManager.Instance.EnemyList[i].TakeDamage(9999).Forget();
+            //        //EnemyManager.Instance.enemies[i].TakeDamageEnemy(9999).Forget();
+            //    }
+            //}
+            //else
+            //{
+            //    MapManager.Instance.ClearStage().Forget();
+            //}
         }
 
         //if (Input.GetKeyDown(KeyCode.LeftArrow))
@@ -685,6 +695,7 @@ public class InGameManager : MonoBehaviour
         //{
         //    EnemyManager.Instance.TestSpawn().Forget();
         //}
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             if (MapManager.Instance.CurrStage.State == Map.StageState.Start)
@@ -694,106 +705,113 @@ public class InGameManager : MonoBehaviour
                     TurnManager.Instance.StartBattle();
             }
         }
+#endif
         //if (Input.GetKeyDown(KeyCode.C))
         //{
         //    AddDeck(_cardSO.Cards[1], EAddDeck.Draw);
         //}
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            CardManager.Instance.AddDeck(100, EAddDeck.Dummy);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))       // 카드 찾아서 뽑기 (수정 필요해보임. 덱에서 인덱스로 GameObject를 지정해서 넣어줄거면 굳이 drawCard 함수에서 카드를 확인해 볼 필요가 없음.)
-        {
-            //DrawCard(Deck.GetComponentsInChildren<Card>()[2].gameObject);  // 전투덱에서 가져오는 경우
-            //DrawCard(DrawDeck[2]);   // 드로우덱에서 가져오는 경우
-            //DrawCard(CardDummy[0]);  // 버린 카드덱에 있는 카드가 드로우덱에도 있을 경우 => 적용 안됨. 주소 문제인 듯
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha4))       // 카드 생성
-        {
-            CardManager.Instance.AddDeck(FindCardData(100), EAddDeck.Hand);
-            CardManager.Instance.AddDeck(FindCardData(101), EAddDeck.Hand);
-            CardManager.Instance.AddDeck(FindCardData(102), EAddDeck.Hand);
-            //CardManager.Instance.AddDeck(FindCardData(103), EAddDeck.Hand);
-            //CardManager.Instance.AddDeck(FindCardData(104), EAddDeck.Hand);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha7))
-        {
-            ShopManager.Instance.ChangeCardShop(true);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha8))
-        {
-            MapManager.Instance.MovePrevStage().Forget();
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            MapManager.Instance.GetLootItem();
-        }
-        if (Input.GetKeyDown(KeyCode.Equals))
-        {
-            ChangeCoinValue(100);
-        }
-        if (Input.GetKeyDown(KeyCode.Minus))
-        {
-            ChangeCoinValue(-100);
-        }
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            ItemManager.Instance.GetItem(FindItemData(501));
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            ItemManager.Instance.GetItem(FindItemData(100));
-            ItemManager.Instance.GetItem(FindItemData(101));
-            ItemManager.Instance.GetItem(FindItemData(102));
-            ItemManager.Instance.GetItem(FindItemData(1001));
-            ItemManager.Instance.GetItem(FindItemData(1001));
-            ItemManager.Instance.GetItem(FindItemData(1001));
-        }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            print(FindItemData(100));
-            MapManager.Instance.ShowAllMap();
-        }
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            Player.AddCurHolo(10);
-        }
-        if (Input.GetKeyDown(KeyCode.Slash))
-        {
-            Player.AddStatusEffect((StatusEffect.Weaking, StatusEffectType.NoAmountPerpetual), 1);
-            Player.AddStatusEffect((StatusEffect.Vulnerable, StatusEffectType.NoAmountPerpetual), 1);
-            //Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), 1);
-            //Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.UseAmountTurnDuration), 3, 4);
-            //Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), 3, 10);
-            //player.AddAndApplyStatusEffect((StatusEffect.HealUp, StatusEffectType.InfiniteDuration), 1);
-            //player.AddAndApplyStatusEffect((StatusEffect.DEFUp, StatusEffectType.InfiniteDuration), 1);
-            //Player.AddStatusEffect((StatusEffect.Resurrection, StatusEffectType.UseAmountTurnDuration), 1, 10);
-            //Player.AddStatusEffect((StatusEffect.Reflection, StatusEffectType.UseAmountTurnDuration), 5, 3);
-            //Player.AddStatusEffect((StatusEffect.Protect, StatusEffectType.DurationIsAmount), 0, 3);
-            //player.AddAndApplyStatusEffect((StatusEffect.Resurrection, StatusEffectType.InfiniteDuration), 1);
-        }
-        if (Input.GetKeyDown(KeyCode.Comma))
-        {
-            List<(StatusEffect, StatusEffectType)> curStatus = Player.CurStatusEffectList.ToList();
-            for (int i = 0; i < curStatus.Count; i++)
-            {
-                Player.RemoveStatusEffect(curStatus[i]);
-            } 
-        }
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            foreach (var enemy in EnemyManager.Instance.EnemyList)
-                enemy.Critical(-10);
-        }
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            foreach (var enemy in EnemyManager.Instance.EnemyList)
-                enemy.Critical(+10);
-        }
+        //if (Input.GetKeyDown(KeyCode.Alpha2))
+        //{
+        //    CardManager.Instance.AddDeck(100, EAddDeck.Dummy);
+        //}
+        //if (Input.GetKeyDown(KeyCode.Alpha3))       // 카드 찾아서 뽑기 (수정 필요해보임. 덱에서 인덱스로 GameObject를 지정해서 넣어줄거면 굳이 drawCard 함수에서 카드를 확인해 볼 필요가 없음.)
+        //{
+        //    //DrawCard(Deck.GetComponentsInChildren<Card>()[2].gameObject);  // 전투덱에서 가져오는 경우
+        //    //DrawCard(DrawDeck[2]);   // 드로우덱에서 가져오는 경우
+        //    //DrawCard(CardDummy[0]);  // 버린 카드덱에 있는 카드가 드로우덱에도 있을 경우 => 적용 안됨. 주소 문제인 듯
+        //}
+        //if (Input.GetKeyDown(KeyCode.Alpha4))       // 카드 생성
+        //{
+        //    CardManager.Instance.AddDeck(FindCardData(100), EAddDeck.Hand);
+        //    CardManager.Instance.AddDeck(FindCardData(101), EAddDeck.Hand);
+        //    CardManager.Instance.AddDeck(FindCardData(102), EAddDeck.Hand);
+        //    //CardManager.Instance.AddDeck(FindCardData(103), EAddDeck.Hand);
+        //    //CardManager.Instance.AddDeck(FindCardData(104), EAddDeck.Hand);
+        //}
+        //if (Input.GetKeyDown(KeyCode.Alpha7))
+        //{
+        //    ShopManager.Instance.ChangeCardShop(true);
+        //}
+        //if (Input.GetKeyDown(KeyCode.Alpha8))
+        //{
+        //    MapManager.Instance.MovePrevStage().Forget();
+        //}
+        //if (Input.GetKeyDown(KeyCode.Alpha9))
+        //{
+        //    MapManager.Instance.GetLootItem();
+        //}
+        //if (Input.GetKeyDown(KeyCode.Equals))
+        //{
+        //    ChangeCoinValue(100);
+        //}
+        //if (Input.GetKeyDown(KeyCode.Minus))
+        //{
+        //    ChangeCoinValue(-100);
+        //}
+        //if (Input.GetKeyDown(KeyCode.I))
+        //{
+        //    ItemManager.Instance.GetItem(FindItemData(501));
+        //}
+        //if (Input.GetKeyDown(KeyCode.P))
+        //{
+        //    //ItemManager.Instance.GetItem(FindItemData(100));
+        //    //ItemManager.Instance.GetItem(FindItemData(101));
+        //    //ItemManager.Instance.GetItem(FindItemData(102));
+        //    //ItemManager.Instance.GetItem(FindItemData(1001));
+        //    //ItemManager.Instance.GetItem(FindItemData(1001));
+        //    //ItemManager.Instance.GetItem(FindItemData(1001));
+
+        //    CardManager.Instance.ChangeActionCard(FindCardData(10000));
+
+        //}
+        //if (Input.GetKeyDown(KeyCode.B))
+        //{
+        //    MapManager.Instance.ShowAllMap();
+        //}
+        //if (Input.GetKeyDown(KeyCode.LeftShift))
+        //{
+        //    Player.AddCurHolo(10);
+        //}
+        //if (Input.GetKeyDown(KeyCode.Slash))
+        //{
+        //    Player.AddStatusEffect((StatusEffect.Weaking, StatusEffectType.NoAmountPerpetual), 1);
+        //    Player.AddStatusEffect((StatusEffect.Vulnerable, StatusEffectType.NoAmountPerpetual), 1);
+        //    //Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.InfiniteDuration), 1);
+        //    //Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.UseAmountTurnDuration), 3, 4);
+        //    //Player.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), 3, 10);
+        //    //player.AddAndApplyStatusEffect((StatusEffect.HealUp, StatusEffectType.InfiniteDuration), 1);
+        //    //player.AddAndApplyStatusEffect((StatusEffect.DEFUp, StatusEffectType.InfiniteDuration), 1);
+        //    //Player.AddStatusEffect((StatusEffect.Resurrection, StatusEffectType.UseAmountTurnDuration), 1, 10);
+        //    //Player.AddStatusEffect((StatusEffect.Reflection, StatusEffectType.UseAmountTurnDuration), 5, 3);
+        //    //Player.AddStatusEffect((StatusEffect.Protect, StatusEffectType.DurationIsAmount), 0, 3);
+        //    //player.AddAndApplyStatusEffect((StatusEffect.Resurrection, StatusEffectType.InfiniteDuration), 1);
+        //}
+        //if (Input.GetKeyDown(KeyCode.Comma))
+        //{
+        //    List<(StatusEffect, StatusEffectType)> curStatus = Player.CurStatusEffectList.ToList();
+        //    for (int i = 0; i < curStatus.Count; i++)
+        //    {
+        //        Player.RemoveStatusEffect(curStatus[i]);
+        //    } 
+        //}
+        //if (Input.GetKeyDown(KeyCode.Z))
+        //{
+        //    foreach (var enemy in EnemyManager.Instance.EnemyList)
+        //        enemy.Critical(-10);
+        //}
+        //if (Input.GetKeyDown(KeyCode.X))
+        //{
+        //    foreach (var enemy in EnemyManager.Instance.EnemyList)
+        //        enemy.Critical(+10);
+        //}
         if (Input.GetKeyDown(KeyCode.A))
         {
-            foreach (var enemy in EnemyManager.Instance.EnemyList)
-                enemy.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), 1);
+            if (TurnManager.Instance.InBattle.Value)
+            {
+                InGameUIManager.Instance.SetViewDeck(1);
+            }
+            //foreach (var enemy in EnemyManager.Instance.EnemyList)
+            //    enemy.AddStatusEffect((StatusEffect.ATKUp, StatusEffectType.TurnDuration), 1);
         }
 //#endif
     }

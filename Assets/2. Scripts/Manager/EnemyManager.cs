@@ -99,9 +99,9 @@ public class EnemyManager : MonoBehaviour
         CanEnemySpawn(true);
         CanBossSpawn(true);
 
-        TurnManager.Instance.OnBattleStart += SettingEnemyNextPattern;
         TurnManager.Instance.OnEnemyTurnStart += EnemyShieldReset;
         TurnManager.Instance.OnEnemyTurnEnd += TurnStatusEffect;
+        TurnManager.Instance.OnEnemyTurnEnd += SettingEnemyNextPattern;
         TurnManager.Instance.OnBattleEnd += EndBattle;
         //TestSpawn().Forget();
     }
@@ -261,6 +261,8 @@ public class EnemyManager : MonoBehaviour
         EnemyList.Remove(enemy);
         EnemyDict.Remove(enemy.gameObject.GetInstanceID());
         /*bool noEnemy */NoEnemy = EnemyList.Count == 0;
+
+        CardManager.Instance.NotifyActionProgress(SpecialTagType.TotalKillEnemy, 1);
         await task;
         enemySpawn[enemy.spawnPosIdx] = true;
         //return noEnemy;
@@ -303,9 +305,9 @@ public class EnemyManager : MonoBehaviour
     {
         if (TurnManager.Instance != null)
         {
-            TurnManager.Instance.OnBattleStart -= SettingEnemyNextPattern;
             TurnManager.Instance.OnEnemyTurnStart -= EnemyShieldReset;
             TurnManager.Instance.OnEnemyTurnEnd -= TurnStatusEffect;
+            TurnManager.Instance.OnEnemyTurnEnd -= SettingEnemyNextPattern;
             TurnManager.Instance.OnBattleEnd -= EndBattle;
         }
     }

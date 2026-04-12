@@ -8,8 +8,26 @@ using System.Threading;
 using TMPro;
 using UniRx;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 
+public struct CardDataValue
+{
+    public int Damage, Shield, Count, Draw, Discard, Remove, HP, Cost;
+
+    public static CardDataValue operator +(CardDataValue a, CardDataValue b)
+    {
+        return new CardDataValue
+        {
+            Damage = a.Damage + b.Damage,
+            Shield = a.Shield + b.Shield,
+            Count = a.Count + b.Count,
+            Draw = a.Draw + b.Draw,
+            Discard = a.Discard + b.Discard,
+            Remove = a.Remove + b.Remove,
+            HP = a.HP + b.HP,
+            Cost = a.Cost + b.Cost
+        };
+    }
+}
 
 //public struct CardData
 //{
@@ -21,17 +39,17 @@ using static UnityEngine.Rendering.DebugUI;
 public class Card : MonoBehaviour
 {
 
-    [SerializeField] SpriteRenderer _card;
-    [SerializeField] SpriteRenderer _character;
-    [SerializeField] SpriteRenderer _descBG;
+    [SerializeField] protected SpriteRenderer _card;
+    [SerializeField] protected SpriteRenderer _character;
+    [SerializeField] protected SpriteRenderer _descBG;
 
-    [SerializeField] SpriteRenderer[] _rararityBG;
-    [SerializeField] TMP_Text _nameText;
-    [SerializeField] TMP_Text _costText;
-    [SerializeField] TMP_Text _descText;
-    [SerializeField] TMP_Text _tagText;
-    [SerializeField] SpriteRenderer _outline;
-    private Tween curOutlineTween;
+    [SerializeField] protected SpriteRenderer[] _rararityBG;
+    [SerializeField] protected TMP_Text _nameText;
+    [SerializeField] protected TMP_Text _costText;
+    [SerializeField] protected TMP_Text _descText;
+    [SerializeField] protected TMP_Text _tagText;
+    [SerializeField] protected SpriteRenderer _outline;
+    protected Tween curOutlineTween;
 
 
     public PRS OriginPRS;
@@ -48,9 +66,17 @@ public class Card : MonoBehaviour
         this.Data = original.Data;
         this._defaultData = original.DefaultData;
 
-        // 2. 이펙트 연출 관련 정보 복사 (이게 없으면 연출이 깨집니다)
+        // 2. 이펙트 연출 및 관련 정보 복사 (이게 없으면 연출이 깨집니다)
         this.RepeatEffect = original.RepeatEffect;
         this.AllEnemies = original.AllEnemies;
+
+        this.TargetEnemy = original.TargetEnemy;
+
+        this._upgradeState = original._upgradeState;
+
+        this._permanentState = original._permanentState;
+
+        //this._addAbilityState = original._addAbilityState;        // ability로 얻은 추가 효과는 재설정 하면서 다시 가져올 수 있음.
 
         // 3. 강제 실행 플래그 설정
         this._isForce = true;
@@ -58,8 +84,9 @@ public class Card : MonoBehaviour
         // 4. [가장 중요] 새로운 몸에 맞는 로직 재조립
         CardAbility.SetCardAbility(this);
 
+
         // 5. 시각적으로 수치 갱신 (선택 사항)
-        RefreshAllDesc();
+        RefreshCardStats();
     }
     public string Desc;
     public int ID;      // 일단 혹시 몰라서 만들었으나, Data.Id로 받을 수 있음.
@@ -85,65 +112,122 @@ public class Card : MonoBehaviour
     public Func<PlayContext, UniTask> CardTask { get; private set; }
     //public AsyncLazy CardLazy { get; private set; }
 
-    private readonly StringBuilder _sb = new StringBuilder();
+    protected readonly StringBuilder _sb = new();
 
     bool _isForce = false;
     //public void SetForce(bool value) => _isForce = value;
     public bool IsForce => _isForce;
 
-    public struct CardDataValue
+    public List<MasterTagData> AddedAbilities = new List<MasterTagData>();
+
+    //public struct CardDataValue
+    //{
+    //    public int Damage, Shield, Count, Draw, Discard, Remove, HP, Cost;
+
+    //    // 원본 데이터로 초기화하는 생성자 (꼬임 방지용)
+    //    public CardDataValue(CardData defaultData)
+    //    {
+    //        Damage = defaultData.Damage;
+    //        Shield = defaultData.Shield;
+    //        Count = defaultData.Count;
+    //        Draw = defaultData.Draw;
+    //        Discard = defaultData.Discard;
+    //        Remove = defaultData.Remove;
+    //        HP = defaultData.HP;
+    //        Cost = defaultData.Cost;
+    //    }
+    //}
+    protected CardDataValue _displayState;      // 시각화용
+
+
+    protected CardDataValue _upgradeState;      // 이번 전투동안 강화 효과
+
+    protected CardDataValue _addAbilityState;   // 추가 능력으로 얻은 강화 효과
+
+    protected CardDataValue _permanentState;    // 영구 강화 효과
+
+    public void ResetCard()
     {
-        public int Damage, Shield, Count, Draw, Discard, Remove, HP, Cost;
-
-        // 원본 데이터로 초기화하는 생성자 (꼬임 방지용)
-        public CardDataValue(CardData defaultData)
-        {
-            Damage = defaultData.Damage;
-            Shield = defaultData.Shield;
-            Count = defaultData.Count;
-            Draw = defaultData.Draw;
-            Discard = defaultData.Discard;
-            Remove = defaultData.Remove;
-            HP = defaultData.HP;
-            Cost = defaultData.Cost;
-        }
+        _permanentState = default;
+        _addAbilityState = default;
+        _upgradeState = default;
     }
-    private CardDataValue _displayState;
-
-    private CardDataValue _upgradeState;
-
     public void ResetForNextBattle()
     {
         _upgradeState = default; // 장부 초기화
     }
 
-    public void AddCardBuff(SpecialTagType type, int amount)
+    public void AbilityRebuild()
+    {
+        _addAbilityState = default;
+    }
+
+    public void AbilityBuff(SpecialTagType type, int amount)
     {
         switch (type)
         {
             case SpecialTagType.AddDamage:
-                _upgradeState.Damage += amount;
+                _addAbilityState.Damage += amount;
                 break;
             case SpecialTagType.AddShield:
-                _upgradeState.Shield += amount;
+                _addAbilityState.Shield += amount;
                 break;
             case SpecialTagType.AddCount:
-                _upgradeState.Count += amount;
+                _addAbilityState.Count += amount;
                 break;
             case SpecialTagType.AddDraw:
-                _upgradeState.Draw += amount;
+                _addAbilityState.Draw += amount;
                 break;
             case SpecialTagType.AddDiscard:
-                _upgradeState.Discard += amount;
+                _addAbilityState.Discard += amount;
                 break;
             case SpecialTagType.AddRemove:
-                _upgradeState.Remove += amount;
+                _addAbilityState.Remove += amount;
                 break;
             case SpecialTagType.AddHealHP:
-                _upgradeState.HP += amount;
+                _addAbilityState.HP += amount;
                 break;
             case SpecialTagType.AddCost:
-                _upgradeState.Cost += amount;
+                _addAbilityState.Cost -= amount;
+                break;
+        }
+    }
+
+    public void AddCardBuff(bool isPermanent,SpecialTagType type, int amount)
+    {
+        switch (type)
+        {
+            case SpecialTagType.AddDamage:
+                if (isPermanent) _permanentState.Damage += amount;
+                else _upgradeState.Damage += amount;
+                break;
+            case SpecialTagType.AddShield:
+                if (isPermanent) _permanentState.Shield += amount;
+                else _upgradeState.Shield += amount;
+                break;
+            case SpecialTagType.AddCount:
+                if (isPermanent) _permanentState.Count += amount;
+                else _upgradeState.Count += amount;
+                break;
+            case SpecialTagType.AddDraw:
+                if (isPermanent) _permanentState.Draw += amount;
+                else _upgradeState.Draw += amount;
+                break;
+            case SpecialTagType.AddDiscard:
+                if (isPermanent) _permanentState.Discard += amount;
+                else _upgradeState.Discard += amount;
+                break;
+            case SpecialTagType.AddRemove:
+                if (isPermanent) _permanentState.Remove += amount;
+                else _upgradeState.Remove += amount;
+                break;
+            case SpecialTagType.AddHealHP:
+                if (isPermanent) _permanentState.HP += amount;
+                else _upgradeState.HP += amount;
+                break;
+            case SpecialTagType.AddCost:
+                if (isPermanent) _permanentState.Cost -= amount;
+                else _upgradeState.Cost -= amount;
                 break;
         }
 
@@ -192,14 +276,15 @@ public class Card : MonoBehaviour
     {
         _defaultData = data;
     }
-    public void Setup(CardData data)
+    public virtual void Setup(CardData data)
     {
-        CardOrder = GetComponent<Order>();
-        //_boxCollider2 = GetComponent<BoxCollider2D>();
+        //CardOrder = GetComponent<Order>();
+        ////_boxCollider2 = GetComponent<BoxCollider2D>();
 
-        SetDefaultDate(data);
-        Data = DefaultData.Clone();
-        
+        //SetDefaultDate(data);
+        //Data = DefaultData.Clone();
+        InitData(data);
+
         //StringBuilder sb = new StringBuilder(_defaultData.Descript);
         //sb.Replace("{Damage}", (_defaultData.Damage + InGameManager.Instance.player.AttackPower.Value).ToString());
         //sb.Replace("{Shield}", (_defaultData.Shield + InGameManager.Instance.player.DefencePower.Value).ToString());
@@ -209,10 +294,96 @@ public class Card : MonoBehaviour
         //_defaultDesc = sb.ToString();
         //Desc = sb.ToString();
 
+        UpdateVisuals();
 
+        //_nameText.text = Data.Name;
+        //_character.sprite = Data.Sprite;
+        //_character.size = new Vector2(7.8f, 4.6f);
+        //switch (Data.CardTag)
+        //{
+        //    case CardTag.SingleAttack:
+        //    case CardTag.AllAttack:
+        //    case CardTag.RandomAttack:
+        //        _tagText.text = "Attack";
+        //        break;
+        //    case CardTag.SkillTargetSelf:
+        //    case CardTag.SkillTargetSingle:
+        //    case CardTag.SkillTargetAll:
+        //    case CardTag.SkillTargetRandom:
+        //        _tagText.text = "Skill";
+        //        break;
+        //}
+        //switch (Data.CardRarity)
+        //{
+        //    case CardRarity.Common:
+        //        for (int i = 0; i < _rararityBG.Length; ++i)
+        //            _rararityBG[i].sprite = CardManager.Instance.CommonSprites[i];
+        //        break;
+        //    case CardRarity.Rare:
+        //        for (int i = 0; i < _rararityBG.Length; ++i)
+        //            _rararityBG[i].sprite = CardManager.Instance.RareSprites[i];
+        //        break;
+        //    case CardRarity.Epic:
+        //        for (int i = 0; i < _rararityBG.Length; ++i)
+        //            _rararityBG[i].sprite = CardManager.Instance.EpicSprites[i];
+        //        break;
+        //    case CardRarity.Legendary:
+        //        for (int i = 0; i < _rararityBG.Length; ++i)
+        //            _rararityBG[i].sprite = CardManager.Instance.LegendarySprites[i];
+        //        break;
+        //}
+        CardAbility.SetCardAbility(this);
+        //CardAction = CardAbility.SetCardActionAbility(this);     // Action<Card> 버전 (드로우 시간 체크 때문에 일단 사용하지 않음.)
+        //CardTask = CardAbility.SetCardAbility(this);              // 그냥 카드어빌리티 실행하면 Task 바꾸도록 함.
+        //CardAbility.SetCardAbility(this);     // 사용 전에 받기 때문에 굳이 사용 안 해도 됨. 나중에 따로 필요하면 킬 것.
+        //CardLazy = CardAbility.SetCardLazyAbility(this);        // 중복 해결을 위해 Lazy를 써봄.
+
+        //SendAnimEvent sendAnimEvent = Data.Effect.GetComponent<SendAnimEvent>();
+        if (Data.Effect != null && Data.Effect.TryGetComponent<SendAnimEvent>(out SendAnimEvent sendAnimEvent))     // 나중에 모든 이펙트에 SendAnimEvent 넣으면 그냥 GetComponent 하면 됨.
+        {
+            RepeatEffect = sendAnimEvent.RepeatEffect;
+            AllEnemies = sendAnimEvent.AllEnemies;
+        }
+
+        RefreshCardStats();        // 글(string) 데이터만 초기화
+        //Data = _defaultData;
+        ////Data.Name = data.Name;
+        ////Data.ID = data.ID;
+        ////Data.Cost = data.Cost;
+        ////Data.Damage = data.Damage;
+        ////Data.EnhancedDamage = data.EnhancedDamage;
+        ////Data.Shield = data.Shield;
+        ////Data.EnhancedDefence = data.EnhancedDefence;
+        ////Data.Count = data.Count;
+        ////Data.EnhancedCount = data.EnhancedCount;
+        ////Data.Draw = data.Draw;
+        ////Data.EnhancedDraw = data.EnhancedDraw;
+        ////Data.cardUseDelay = data.cardUseDelay;
+        ////Data.Descript = data.Descript;
+        ////Data.Sprite = data.Sprite;
+        ////Data.CardTag = data.CardTag;
+
+        //nameText.text = Data.Name;
+        //costText.text = Data.Cost.ToString();
+        //desText.text = Data.Descript;
+        //character.sprite = Data.Sprite;
+
+        //CardTask = CardAbility.SetCardTaskAbility(Data.ID);
+    }
+    protected virtual void InitData(CardData data)
+    {
+        CardOrder = GetComponent<Order>();
+        SetDefaultDate(data);
+        Data = DefaultData.Clone();
+    }
+
+    // 일반 카드가 사용하는 비주얼 로직 (virtual)
+    protected virtual void UpdateVisuals()
+    {
+        // 일반 카드 특유의 복잡한 UI 세팅들 (레어도, 태그 등)
         _nameText.text = Data.Name;
         _character.sprite = Data.Sprite;
-        _character.size = new Vector2(7.8f, 4.6f);
+        _character.size = new Vector2(9f, 6f);
         switch (Data.CardTag)
         {
             case CardTag.SingleAttack:
@@ -246,45 +417,20 @@ public class Card : MonoBehaviour
                     _rararityBG[i].sprite = CardManager.Instance.LegendarySprites[i];
                 break;
         }
-        CardAbility.SetCardAbility(this);
-        //CardAction = CardAbility.SetCardActionAbility(this);     // Action<Card> 버전 (드로우 시간 체크 때문에 일단 사용하지 않음.)
-        //CardTask = CardAbility.SetCardAbility(this);              // 그냥 카드어빌리티 실행하면 Task 바꾸도록 함.
-        //CardAbility.SetCardAbility(this);     // 사용 전에 받기 때문에 굳이 사용 안 해도 됨. 나중에 따로 필요하면 킬 것.
-        //CardLazy = CardAbility.SetCardLazyAbility(this);        // 중복 해결을 위해 Lazy를 써봄.
-
-        //SendAnimEvent sendAnimEvent = Data.Effect.GetComponent<SendAnimEvent>();
-        if (Data.Effect != null && Data.Effect.TryGetComponent<SendAnimEvent>(out SendAnimEvent sendAnimEvent))     // 나중에 모든 이펙트에 SendAnimEvent 넣으면 그냥 GetComponent 하면 됨.
-        {
-            RepeatEffect = sendAnimEvent.RepeatEffect;
-            AllEnemies = sendAnimEvent.AllEnemies;
-        }
-
-        RefreshAllDesc();        // 글(string) 데이터만 초기화
-        //Data = _defaultData;
-        ////Data.Name = data.Name;
-        ////Data.ID = data.ID;
-        ////Data.Cost = data.Cost;
-        ////Data.Damage = data.Damage;
-        ////Data.EnhancedDamage = data.EnhancedDamage;
-        ////Data.Shield = data.Shield;
-        ////Data.EnhancedDefence = data.EnhancedDefence;
-        ////Data.Count = data.Count;
-        ////Data.EnhancedCount = data.EnhancedCount;
-        ////Data.Draw = data.Draw;
-        ////Data.EnhancedDraw = data.EnhancedDraw;
-        ////Data.cardUseDelay = data.cardUseDelay;
-        ////Data.Descript = data.Descript;
-        ////Data.Sprite = data.Sprite;
-        ////Data.CardTag = data.CardTag;
-
-        //nameText.text = Data.Name;
-        //costText.text = Data.Cost.ToString();
-        //desText.text = Data.Descript;
-        //character.sprite = Data.Sprite;
-
-        //CardTask = CardAbility.SetCardTaskAbility(Data.ID);
     }
-    private void OnEnable()
+
+    // 능력을 추가하고 재조립하는 함수
+    public void AddEnhancement(List<MasterTagData> newTags)
+    {
+        AddedAbilities.AddRange(newTags);
+
+        // 중요: 능력이 추가되었으니 조립을 다시 해야 합니다!
+        CardAbility.SetCardAbility(this);
+
+        // 시각적 갱신
+        RefreshCardStats();
+    }
+    protected virtual void OnEnable()
     {
         // 구독: 스탯이나 타겟이 바뀌면 '기본 스탯 갱신' 실행
         GameEvents.OnBaseStatsChanged += RefreshCardStats;
@@ -295,10 +441,10 @@ public class Card : MonoBehaviour
         //GameEvents.OnPlayStateChanged += RefreshSpecialCondition;
 
         if (_defaultData != null)
-            RefreshAllDesc();
+            RefreshCardStats();
     }
 
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
         GameEvents.OnBaseStatsChanged -= RefreshCardStats;
         GameEvents.OnTargetChanged -= RefreshTargetCardStats;
@@ -306,11 +452,11 @@ public class Card : MonoBehaviour
         //GameEvents.OnPlayStateChanged -= RefreshSpecialCondition;
     }
 
-    public void RefreshAllDesc()
-    {
-        RefreshCardStats(); // 특수 조건도 그냥 여기서 계산함.
-        //RefreshSpecialCondition();
-    }
+    //public void RefreshAllDesc()
+    //{
+    //    RefreshCardStats(); // 특수 조건도 그냥 여기서 계산함.
+    //    //RefreshSpecialCondition();
+    //}
     public void SetCardImmediately((Action immediately, Action failure, Action success)? action)
     {
         this.ImmediatelyUseCard = action?.immediately;
@@ -375,13 +521,14 @@ public class Card : MonoBehaviour
     //}
 
     // --- [1] 기본 수치 및 스탯 계산 (RefreshCardStats) ---
-    public void RefreshCardStats()
+    public virtual void RefreshCardStats()
     {
+        CardDataValue addValue = _upgradeState + _permanentState + _addAbilityState;
         // 1. 데미지 계산
         if (Data.DamageOrder >= 0)
         {
             int baseDmg = Mathf.Max(0, DefaultData.Damage + InGameManager.Instance.Player.AttackPower.Value);
-            Data.Damage = baseDmg + _upgradeState.Damage;
+            Data.Damage = baseDmg + addValue.Damage;
 
             //if (CheckTarget != null)
             //{
@@ -399,15 +546,15 @@ public class Card : MonoBehaviour
         if (Data.ShieldOrder >= 0)
         {
             int baseShield = Mathf.Max(0, DefaultData.Shield + InGameManager.Instance.Player.DefensePower.Value);
-            Data.Shield = baseShield + _upgradeState.Shield;
+            Data.Shield = baseShield + addValue.Shield ;
         }
 
         // 3. 기타 수치 갱신 (Count, Draw, Discard, Remove, HP)
-        Data.Count = DefaultData.Count + _upgradeState.Count;
-        Data.Draw = DefaultData.Draw + _upgradeState.Draw;
-        Data.Discard = DefaultData.Discard + _upgradeState.Discard;
-        Data.Remove = DefaultData.Remove + _upgradeState.Remove;
-        Data.HP = DefaultData.HP + _upgradeState.HP;
+        Data.Count = DefaultData.Count + addValue.Count;
+        Data.Draw = DefaultData.Draw + addValue.Draw;
+        Data.Discard = DefaultData.Discard + addValue.Discard;
+        Data.Remove = DefaultData.Remove + addValue .Remove;
+        Data.HP = DefaultData.HP + addValue.HP;
 
         // 4. [중요] 기본 코스트 초기화 (레이어 1: 원본 + 유물/포션 등 스탯)
         if (DefaultData.Cost == -1) 
@@ -417,7 +564,7 @@ public class Card : MonoBehaviour
         else 
         {
             // 여기에 유물/포션에 의한 코스트 변동이 있다면 더해줌 (예: + InGameManager.Instance.Player.GlobalCostMod)
-            Data.Cost = DefaultData.Cost + _upgradeState.Cost; 
+            Data.Cost = DefaultData.Cost + addValue.Cost; 
         }
 
         // 스탯 계산이 끝났으니, 이어서 특수 조건(첫 카드 등)을 계산하러 갑니다.
@@ -555,7 +702,7 @@ public class Card : MonoBehaviour
         }
     }
 
-    private string GetColorValue(int current, int original)
+    protected string GetColorValue(int current, int original)
     {
         if (current > original) return $"<color=#4CAF50>{current}</color>";
         if (current < original) return $"<color=#B71C1C>{current}</color>";
@@ -763,10 +910,10 @@ public class Card : MonoBehaviour
     //    Setup(Data.ID * 10);
     //}
 
-    public void ResetCard()
-    {
-        _outline.gameObject.SetActive(false);
-    }
+    //public void ResetCard()
+    //{
+    //    _outline.gameObject.SetActive(false);
+    //}
 
     //public void CheckTargetTemp(Enemy enemy)
     //{
@@ -990,7 +1137,7 @@ public class Card : MonoBehaviour
         return true;
     }
 
-    public async UniTask AfterCardAbility(bool endBattle = false)
+    public virtual async UniTask AfterCardAbility(bool endBattle = false)
     {
         //RevertXValueEffects();
         if (IsForce)

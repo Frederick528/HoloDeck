@@ -41,6 +41,7 @@ public partial class CardAbility
         // 3단계: 메인 공격
         if (card.Data.DamageOrder >= 0)
         {
+            tasks.Add((card.Data.DamageOrder, AbilityTag.Attack, (ctx) => _player.AttackAnimation()));
             if (card.Data.CardTag == CardTag.SingleAttack)
                 tasks.Add((card.Data.DamageOrder, AbilityTag.Attack, (ctx) => SingleAttackAB(card, GetCrit(), ctx)));
             else if (card.Data.CardTag == CardTag.AllAttack)

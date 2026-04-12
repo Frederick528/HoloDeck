@@ -143,6 +143,8 @@ public abstract class Enemy : Entity
         spawnPosIdx = pos;
         player = InGameManager.Instance.Player;
         EnemySubScribe();
+
+        NextPattern();
     }
     public override async UniTask<(bool Dead, int ActualDamage)> TakeDamage(int dmg, Entity attacker = null, bool ignoreShield = false)
     {
@@ -156,6 +158,7 @@ public abstract class Enemy : Entity
             KillEnemy().Forget();
             //return false;
         }
+        CardManager.Instance.NotifyActionProgress(SpecialTagType.TotalDamage, checkTakeDamage.ActualDamage);
         return checkTakeDamage;
 
     }

@@ -1154,10 +1154,9 @@ MonoBehaviour:
   Used: 0
   Selected: 0
   IsEnqueued: 0
+  AddedAbilities: []
   Enhanced: 0
-  TotalUseDamage: 0
-  IndividualUseDamage: 0
-  IsKillEnemy: 0
+  UnableEffect: 0
 --- !u!61 &6399435079816834888
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1340,8 +1339,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 2.5
-  m_fontSizeBase: 2.5
+  m_fontSize: 2.2
+  m_fontSizeBase: 2.2
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

@@ -61,6 +61,7 @@ public class TurnManager : MonoBehaviour
         {
             _isFirstCardPlayed = true;
         }
+        CardManager.Instance.NotifyActionProgress(SpecialTagType.UsedAttackCard, 1);
         GameEvents.NotifyPlayState();
     }
     public void AddSkillCardsPlayed()
@@ -71,6 +72,7 @@ public class TurnManager : MonoBehaviour
         {
             _isFirstCardPlayed = true;
         }
+        CardManager.Instance.NotifyActionProgress(SpecialTagType.UsedSkillCard, 1);
         GameEvents.NotifyPlayState();
     }
     public void AddZeroCardsPlayed()

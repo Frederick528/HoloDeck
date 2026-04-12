@@ -34,11 +34,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 20036ee39e77f084b98c0e7ae46d9fc5
-    m_Address: PicoChan.prefab
+    m_Address: PicoChanOrigin.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: f6d670a813a3ddc4885cc2b3b04a4dec
-    m_Address: Muryotaisu.prefab
+    m_Address: MuryotaisuOrigin.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 13c990b8270c70b4c9f196019286028c
@@ -47,6 +47,14 @@ MonoBehaviour:
     m_SerializedLabels: []
   - m_GUID: 52c7d057cba585641bb68312c10d7791
     m_Address: RedPortal.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 714b1c86ed864eb4f92ce2f8f0dbcd1c
+    m_Address: PicoChan.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 02e914e85bb8cb948a63cbdaa6b59775
+    m_Address: Muryotaisu.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0

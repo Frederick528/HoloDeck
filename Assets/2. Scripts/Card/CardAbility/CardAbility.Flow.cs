@@ -90,6 +90,10 @@ public partial class CardAbility
             }
 
         }
+        else
+        {
+            PostProcess(card, context);
+        }
 
         //if (cardEvent.TryGetValue(999, out var endTasks))
         //{
@@ -113,6 +117,10 @@ public partial class CardAbility
     void PostProcess(Card card, PlayContext context)
     {
         if (card == null) return;
+        if (card is ActionCard actionCard)
+        {
+            return;
+        }
         if (card.Data.CardTag == CardTag.SingleAttack || card.Data.CardTag == CardTag.SkillTargetSingle) card.Target(null);
         if (card.Data.DamageOrder >= 0)
         {

@@ -9,8 +9,8 @@ EditorBuildSettings:
     path: Assets/1. Scenes/0. Title.unity
     guid: 28cd5d6170d6bb048b37bf0737bb4036
   - enabled: 1
-    path: Assets/1. Scenes/20. ActionCard.unity
-    guid: f8501867b8ce53e47b70dff99a230715
+    path: Assets/1. Scenes/30. CardTest.unity
+    guid: a2b2204b8bf090849906930833e189a4
   - enabled: 1
     path: Assets/1. Scenes/16. EndBoss.unity
     guid: acad0528ac071294f8c9a9078239f6b0

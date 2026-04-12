@@ -35,6 +35,7 @@ public class Arrow : MonoBehaviour
         {
             new Vector2[2] { new Vector2(-0.3f, 0.8f), new Vector2(0.1f, 1.4f) },
             new Vector2[2] { new Vector2(0f, 0.8f), new Vector2(0f, 1.5f) },
+            new Vector2[2] { new Vector2(0f, 0.8f), new Vector2(0f, 1.5f) },
             new Vector2[2] { new Vector2(0f, 0.8f), new Vector2(0f, 1.5f) }
         };
     #endregion
@@ -50,9 +51,12 @@ public class Arrow : MonoBehaviour
             case 2:
                 this.controlPoints[0] = ItemManager.Instance.SettingArrowPos(ArrowIndex);
                 break;
-            //case 2:
-            //    this.controlPoints[0] = PotionManager.Instance.ArrowPotionPos();
-            //    break;
+            case 3:
+                this.controlPoints[0] = CardManager.Instance.SettingArrowPos(ArrowIndex);
+                break;
+                //case 2:
+                //    this.controlPoints[0] = PotionManager.Instance.ArrowPotionPos();
+                //    break;
         }
         this.controlPoints[3] = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
@@ -149,6 +153,10 @@ public class Arrow : MonoBehaviour
                 else if (ArrowIndex == 2)
                 {
                     ItemManager.Instance.AttackSingleTarget(EnemyManager.Instance.TargetEnemy);
+                }
+                else if (ArrowIndex == 3)
+                {
+                    CardManager.Instance.AttackSingleTarget(EnemyManager.Instance.TargetEnemy);
                 }
             }
             BattleManager.Instance.SetActiveArrowCursor(false, ArrowIndex);

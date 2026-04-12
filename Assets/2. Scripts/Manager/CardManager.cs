@@ -87,12 +87,22 @@ public class CardManager : MonoBehaviour
 
     int _isDrawingCount = 0;
 
-    RectTransform[] _cachedDropZones;
+    //RectTransform[] _cachedDropZones;
     (RectTransform rect, int? index) _hoveredZone;
     (RectTransform rect, int? index) _lastHoveredZone; // 이전 프레임의 호버 상태 기억
 
     CancellationTokenSource _moveCts;
 
+    [Header("Action Card Slots")]
+    [SerializeField] private ActionCard[] _actionCards = new ActionCard[4];
+    public bool[] CanUseActionCard = new bool[4];
+    private int _clickedActionIdx = -1;
+
+    private RectTransform[] _cachedActionRects;
+
+    public RectTransform[] GetActionRects() => _cachedActionRects;
+
+    private Dictionary<SpecialTagType, List<ActionCard>> _conditionListeners = new();
 
     private void Awake()
     {
@@ -103,6 +113,10 @@ public class CardManager : MonoBehaviour
         PlayingCardTr = InGameManager.Instance.PlayerTr.Find("PlayingCard");
         myCardLeft = InGameManager.Instance.PlayerTr.Find("MyCardLeft");
         myCardRight = InGameManager.Instance.PlayerTr.Find("MyCardRight");
+
+        _cachedActionRects = _actionCards
+            .Select(card => card.GetComponent<RectTransform>())
+            .ToArray();
     }
 
     void StartBattle()
@@ -144,7 +158,7 @@ public class CardManager : MonoBehaviour
         TurnManager.Instance.OnBattleStart += StartBattle;
 
 
-        _cachedDropZones = ItemManager.Instance.GetPotionRects();
+        //_cachedDropZones = ItemManager.Instance.GetPotionRects();
     }
     public void RewardedCard()
     {
@@ -301,6 +315,165 @@ public class CardManager : MonoBehaviour
     //    playedCard.Block = false;
     //    playedCard.Used = false;
     //}
+
+    public void RegisterListener(SpecialTagType type, ActionCard card)
+    {
+        if (!_conditionListeners.ContainsKey(type))
+            _conditionListeners[type] = new List<ActionCard>();
+
+        if (!_conditionListeners[type].Contains(card))
+            _conditionListeners[type].Add(card);
+    }
+
+    public void UnregisterListener(SpecialTagType type, ActionCard card)
+    {
+        if (_conditionListeners.ContainsKey(type))
+            _conditionListeners[type].Remove(card);
+    }
+
+    public void NotifyActionProgress(SpecialTagType type, int amount)
+    {
+        if (NowPlayedCard is ActionCard) return;
+        if (_conditionListeners.TryGetValue(type, out List<ActionCard> cards))
+        {
+            // 역순 순회(Reverse)는 리스트 수정 시 안전합니다.
+            for (int i = cards.Count - 1; i >= 0; i--)
+            {
+                if (cards[i] != null)
+                    cards[i].AddProgress(amount);
+            }
+        }
+    }
+
+    public void SetActionCardButtons()
+    {
+        for (int idx = 0; idx < _actionCards.Length; ++idx)
+        {
+            int i = idx; // 클로저 이슈 방지를 위한 지역 변수 복사
+
+            // InGameButtonManager에 있는 액션 카드 버튼들에 리스너 연결
+            InGameButtonManager.Instance.PotionButtons[i].onClick.AddListener(() =>
+            {
+                if (!TurnManager.Instance.InBattle.Value || TurnManager.Instance.CurTurnType != TurnManager.TurnType.Player) return;
+                if (InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf) return;
+                // 1. 현재 클릭된 인덱스 저장
+                _clickedActionIdx = i;
+
+                OnActionCardClicked();
+            });
+        }
+    }
+
+    public void AttackSingleTarget(Enemy enemy)
+    {
+        _actionCards[_clickedActionIdx].Target(enemy);
+
+        // 2. 타겟 설정이 완료되었으므로 실제 실행(이벤트 큐 삽입 및 게이지 리셋)을 진행합니다.
+        ExecuteActionCard();
+    }
+
+    public void ExecuteActionCard()
+    {
+        InGameManager.Instance.AbilityEventQueue.Enqueue(_actionCards[_clickedActionIdx]);
+        _actionCards[_clickedActionIdx].ResetActionCard();
+        //SetActionCardReady(_clickedActionIdx, false);
+    }
+
+    public CardData ChangeActionCard(CardData newCardData)
+    {
+        // 1. 빈 슬롯이 있는지 먼저 확인
+        for (int i = 0; i < _actionCards.Length; ++i)
+        {
+            if (_actionCards[i].SlotIdx == -1)
+            {
+                //_actionCards[i].gameObject.SetActive(true);
+                _actionCards[i].SlotIdx = i;
+                _actionCards[i].Setup(newCardData);
+                SetActionCardReady(i, false);
+                return null;
+            }
+        }
+
+        return null;
+
+        //// 2. 모든 슬롯이 꽉 찼다면 현재 '선택된' 슬롯이나 특정 슬롯(예: 0번)과 교체
+        //// 여기서는 안전하게 0번 슬롯과 교체하는 예시입니다.
+        //int replaceIdx = 0;
+        //CardData oldData = _actionCards[replaceIdx].GetDefaultData<CardData>();
+
+        //_actionCards[replaceIdx].Setup(newCardData);
+        //_actionCards[replaceIdx].ResetActionCard(); // 교체 시 진행도 초기화
+
+        //Debug.Log($"<color=yellow>[ActionCard]</color> {oldData.Name}이(가) {newCardData.Name}(으)로 교체되었습니다.");
+        //return oldData;
+    }
+
+    public void OnActionCardClicked()
+    {
+        // 1. 검증: 게이지가 다 찼는지, 이미 실행 중인지 확인
+        if (!CanUseActionCard[_clickedActionIdx] || _actionCards[_clickedActionIdx].Data == null) return;
+
+        //// 2. 스팸 방지: 클릭 즉시 Ready 상태를 false로 만들어 버튼 중복 클릭 차단
+        //SetActionCardReady(_clickedActionIdx, false);
+
+        ActionCard targetCard = _actionCards[_clickedActionIdx];
+
+        // 3. 타겟팅 여부에 따른 분기
+        if (targetCard.Data.CardTag == CardTag.SingleAttack || targetCard.Data.CardTag == CardTag.SkillTargetSingle)
+        {
+            // 화살표 커서 활성화 (이후 BattleManager에서 AttackSingleTargetByAction 호출)
+            BattleManager.Instance.SetActiveArrowCursor(true, 3);
+        }
+        else
+        {
+            // 타겟이 필요 없는 카드는 즉시 이벤트 큐로 보냄
+            ExecuteActionCard();
+        }
+
+        targetCard.DescWindowOff();
+    }
+    public Vector2 SettingArrowPos(int idx)
+    {
+        switch (idx)
+        {
+            case 3:
+                return new Vector2(InGameButtonManager.Instance.PotionButtons[_clickedActionIdx].transform.position.x, InGameButtonManager.Instance.PotionButtons[_clickedActionIdx].transform.position.y - 0.4f);
+        }
+        return Vector2.zero;
+    }
+
+    /// <summary>
+    /// 특정 슬롯의 액션 카드 활성화 상태를 설정합니다.
+    /// </summary>
+    /// <param name="idx">슬롯 인덱스</param>
+    /// <param name="isReady">활성화 여부</param>
+    public void SetActionCardReady(int idx, bool isReady)
+    {
+        // 1. 인덱스 안전 검사
+        if (idx < 0 || idx >= CanUseActionCard.Length)
+        {
+            return;
+        }
+
+        // 2. 상태 저장
+        CanUseActionCard[idx] = isReady;
+
+        // 3. 시각적 피드백 (하이라이트 연출)
+        if (_actionCards[idx] != null && _actionCards[idx].gameObject.activeSelf)
+        {
+            // ActionCard에 하이라이트 효과(예: 외곽선 반짝임)를 켜고 끄는 로직
+            // 만약 ActionCard에 SetHighlight 함수가 없다면 아래처럼 직접 제어하거나 추가하세요.
+            //_actionCards[idx].SetHighlight(isReady);
+            _actionCards[idx].SetHighlight(isReady);
+        }
+
+        // 디버그 로그 (개발 중 확인용)
+        if (isReady)
+        {
+            //Debug.Log($"<color=cyan>[ActionCard]</color> {idx}번 슬롯 준비 완료!");
+        }
+    }
+
 
     async UniTask<bool> CheckCanUsingCard(Card card/*, bool singleAtk = false*/)
     {
@@ -789,10 +962,10 @@ public class CardManager : MonoBehaviour
     public async UniTask RemoveCopyCard(Card card)
     {
         // 1. 연출: 카드가 작아지거나 투명해지는 애니메이션
-        card.MoveTransform(new PRS(card.transform.position, Quaternion.identity, Vector3.zero), true, 0.2f);
+        await card.TaskMoveTransform(new PRS(card.transform.position, Quaternion.identity, Vector3.zero), card.GetCancellationTokenOnDestroy(), CardUtils.ThrowAwayCardDelay);
 
         // 2. 잠시 대기
-        await UniTask.WaitForSeconds(0.2f);
+        //await UniTask.WaitForSeconds(CardUtils.ThrowAwayCardDelay);
 
         // 3. 오브젝트 파괴 또는 리턴
         // 오브젝트 풀링을 사용 중이라면 Release, 아니면 Destroy
@@ -891,6 +1064,8 @@ public class CardManager : MonoBehaviour
         PlayContext context = new();
         NowPlayedCard = playedCard;       // 마지막으로 시전한 카드 정보를 받아와야 할 수도 있기 때문에 일단 초기화는 안 함.
 
+
+        // 액션카드의 더블 공격도 막을 것인지 확인해야 함.
         if (!playedCard.IsForce && playedCard.Data.DamageOrder >= 0 && InGameManager.Instance.Player.ApplyStatusEffect(StatusEffect.DoubleAttack, out _))
         {
             // 원본과 똑같은 카드를 하나 복제합니다.
@@ -912,7 +1087,14 @@ public class CardManager : MonoBehaviour
 
         //SetOriginOrder();
         //CardAlignment();
-        playedCard.MoveTransform(new PRS(PlayingCardTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.CardAlignmentDelay);
+        if (playedCard is ActionCard actionCard)
+        {
+            actionCard.MoveVisual(PlayingCardTr.position);
+        }
+        else
+        {
+            playedCard.MoveTransform(new PRS(PlayingCardTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.CardAlignmentDelay);
+        }
         bool endBattle = await playedCard.UseTask(context).SuppressCancellationThrow();
         //if (endBattle)
         //{
@@ -1102,15 +1284,23 @@ public class CardManager : MonoBehaviour
         if (isIn)
         {
             card.ImmediatelyUseCard?.Invoke();
-            card.MoveTransform(new PRS(WatingCardTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.CardAlignmentDelay);
             _enQueuedCardCount++;
             if (_enQueuedCardCount > 1)
             {
-                card.CardOrder.SetOriginOrder(++_waitedCardOrder);
+                ++_waitedCardOrder;
             }
             else
             {
                 _waitedCardOrder = -10;
+            }
+
+            if (card is ActionCard actionCard)
+            {
+                actionCard.ShowQueueVisual(WatingCardTr.position, _waitedCardOrder);
+            }
+            else
+            {
+                card.MoveTransform(new PRS(WatingCardTr.position, Quaternion.identity, CardUtils.CardScale * 0.5f), true, CardUtils.CardAlignmentDelay);
                 card.CardOrder.SetOriginOrder(_waitedCardOrder);
             }
         }
@@ -1259,6 +1449,37 @@ public class CardManager : MonoBehaviour
             return;
         if (card.Used) return;
 
+        if (_hoveredZone.rect != null)
+        {
+            ActionCard actionCard = _actionCards[_hoveredZone.index.Value];
+
+            // 지금 업그레이드가 공격력밖에 없어서 공격력인 것만 강화되게 함.
+            if (!actionCard.MaxUpgrade && actionCard.Data.DamageOrder >= 0 && card.Data.UpgradeTags[0].Type.Special == SpecialTagType.AddDamage)
+            {
+                if (actionCard != null)
+                {
+                    // 1. 강화 확정 (LogicData는 현재 카드 데이터나 별도 로직 전달)
+                    // 예: "데미지를 3 증가시킵니다." 문구와 함께 실제 수치 강화
+                    actionCard.ConfirmAugment(card.Data.UpgradeTags, card.Data.UpgradeDescriptions, card.Data.Sprite);
+
+                    // 2. UI 정리
+                    actionCard.OnPointerExit(null);
+
+                    // 3. 카드 소모 처리 (버린 덱으로 이동)
+                    ThrowAwayCard(card).Forget();
+                    //DiscardCardFromHand(card);
+
+                    // 4. 매니저 상태 리셋 및 종료
+                    ResetSetting();
+                    _hoveredZone.rect = null;
+                    _hoveredZone.index = null;
+                    _lastHoveredZone = _hoveredZone;
+                    return; // 일반 카드 사용 로직으로 넘어가지 않도록 종료!
+                }
+            }
+
+        }
+
         if (isUseCard.Value)        // 카드 사용 가능 범위에 들어왔는지 확인
         {
             if (card.Data.CardTag != CardTag.SingleAttack && card.Data.CardTag != CardTag.SkillTargetSingle)     // 지정 카드를 제외한 나머지
@@ -1319,23 +1540,110 @@ public class CardManager : MonoBehaviour
 
         Vector2 tempPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
+        //if (_hoveredZone.rect != null)
+        //{
+        //    // 1. 방금 막 포션 구역에 들어왔을 때 (딱 한 번만 실행)
+        //    if (_lastHoveredZone != _hoveredZone)
+        //    {
+        //        _lastHoveredZone = _hoveredZone;
+        //        ActionCard actionCard = _actionCards[_hoveredZone.index.Value];
+        //        // 지금 업그레이드가 공격력밖에 없어서 공격력인 것만 강화되게 함.
+        //        if (actionCard.Data.DamageOrder >= 0 && card.Data.UpgradeTags[0].Type.Special == SpecialTagType.AddDamage)
+        //        {
+        //            card.DOKill();
+        //            card.MoveTransform(new PRS(_hoveredZone.rect.position, Quaternion.identity, CardUtils.CardScale * 0.3f), true, CardUtils.CardAlignmentDelay);
+
+
+        //            if (actionCard != null)
+        //            {
+        //                actionCard.SetPreviewAugments(card.Data.UpgradeDescriptions);
+        //                actionCard.OnPointerEnter(null);
+        //            }
+
+
+        //            if (card.Data.CardTag == CardTag.SingleAttack || card.Data.CardTag == CardTag.SkillTargetSingle)
+        //            {
+        //                CancelCardMoveTask();
+        //                BattleManager.Instance.SetActiveArrowCursor(false, 0);
+        //            }
+        //            else
+        //            {
+        //                Cursor.visible = true;
+        //            }
+        //        }
+
+        //    }
+        //    // 들어와 있는 상태라면 트윈을 더 호출하지 않고 트윈이 끝날 때까지 기다리거나 위치 고정
+        //}
+        //else
+        //{
+        //    // 2. 구역에서 나갔을 때 (딱 한 번만 실행)
+        //    if (_lastHoveredZone.rect != null)
+        //    {
+        //        //card.DOKill();
+        //        ActionCard actionCard = _actionCards[_lastHoveredZone.index.Value];
+
+        //        // 지금 업그레이드가 공격력밖에 없어서 공격력인 것만 강화되게 함.
+        //        if (actionCard.Data.DamageOrder >= 0 && card.Data.UpgradeTags[0].Type.Special == SpecialTagType.AddDamage)
+        //        {
+        //            card.DOKill();
+        //            if (actionCard != null)
+        //            {
+        //                actionCard.ClearPreviewAugment();
+        //                actionCard.OnPointerExit(null);
+        //            }
+
+        //            _lastHoveredZone.rect = null;
+        //            _lastHoveredZone.index = null;
+
+
+        //            if (card.Data.CardTag == CardTag.SingleAttack || card.Data.CardTag == CardTag.SkillTargetSingle)
+        //            {
+        //                _moveCts = new();
+        //                MoveToDefaultAndShowCursor(card, _moveCts.Token).Forget();
+        //            }
+        //            else
+        //            {
+        //                Cursor.visible = false;
+        //            }
+        //        }
+
+        //    }
+        //    if (!isUseCard.Value || (card.Data.CardTag != CardTag.SingleAttack && card.Data.CardTag != CardTag.SkillTargetSingle))
+        //    {
+        //        card.transform.position = Vector3.Lerp(card.transform.position, tempPos, Time.deltaTime * 20f);
+        //        card.transform.localScale = Vector3.Lerp(card.transform.localScale, CardUtils.CardScale * 1.2f, Time.deltaTime * 7.5f);
+        //    }
+
+        //}
+
+        // [1] 유효한 액션 카드 구역에 들어왔는지 체크
+        bool isValidZone = false;
         if (_hoveredZone.rect != null)
         {
-            // 1. 방금 막 포션 구역에 들어왔을 때 (딱 한 번만 실행)
-            if (_lastHoveredZone != _hoveredZone)
+            ActionCard actionCard = _actionCards[_hoveredZone.index.Value];
+            // 조건 체크: 공격력 강화 카드이고, 대상 액션 카드가 공격형일 때만
+            if (actionCard.Data.DamageOrder >= 0 && card.Data.UpgradeTags[0].Type.Special == SpecialTagType.AddDamage)
             {
-                card.DOKill();
-                card.MoveTransform(new PRS(_hoveredZone.rect.position, Quaternion.identity, CardUtils.CardScale * 0.3f), true, CardUtils.CardAlignmentDelay);
+                if (!actionCard.MaxUpgrade)
+                    isValidZone = true;
+            }
+        }
+
+        // [2] 유효한 구역이라면 스냅(고정) 로직 실행
+        if (isValidZone)
+        {
+            if (_lastHoveredZone.index != _hoveredZone.index)
+            {
                 _lastHoveredZone = _hoveredZone;
+                ActionCard actionCard = _actionCards[_hoveredZone.index.Value];
 
-                PotionItem potion = ItemManager.Instance.GetPotionItems()[_hoveredZone.index.Value];
+                card.DOKill();
+                // 구역 정중앙으로 스냅
+                card.MoveTransform(new PRS(_hoveredZone.rect.position, Quaternion.identity, CardUtils.CardScale * 0.3f), true, CardUtils.CardAlignmentDelay);
 
-                if (potion != null)
-                {
-                    potion.SetPreviewAugment("데미지를 3 증가시킵니다.");
-                    potion.OnPointerEnter(null);
-                }
-
+                actionCard.SetPreviewAugments(card.Data.UpgradeDescriptions);
+                actionCard.OnPointerEnter(null);
 
                 if (card.Data.CardTag == CardTag.SingleAttack || card.Data.CardTag == CardTag.SkillTargetSingle)
                 {
@@ -1346,45 +1654,39 @@ public class CardManager : MonoBehaviour
                 {
                     Cursor.visible = true;
                 }
-
             }
-            // 들어와 있는 상태라면 트윈을 더 호출하지 않고 트윈이 끝날 때까지 기다리거나 위치 고정
         }
+        // [3] 구역이 아니거나, 유효하지 않은 구역일 때는 마우스를 따라감
         else
         {
-            // 2. 구역에서 나갔을 때 (딱 한 번만 실행)
+            // 이전에 유효 구역에 있었다면 탈출 처리(청소)
             if (_lastHoveredZone.rect != null)
             {
-                card.DOKill();
-                PotionItem potion = ItemManager.Instance.GetPotionItems()[_lastHoveredZone.index.Value];
-
-                if (potion != null)
-                {
-                    potion.ClearPreviewAugment();
-                    potion.OnPointerExit(null);
-                }
+                ActionCard lastActionCard = _actionCards[_lastHoveredZone.index.Value];
+                lastActionCard.ClearPreviewAugment();
+                lastActionCard.OnPointerExit(null);
 
                 _lastHoveredZone.rect = null;
                 _lastHoveredZone.index = null;
 
+                Cursor.visible = false;
 
                 if (card.Data.CardTag == CardTag.SingleAttack || card.Data.CardTag == CardTag.SkillTargetSingle)
                 {
                     _moveCts = new();
                     MoveToDefaultAndShowCursor(card, _moveCts.Token).Forget();
                 }
-                else
-                {
-                    Cursor.visible = false;
-                }
             }
+
+            // --- 마우스 추적 로직 (끊기지 않게 밖으로 뺌) ---
+            // 공격 카드가 아니거나, 사용 중이 아닐 때 자유롭게 드래그
             if (!isUseCard.Value || (card.Data.CardTag != CardTag.SingleAttack && card.Data.CardTag != CardTag.SkillTargetSingle))
             {
                 card.transform.position = Vector3.Lerp(card.transform.position, tempPos, Time.deltaTime * 20f);
                 card.transform.localScale = Vector3.Lerp(card.transform.localScale, CardUtils.CardScale * 1.2f, Time.deltaTime * 7.5f);
             }
-
         }
+
         //else if ((/*isUseCard.Value && */card.Data.CardTag != CardTag.SingleAttack))
         //{
         //    card.DOKill();
@@ -1409,12 +1711,16 @@ public class CardManager : MonoBehaviour
 
     void CheckActionCard()
     {
-        if (_cachedDropZones == null) return;
+        if (_cachedActionRects == null) return;
         _hoveredZone.rect = null;
         _hoveredZone.index = null;
         int i = 0;
-        foreach (var zone in _cachedDropZones)
+        foreach (var zone in _cachedActionRects)
         {
+            if (_actionCards[i].Data == null) continue;
+
+            if (i == 3) continue;       // 테스트를 위해 4번째 칸 제외
+            
             // Raycast Target이 꺼져있어도 수학적으로 계산됨
             if (RectTransformUtility.RectangleContainsScreenPoint(zone, Input.mousePosition, Camera.main))
             {

@@ -65,11 +65,11 @@ public class ReadSpreadSheet : MonoBehaviour
     {
         Debug.Log("Card Load Start");
         string address = "https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8";
-        string range = "A4:Z33";
+        string range = "A4:AA33";
         //string range = "A4:O";
         string cardSheetID = "2055316414";
         //string cardSheetID = "1809511646";
-        string enhancedCardSheetID = "1928890928";
+        string enhancedCardSheetID = "799659022";
         using UnityWebRequest wwwC =
             //UnityWebRequest.Get("https://docs.google.com/spreadsheets/d/1zMmdkBnHjdpRvZV6WzHDfPSj76XQ227xlB8fwNBRe-8/export?format=csv&range=A3:Q&gid=0"))  // 0 = 원본, 1809511646 = 테스트용
             UnityWebRequest.Get($"{address}/export?format=tsv&range={range}&gid={cardSheetID}");
@@ -80,7 +80,7 @@ public class ReadSpreadSheet : MonoBehaviour
         _dataCardGS = wwwC.downloadHandler.text;
 
         await wwwEC.SendWebRequest();
-        //_dataCardGS += "\n" + wwwEC.downloadHandler.text;     강화 카드 구현 안 되서 일단 추가X
+        _dataCardGS += "\n" + wwwEC.downloadHandler.text;
 
         if (wwwEC.isDone)
         {
@@ -139,7 +139,7 @@ public class ReadSpreadSheet : MonoBehaviour
         CardSO.Cards = new CardData[rows.Length];
         //_cardSO.CardSprites = new Sprite[rows.Length];
         //SystemIOFileLoad();
-        for (int idx = 0;  idx < CardSO.ClassifyCardRarityID.Length; ++idx)
+        for (int idx = 0; idx < CardSO.ClassifyCardRarityID.Length; ++idx)
         {
             CardSO.ClassifyCardRarityID[idx].x = -1;
         }
@@ -167,15 +167,15 @@ public class ReadSpreadSheet : MonoBehaviour
                 Price = ConvertInt32(cells[10]),
                 Descript = LineBreakStr(cells[11]),
                 //MasterTags = LineBreakStr(cells[12]),
-                HasCondition = NullFalseBool(cells[13]),
-                CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[14]),
-                CardRarity = (CardRarity)Enum.Parse(typeof(CardRarity), cells[15]),
-                DamageOrder = ConvertFloat32M1(cells[19]),
-                ShieldOrder = ConvertFloat32M1(cells[20]),
-                DrawOrder = ConvertFloat32M1(cells[21]),
-                HPOrder = ConvertFloat32M1(cells[22]),
-                DiscardOrder = ConvertFloat32M1(cells[23]),
-                RemoveOrder = ConvertFloat32M1(cells[24])
+                HasCondition = NullFalseBool(cells[14]),
+                CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[15]),
+                CardRarity = (CardRarity)Enum.Parse(typeof(CardRarity), cells[16]),
+                DamageOrder = ConvertFloat32M1(cells[20]),
+                ShieldOrder = ConvertFloat32M1(cells[21]),
+                DrawOrder = ConvertFloat32M1(cells[22]),
+                HPOrder = ConvertFloat32M1(cells[23]),
+                DiscardOrder = ConvertFloat32M1(cells[24]),
+                RemoveOrder = ConvertFloat32M1(cells[25])
             };
 
             string rawTags = cells[12].Trim();
@@ -217,622 +217,694 @@ public class ReadSpreadSheet : MonoBehaviour
                     });
                 }
             }
-            //string rawTags = cells[12].Trim();
-            //if (!string.IsNullOrEmpty(rawTags))
-            //{
-            //    // 1. "//" 로 각 효과 단위 분리
-            //    string[] units = rawTags.Split(new[] { "//" }, StringSplitOptions.RemoveEmptyEntries);
 
-            //    foreach (string unit in units)
-            //    {
-            //        string trimmedUnit = unit.Trim();
-            //        if (string.IsNullOrEmpty(trimmedUnit)) continue;
-
-            //        MasterTagData tagData = new MasterTagData();
-
-            //        // 2. ":" 로 태그와 값 분리
-            //        if (trimmedUnit.Contains(":"))
-            //        {
-            //            string[] parts = trimmedUnit.Split(':');
-            //            tagData.Tag = parts[0].Trim();
-            //            tagData.Value = parts[1].Trim();
-            //        }
-            //        else
-            //        {
-            //            // 만약 수치 없이 태그만 들어왔을 경우를 대비한 방어 코드
-            //            tagData.Tag = trimmedUnit;
-            //            tagData.Value = "0";
-            //        }
-
-            //        data.MasterTags.Add(tagData);
-            //    }
-            //}
-
-            data.Sprite = Array.Find(CardSO.CardSprites, x => x.name == data.ID.ToString());
-            data.Effect = Array.Find(CardSO.CardEffects, x => x.name == data.ID.ToString());
-            //try
-            //{
-            //    data.Sprite = Array.Find(CardSO.CardSprites, x => x.name == data.ID.ToString());
-            //}
-            //catch (UnassignedReferenceException)
-            //{
-            //    data.Sprite = CardSO.CardSprites[0];
-            //    Debug.Log("스프라이트가 없습니다.");
-            //}
-            //data.ID = ConvertInt32(cells[0]);
-            //data.Name = LineBreakStr(cells[1]);
-            //data.Cost = ConvertInt32(cells[2]);
-            //data.EnhancedCost = ConvertInt32(cells[3]);
-            //data.Damage = ConvertInt32(cells[4]);
-            //data.EnhancedDamage = ConvertInt32(cells[5]);
-            //data.Shield = ConvertInt32(cells[6]);
-            //data.EnhancedDefence = ConvertInt32(cells[7]);
-            //data.Count = ConvertInt32(cells[8]);                                                    
-            //data.EnhancedCount = ConvertInt32(cells[9]);
-            //data.Draw = ConvertInt32(cells[10]);
-            //data.EnhancedDraw = ConvertInt32(cells[11]);
-            //data.CardUseDelay = ConvertSingle(cells[12]);
-            //data.Price = ConvertInt32(cells[13]);
-            //data.Descript = LineBreakStr(cells[14]);
-            //data.EnhancedDescript = LineBreakStr(cells[15]);
-            //try
-            //{
-            //    data.Sprite = Array.Find(_cardSO.CardSprites, x => x.name == data.ID.ToString());
-            //}
-            //catch (UnassignedReferenceException)
-            //{
-            //    data.Sprite = null;
-            //    Debug.Log("스프라이트가 없습니다.");
-            //}
-            //data.CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[16]);
-            if (data.ID < 10000)
+            string upgradeTags = cells[13].Trim();
+            if (!string.IsNullOrEmpty(upgradeTags))
             {
-                switch (data.CardRarity)
+                if (data.ID < 10000)
                 {
-                    case CardRarity.Common:
-                        if (CardSO.ClassifyCardRarityID[0].x == -1)
+                    string[] units = upgradeTags.Split(new[] { "//" }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string unit in units)
+                    {
+                        string[] parts = unit.Trim().Split(':');
+                        if (parts.Length < 1) continue; // 데이터가 1보다 적으면 스킵
+
+                        string amountStr = parts.Length > 2 ? parts[2].Trim() : "0";
+                        bool isXAmount = amountStr.ToLower() == "x";
+
+                        float parsedAmount = 0;
+                        if (!isXAmount)
                         {
-                            CardSO.ClassifyCardRarityID[0].x = data.ID;
+                            // 혹시 모를 오타를 대비해 TryParse를 쓰는 게 더 안전합니다.
+                            float.TryParse(amountStr, out parsedAmount);
                         }
-                        CardSO.ClassifyCardRarityID[0].y = data.ID;
+
+                        string descStr = parts.Length > 3 ? parts[3].Trim() : "설명이 없습니다.";
+
+                        // 액션 카드 강화 효과
+                        data.UpgradeTags.Add(new MasterTagData
+                        {
+                            Tag = MasterTag.Parse(parts[0].Trim()),
+                            Type = MasterType.Parse(parts.Length > 1 ? parts[1].Trim() : ""),
+                            XAmount = isXAmount,
+                            Amount = parsedAmount,
+                            XDuration = false,
+                            Duration = -1
+                        });
+
+                        data.UpgradeDescriptions.Add(descStr);      // 액션 카드 강화 텍스트
+                    }
+                }
+                else
+                {
+                    string[] units = upgradeTags.Split(new[] { "//" }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string unit in units)
+                    {
+                        string[] parts = unit.Trim().Split(':');
+                        if (parts.Length < 1) continue; // 데이터가 1보다 적으면 스킵
+
+                        string amountStr = parts.Length > 2 ? parts[2].Trim() : "0";
+                        bool isXAmount = amountStr.ToLower() == "x";
+
+                        float parsedAmount = 0;
+                        if (!isXAmount)
+                        {
+                            // 혹시 모를 오타를 대비해 TryParse를 쓰는 게 더 안전합니다.
+                            float.TryParse(amountStr, out parsedAmount);
+                        }
+
+                        string descStr = parts.Length > 3 ? parts[3].Trim() : "";
+
+                        // 액션 카드 사용 조건
+                        data.UpgradeTags.Add(new MasterTagData
+                        {
+                            Tag = MasterTag.Parse(parts[0].Trim()),
+                            Type = MasterType.Parse(parts.Length > 1 ? parts[1].Trim() : ""),
+                            XAmount = isXAmount,
+                            Amount = parsedAmount,
+                            XDuration = false,
+                            Duration = -1
+                        });
+
+                        data.UpgradeDescriptions.Add(descStr);      // 액션 카드 사용 조건 텍스트
+                    }
+                }
+                //string rawTags = cells[12].Trim();
+                //if (!string.IsNullOrEmpty(rawTags))
+                //{
+                //    // 1. "//" 로 각 효과 단위 분리
+                //    string[] units = rawTags.Split(new[] { "//" }, StringSplitOptions.RemoveEmptyEntries);
+
+                //    foreach (string unit in units)
+                //    {
+                //        string trimmedUnit = unit.Trim();
+                //        if (string.IsNullOrEmpty(trimmedUnit)) continue;
+
+                //        MasterTagData tagData = new MasterTagData();
+
+                //        // 2. ":" 로 태그와 값 분리
+                //        if (trimmedUnit.Contains(":"))
+                //        {
+                //            string[] parts = trimmedUnit.Split(':');
+                //            tagData.Tag = parts[0].Trim();
+                //            tagData.Value = parts[1].Trim();
+                //        }
+                //        else
+                //        {
+                //            // 만약 수치 없이 태그만 들어왔을 경우를 대비한 방어 코드
+                //            tagData.Tag = trimmedUnit;
+                //            tagData.Value = "0";
+                //        }
+
+                //        data.MasterTags.Add(tagData);
+                //    }
+                //}
+
+                data.Sprite = Array.Find(CardSO.CardSprites, x => x.name == data.ID.ToString());
+                data.Effect = Array.Find(CardSO.CardEffects, x => x.name == data.ID.ToString());
+                //try
+                //{
+                //    data.Sprite = Array.Find(CardSO.CardSprites, x => x.name == data.ID.ToString());
+                //}
+                //catch (UnassignedReferenceException)
+                //{
+                //    data.Sprite = CardSO.CardSprites[0];
+                //    Debug.Log("스프라이트가 없습니다.");
+                //}
+                //data.ID = ConvertInt32(cells[0]);
+                //data.Name = LineBreakStr(cells[1]);
+                //data.Cost = ConvertInt32(cells[2]);
+                //data.EnhancedCost = ConvertInt32(cells[3]);
+                //data.Damage = ConvertInt32(cells[4]);
+                //data.EnhancedDamage = ConvertInt32(cells[5]);
+                //data.Shield = ConvertInt32(cells[6]);
+                //data.EnhancedDefence = ConvertInt32(cells[7]);
+                //data.Count = ConvertInt32(cells[8]);                                                    
+                //data.EnhancedCount = ConvertInt32(cells[9]);
+                //data.Draw = ConvertInt32(cells[10]);
+                //data.EnhancedDraw = ConvertInt32(cells[11]);
+                //data.CardUseDelay = ConvertSingle(cells[12]);
+                //data.Price = ConvertInt32(cells[13]);
+                //data.Descript = LineBreakStr(cells[14]);
+                //data.EnhancedDescript = LineBreakStr(cells[15]);
+                //try
+                //{
+                //    data.Sprite = Array.Find(_cardSO.CardSprites, x => x.name == data.ID.ToString());
+                //}
+                //catch (UnassignedReferenceException)
+                //{
+                //    data.Sprite = null;
+                //    Debug.Log("스프라이트가 없습니다.");
+                //}
+                //data.CardTag = (CardTag)Enum.Parse(typeof(CardTag), cells[16]);
+                if (data.ID < 10000)
+                {
+                    switch (data.CardRarity)
+                    {
+                        case CardRarity.Common:
+                            if (CardSO.ClassifyCardRarityID[0].x == -1)
+                            {
+                                CardSO.ClassifyCardRarityID[0].x = data.ID;
+                            }
+                            CardSO.ClassifyCardRarityID[0].y = data.ID;
+                            break;
+                        case CardRarity.Rare:
+                            if (CardSO.ClassifyCardRarityID[1].x == -1)
+                            {
+                                CardSO.ClassifyCardRarityID[1].x = data.ID;
+                            }
+                            CardSO.ClassifyCardRarityID[1].y = data.ID;
+                            break;
+                        case CardRarity.Epic:
+                            if (CardSO.ClassifyCardRarityID[2].x == -1)
+                            {
+                                CardSO.ClassifyCardRarityID[2].x = data.ID;
+                            }
+                            CardSO.ClassifyCardRarityID[2].y = data.ID;
+                            break;
+                        case CardRarity.Legendary:
+                            if (CardSO.ClassifyCardRarityID[3].x == -1)
+                            {
+                                CardSO.ClassifyCardRarityID[3].x = data.ID;
+                            }
+                            CardSO.ClassifyCardRarityID[3].y = data.ID;
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data.CardRarity)
+                    {
+                        case CardRarity.Common:
+                            if (CardSO.ClassifyEnhancedCardRarityID[0].x == -1)
+                            {
+                                CardSO.ClassifyEnhancedCardRarityID[0].x = data.ID;
+                            }
+                            CardSO.ClassifyEnhancedCardRarityID[0].y = data.ID;
+                            break;
+                        case CardRarity.Rare:
+                            if (CardSO.ClassifyEnhancedCardRarityID[1].x == -1)
+                            {
+                                CardSO.ClassifyEnhancedCardRarityID[1].x = data.ID;
+                            }
+                            CardSO.ClassifyEnhancedCardRarityID[1].y = data.ID;
+                            break;
+                        case CardRarity.Epic:
+                            if (CardSO.ClassifyEnhancedCardRarityID[2].x == -1)
+                            {
+                                CardSO.ClassifyEnhancedCardRarityID[2].x = data.ID;
+                            }
+                            CardSO.ClassifyEnhancedCardRarityID[2].y = data.ID;
+                            break;
+                        case CardRarity.Legendary:
+                            if (CardSO.ClassifyEnhancedCardRarityID[3].x == -1)
+                            {
+                                CardSO.ClassifyEnhancedCardRarityID[3].x = data.ID;
+                            }
+                            CardSO.ClassifyEnhancedCardRarityID[3].y = data.ID;
+                            break;
+                    }
+                }
+                CardSO.Cards[i] = data;
+                ++i;
+            }
+            Debug.Log("Card Load End");
+#if UNITY_EDITOR
+            EditorUtility.SetDirty(CardSO);
+#endif
+        }
+    }
+
+        void SetEnemySO()
+        {
+            string[] rows = _dataEnemyGS.Split("\n");
+            EnemySO.EnemyDatas = new EnemyData[rows.Length];
+            //Addressables.LoadResourceLocationsAsync(AssetLabel).Completed +=
+            //    (handle) =>
+            //    {
+            //        _locations = handle.Result;
+            //    };
+            //Addressables.LoadAssetsAsync<GameObject>(AssetLabel, null).Completed +=
+            //    (handle) =>
+            //    {
+            //        if (handle.Status != AsyncOperationStatus.Succeeded)
+            //        {
+            //            return;
+            //        }
+            //        for (int i = 0; i < handle.Result.Count; ++i)
+            //        {
+            //            _enemyPath.Add(handle.Result[i].name, handle.Result[i]);
+            //        }
+            //        int j = 0;
+            //        foreach (string row in rows)
+            //        {
+            //            string[] cells = row.Split("\t");
+            //            EnemyData data = new()
+            //            {
+            //                id = ConvertInt32(cells[0]),
+            //                name = LineBreakStr(cells[1]),
+            //                hp = ConvertInt32(cells[2]),
+            //                damage = ConvertInt32(cells[3]),
+            //                dropCoin = ConvertInt32(cells[4]),
+            //                descript = LineBreakStr(cells[5]),
+            //                enemyTag = (EnemyTag)Enum.Parse(typeof(EnemyTag), cells[6])
+            //            };
+            //            try
+            //            {
+            //                data.sprite = Array.Find(EnemySO.enemySprites, x => x.name == data.id.ToString());
+            //            }
+            //            catch (UnassignedReferenceException)
+            //            {
+            //                data.sprite = null;
+            //                Debug.Log("스프라이트가 없습니다.");
+            //            }
+            //            try
+            //            {
+            //                data.enemyPrefab = Array.Find(EnemySO.Prefabs, x => x.name == data.name);
+            //            }
+            //            catch (UnassignedReferenceException)
+            //            {
+            //                data.enemyPrefab = null;
+            //                Debug.Log("프리팹이 없습니다.");
+            //            }
+            //            //if (_enemyPath.ContainsKey(data.name))
+            //            //{
+            //            //    data.enemyPrefab = _enemyPath[data.name];
+            //            //}
+
+            //            EnemySO.enemyDatas[j] = data;
+            //            ++j;
+            //        }
+            //        Addressables.Release(handle);
+            //    };
+            int i = 0;
+            foreach (string row in rows)
+            {
+                string[] cells = row.Split("\t");
+                EnemyData data = new()
+                {
+                    ID = ConvertInt32(cells[0]),
+                    Name = LineBreakStr(cells[1]),
+                    HP = ConvertInt32(cells[2]),
+                    Damage = ConvertInt32(cells[3]),
+                    CriticalChance = ConvertInt32(cells[4]),
+                    CriticalDamage = ConvertInt32(cells[5]),
+                    DropCoin = ConvertInt32(cells[6]),
+                    Descript = LineBreakStr(cells[7]),
+                    EnemyTag = (EnemyTag)Enum.Parse(typeof(EnemyTag), cells[8])
+                };
+                try
+                {
+                    data.Sprite = Array.Find(EnemySO.EnemySprites, x => x.name == data.ID.ToString());
+                }
+                catch (UnassignedReferenceException)
+                {
+                    data.Sprite = null;
+                    Debug.Log("스프라이트가 없습니다.");
+                }
+                try
+                {
+                    data.EnemyPrefab = Array.Find(EnemySO.EnemyPrefabs, x => x.name == data.Name);
+                }
+                catch (UnassignedReferenceException)
+                {
+                    data.EnemyPrefab = null;
+                    Debug.Log("프리팹이 없습니다.");
+                }
+
+                EnemySO.EnemyDatas[i] = data;
+                ++i;
+            }
+            Debug.Log("Enemy Load End");
+#if UNITY_EDITOR
+            EditorUtility.SetDirty(EnemySO);
+#endif
+        }
+
+        void SetItemSO()
+        {
+            string[] rows = _dataItemGS.Split("\n");
+            //ItemSO.Items = new ItemBase[rows.Length];
+            //_cardSO.CardSprites = new Sprite[rows.Length];
+            //SystemIOFileLoad();
+            ItemSO.PassiveID.x = -1;
+            ItemSO.ActiveID.x = -1;
+            ItemSO.PotionID.x = -1;
+            //int pa = 0;
+            //int ac = 0;
+            //int po = 0;
+            foreach (string row in rows)
+            {
+                string[] cells = row.Split("\t");
+                ItemTag itemTag = (ItemTag)Enum.Parse(typeof(ItemTag), cells[cells.Length - 2]);
+
+                switch (itemTag)
+                {
+                    case ItemTag.Passive:
+
+                        ItemBase passiveData = new()
+                        {
+                            ID = ConvertInt32(cells[0]),
+                            Name = LineBreakStr(cells[1]),
+                            ItemTag = itemTag,
+                            ItemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), cells[cells.Length - 1]),
+                            Price = ConvertInt32(cells[2]),
+                            Descript = LineBreakStr(cells[3])
+                        };
+                        if (ItemSO.PassiveID.x == -1)
+                        {
+                            ItemSO.PassiveID.x = passiveData.ID;
+                        }
+                        ItemSO.PassiveID.y = passiveData.ID;
+                        try
+                        {
+                            passiveData.Sprite = Array.Find(ItemSO.ItemSprites, x => x.name == passiveData.ID.ToString());
+                        }
+                        catch (UnassignedReferenceException)
+                        {
+                            passiveData.Sprite = null;
+                            Debug.Log("스프라이트가 없습니다.");
+                        }
+                        ItemSO.PassiveItems.Add(passiveData);
                         break;
-                    case CardRarity.Rare:
-                        if (CardSO.ClassifyCardRarityID[1].x == -1)
+                    case ItemTag.Active:
+                        ChargeItemBase activeData = new()
                         {
-                            CardSO.ClassifyCardRarityID[1].x = data.ID;
+                            ID = ConvertInt32(cells[0]),
+                            Name = LineBreakStr(cells[1]),
+                            ItemTag = itemTag,
+                            ItemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), cells[cells.Length - 1]),
+                            MaxCharge = ConvertInt32(cells[2]),
+                            Damage = ConvertInt32(cells[3]),
+                            Shield = ConvertInt32(cells[4]),
+                            Draw = ConvertInt32(cells[5]),
+                            Heal = ConvertInt32(cells[6]),
+                            Duration = ConvertInt32(cells[7]),
+                            Price = ConvertInt32(cells[8]),
+                            Descript = LineBreakStr(cells[9]),
+                            AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[10])),
+                            ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[11])),
+                            StartCharge = NullTrueBool(cells[12])
+                        };
+                        if (ItemSO.ActiveID.x == -1)
+                        {
+                            ItemSO.ActiveID.x = activeData.ID;
                         }
-                        CardSO.ClassifyCardRarityID[1].y = data.ID;
+                        ItemSO.ActiveID.y = activeData.ID;
+                        try
+                        {
+                            activeData.Sprite = Array.Find(ItemSO.ItemSprites, x => x.name == activeData.ID.ToString());
+                        }
+                        catch (UnassignedReferenceException)
+                        {
+                            activeData.Sprite = null;
+                            Debug.Log("스프라이트가 없습니다.");
+                        }
+                        ItemSO.ActiveItems.Add(activeData);
                         break;
-                    case CardRarity.Epic:
-                        if (CardSO.ClassifyCardRarityID[2].x == -1)
+                    case ItemTag.Potion:
+                        UseItemBase potionData = new()
                         {
-                            CardSO.ClassifyCardRarityID[2].x = data.ID;
+                            ID = ConvertInt32(cells[0]),
+                            Name = LineBreakStr(cells[1]),
+                            ItemTag = itemTag,
+                            ItemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), cells[cells.Length - 1]),
+                            Damage = ConvertInt32(cells[2]),
+                            Shield = ConvertInt32(cells[3]),
+                            Draw = ConvertInt32(cells[4]),
+                            Heal = ConvertInt32(cells[5]),
+                            Duration = ConvertInt32(cells[6]),
+                            Price = ConvertInt32(cells[7]),
+                            Descript = LineBreakStr(cells[8]),
+                            AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[9])),
+                            ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[10]))
+                        };
+                        if (ItemSO.PotionID.x == -1)
+                        {
+                            ItemSO.PotionID.x = potionData.ID;
                         }
-                        CardSO.ClassifyCardRarityID[2].y = data.ID;
+                        ItemSO.PotionID.y = potionData.ID;
+                        try
+                        {
+                            potionData.Sprite = Array.Find(ItemSO.ItemSprites, x => x.name == potionData.ID.ToString());
+                        }
+                        catch (UnassignedReferenceException)
+                        {
+                            potionData.Sprite = null;
+                            Debug.Log("스프라이트가 없습니다.");
+                        }
+                        ItemSO.PotionItems.Add(potionData);
                         break;
-                    case CardRarity.Legendary:
-                        if (CardSO.ClassifyCardRarityID[3].x == -1)
-                        {
-                            CardSO.ClassifyCardRarityID[3].x = data.ID;
-                        }
-                        CardSO.ClassifyCardRarityID[3].y = data.ID;
+                    default:
+                        Debug.Log("아이템 태그 오류");
                         break;
                 }
+                //ItemBase data = new()
+                //{
+                //    ID = ConvertInt32(cells[0]),
+                //    Name = LineBreakStr(cells[1]),
+                //    ItemTag = (ItemTag)Enum.Parse(typeof(ItemTag), cells[cells.Length-2]),
+                //    ItemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), cells[cells.Length-1])
+                //    //MaxCharge = ConvertInt32(cells[2]),
+                //    //CurCharge = ConvertInt32(cells[3]),
+                //    //Damage = ConvertInt32(cells[4]),
+                //    //Shield = ConvertInt32(cells[5]),
+                //    //Draw = ConvertInt32(cells[6]),
+                //    //Heal = ConvertInt32(cells[7]),
+                //    //Duration = ConvertInt32(cells[8]),
+                //    //Price = ConvertInt32(cells[9]),
+                //    //Descript = LineBreakStr(cells[10]),
+                //};
+                //switch (data.ItemTag)
+                //{
+                //    case ItemTag.Passive:
+                //        if (ItemSO.PassiveID.x == -1)
+                //        {
+                //            ItemSO.PassiveID.x = data.ID;
+                //        }
+                //        ItemSO.PassiveID.y = data.ID;
+
+                //        data.Price = ConvertInt32(cells[2]);
+                //        data.Descript = LineBreakStr(cells[3]);
+
+                //        break;
+                //    case ItemTag.Active:
+                //        if (ItemSO.ActiveID.x == -1)
+                //        {
+                //            ItemSO.ActiveID.x = data.ID;
+                //        }
+                //        ItemSO.ActiveID.y = data.ID;
+
+                //        data.MaxCharge = ConvertInt32(cells[2]);
+                //        data.Damage = ConvertInt32(cells[3]);
+                //        data.Shield = ConvertInt32(cells[4]);
+                //        data.Draw = ConvertInt32(cells[5]);
+                //        data.Heal = ConvertInt32(cells[6]);
+                //        data.Duration = ConvertInt32(cells[7]);
+                //        data.Price = ConvertInt32(cells[8]);
+                //        data.Descript = LineBreakStr(cells[9]);
+                //        data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[10]));
+                //        data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[11]));
+                //        data.StartCharge = NullTrueBool(cells[12]);
+
+                //        break;
+                //    case ItemTag.Potion:
+                //        if (ItemSO.PotionID.x == -1)
+                //        {
+                //            ItemSO.PotionID.x = data.ID;
+                //        }
+                //        ItemSO.PotionID.y = data.ID;
+
+                //        data.Damage = ConvertInt32(cells[2]);
+                //        data.Shield = ConvertInt32(cells[3]);
+                //        data.Draw = ConvertInt32(cells[4]);
+                //        data.Heal = ConvertInt32(cells[5]);
+                //        data.Duration = ConvertInt32(cells[6]);
+                //        data.Price = ConvertInt32(cells[7]);
+                //        data.Descript = LineBreakStr(cells[8]);
+                //        data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[9]));
+                //        data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[10]));
+
+                //        break;
+                //}
+                //if (data.ItemTag != ItemTag.Passive)
+                //{
+                //    data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[13]));
+                //    data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[14]));
+                //}
+
+                //try
+                //{
+                //    data.Sprite = Array.Find(ItemSO.ItemSprites, x => x.name == data.ID.ToString());
+                //}
+                //catch (UnassignedReferenceException)
+                //{
+                //    data.Sprite = null;
+                //    Debug.Log("스프라이트가 없습니다.");
+                //}
+                //ItemSO.Items[i] = data;
+                //++i;
+            }
+            Debug.Log("Item Load End");
+#if UNITY_EDITOR
+            EditorUtility.SetDirty(ItemSO);
+#endif
+        }
+
+        //private void SystemIOFileLoad()
+        //{
+        //    string[] imageFiles = Directory.GetFiles(imagePath, "*.png");
+        //    int j = 0;
+        //    foreach (string imagePath in imageFiles)
+        //    {
+        //        string imageName = Path.GetFileNameWithoutExtension(imagePath);
+        //        // 파일을 바이트 배열로 읽어옴
+        //        byte[] imageData = File.ReadAllBytes(imagePath);
+        //        Texture2D texture = new Texture2D(1, 1);
+        //        texture.LoadImage(imageData);
+        //        Sprite Sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+        //        Sprite.Name = imageName;
+        //        gameSprite.Sprite = Sprite;
+        //        s[j] = (Sprite);
+        //        _cardSO.CardSprites[j] = Sprite;
+        //        j++;
+        //    }
+        //}
+
+        float ConvertSingle(string str)    // 구글스프레드시트는 엑셀 빈 칸을 ""로 가져오기 때문에 Convert.ToSingle가 에러가 뜸.
+        {
+            //float _value = Convert.ToSingle(string.IsNullOrEmpty(str) ? null : str);
+            return Convert.ToSingle(string.IsNullOrEmpty(str) ? null : str);
+        }
+
+        int ConvertInt32(string str)    // 구글스프레드시트는 엑셀 빈 칸을 ""로 가져오기 때문에 Convert.ToInt32가 에러가 뜸.
+        {
+            //int _value = Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
+            //return Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
+            if (string.IsNullOrWhiteSpace(str))
+                return 0;
+
+            // 2. 양끝 공백 및 보이지 않는 특수 문자 제거 (Trim)
+            string cleanStr = str.Trim();
+
+            // 3. TryParse로 안전하게 변환 시도
+            if (int.TryParse(cleanStr, out int result))
+            {
+                return result;
             }
             else
             {
-                switch (data.CardRarity)
-                {
-                    case CardRarity.Common:
-                        if (CardSO.ClassifyEnhancedCardRarityID[0].x == -1)
-                        {
-                            CardSO.ClassifyEnhancedCardRarityID[0].x = data.ID;
-                        }
-                        CardSO.ClassifyEnhancedCardRarityID[0].y = data.ID;
-                        break;
-                    case CardRarity.Rare:
-                        if (CardSO.ClassifyEnhancedCardRarityID[1].x == -1)
-                        {
-                            CardSO.ClassifyEnhancedCardRarityID[1].x = data.ID;
-                        }
-                        CardSO.ClassifyEnhancedCardRarityID[1].y = data.ID;
-                        break;
-                    case CardRarity.Epic:
-                        if (CardSO.ClassifyEnhancedCardRarityID[2].x == -1)
-                        {
-                            CardSO.ClassifyEnhancedCardRarityID[2].x = data.ID;
-                        }
-                        CardSO.ClassifyEnhancedCardRarityID[2].y = data.ID;
-                        break;
-                    case CardRarity.Legendary:
-                        if (CardSO.ClassifyEnhancedCardRarityID[3].x == -1)
-                        {
-                            CardSO.ClassifyEnhancedCardRarityID[3].x = data.ID;
-                        }
-                        CardSO.ClassifyEnhancedCardRarityID[3].y = data.ID;
-                        break;
-                }
+                // 4. 숫자가 아닌 문자가 들어온 경우 (예: "데미지", "10A" 등)
+                // 디버깅을 위해 어떤 데이터에서 에러가 났는지 로그를 찍는 것이 좋습니다.
+                Debug.LogWarning($"숫자 변환 실패! 입력된 문자열: '{str}' (0으로 대체됨)");
+                return 0;
             }
-            CardSO.Cards[i] = data;
-            ++i;
         }
-        Debug.Log("Card Load End");
-#if UNITY_EDITOR
-        EditorUtility.SetDirty(CardSO);
-#endif
-    }
-
-    void SetEnemySO()
-    {
-        string[] rows = _dataEnemyGS.Split("\n");
-        EnemySO.EnemyDatas = new EnemyData[rows.Length];
-        //Addressables.LoadResourceLocationsAsync(AssetLabel).Completed +=
-        //    (handle) =>
-        //    {
-        //        _locations = handle.Result;
-        //    };
-        //Addressables.LoadAssetsAsync<GameObject>(AssetLabel, null).Completed +=
-        //    (handle) =>
-        //    {
-        //        if (handle.Status != AsyncOperationStatus.Succeeded)
-        //        {
-        //            return;
-        //        }
-        //        for (int i = 0; i < handle.Result.Count; ++i)
-        //        {
-        //            _enemyPath.Add(handle.Result[i].name, handle.Result[i]);
-        //        }
-        //        int j = 0;
-        //        foreach (string row in rows)
-        //        {
-        //            string[] cells = row.Split("\t");
-        //            EnemyData data = new()
-        //            {
-        //                id = ConvertInt32(cells[0]),
-        //                name = LineBreakStr(cells[1]),
-        //                hp = ConvertInt32(cells[2]),
-        //                damage = ConvertInt32(cells[3]),
-        //                dropCoin = ConvertInt32(cells[4]),
-        //                descript = LineBreakStr(cells[5]),
-        //                enemyTag = (EnemyTag)Enum.Parse(typeof(EnemyTag), cells[6])
-        //            };
-        //            try
-        //            {
-        //                data.sprite = Array.Find(EnemySO.enemySprites, x => x.name == data.id.ToString());
-        //            }
-        //            catch (UnassignedReferenceException)
-        //            {
-        //                data.sprite = null;
-        //                Debug.Log("스프라이트가 없습니다.");
-        //            }
-        //            try
-        //            {
-        //                data.enemyPrefab = Array.Find(EnemySO.Prefabs, x => x.name == data.name);
-        //            }
-        //            catch (UnassignedReferenceException)
-        //            {
-        //                data.enemyPrefab = null;
-        //                Debug.Log("프리팹이 없습니다.");
-        //            }
-        //            //if (_enemyPath.ContainsKey(data.name))
-        //            //{
-        //            //    data.enemyPrefab = _enemyPath[data.name];
-        //            //}
-
-        //            EnemySO.enemyDatas[j] = data;
-        //            ++j;
-        //        }
-        //        Addressables.Release(handle);
-        //    };
-        int i = 0;
-        foreach (string row in rows)
+        float ConvertFloat32M1(string str)    // 구글스프레드시트는 엑셀 빈 칸을 ""로 가져오기 때문에 에러가 뜸.
         {
-            string[] cells = row.Split("\t");
-            EnemyData data = new()
+            //int _value = Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
+            //return Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
+            if (string.IsNullOrWhiteSpace(str))
+                return -1f;
+
+            // 2. 양끝 공백 및 보이지 않는 특수 문자 제거 (Trim)
+            string cleanStr = str.Trim();
+
+            // 3. TryParse로 안전하게 변환 시도
+            if (float.TryParse(cleanStr, out float result))
             {
-                ID = ConvertInt32(cells[0]),
-                Name = LineBreakStr(cells[1]),
-                HP = ConvertInt32(cells[2]),
-                Damage = ConvertInt32(cells[3]),
-                CriticalChance = ConvertInt32(cells[4]),
-                CriticalDamage = ConvertInt32(cells[5]),
-                DropCoin = ConvertInt32(cells[6]),
-                Descript = LineBreakStr(cells[7]),
-                EnemyTag = (EnemyTag)Enum.Parse(typeof(EnemyTag), cells[8])
-            };
-            try
-            {
-                data.Sprite = Array.Find(EnemySO.EnemySprites, x => x.name == data.ID.ToString());
+                return result;
             }
-            catch (UnassignedReferenceException)
+            else
             {
-                data.Sprite = null;
-                Debug.Log("스프라이트가 없습니다.");
+                // 4. 숫자가 아닌 문자가 들어온 경우 (예: "데미지", "10A" 등)
+                // 디버깅을 위해 어떤 데이터에서 에러가 났는지 로그를 찍는 것이 좋습니다.
+                Debug.LogWarning($"숫자 변환 실패! 입력된 문자열: '{str}' (-1f로 대체됨)");
+                return -1f;
             }
-            try
+        }
+
+        bool NullFalseBool(string str)
+        {
+            if (string.IsNullOrWhiteSpace(str))
+                return false;
+
+            // 2. 앞뒤 공백 제거 및 대문자로 통일 (비교 편의성)
+            string cleanStr = str.Trim().ToUpper();
+
+            // 3. 숫자로 입력된 경우 처리 (1 = true, 0 = false)
+            if (cleanStr == "1" || cleanStr == "TRUE") return true;
+            if (cleanStr == "0" || cleanStr == "FALSE") return false;
+
+            // 4. 그 외의 경우 안전하게 TryParse 시도
+            if (bool.TryParse(cleanStr, out bool result))
             {
-                data.EnemyPrefab = Array.Find(EnemySO.EnemyPrefabs, x => x.name == data.Name);
-            }
-            catch (UnassignedReferenceException)
-            {
-                data.EnemyPrefab = null;
-                Debug.Log("프리팹이 없습니다.");
+                return result;
             }
 
-            EnemySO.EnemyDatas[i] = data;
-            ++i;
-        }
-        Debug.Log("Enemy Load End");
-#if UNITY_EDITOR
-        EditorUtility.SetDirty(EnemySO);
-#endif
-    }
-
-    void SetItemSO()
-    {
-        string[] rows = _dataItemGS.Split("\n");
-        //ItemSO.Items = new ItemBase[rows.Length];
-        //_cardSO.CardSprites = new Sprite[rows.Length];
-        //SystemIOFileLoad();
-        ItemSO.PassiveID.x = -1;
-        ItemSO.ActiveID.x = -1;
-        ItemSO.PotionID.x = -1;
-        //int pa = 0;
-        //int ac = 0;
-        //int po = 0;
-        foreach (string row in rows)
-        {
-            string[] cells = row.Split("\t");
-            ItemTag itemTag = (ItemTag)Enum.Parse(typeof(ItemTag), cells[cells.Length - 2]);
-
-            switch (itemTag)
-            {
-                case ItemTag.Passive:
-
-                    ItemBase passiveData = new()
-                    {
-                        ID = ConvertInt32(cells[0]),
-                        Name = LineBreakStr(cells[1]),
-                        ItemTag = itemTag,
-                        ItemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), cells[cells.Length - 1]),
-                        Price = ConvertInt32(cells[2]),
-                        Descript = LineBreakStr(cells[3])
-                    };
-                    if (ItemSO.PassiveID.x == -1)
-                    {
-                        ItemSO.PassiveID.x = passiveData.ID;
-                    }
-                    ItemSO.PassiveID.y = passiveData.ID;
-                    try
-                    {
-                        passiveData.Sprite = Array.Find(ItemSO.ItemSprites, x => x.name == passiveData.ID.ToString());
-                    }
-                    catch (UnassignedReferenceException)
-                    {
-                        passiveData.Sprite = null;
-                        Debug.Log("스프라이트가 없습니다.");
-                    }
-                    ItemSO.PassiveItems.Add(passiveData);
-                    break;
-                case ItemTag.Active:
-                    ChargeItemBase activeData = new()
-                    {
-                        ID = ConvertInt32(cells[0]),
-                        Name = LineBreakStr(cells[1]),
-                        ItemTag = itemTag,
-                        ItemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), cells[cells.Length - 1]),
-                        MaxCharge = ConvertInt32(cells[2]),
-                        Damage = ConvertInt32(cells[3]),
-                        Shield = ConvertInt32(cells[4]),
-                        Draw = ConvertInt32(cells[5]),
-                        Heal = ConvertInt32(cells[6]),
-                        Duration = ConvertInt32(cells[7]),
-                        Price = ConvertInt32(cells[8]),
-                        Descript = LineBreakStr(cells[9]),
-                        AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[10])),
-                        ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[11])),
-                        StartCharge = NullTrueBool(cells[12])
-                    };
-                    if (ItemSO.ActiveID.x == -1)
-                    {
-                        ItemSO.ActiveID.x = activeData.ID;
-                    }
-                    ItemSO.ActiveID.y = activeData.ID;
-                    try
-                    {
-                        activeData.Sprite = Array.Find(ItemSO.ItemSprites, x => x.name == activeData.ID.ToString());
-                    }
-                    catch (UnassignedReferenceException)
-                    {
-                        activeData.Sprite = null;
-                        Debug.Log("스프라이트가 없습니다.");
-                    }
-                    ItemSO.ActiveItems.Add(activeData);
-                    break;
-                case ItemTag.Potion:
-                    UseItemBase potionData = new()
-                    {
-                        ID = ConvertInt32(cells[0]),
-                        Name = LineBreakStr(cells[1]),
-                        ItemTag = itemTag,
-                        ItemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), cells[cells.Length - 1]),
-                        Damage = ConvertInt32(cells[2]),
-                        Shield = ConvertInt32(cells[3]),
-                        Draw = ConvertInt32(cells[4]),
-                        Heal = ConvertInt32(cells[5]),
-                        Duration = ConvertInt32(cells[6]),
-                        Price = ConvertInt32(cells[7]),
-                        Descript = LineBreakStr(cells[8]),
-                        AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[9])),
-                        ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[10]))
-                    };
-                    if (ItemSO.PotionID.x == -1)
-                    {
-                        ItemSO.PotionID.x = potionData.ID;
-                    }
-                    ItemSO.PotionID.y = potionData.ID;
-                    try
-                    {
-                        potionData.Sprite = Array.Find(ItemSO.ItemSprites, x => x.name == potionData.ID.ToString());
-                    }
-                    catch (UnassignedReferenceException)
-                    {
-                        potionData.Sprite = null;
-                        Debug.Log("스프라이트가 없습니다.");
-                    }
-                    ItemSO.PotionItems.Add(potionData);
-                    break;
-                default:
-                    Debug.Log("아이템 태그 오류");
-                    break;
-            }
-            //ItemBase data = new()
-            //{
-            //    ID = ConvertInt32(cells[0]),
-            //    Name = LineBreakStr(cells[1]),
-            //    ItemTag = (ItemTag)Enum.Parse(typeof(ItemTag), cells[cells.Length-2]),
-            //    ItemRarity = (ItemRarity)Enum.Parse(typeof(ItemRarity), cells[cells.Length-1])
-            //    //MaxCharge = ConvertInt32(cells[2]),
-            //    //CurCharge = ConvertInt32(cells[3]),
-            //    //Damage = ConvertInt32(cells[4]),
-            //    //Shield = ConvertInt32(cells[5]),
-            //    //Draw = ConvertInt32(cells[6]),
-            //    //Heal = ConvertInt32(cells[7]),
-            //    //Duration = ConvertInt32(cells[8]),
-            //    //Price = ConvertInt32(cells[9]),
-            //    //Descript = LineBreakStr(cells[10]),
-            //};
-            //switch (data.ItemTag)
-            //{
-            //    case ItemTag.Passive:
-            //        if (ItemSO.PassiveID.x == -1)
-            //        {
-            //            ItemSO.PassiveID.x = data.ID;
-            //        }
-            //        ItemSO.PassiveID.y = data.ID;
-
-            //        data.Price = ConvertInt32(cells[2]);
-            //        data.Descript = LineBreakStr(cells[3]);
-
-            //        break;
-            //    case ItemTag.Active:
-            //        if (ItemSO.ActiveID.x == -1)
-            //        {
-            //            ItemSO.ActiveID.x = data.ID;
-            //        }
-            //        ItemSO.ActiveID.y = data.ID;
-
-            //        data.MaxCharge = ConvertInt32(cells[2]);
-            //        data.Damage = ConvertInt32(cells[3]);
-            //        data.Shield = ConvertInt32(cells[4]);
-            //        data.Draw = ConvertInt32(cells[5]);
-            //        data.Heal = ConvertInt32(cells[6]);
-            //        data.Duration = ConvertInt32(cells[7]);
-            //        data.Price = ConvertInt32(cells[8]);
-            //        data.Descript = LineBreakStr(cells[9]);
-            //        data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[10]));
-            //        data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[11]));
-            //        data.StartCharge = NullTrueBool(cells[12]);
-
-            //        break;
-            //    case ItemTag.Potion:
-            //        if (ItemSO.PotionID.x == -1)
-            //        {
-            //            ItemSO.PotionID.x = data.ID;
-            //        }
-            //        ItemSO.PotionID.y = data.ID;
-
-            //        data.Damage = ConvertInt32(cells[2]);
-            //        data.Shield = ConvertInt32(cells[3]);
-            //        data.Draw = ConvertInt32(cells[4]);
-            //        data.Heal = ConvertInt32(cells[5]);
-            //        data.Duration = ConvertInt32(cells[6]);
-            //        data.Price = ConvertInt32(cells[7]);
-            //        data.Descript = LineBreakStr(cells[8]);
-            //        data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[9]));
-            //        data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[10]));
-
-            //        break;
-            //}
-            //if (data.ItemTag != ItemTag.Passive)
-            //{
-            //    data.AttackType = (AttackType)Enum.Parse(typeof(AttackType), ItemEnumCellCheck(cells[13]));
-            //    data.ItemCanUse = (ItemCanUse)Enum.Parse(typeof(ItemCanUse), ItemEnumCellCheck(cells[14]));
-            //}
-
-            //try
-            //{
-            //    data.Sprite = Array.Find(ItemSO.ItemSprites, x => x.name == data.ID.ToString());
-            //}
-            //catch (UnassignedReferenceException)
-            //{
-            //    data.Sprite = null;
-            //    Debug.Log("스프라이트가 없습니다.");
-            //}
-            //ItemSO.Items[i] = data;
-            //++i;
-        }
-        Debug.Log("Item Load End");
-#if UNITY_EDITOR
-        EditorUtility.SetDirty(ItemSO);
-#endif
-    }
-
-    //private void SystemIOFileLoad()
-    //{
-    //    string[] imageFiles = Directory.GetFiles(imagePath, "*.png");
-    //    int j = 0;
-    //    foreach (string imagePath in imageFiles)
-    //    {
-    //        string imageName = Path.GetFileNameWithoutExtension(imagePath);
-    //        // 파일을 바이트 배열로 읽어옴
-    //        byte[] imageData = File.ReadAllBytes(imagePath);
-    //        Texture2D texture = new Texture2D(1, 1);
-    //        texture.LoadImage(imageData);
-    //        Sprite Sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
-    //        Sprite.Name = imageName;
-    //        gameSprite.Sprite = Sprite;
-    //        s[j] = (Sprite);
-    //        _cardSO.CardSprites[j] = Sprite;
-    //        j++;
-    //    }
-    //}
-
-    float ConvertSingle(string str)    // 구글스프레드시트는 엑셀 빈 칸을 ""로 가져오기 때문에 Convert.ToSingle가 에러가 뜸.
-    {
-        //float _value = Convert.ToSingle(string.IsNullOrEmpty(str) ? null : str);
-        return Convert.ToSingle(string.IsNullOrEmpty(str) ? null : str);
-    }
-
-    int ConvertInt32(string str)    // 구글스프레드시트는 엑셀 빈 칸을 ""로 가져오기 때문에 Convert.ToInt32가 에러가 뜸.
-    {
-        //int _value = Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
-        //return Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
-        if (string.IsNullOrWhiteSpace(str))
-            return 0;
-
-        // 2. 양끝 공백 및 보이지 않는 특수 문자 제거 (Trim)
-        string cleanStr = str.Trim();
-
-        // 3. TryParse로 안전하게 변환 시도
-        if (int.TryParse(cleanStr, out int result))
-        {
-            return result;
-        }
-        else
-        {
-            // 4. 숫자가 아닌 문자가 들어온 경우 (예: "데미지", "10A" 등)
-            // 디버깅을 위해 어떤 데이터에서 에러가 났는지 로그를 찍는 것이 좋습니다.
-            Debug.LogWarning($"숫자 변환 실패! 입력된 문자열: '{str}' (0으로 대체됨)");
-            return 0;
-        }
-    }
-    float ConvertFloat32M1(string str)    // 구글스프레드시트는 엑셀 빈 칸을 ""로 가져오기 때문에 에러가 뜸.
-    {
-        //int _value = Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
-        //return Convert.ToInt32(string.IsNullOrEmpty(str) ? null : str);
-        if (string.IsNullOrWhiteSpace(str))
-            return -1f;
-
-        // 2. 양끝 공백 및 보이지 않는 특수 문자 제거 (Trim)
-        string cleanStr = str.Trim();
-
-        // 3. TryParse로 안전하게 변환 시도
-        if (float.TryParse(cleanStr, out float result))
-        {
-            return result;
-        }
-        else
-        {
-            // 4. 숫자가 아닌 문자가 들어온 경우 (예: "데미지", "10A" 등)
-            // 디버깅을 위해 어떤 데이터에서 에러가 났는지 로그를 찍는 것이 좋습니다.
-            Debug.LogWarning($"숫자 변환 실패! 입력된 문자열: '{str}' (-1f로 대체됨)");
-            return -1f;
-        }
-    }
-
-    bool NullFalseBool(string str)
-    {
-        if (string.IsNullOrWhiteSpace(str))
+            // 5. 여기까지 왔다면 형식이 잘못된 것 (예: "안녕", "오류")
+            Debug.LogWarning($"부울 변환 실패! 입력된 문자열: '{str}' (false로 대체됨)");
             return false;
-
-        // 2. 앞뒤 공백 제거 및 대문자로 통일 (비교 편의성)
-        string cleanStr = str.Trim().ToUpper();
-
-        // 3. 숫자로 입력된 경우 처리 (1 = true, 0 = false)
-        if (cleanStr == "1" || cleanStr == "TRUE") return true;
-        if (cleanStr == "0" || cleanStr == "FALSE") return false;
-
-        // 4. 그 외의 경우 안전하게 TryParse 시도
-        if (bool.TryParse(cleanStr, out bool result))
+        }
+        bool NullTrueBool(string str)
         {
-            return result;
+            if (string.IsNullOrWhiteSpace(str))
+                return true;
+
+            // 2. 앞뒤 공백 제거 및 대문자로 통일 (비교 편의성)
+            string cleanStr = str.Trim().ToUpper();
+
+            // 3. 숫자로 입력된 경우 처리 (1 = true, 0 = false)
+            if (cleanStr == "1" || cleanStr == "TRUE") return true;
+            if (cleanStr == "0" || cleanStr == "FALSE") return false;
+
+            // 4. 그 외의 경우 안전하게 TryParse 시도
+            if (bool.TryParse(cleanStr, out bool result))
+            {
+                return result;
+            }
+
+            // 5. 여기까지 왔다면 형식이 잘못된 것 (예: "안녕", "오류")
+            Debug.LogWarning($"부울 변환 실패! 입력된 문자열: '{str}' (false로 대체됨)");
+            return false;
         }
 
-        // 5. 여기까지 왔다면 형식이 잘못된 것 (예: "안녕", "오류")
-        Debug.LogWarning($"부울 변환 실패! 입력된 문자열: '{str}' (false로 대체됨)");
-        return false;
-    }
-    bool NullTrueBool(string str)
-    {
-        if (string.IsNullOrWhiteSpace(str))
-            return true;
-
-        // 2. 앞뒤 공백 제거 및 대문자로 통일 (비교 편의성)
-        string cleanStr = str.Trim().ToUpper();
-
-        // 3. 숫자로 입력된 경우 처리 (1 = true, 0 = false)
-        if (cleanStr == "1" || cleanStr == "TRUE") return true;
-        if (cleanStr == "0" || cleanStr == "FALSE") return false;
-
-        // 4. 그 외의 경우 안전하게 TryParse 시도
-        if (bool.TryParse(cleanStr, out bool result))
+        string ItemEnumCellCheck(string str)
         {
-            return result;
+            return string.IsNullOrEmpty(str) ? "None" : str;
         }
 
-        // 5. 여기까지 왔다면 형식이 잘못된 것 (예: "안녕", "오류")
-        Debug.LogWarning($"부울 변환 실패! 입력된 문자열: '{str}' (false로 대체됨)");
-        return false;
-    }
+        string LineBreakStr(string str)     // 구글스프레드시트에서 줄바꿈을 하면, csv에서 쉼표로 읽어옴. 따라서 개행문자(\n)를 이용해야 하나. 이 또한, \\n으로 인식하기 때문에 Replace가 필요함.
+        {
+            //string _return = str.Replace("\\n", "\n");
+            return str.Replace("\\n", "\n");
+        }
 
-    string ItemEnumCellCheck(string str)
-    {
-        return string.IsNullOrEmpty(str) ? "None" : str;
-    }
+        //private static Dictionary<int, CardData> CreateDB()
+        //{
+        //    string[] rows = dataCardGS.Split("\n");
+        //    Dictionary<int, CardData> cardDB = new Dictionary<int, CardData>();
+        //    foreach (string row in rows)
+        //    {
+        //        string[] cells = row.Split(",");
+        //        var data = new CardData();
+        //        data.Name = cells[1];
+        //        data.Descript = cells[2];
+        //        print(cells[2]);
 
-    string LineBreakStr(string str)     // 구글스프레드시트에서 줄바꿈을 하면, csv에서 쉼표로 읽어옴. 따라서 개행문자(\n)를 이용해야 하나. 이 또한, \\n으로 인식하기 때문에 Replace가 필요함.
-    {
-        //string _return = str.Replace("\\n", "\n");
-        return str.Replace("\\n", "\n");
-    }
-
-    //private static Dictionary<int, CardData> CreateDB()
-    //{
-    //    string[] rows = dataCardGS.Split("\n");
-    //    Dictionary<int, CardData> cardDB = new Dictionary<int, CardData>();
-    //    foreach (string row in rows)
-    //    {
-    //        string[] cells = row.Split(",");
-    //        var data = new CardData();
-    //        data.Name = cells[1];
-    //        data.Descript = cells[2];
-    //        print(cells[2]);
-
-    //        cardDB.Add(Convert.ToInt32(cells[0].ToString()), data);
-    //        //InGameManager.Instance.ArtifactDict.Add(Convert.ToInt32(cells[0].ToString()), false);
-    //        //InGameManager.Instance.ObtainableArtifact.Add(Convert.ToInt32(cells[0].ToString()));
-    //    }
-    //    dataDict = cardDB;
-    //    return dataDict;
-    //}
-    //public static bool TryGetData(int key, out CardData data)
-    //{
-    //    dataDict ??= CreateDB();
-    //    var result = true;
-    //    data = dataDict[key];
-    //    return result;
-    //}
-
+        //        cardDB.Add(Convert.ToInt32(cells[0].ToString()), data);
+        //        //InGameManager.Instance.ArtifactDict.Add(Convert.ToInt32(cells[0].ToString()), false);
+        //        //InGameManager.Instance.ObtainableArtifact.Add(Convert.ToInt32(cells[0].ToString()));
+        //    }
+        //    dataDict = cardDB;
+        //    return dataDict;
+        //}
+        //public static bool TryGetData(int key, out CardData data)
+        //{
+        //    dataDict ??= CreateDB();
+        //    var result = true;
+        //    data = dataDict[key];
+        //    return result;
+        //}
 
 }

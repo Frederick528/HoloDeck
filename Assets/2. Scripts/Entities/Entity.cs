@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -355,13 +356,73 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         _isAtk.Value = true;
     }
 
+    public void PlayAttackAnim()
+    {
+        if (animator == null) return;
+
+        // 1. 애니메이션 실행
+        animator.Play(_attackAnim, -1, 0f);
+
+        // 2. 스케일 설정 (명미 님 기존 로직)
+        SetCharacterScale().Forget();
+    }
+
+    private async UniTaskVoid SetCharacterScale()
+    {
+        if (this is Player)
+        {
+            Vector3 temp = animator.transform.localScale;
+            float scale = GameManager.Instance.PlayerInt == 0 ? 0.37f : 0.31f;
+            animator.transform.localScale = new Vector3(scale, scale, scale);
+            // 3. [중요] 1프레임 대기
+            // Play() 직후에는 아직 애니메이터 상태가 업데이트되지 않아 이전 애니메이션 정보를 읽을 수 있어요.
+            await UniTask.WaitUntil(() =>
+                animator.GetCurrentAnimatorStateInfo(0).shortNameHash == _attackAnim,
+                cancellationToken: this.GetCancellationTokenOnDestroy()
+            );
+            //await UniTask.Yield(PlayerLoopTiming.Update);
+
+            // 4. 애니메이션이 끝날 때까지 대기
+            // GetCurrentAnimatorStateInfo(0).normalizedTime이 1.0 이상이 될 때까지 비동기로 기다립니다.
+            await UniTask.WaitUntil(() =>
+            {
+                var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+                // [조건 A] 상태가 이미 다른 거(Idle 등)로 바뀌었다면? 이미 끝난 거니까 통과!
+                if (stateInfo.shortNameHash != _attackAnim) return true;
+
+                // [조건 B] 루프 중이라도 0.99 이상 왔다면 거의 다 끝난 거니까 통과!
+                // 1.0f로 딱 맞추면 프레임 드랍 시 소수점 오차로 체크를 못 할 수 있어요.
+                if (stateInfo.normalizedTime >= 0.99f) return true;
+
+                return false;
+            }, cancellationToken: this.GetCancellationTokenOnDestroy());
+            animator.transform.localScale = temp;
+        }
+    }
+
     public virtual async UniTask AttackAnimation(bool checkAtkTiming = false)
     {
         if (_animEvent == null)
             checkAtkTiming = false;
         //animator.SetTrigger(_attackAnim);
-        if (animator)
-            animator.Play(_attackAnim, -1, 0);  // 공격 애니메이션 실행
+        //if (animator)
+        //{
+        //    animator.Play(_attackAnim, -1, 0);  // 공격 애니메이션 실행
+        //    if (this is Player player)
+        //    {
+        //        if (GameManager.Instance.PlayerInt == 0)
+        //        {
+        //            animator.transform.localScale = new Vector3(0.31f, 0.31f, 0.31f);
+
+        //        }
+        //        else if (GameManager.Instance.PlayerInt == 1)
+        //        {
+        //            animator.transform.localScale = new Vector3(0.37f, 0.37f, 0.37f);
+        //        }
+        //    }
+        //}
+        PlayAttackAnim();
         if (checkAtkTiming)
         {
             var cts = new CancellationTokenSource();
@@ -446,10 +507,11 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         await UniTask.WaitForSeconds(0.2f);     // 일단 딜레이가 없으면 전체 공격일 때, 흡혈하자마자 반사딜 들어오면서 순서가 뒤죽박죽이 됨. 일단 딜레이 줘서 먼저 흡혈 후, 데미지 들어오도록 보이게만 함.
     }
 
-    public virtual async UniTask Shield(int amount)
+    public virtual async UniTask<int> Shield(int amount)
     {
         CurShield.Value += amount;
         await UniTask.WaitForSeconds(0.2f);
+        return amount;
     }
 
     //public virtual async UniTask Shield()
@@ -746,6 +808,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
         if (InGameUIManager.Instance.Canvas(InGameUIManager.CanvasName.SelectedCard).gameObject.activeSelf) return false;
         if (!Cursor.visible) return false;
         if (_numberOfStatusEffects == 0 && _numberOfInformation == 0) return false;
+        if (CardManager.Instance.SelectCard != null) return false;
         TargetOutline(true);        // 커서 꺼져있을 때 => 전투용 화살표 커서를 사용할 때, 이건 그냥 배틀매니저에서 켜주기로 함.
         _statusEffectDescContent.localPosition = Vector3.zero;
         canvas.sortingOrder = 1;        // 이거 없으면 체력 UI에 가려짐
@@ -1520,7 +1583,7 @@ public abstract class Entity : MonoBehaviour, IOnMouseEnter
 
         (int amount, int duration) info = CurStatusEffectDict[statusEffect.Value.effect][statusEffect.Value.type];
 
-        if (info.amount == 0 || info.duration == 0)               // 상태효과 지속시간이나 값이 0일 경우 (지속시간이 -1일 경우가 있어서 일단 둘 다 체크함.)
+        if (statusEffect.Value.type != StatusEffectType.Information && (info.amount == 0 || info.duration == 0))               // 상태효과 지속시간이나 값이 0일 경우 (지속시간이 -1일 경우가 있어서 일단 둘 다 체크함.)
             return;
         else
         {
